@@ -7,13 +7,27 @@ export function addDomesticDetails({THREE,group,room,seed,curvize,spots,photos,s
   const geometries=new Set(),materials=new Set(),textures=new Set();
   const material=color=>{const m=curvize(new THREE.MeshLambertMaterial({color}));materials.add(m);return m;};
   const palette=[0x7b8f79,0xbb9a6a,0xaaa8a0,0x547c88,0x937065,0xd0c8b1].map(material);
+  const food=[0xb75a43,0xc7a75a,0x7e9a53,0xd09c79,0xc5c1a4].map(material);
   const geo=g=>{geometries.add(g);return g;};
   const box=geo(new THREE.BoxGeometry(1,1,1)),round=geo(new THREE.CylinderGeometry(0.5,0.5,1,8)),ball=geo(new THREE.SphereGeometry(0.5,6,4));
   function mesh(parent,geometry,mat,x,y,z,w,h,d){const m=new THREE.Mesh(geometry,mat);m.position.set(x,y,z);m.scale.set(w,h,d);parent.add(m);return m;}
   function assortment(parent,x,y,z,n=3){
     for(let i=0;i<n;i++){
-      const shape=Math.floor(random()*4),w=0.07+random()*0.09,h=shape===0?0.16+random()*0.13:0.025+random()*0.09;
+      const shape=Math.floor(random()*7),w=0.07+random()*0.09,h=shape===0?0.16+random()*0.13:0.025+random()*0.09;
       const cx=x+(i-(n-1)/2)*0.18,cz=z+(random()-0.5)*0.1,m=palette[Math.floor(random()*palette.length)];
+      if(shape===4){
+        const width=w*1.8,depth=w*1.25;
+        mesh(parent,box,m,cx,y+h/2,cz,width,h,depth);
+        mesh(parent,box,palette[5],cx,y+h+0.006,cz,width+0.012,0.012,depth+0.012);
+        mesh(parent,box,palette[2],cx+width/2+0.001,y+h*0.55,cz,0.002,h*0.38,depth*0.4);
+        continue;
+      }
+      if(shape>=5){
+        const skin=food[Math.floor(random()*food.length)],size=shape===6?0.035:w;
+        mesh(parent,ball,skin,cx,y+size*0.4,cz,size,size*0.8,size*1.1);
+        if(shape===6)for(const side of [-1,1])mesh(parent,box,skin,cx+side*size*0.65,y+size*0.4,cz,size*0.45,size*0.45,size*0.65).rotation.y=side*0.45;
+        continue;
+      }
       mesh(parent,shape===2?ball:shape===0?round:box,m,cx,y+h/2,cz,w,h,w);
       if(shape===0)mesh(parent,round,m,cx,y+h+0.025,cz,w*0.4,0.05,w*0.4);
       if(shape===3)for(let k=1;k<3;k++)mesh(parent,box,m,cx+k*0.012,y+h/2+k*0.025,cz,w*1.2,h,w*1.6).rotation.y=k*0.08;

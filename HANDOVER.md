@@ -157,3 +157,7 @@ index.html adds domestic-details.js after furnishing. It places seeded abstract 
 ## Broader unusual spaces — 2026-10-05
 
 The demo exception pool includes more modest variations and six rare vast forms: distant walls, low canopy, column field, deep hall, assembly hall, and vertical void. Roughly 2% of rooms remain vast; exception spacing stays six to eight rooms. The first vast exception for each seed uses distant walls. Default seed 5 reaches the 80-metre-wide expanse at room 29: ?start=29&offset=12&inspect=1&still=1. Camera clipping and lateral fog depth accommodate wider rooms. Read the latest NOTES.md entry for sequence, navigation, spatial-route and browser checks. Cross-device performance evaluation remains next; these changes are local until pushed.
+
+## Tabletop burners and metal sinks — 2026-10-05
+
+room-sets.js assembles an authored two-burner tabletop stove on a plain stand and an open aluminum-coloured sink basin with faucet, drain and stand. Existing pots sit on the burner grates; occasional fitted cabinets remain. domestic-details.js adds lidded boxes, fruit-like shapes and wrapped sweets to its seeded clutter pool. Preview with ?room=kitchen&space=straight&offset=3&inspect=1&still=1 and turn towards the wall strip. The latest NOTES.md entry records rendered placement checks and remaining work. No external image or brand was copied from the stove reference.

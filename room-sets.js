@@ -28,16 +28,43 @@ export function createRoomSet(type,models,{width,length,index=0}={}){
     const seed=Math.imul(index+31,0x45d9f3b)>>>0;
     const fitted=((seed^(seed>>>16))>>>0)%5===0;
     group.userData.fittedCounters=fitted;
-    piece('kitchenSink',0.85,-1.15);
-    const stove=piece('kitchenStove',0.85,-0.2);
+    // Local +X is depth; the two burners sit along the wall, on a simple stand.
+    function solid(parent,geometry,color,x,y,z){
+      const m=new THREE.Mesh(geometry,new THREE.MeshLambertMaterial({color}));
+      m.position.set(x,y,z);m.userData.own=m.userData.ownMaterial=true;parent.add(m);return m;
+    }
+    function block(parent,color,x,y,z,w,h,d){return solid(parent,new THREE.BoxGeometry(w,h,d),color,x,y,z);}
+    const sink=new THREE.Group();sink.userData.fixture='aluminumSink';group.add(sink);
+    block(sink,0x899694,0.5,0.73,-1.15,0.62,0.04,0.82);
+    // An open basin: recessed bottom and four rim walls, rather than a solid slab.
+    block(sink,0x9ea9a8,0.5,0.78,-1.15,0.48,0.02,0.62);
+    for(const x of [0.245,0.755])block(sink,0xbcc5c2,x,0.825,-1.15,0.03,0.11,0.68);
+    for(const z of [-1.475,-0.825])block(sink,0xbcc5c2,0.5,0.825,z,0.54,0.11,0.03);
+    for(const x of [0.25,0.75])for(const z of [-1.48,-0.82])block(sink,0x858d88,x,0.36,z,0.035,0.72,0.035);
+    solid(sink,new THREE.CylinderGeometry(0.026,0.026,0.12,8),0xc6cdca,0.22,0.93,-1.15);
+    block(sink,0xc6cdca,0.29,0.99,-1.15,0.16,0.025,0.025);
+    solid(sink,new THREE.CylinderGeometry(0.027,0.027,0.004,10),0x4c5554,0.5,0.793,-1.15);
+    const stove=new THREE.Group();stove.userData.fixture='tabletopBurner';group.add(stove);
+    block(stove,0x88765a,0.55,0.72,-0.2,0.65,0.055,0.9);
+    for(const x of [0.29,0.81])for(const z of [-0.56,0.16])block(stove,0x6f6555,x,0.35,z,0.045,0.7,0.045);
+    block(stove,0x252a29,0.55,0.805,-0.2,0.52,0.115,0.82);
+    block(stove,0xb6bebc,0.55,0.868,-0.2,0.54,0.018,0.84);
+    for(const z of [-0.43,0.03]){
+      solid(stove,new THREE.CylinderGeometry(0.095,0.095,0.022,12),0xb2a26c,0.55,0.89,z);
+      const ring=solid(stove,new THREE.TorusGeometry(0.125,0.012,4,12),0x202522,0.55,0.912,z);ring.rotation.x=Math.PI/2;
+      for(const angle of [0,Math.PI/2,Math.PI,Math.PI*1.5]){
+        const grate=block(stove,0x202522,0.55+Math.cos(angle)*0.103,0.924,z+Math.sin(angle)*0.103,0.09,0.025,0.022);grate.rotation.y=-angle;
+      }
+      const knob=solid(stove,new THREE.CylinderGeometry(0.027,0.027,0.025,10),0x141918,0.828,0.803,z);knob.rotation.z=Math.PI/2;
+    }
     if(type==='kitchen')piece('kitchenFridge',1.65,0.8,{maxWidth:0.8});
     if(fitted){
       piece('kitchenCabinet',0.85,type==='kitchen'?1.7:0.75);
       piece('kitchenCabinet',0.75,-1.75,{depth:0.72,rotation:0,maxWidth:0.55});
     }
-    const pot=piece('phPot',0.18,-0.2,{depth:0.58,base:new THREE.Box3().setFromObject(stove).max.y+0.01,maxWidth:0.32});
+    const pot=piece('phPot',0.18,-0.43,{depth:0.55,base:0.937,maxWidth:0.24});
     pot.userData.countertop=true;
-    piece(index%2?'phBananas':'phGinger',0.09,-1.1,{depth:0.62,base:0.86,maxWidth:0.35});
+    if(index%3===0)piece('phPot',0.14,0.03,{depth:0.55,base:0.937,maxWidth:0.22});
   }
   group.position.set(-width/2+0.12,0,-length/2);
   if(index%2){group.rotation.y=Math.PI;group.position.x=width/2-0.12;}

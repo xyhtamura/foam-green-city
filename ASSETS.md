@@ -211,3 +211,7 @@ The ceiling socket, tapered body, and diffuser are Codex-authored primitive geom
 ## Abstract household clutter, wear, and exposed roofs — 2026-10-04
 
 Codex-authored geometry and canvas marks in domestic-details.js, made for this project. Boxes, low-sided cylinders, and rounded shapes suggest containers, small bottles, bundles, and paper stacks. Shelves and photo-frame surrounds, corrugated roofing, timber rafters, and tiny cockroach silhouettes use authored meshes. Floor and wall wear is drawn on canvas. Framed photos reuse the already-cleared WALL_HANGINGS pool. No external images, models, or fonts were added. Code uses the project MIT licence; authored artwork uses CC BY 4.0.
+
+## Tabletop stove, metal sink, and clutter skins — 2026-10-05
+
+Codex-authored primitive geometry in room-sets.js creates the two-burner tabletop stove, supporting stand, open sink basin, faucet and drain. The user supplied a product photograph as a shape reference; the photograph, logo and brand are not included. Existing cleared pot models are reused. domestic-details.js adds authored lidded boxes with label panels and colour variations for fruit-like objects and wrapped sweets. No third-party mesh, texture or font was added. Code uses MIT; authored artwork uses CC BY 4.0.
