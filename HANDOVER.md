@@ -169,3 +169,7 @@ utility-props.js narrows the walis tingting at its twine binding and retains a s
 ## Pipe selection expanded — 2026-10-05
 
 The local pipe kit matches fgc-c byte for byte. wall-utilities.js selects six water styles and three bathroom choices, including drainage; all eight pipe style names work with ?pipes=<style>. Existing clear wall-section placement and standard-height room restrictions remain. The raw folder still has 47 supplied PNGs, with 45 active cutouts and two electrical cutouts awaiting wall mounting. See the latest NOTES.md entry for checks and remaining work.
+
+## Windows and pipe proportions — 2026-10-05
+
+Water runs use thin blue 21–27 mm pipes; thicker drainage uses orange. Window sections are more frequent, with narrow, wide, high-set, open-frame and grilled variants. ?window=<variant> forces inspection. Open frames have a light backdrop, and hallway connectivity remains unchanged. See the latest NOTES.md entry for rendered checks and unfinished work.

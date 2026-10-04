@@ -2,7 +2,7 @@ import * as THREE from 'three';
 
 // A 2 m wall tile, with its origin at the bottom-left corner, like the
 // architecture kit. Geometry and materials are shared by streamed clones.
-export function createJalousieWall({ height, wallColor, trimColor, curvize, curtains=null }) {
+export function createJalousieWall({ height, wallColor, trimColor, curvize, curtains=null, variant='standard' }) {
   const group = new THREE.Group();
   group.name = 'jalousie-wall';
   const box = new THREE.BoxGeometry(1, 1, 1);
@@ -20,25 +20,32 @@ export function createJalousieWall({ height, wallColor, trimColor, curvize, curt
     group.add(mesh);
     return mesh;
   }
-  const bottom = 0.9, top = 2.16, left = 0.28, right = 1.72;
+  const bottom=variant==='high'?1.65:variant==='wide'?0.65:0.9;
+  const top=variant==='high'?2.28:2.16;
+  const left=variant==='narrow'?0.6:variant==='wide'?0.12:0.28,right=2-left;
+  group.userData.windowVariant=variant;
   part('wall-bottom', wall, 1, bottom / 2, 0, 2, bottom, 0.16);
   part('wall-top', wall, 1, (top + height) / 2, 0, 2, height - top, 0.16);
   part('wall-left', wall, left / 2, (top + bottom) / 2, 0, left, top - bottom, 0.16);
   part('wall-right', wall, (right + 2) / 2, (top + bottom) / 2, 0, 2 - right, top - bottom, 0.16);
-  for (const x of [left, 1, right])
+  for (const x of variant==='open'?[left,right]:[left,1,right])
     part('vertical-frame', frame, x, (top + bottom) / 2, 0, 0.045, top - bottom, 0.22);
   for (const y of [bottom, top])
     part('horizontal-frame', frame, 1, y, 0, right - left + 0.045, 0.055, 0.22);
   part('sill', frame, 1, bottom - 0.035, 0, 1.55, 0.045, 0.32);
   // Backing stays within the wall thickness, beyond the slats on the outside.
   part('exterior-light', light, 1, (top + bottom) / 2, -0.14, right - left, top - bottom, 0.01);
-  const rows = 8, pitch = (top - bottom - 0.08) / rows;
-  for (const x of [0.64, 1.36]) {
+  const rows = variant==='high'?4:8, pitch = (top - bottom - 0.08) / rows;
+  for (const x of variant==='open'?[]:[(left+1)/2,(right+1)/2]) {
     for (let row = 0; row < rows; row++) {
       const slat = part('glass-slat', glass, x, bottom + 0.04 + pitch * (row + 0.5),
-        0, 0.67, pitch + 0.025, 0.012);
+        0, 1-left-0.05, pitch + 0.025, 0.012);
       slat.rotation.x = -Math.PI / 5;
     }
+  }
+  if(variant==='grille'){
+    for(let x=left+0.16;x<right;x+=0.18)part('security-bar',frame,x,(top+bottom)/2,0.13,0.015,top-bottom,0.02);
+    part('security-crossbar',frame,1,(top+bottom)/2,0.13,right-left,0.018,0.02);
   }
   if(curtains) {
     const fabric=curvize(new THREE.MeshLambertMaterial({

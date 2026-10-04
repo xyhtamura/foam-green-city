@@ -694,3 +694,13 @@ Expanded wall-utilities.js selection to use supply, riser, loop, meander, overhe
 check_pipes.mjs passed 48,000 seeded cases; check_raw_objects.mjs passed 45 paths and placement sizes. Viewed ?room=bare&space=straight&pipes=bundle&offset=3&inspect=1&still=1 in-browser: blue parallel pipes were visible above the raw drawer cutout, and all six retained rooms reported bundle runs. Browser logs had no warnings or errors. Saved pipe-variation-preview.png. Other newly enabled styles have not each been viewed in the integrated walkthrough during this pass.
 
 Next remains navigation, hallway access and bidirectional streaming evaluation across devices; ROADMAP.md remains accurate. No additional raw files were found, so there was nothing to import from that folder. Cross-room pipe connections, drainage reducers and sustained performance measurements remain undone. Nothing was pushed or published.
+
+## 2026-10-05 — Codex — thinner blue pipes and window variants
+
+Adjusted the integrated water runs to blue 21 or 27 mm pipes; drainage retains its thicker sizes and uses orange. Bathrooms select water runs more often, with two drainage entries in their six-entry style pool. No reference image or brand was imported, and the underlying vendored pipe modules remain unchanged.
+
+Added narrow, wide, high-set, open-frame and grilled variants to createJalousieWall. Window selection rises from 34% to 48% of eligible wall sections, or 42% in bathrooms. Existing curtains and imported window types remain. Open frames retain an exterior light backdrop and do not provide a traversable side passage. Force a variant with ?window=narrow|wide|high|open|grille. Existing hallway connections are unchanged.
+
+Viewed the default mixed window selection and the forced high-set variant in the running straight-room preview using drag mouse-look. High windows rendered as short openings near the ceiling; saved window-variation-preview.png. The mixed preview had no browser warnings or errors. check_navigation.mjs passed 2,000 descriptors and 48 reconstructions. git diff --check passed. Individual visual checks of the other four variants and sustained performance remain undone.
+
+Next remains navigation, hallway access and bidirectional streaming evaluation across devices; ROADMAP.md remains accurate. More traversable openings, exterior views and connected plumbing remain deferred. Nothing was pushed or published.

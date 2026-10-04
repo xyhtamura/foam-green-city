@@ -45,7 +45,7 @@ window.addEventListener('unhandledrejection',reportLoadFailure);
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { createJalousieWall } from './jalousie.js?v=curtains-3';
+import { createJalousieWall } from './jalousie.js?v=curtains-4';
 import { createDomesticProps, animateDomesticProps, createFurnitureVariants, FURNITURE_FINISHES } from './domestic-props.js?v=domestic-7';
 import { WALL_HANGINGS } from './wall-assets.js?v=photos-2';
 import { RAW_OBJECTS, createRawObject } from './raw-object-assets.js?v=raw-2';
@@ -59,7 +59,7 @@ import { MODEL_ASSETS, loadModelAssets } from './model-assets.js';
 import { createRoomSet, createRoomFixture } from './room-sets.js?v=sets-8';
 import { createUratexSofa } from './uratex-sofa.js';
 import { createWireRun } from './wire-runs.js';
-import { createWallUtilities } from './wall-utilities.js?v=walls-2';
+import { createWallUtilities } from './wall-utilities.js?v=walls-3';
 import {createWalkSequence,retainedRooms,walkRegions,canOccupy,moveWalker,pathToRoute} from './navigation.js';
 import {addDomesticDetails} from './domestic-details.js?v=details-2';
 let wallUtilities;
@@ -395,7 +395,10 @@ function buildSegment(index){
   // side walls, seeded windows
   const solidWalls=[];
   const windowTile=()=>{
-    if(r()>=0.34)return WALLP.wall;
+    const forcedWindow=['narrow','wide','high','open','grille'].indexOf(params.get('window'));
+    if(forcedWindow>=0)return WALLP.windowVariants[forcedWindow];
+    if(r()>=(room.name==='bathroom'?0.42:0.48))return WALLP.wall;
+    if(r()<0.45)return WALLP.windowVariants[Math.floor(r()*WALLP.windowVariants.length)];
     if(r()<0.35)return r()<0.5?WALLP.normalWindow:WALLP.slidingWindow;
     if(room.name==='kitchen'&&r()<0.65)return curtainWindow('windowCafe',r);
     if((room.name==='sala'||room.name==='bedroom')&&r()<0.7)
@@ -814,6 +817,7 @@ function inspectRooms(){
     .map(async n => { const s = await loadGLB(n); prepWall(s); WALLP[n]=s; }));
   WALLP.wallWindow = createJalousieWall({ height: H, wallColor: COL.wall,
     trimColor: COL.trim, curvize });
+  WALLP.windowVariants=['narrow','wide','high','open','grille'].map(variant=>createJalousieWall({height:H,wallColor:COL.wall,trimColor:COL.trim,curvize,variant}));
   for(const [name,style,color] of [['windowCafe','cafe',0xd8e0c5],
       ['windowCream','gathered',0xe6dbbf],['windowRose','gathered',0xc79691]])
     WALLP[name]=[0,0.25,0.5,0.75,1].map(openness=>createJalousieWall({height:H,wallColor:COL.wall,trimColor:COL.trim,
