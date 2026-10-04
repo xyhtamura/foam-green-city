@@ -60,4 +60,6 @@ The continued local version adds domestic accumulation: small framed photos and 
 
 ## Using this reference
 
+[Object arrangements](ARRANGEMENTS.md) records a proposed system for objects in use, storage, localized messes, displaced objects, and occasional unexplained groupings. Its next implementation step is shared support placement, beginning with a TV on a table. These arrangements extend the domestic reference; the full system remains planned.
+
 Draw descriptions from the artwork's form, domestic details, color, and changing local upright. Keep intended effects separate from claims about viewers' actual responses. Treat the dated implementation section as the limit on present-tense feature claims. Further interpretation is welcome, but should be identified as interpretation rather than attributed to the artist as an established position.

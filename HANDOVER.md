@@ -185,3 +185,7 @@ Plain openings dominate the window pool. room-lighting.js includes daylight, ove
 ## Household tools and small clusters — 2026-10-05
 
 Domestic clutter includes authored pitchers, chopping boards and knives, folded clothing-like blocks, paper/file stacks, occasional mops and three generic bottle profiles with cap and label variations. Condiments, envelopes/pads and clothing use small category-specific cutout groups on tables, surfaces and clear floor edges. Per-room geometries are disposed with the room. See the latest NOTES.md entry for rendered checks and performance limits.
+
+## Object arrangement plan — 2026-10-05
+
+Read [Object arrangements](ARRANGEMENTS.md) for the proposed catalogue and placement rules. Next: shared object supports, beginning with a tabletop TV and then existing clutter. Arrangement density, valid poses, color/size/angle variation, collision reservations, and rendered acceptance checks are specified there. Navigation and cross-device streaming evaluation remain pending after this pass. No arrangement-system code was added with this plan.
