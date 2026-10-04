@@ -141,4 +141,3 @@ Use the in-app browser through `cua_repl`; after session restoration, read its d
 ## Housekeeping and limitations
 
 No publication was requested. Supplied image licences and original authors remain unverified in `ASSETS.md`; keep those facts visible. No new bitmap generation is required for the planned first pass. Root files had unrelated changes in `.agents/skills/abstract-to-minipaper/SKILL.md`, `scholarship/abstract-to-minipaper.md`, `serve_diary.bat`, and `.claude/skills/indeterminate-juxtaposition/`; leave them alone. The preceding scoped roadmap commit was `1ff5c7f`.
-
