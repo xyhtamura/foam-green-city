@@ -1,4 +1,4 @@
-import {branchOpenings,sideSpacePlan} from './side-spaces.js?v=storage-1';
+import {branchOpenings,sideSpacePlan} from './side-spaces.js?v=washrooms-1';
 import {localBounds} from './object-supports.js?v=supports-4';
 
 export function addSideStorage({THREE,group,room,assets,curvize}){

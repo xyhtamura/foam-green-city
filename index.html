@@ -60,16 +60,17 @@ import { createRoomSet, createRoomFixture } from './room-sets.js?v=sets-8';
 import { createUratexSofa } from './uratex-sofa.js';
 import { createWireRun } from './wire-runs.js';
 import { createWallUtilities } from './wall-utilities.js?v=walls-7';
-import {createWalkSequence,retainedRooms,walkRegions,canOccupy,moveWalker,pathToRoute} from './navigation.js?v=side-rooms-4';
+import {createWalkSequence,retainedRooms,walkRegions,canOccupy,moveWalker,pathToRoute} from './navigation.js?v=side-rooms-5';
 import {addDomesticDetails} from './domestic-details.js?v=details-9';
 let wallUtilities;
 import { roomLighting } from './room-lighting.js?v=lighting-2';
 import { spatialFrame, spatialPoint, SPATIAL_GLSL, SPATIAL_PROFILES } from './spatial-route.js';
 import { floorHeight, cameraRoute, routePoint } from './room-sequences.js?v=room-lengths-3';
-import {sideSpacePlan} from './side-spaces.js?v=storage-1';
-import {addSideStorage} from './side-storage.js?v=storage-1';
-import {addSideBedrooms} from './side-bedrooms.js?v=bedrooms-5';
-import { branchOpenings, raiseFloor, createRoomArchitecture } from './room-architecture.js?v=architecture-5';
+import {sideSpacePlan} from './side-spaces.js?v=washrooms-1';
+import {addSideWashrooms} from './side-washrooms.js?v=washrooms-2';
+import {addSideStorage} from './side-storage.js?v=storage-2';
+import {addSideBedrooms} from './side-bedrooms.js?v=bedrooms-6';
+import { branchOpenings, raiseFloor, createRoomArchitecture } from './room-architecture.js?v=architecture-6';
 
 // ---- palette (DepEd MPSS, stylized: green walls) ----
 const COL = {
@@ -400,6 +401,7 @@ function buildSegment(index){
   const architecture=createRoomArchitecture(descriptor,curvize);grp.add(architecture);grp.userData.architecture=architecture;
   grp.userData.sideBedrooms=addSideBedrooms({THREE,group:grp,room:descriptor,assets:FURNI,curvize,photos:WALL_HANGINGS,spriteMat});
   grp.userData.sideStorage=addSideStorage({THREE,group:grp,room:descriptor,assets:FURNI,curvize});
+  grp.userData.sideWashrooms=addSideWashrooms({THREE,group:grp,room:descriptor,assets:FURNI,curvize});
   grp.userData.floorGroup=floor;grp.userData.floor=descriptor.rise?'bare':floorChoice;grp.add(floor);
   const c = new THREE.Mesh(new THREE.PlaneGeometry(width,SEG_LEN,width/2,SEG_TILES*3), mat.ceiling);
   c.rotation.x=Math.PI/2; c.position.set(0,descriptor.height,-SEG_LEN/2); c.userData.own=true; grp.add(c);
@@ -581,7 +583,7 @@ function ensureSegments(){
   for (const i of retained) if (!segments.has(i)) buildSegment(i);
   for (const [i,grp] of segments){
     if (!retained.includes(i)){
-      scene.remove(grp);grp.userData.floorGroup.userData.dispose();grp.userData.architecture.userData.dispose();grp.userData.domesticDetails.userData.dispose();grp.userData.sideBedrooms.userData.dispose();grp.userData.sideStorage.userData.dispose();
+      scene.remove(grp);grp.userData.floorGroup.userData.dispose();grp.userData.architecture.userData.dispose();grp.userData.domesticDetails.userData.dispose();grp.userData.sideBedrooms.userData.dispose();grp.userData.sideStorage.userData.dispose();grp.userData.sideWashrooms.userData.dispose();
       grp.traverse(o=>{ if (o.isMesh && o.userData.own && o.geometry) o.geometry.dispose();
       if(o.userData.ownMaterial)o.material.dispose();
  });
@@ -797,7 +799,7 @@ function inspectRooms(){
       }).every(Boolean);
       const photos=g.children.filter(o=>o.userData.wallPhoto).map(o=>new THREE.Box3().setFromObject(o).getSize(new THREE.Vector3()).toArray());
       const imported=[];g.traverse(o=>{if(o.userData.importedModel)imported.push(o.userData.importedModel);});
-      report.push({i,imported,routeSurfaceClear:surfaceSamples.every(Boolean),branchesOpen,branchBlockers,type:g.userData.type,shape:g.userData.shape,height:g.userData.height,rise:g.userData.rise,branches:g.userData.architecture.userData.openings.length,sideSpaces:g.userData.architecture.userData.sideSpaces,sideBedrooms:g.userData.sideBedrooms.userData.report,sideStorage:g.userData.sideStorage.userData.report,architectureClear:[...furniture,...utilities].every(o=>!architectureCollision(g,new THREE.Box3().setFromObject(o))),cameraFloor:floorHeight(g.userData,cam.position.z-g.position.z),layoutCheck:layoutCheck.ok,layoutFailures:layoutCheck.failures,floorBoundsClear,photos,doors:g.children.filter(o=>o.userData.door).map(o=>o.userData.door),utilities:utilities.map(o=>o.userData.utilityProp),omittedUtilities:g.userData.omittedUtilities,utilityBoundsClear,utilityOverlapFree,furnitureInside,startZ:g.position.z,length:g.userData.length,phrase:g.userData.phrase,layout:g.userData.layout,floor:g.userData.floor,width:g.userData.width,nextWidth:roomWidth(i+1),doorClear:!blocked(0),shouldersClosed:shoulders.every(Boolean),aisleClear:clear,tables:furniture.filter(o=>o.userData.diningTable).length,chairs:furniture.filter(o=>o.userData.diningChair).length});
+      report.push({i,imported,routeSurfaceClear:surfaceSamples.every(Boolean),branchesOpen,branchBlockers,type:g.userData.type,shape:g.userData.shape,height:g.userData.height,rise:g.userData.rise,branches:g.userData.architecture.userData.openings.length,sideSpaces:g.userData.architecture.userData.sideSpaces,sideBedrooms:g.userData.sideBedrooms.userData.report,sideStorage:g.userData.sideStorage.userData.report,sideWashrooms:g.userData.sideWashrooms.userData.report,architectureClear:[...furniture,...utilities].every(o=>!architectureCollision(g,new THREE.Box3().setFromObject(o))),cameraFloor:floorHeight(g.userData,cam.position.z-g.position.z),layoutCheck:layoutCheck.ok,layoutFailures:layoutCheck.failures,floorBoundsClear,photos,doors:g.children.filter(o=>o.userData.door).map(o=>o.userData.door),utilities:utilities.map(o=>o.userData.utilityProp),omittedUtilities:g.userData.omittedUtilities,utilityBoundsClear,utilityOverlapFree,furnitureInside,startZ:g.position.z,length:g.userData.length,phrase:g.userData.phrase,layout:g.userData.layout,floor:g.userData.floor,width:g.userData.width,nextWidth:roomWidth(i+1),doorClear:!blocked(0),shouldersClosed:shoulders.every(Boolean),aisleClear:clear,tables:furniture.filter(o=>o.userData.diningTable).length,chairs:furniture.filter(o=>o.userData.diningChair).length});
     }
     for(const item of report){
       const g=segments.get(item.i),sets=g.children.filter(o=>o.userData.roomSet);

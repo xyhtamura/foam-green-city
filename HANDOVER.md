@@ -220,3 +220,7 @@ Domestic rectangular rooms can include a direct side room or a short hallway lea
 ## Side storage — 2026-10-05
 
 The third seeded annex variant now contains storage. `sideRoom=storage` forces it; `bedroom` and `bare` retain their overrides. `side-storage.js` creates an open shelf with cartons, a floor stack, plastic drawers with a carton on top, and a bucket. `side-spaces.js` reserves their footprints for collision. Keep model resources shared when cloning and dispose authored geometry/materials with the parent cell. Inspector entries include bounds and floor contact. `check_side_spaces.mjs` covers 480 plans, including pairwise fixture clearance. Next: washroom fittings. Open shelf supports elsewhere remain deferred.
+
+## Side washrooms — 2026-10-05
+
+`side-spaces.js` now selects bedrooms, storage rooms, and washrooms independently of annex dimensions, with weights 2:2:1. Force washrooms with `sideRoom=washroom`. `side-washrooms.js` fits existing toilet, basin, and bucket assets, then adds a small mirror, towel, nozzle shower, thin blue pipe with wall clamps, low faucet, soap dish, and floor drain. Bare annex floors remain. The shared plan reserves the floor fixtures; authored geometry/materials are disposed with the parent cell, while cloned assets stay shared. Inspector reports cover bounds and floor contact. Side-space checks now cover 600 plans. Next: independent side-room lighting profiles; fittings currently inherit the parent scene lighting.

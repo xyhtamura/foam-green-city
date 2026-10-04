@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import {branchOpenings,sideSpacePlan} from '../side-spaces.js';
 import {createWalkSequence,walkRegions,canOccupy,moveWalker,pathToRoute} from '../navigation.js';
 let cases=0;
-for(const sideRoom of ['bedroom','storage','bare',undefined])for(const kind of ['room','hallway'])for(const width of [4,6,8])for(const length of [6,8,12,16])for(const index of [-5,-2,0,1,7]){
+for(const sideRoom of ['bedroom','storage','washroom','bare',undefined])for(const kind of ['room','hallway'])for(const width of [4,6,8])for(const length of [6,8,12,16])for(const index of [-5,-2,0,1,7]){
   const room={index,width,length,startZ:13,height:2.58,rise:0,shape:'rectangle',sideSpaces:kind,sideRoom};
   const portal=branchOpenings(room)[0],plan=sideSpacePlan(room,portal);
   assert.deepEqual(plan,sideSpacePlan({...room}, {...portal}));
