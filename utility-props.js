@@ -68,10 +68,12 @@ export function createUtilityProps(){
   const sticks=[];
   for(let i=0;i<35;i++){
     const a=i*2.399963,spread=0.05+0.10*(i%7)/6;
-    sticks.push([[Math.cos(a)*spread,0.012+(i%4)*0.008,Math.sin(a)*spread],
-      [Math.cos(a)*0.014,0.94+(i%5)*0.016,Math.sin(a)*0.014],0.002,0.004]);
+    const base=[Math.cos(a)*spread,0.012+(i%4)*0.008,Math.sin(a)*spread];
+    const neck=[Math.cos(a)*0.026,0.78,Math.sin(a)*0.026];
+    const tip=[Math.cos(a)*0.039,0.98+(i%5)*0.009,Math.sin(a)*0.039];
+    sticks.push([base,neck,0.0015,0.003],[neck,tip,0.003,0.003]);
   }
   rods(tingting,'palm-midribs',twig,sticks);
-  for(const y of [0.60,0.64]){const band=mesh(tingting,'twine-binding',new THREE.TorusGeometry(0.056,0.008,5,12),cream,0,y);band.rotation.x=Math.PI/2;}
+  for(const y of [0.765,0.78,0.795]){const band=mesh(tingting,'twine-binding',new THREE.TorusGeometry(0.029,0.005,5,12),cream,0,y);band.rotation.x=Math.PI/2;}
   return {bucket:bucket('bucket',blue),bucketPink:bucket('bucketPink',pink),gasul,plasticDrawers:drawers,walisTambo:tambo,walisTingting:tingting};
 }

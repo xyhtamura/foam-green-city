@@ -215,3 +215,7 @@ Codex-authored geometry and canvas marks in domestic-details.js, made for this p
 ## Tabletop stove, metal sink, and clutter skins — 2026-10-05
 
 Codex-authored primitive geometry in room-sets.js creates the two-burner tabletop stove, supporting stand, open sink basin, faucet and drain. The user supplied a product photograph as a shape reference; the photograph, logo and brand are not included. Existing cleared pot models are reused. domestic-details.js adds authored lidded boxes with label panels and colour variations for fruit-like objects and wrapped sweets. No third-party mesh, texture or font was added. Code uses MIT; authored artwork uses CC BY 4.0.
+
+## Renamed and expanded supplied cutouts — 2026-10-05
+
+The user supplied and renamed the PNGs in 2d/raw objects. They remain covered by the user's confirmation that supplied images are theirs or cleared for redistribution, under the project's CC BY 4.0 artwork terms. raw-object-assets.js uses 45 files; the two electrical wall cutouts are stored but not selected. scripts/index_raw_objects.py records filenames and reads their original dimensions without editing the images. utility-props.js uses authored geometry revised from the user's broom reference; the reference photograph is not shipped.

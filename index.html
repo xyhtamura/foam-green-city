@@ -46,9 +46,9 @@ import * as THREE from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { createJalousieWall } from './jalousie.js?v=curtains-3';
-import { createDomesticProps, animateDomesticProps, createFurnitureVariants, FURNITURE_FINISHES } from './domestic-props.js?v=domestic-6';
+import { createDomesticProps, animateDomesticProps, createFurnitureVariants, FURNITURE_FINISHES } from './domestic-props.js?v=domestic-7';
 import { WALL_HANGINGS } from './wall-assets.js?v=photos-2';
-import { RAW_OBJECTS, createRawObject } from './raw-object-assets.js';
+import { RAW_OBJECTS, createRawObject } from './raw-object-assets.js?v=raw-2';
 import { loadCurtainPatterns } from './photo-assets.js';
 import { ROOM_WIDTHS, partitionPieces } from './room-widths.js';
 
@@ -520,6 +520,8 @@ function buildSegment(index){
     }else if(n===0&&MODEL_ASSETS[forcedProp]){
       const heights={phDaybed:0.85,phBookshelf:1.65,phChair:0.88,phCrate:0.32,phPillows:0.25,phPot:0.18,phApple:0.085,phSpoon:0.025,phRack:1.7,phCrate2:0.32,phBananas:0.12,phGinger:0.07,phSweetPotato:0.07,phNotepads:0.04};
       wallModel(forcedProp,heights[forcedProp])(grp,r);
+    }else if(r()<0.25&&RAW_OBJECTS.some(p=>p.mode==='floor'&&p.rooms.includes(room.name))){
+      const pool=RAW_OBJECTS.filter(p=>p.mode==='floor'&&p.rooms.includes(room.name));rawFloor(pool[Math.floor(r()*pool.length)].id)(grp,r);
     }else if(n===0&&preferred)wallModel(...preferred)(grp,r);
     else room.pool[Math.floor(r()*room.pool.length)](grp,r);
     const obj=grp.children[before];grp.updateMatrixWorld(true);

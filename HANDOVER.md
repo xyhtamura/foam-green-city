@@ -161,3 +161,7 @@ The demo exception pool includes more modest variations and six rare vast forms:
 ## Tabletop burners and metal sinks — 2026-10-05
 
 room-sets.js assembles an authored two-burner tabletop stove on a plain stand and an open aluminum-coloured sink basin with faucet, drain and stand. Existing pots sit on the burner grates; occasional fitted cabinets remain. domestic-details.js adds lidded boxes, fruit-like shapes and wrapped sweets to its seeded clutter pool. Preview with ?room=kitchen&space=straight&offset=3&inspect=1&still=1 and turn towards the wall strip. The latest NOTES.md entry records rendered placement checks and remaining work. No external image or brand was copied from the stove reference.
+
+## Named cutouts and broom correction — 2026-10-05
+
+utility-props.js narrows the walis tingting at its twine binding and retains a short bundle of stalks above it. The cutout manifest uses the descriptive filenames in 2d/raw objects and includes 45 placement entries. Rebuild with python scripts/index_raw_objects.py and validate with node scripts/check_raw_objects.mjs after further renames. Existing raw-object IDs remain supported. The electrical outlet and surface receptacle cutouts are stored but await wall placement. See the latest NOTES.md entry for browser checks and limits.
