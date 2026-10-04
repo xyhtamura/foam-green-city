@@ -1,15 +1,16 @@
 import {createLedTv} from './led-tv.js';
 import {createPipeKit} from './pipe-parts.js';
 import {generatePipeRun, checkPipeRun, PIPE_STYLE_IDS} from './pipe-runs.js';
+import {tableSupport,reserveSupport} from './object-supports.js';
 
 // Cached prototypes and unit fittings survive room culls. Clones own no GPU resources.
 export function createWallUtilities({THREE,curvize}){
   const kit=createPipeKit();
   for(const material of Object.values(kit.materials))curvize(material);
   const tvs=new Map();
-  function tv(size,screenPreset){
-    const key=size+screenPreset;
-    if(!tvs.has(key))tvs.set(key,createLedTv({THREE,size,screenPreset,mountMode:'wallMount',curvize}));
+  function tv(size,screenPreset,mountMode='wallMount'){
+    const key=size+screenPreset+mountMode;
+    if(!tvs.has(key))tvs.set(key,createLedTv({THREE,size,screenPreset,mountMode,curvize}));
     return tvs.get(key).clone();
   }
   function add({group,descriptor,index,spots,params}){
@@ -26,17 +27,46 @@ export function createWallUtilities({THREE,curvize}){
       object.traverse(o=>{if(o.isMesh)o.frustumCulled=false;});
       boxes.push(box);spots.splice(spots.indexOf(spot),1);return true;
     }
-    const wantsTv=params.get('tv')!=='0'&&(['sala','bedroom'].includes(descriptor.type)&&(index%3!==2)||params.has('tv')&&params.get('tv')!=='0');
+    const forcedTable=params.get('tvMount')==='table';
+    const wantsTv=params.get('tv')!=='0'&&(['sala','bedroom'].includes(descriptor.type)&&(index%3!==2)||params.has('tv')&&params.get('tv')!=='0'||forcedTable);
     if(wantsTv){
       const requested=params.get('tv');
-      const screen=['offStandby','noSignalBlue','colorBars'].includes(requested)?requested:['offStandby','offStandby','noSignalBlue','colorBars'][index%4];
-      for(const spot of [...spots].sort((a,b)=>Math.abs(a.z+descriptor.length/2)-Math.abs(b.z+descriptor.length/2))){
+      const screen=['offStandby','noSignalBlue','colorBars'].includes(requested)?requested:['offStandby','offStandby','noSignalBlue','colorBars'][((index%4)+4)%4];
+      let onTable=false;
+      group.userData.tvPlacement={requested:forcedTable?'table':'seeded',rejected:[]};
+      if(params.get('tvMount')!=='wall'&&(forcedTable||(Math.imul(index+11,2654435761)>>>0)%2===0)){
+        for(const table of group.children.filter(o=>o.userData.diningTable)){
+          const support=tableSupport(table.userData.placement);if(!support)continue;
+          const mountMode=index%2?'centerPedestal':'tableStand',object=tv('small32',screen,mountMode);
+          // Face across the room, accounting for the table's own orientation.
+          object.rotation.y=(table.position.x>0?-Math.PI/2:Math.PI/2)-table.rotation.y;
+          table.add(object);group.updateMatrixWorld(true);
+          const inverse=table.matrixWorld.clone().invert();
+          function localBox(root){
+            const b=new THREE.Box3();root.traverse(o=>{if(o.isMesh){o.geometry.computeBoundingBox();b.union(o.geometry.boundingBox.clone().applyMatrix4(inverse.clone().multiply(o.matrixWorld)));}});return b;
+          }
+          let b=localBox(object);object.position.y=support.height+0.002-b.min.y;
+          group.updateMatrixWorld(true);b=localBox(object);
+          const footprint={minX:b.min.x,maxX:b.max.x,minZ:b.min.z,maxZ:b.max.z};
+          const props=table.children.filter(o=>o!==object&&o.name!=='scallopedRunner'&&(!o.isMesh||o.userData.rawObject));
+          const overlap=props.some(o=>b.intersectsBox(localBox(o)));
+          const worldBox=new THREE.Box3().setFromObject(object);
+          const blocked=occupied.filter(o=>o!==table).some(o=>worldBox.intersectsBox(new THREE.Box3().setFromObject(o)))||worldBox.max.y>descriptor.height;
+          if(overlap||blocked||!reserveSupport(support,footprint)){
+            table.remove(object);group.userData.tvPlacement.rejected.push({table:table.userData.placement.kind,reason:overlap?'surface occupied':blocked?'room obstruction':'support too small'});continue;
+          }
+          table.userData.supportSurface=support;table.userData.tabletopTv=true;
+          object.userData.tableTv={screen,size:object.userData.size,mount:mountMode,support:table.userData.placement.kind,contactGap:b.min.y-support.height,footprint};
+          object.traverse(o=>{if(o.isMesh)o.frustumCulled=false;});boxes.push(worldBox);onTable=true;break;
+        }
+      }
+      if(!onTable)for(const spot of [...spots].sort((a,b)=>Math.abs(a.z+descriptor.length/2)-Math.abs(b.z+descriptor.length/2))){
         const object=tv(descriptor.type==='bedroom'?'small32':'medium43',screen);
         object.rotation.y=spot.side>0?-Math.PI/2:Math.PI/2;
         const bounds=new THREE.Box3().setFromObject(object);
         const x=spot.side>0?descriptor.width/2-0.105-bounds.max.x:-descriptor.width/2+0.105-bounds.min.x;
         object.position.set(x,1.5,spot.z);
-        object.userData.wallTv={screen,size:object.userData.size};
+        object.userData.wallTv={screen,size:object.userData.size,mount:'wallMount'};
         if(place(object,spot))break;
       }
     }

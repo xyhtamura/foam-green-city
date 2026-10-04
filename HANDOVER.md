@@ -189,3 +189,7 @@ Domestic clutter includes authored pitchers, chopping boards and knives, folded 
 ## Object arrangement plan — 2026-10-05
 
 Read [Object arrangements](ARRANGEMENTS.md) for the proposed catalogue and placement rules. Next: shared object supports, beginning with a tabletop TV and then existing clutter. Arrangement density, valid poses, color/size/angle variation, collision reservations, and rendered acceptance checks are specified there. Navigation and cross-device streaming evaluation remain pending after this pass. No arrangement-system code was added with this plan.
+
+## Tabletop TV placement — 2026-10-05
+
+wall-utilities.js can fit a 32-inch TV with feet or a pedestal to upright monobloc/wooden tables through object-supports.js. Existing props and neighboring furniture can reject a candidate; wall placement remains the fallback. Accepted TV tables skip later clutter. Inspect with ?start=1&room=sala&tvMount=table&tv=colorBars&lighting=daylight&offset=3&inspect=1&still=1. Next is migrating existing clutter to the same support rules. Read the latest NOTES.md entry for rendered contact checks and remaining tests.

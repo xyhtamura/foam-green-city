@@ -87,7 +87,7 @@ export function addDomesticDetails({THREE,group,room,seed,curvize,spots,photos,s
     }
   }
   // Everyday objects collect at table edges instead of filling the walking aisle.
-  for(const table of group.children.filter(o=>o.userData.diningTable&&!o.userData.placement?.inverted&&o.userData.placement?.stack===null).slice(0,6)){
+  for(const table of group.children.filter(o=>o.userData.diningTable&&!o.userData.tabletopTv&&!o.userData.placement?.inverted&&o.userData.placement?.stack===null).slice(0,6)){
     const cluster=new THREE.Group();cluster.name='table-clutter';assortment(cluster,0,0.768,0.28,3+Math.floor(random()*2));
     supplied(cluster,0,0.77,-0.25,kitchen?condiments:papers,2);
     if(kitchen&&random()<0.65)board(cluster,0.22,0.77,0);

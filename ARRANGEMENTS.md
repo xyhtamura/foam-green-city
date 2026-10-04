@@ -8,7 +8,7 @@ The reference remains a modernish lower-middle-income Filipino household. Ordina
 
 `domestic-details.js` creates seeded clusters on tables, selected furniture tops, wall shelves, and floor edges. Its pool includes generic bottles, pitchers, boards and knives, paper stacks, folded clothing-like shapes, containers, and supplied cutouts. Floor clusters and mops check room bounds, furniture overlap, and doorway reservations. Placement on surfaces still uses object-specific positions rather than a shared description of available supports.
 
-The walkthrough mounts flat-screen TVs on walls. `led-tv.js` also contains tabletop feet and a central pedestal, which the arrangement system could reuse.
+As of 2026-10-05, the walkthrough selects wall or tabletop mounting for flat-screen TVs. Tabletop placement uses the existing feet or pedestal from `led-tv.js` and the support bounds and reservations in `object-supports.js`. It fits a 32-inch TV on an upright monobloc or wooden table, rejects occupied or obstructed placements, and falls back to wall mounting when possible. Later clutter skips the accepted TV table. Other clutter still uses its preceding placement rules.
 
 ## Arrangement catalogue
 
@@ -55,7 +55,7 @@ Unexplained arrangements should be occasional deviations from this pattern. Most
 
 ## Implementation order
 
-1. Describe usable supports on tables, shelves, seats, and cabinet tops, including bounds and occupied areas. Fit an existing TV with tabletop feet to one compatible support as the first complete example.
+1. Extend the implemented table supports and reservations to existing clutter, then shelves, seats, and cabinet tops. Tabletop TV placement is the completed first example.
 2. Move the existing clutter clusters onto those supports and reserve their footprints. Add seeded color, size, and orientation choices per object family.
 3. Implement food preparation, paperwork, clothing, and storage groups using the existing meshes and cutouts.
 4. Add room-level density choices and occasional unexplained arrangements. Judge their frequency in a sustained domestic walkthrough.
