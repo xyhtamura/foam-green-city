@@ -1,6 +1,6 @@
 # Object arrangements
 
-This document records the implemented surface arrangements and planned extensions for Foam Green City. Tables, authored wall shelves, and selected cabinet tops use shared fitting rules. Seats, open shelf interiors, room-level density, and unexplained arrangements remain planned.
+This document records the implemented surface arrangements and planned extensions for Foam Green City. Tables, authored wall shelves, and selected cabinet tops use shared fitting rules. Upright monobloc chair seats also support small items. Open shelf interiors, room-level density, and unexplained arrangements remain planned.
 
 The reference remains a modernish lower-middle-income Filipino household. Ordinary uses and recognizable object sizes should establish that baseline. Variation comes from which objects collect together, what supports them, and how much of a room stays empty.
 
@@ -8,7 +8,7 @@ The reference remains a modernish lower-middle-income Filipino household. Ordina
 
 `domestic-details.js` creates seeded clusters on tables, selected furniture tops, wall shelves, and floor edges. Its pool includes generic bottles, pitchers, boards and knives, paper stacks, folded clothing-like shapes, containers, and supplied cutouts. Tables, authored shelves, selected closed cabinets, and fridge tops use the bounds and reservations in `object-supports.js`. Each accepted item fits a free area and has measured contact with its support. Floor clusters and mops retain their room-bound, overlap, and doorway checks.
 
-As of 2026-10-05, the walkthrough selects wall or tabletop mounting for flat-screen TVs. Tabletop placement uses the existing feet or pedestal from `led-tv.js` and the support bounds and reservations in `object-supports.js`. It fits a 32-inch TV on an upright monobloc or wooden table, rejects occupied or obstructed placements, and falls back to wall mounting when possible. Later clutter can occupy the remaining space beside the TV. Supports on seats and within open racks remain planned.
+As of 2026-10-05, the walkthrough selects wall or tabletop mounting for flat-screen TVs. Tabletop placement uses the existing feet or pedestal from `led-tv.js` and the support bounds and reservations in `object-supports.js`. It fits a 32-inch TV on an upright monobloc or wooden table, rejects occupied or obstructed placements, and falls back to wall mounting when possible. Later clutter can occupy the remaining space beside the TV. Upright monobloc chair seats support compact clothing, paperwork, bags, and boxes. Supports within open racks remain planned.
 
 ## Implemented presets
 
@@ -17,6 +17,12 @@ As of 2026-10-05, the walkthrough selects wall or tabletop mounting for flat-scr
 Selection is seeded and weighted by room use. Kitchen tables favor food preparation; bedrooms favor clothing and storage. Shelves and cabinet tops receive compact versions. Tables attempt two groups and one or two individual items, with limits of six tables, four cabinet tops, and two wall shelves per room. Floor clutter keeps its preceding placement rules.
 
 Use `?arrangement=food`, `paperwork`, `clothing`, or `storage` to force a preset for inspection. The room inspector reports accepted preset IDs, footprints, measured contact gaps, and rejection reasons. These presets reuse authored primitive geometry and supplied images; they add no external assets.
+
+## Chair seats
+
+Upright, unstacked monobloc chairs standing on the floor can hold one clothing or paperwork group, an authored bag, or a small lidded box. The usable area stays inside the rounded seat edge, arm supports, and backrest. Seat height and obstruction bounds are preserved before the rendering mesh is merged. Items use shared footprint reservations and check the chair parts and nearby furniture.
+
+A seeded 32% selection keeps most seats empty, with a maximum of three attempted occupied chairs per room. Stacked chairs, inverted chairs, chairs stored on tables, and imported chairs without support metadata are excluded. `?seats=mixed` forces attempts up to the cap; `clothing`, `paperwork`, `bag`, and `box` force a type. `?seats=off` disables seat objects. The inspector reports seat contact, bounds, and clearance from chair parts.
 
 ## Arrangement catalogue
 
@@ -63,7 +69,7 @@ Unexplained arrangements should be occasional deviations from this pattern. Most
 
 ## Implementation order
 
-1. Extend support descriptions to seats and open shelf interiors. Preserve seeded color, size, and orientation choices per object family. Tabletop TVs, shared surface fitting, and the four surface presets are implemented.
+1. Extend support descriptions to open shelf interiors. Preserve seeded color, size, and orientation choices per object family. Tabletop TVs, shared surface fitting, four surface presets, and upright monobloc seat supports are implemented.
 2. Add room-level density choices and occasional unexplained arrangements. Judge their frequency in a sustained domestic walkthrough.
 
 Manual navigation, hallway access, and streaming performance evaluation remain pending after this arrangement pass. Cross-room plumbing, exterior scenes, and connected storeys remain separate proposals.

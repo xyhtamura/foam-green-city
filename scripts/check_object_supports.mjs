@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import {tableSupport,reserveSupport,surfaceSupport} from '../object-supports.js';
+import {tableSupport,reserveSupport,surfaceSupport,seatSupport} from '../object-supports.js';
 
 const ordinary={role:'table',kind:'monoblocTable',inverted:false,stack:null};
 assert.equal(tableSupport({...ordinary,inverted:true}),null);
@@ -20,3 +20,12 @@ assert.equal(reserveSupport(shelf,{minX:-0.1,maxX:0.1,minZ:0.03,maxZ:0.19}),true
 assert.equal(reserveSupport(shelf,{minX:0.2,maxX:0.3,minZ:0.01,maxZ:0.23}),false,'overhanging shelf item');
 assert.equal(reserveSupport(shelf,{minX:-0.02,maxX:0.02,minZ:0.08,maxZ:0.13}),false,'occupied shelf');
 console.log('PASS table/shelf bounds, upright eligibility, occupied areas, and remaining support area');
+
+const seated={role:'seat',kind:'monoblocChair',inverted:false,stack:null,y:0};
+for(const p of [{...seated,stack:1},{...seated,inverted:true},{...seated,y:0.759},{...seated,kind:'unknownChair'},{...seated,role:'table'}])assert.equal(seatSupport(p),null,'ineligible seat');
+const seat=seatSupport(seated);
+assert.equal(reserveSupport(seat,{minX:-0.12,maxX:0.12,minZ:-0.09,maxZ:0.09}),true,'small seat item');
+assert.equal(reserveSupport(seat,{minX:-0.1,maxX:0.1,minZ:-0.08,maxZ:0.08}),false,'occupied seat');
+assert.equal(reserveSupport(seat,{minX:-0.25,maxX:0.25,minZ:-0.1,maxZ:0.1}),false,'armrest overhang');
+assert.equal(reserveSupport(seat,{minX:-0.1,maxX:0.1,minZ:-0.23,maxZ:-0.17}),false,'backrest intrusion');
+console.log('PASS seat eligibility, occupied area, armrest and backrest clearances');

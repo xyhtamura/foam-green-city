@@ -8,6 +8,12 @@ export function tableSupport(placement){
   return {minX:-half.x+0.025,maxX:half.x-0.025,minZ:-half.z+0.025,maxZ:half.z-0.025,height,reservations:[]};
 }
 
+// The inset avoids the rounded edge, rear backrest, and arm supports.
+export function seatSupport(placement){
+  if(placement?.role!=='seat'||placement.kind!=='monoblocChair'||placement.inverted||placement.stack!==null||(placement.y??0)!==0)return null;
+  return {minX:-0.215,maxX:0.215,minZ:-0.16,maxZ:0.16,height:0.481,reservations:[]};
+}
+
 export function reserveSupport(support,footprint){
   if(footprint.minX<support.minX||footprint.maxX>support.maxX||footprint.minZ<support.minZ||footprint.maxZ>support.maxZ)return false;
   if(support.reservations.some(b=>footprint.minX<b.maxX&&footprint.maxX>b.minX&&footprint.minZ<b.maxZ&&footprint.maxZ>b.minZ))return false;

@@ -202,3 +202,8 @@ object-supports.js fits and reserves surface areas for TVs and domestic clutter.
 ## Domestic arrangement presets — 2026-10-05
 
 `domestic-details.js` fits food preparation, paperwork, clothing, and storage groups as whole reserved footprints. Room use weights their selection; shelves and cabinet tops receive compact versions. Force inspection with `?arrangement=food`, `paperwork`, `clothing`, or `storage`. The inspector includes accepted preset IDs and footprints. Read `ARRANGEMENTS.md` for the implemented scope and `NOTES.md` for browser checks and limits. Next: supports on chair seats and inside open shelves. User edits to the two sardine PNGs remain outside this commit.
+
+
+## Chair seat supports — 2026-10-05
+
+`object-supports.js` includes eligible floor-chair seats. `domestic-props.js` stores seat height and obstruction bounds before chair mesh merging; retain this metadata when changing chair geometry. Domestic details fit compact clothing/paperwork, authored bags, and boxes to up to three chairs per room. Force inspection with `?seats=mixed|clothing|paperwork|bag|box`, or disable with `?seats=off`. The inspector records seat bounds, contact gaps, and clearance from arms/backrest. Read `NOTES.md` for browser checks and limits. Next: open shelf interiors.

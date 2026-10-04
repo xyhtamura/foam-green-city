@@ -119,6 +119,14 @@ export function createDomesticProps() {
     block(chair,'arm-support',plastic,x*0.265,0.56,0.18,0.035,0.17,0.035);
   }
 
+  // Keep support metadata when the renderer merges the chair's mesh parts.
+  chair.updateMatrixWorld(true);
+  const seatBounds=new THREE.Box3().setFromObject(seat);
+  chair.userData.seatGeometry={height:seatBounds.max.y,blockers:chair.children.filter(o=>o!==seat).map(o=>{
+    const b=new THREE.Box3().setFromObject(o);
+    return {minX:b.min.x,maxX:b.max.x,minY:b.min.y,maxY:b.max.y,minZ:b.min.z,maxZ:b.max.z};
+  })};
+
   const runner=new THREE.Group();runner.name='scallopedRunner';
   const textile=new THREE.MeshLambertMaterial({color:0xeee5cc,side:THREE.DoubleSide});
   const width=0.28, length=1.15, shape=new THREE.Shape();

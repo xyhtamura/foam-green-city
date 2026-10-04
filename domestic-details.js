@@ -1,9 +1,9 @@
 import {floorHeight} from './room-sequences.js';
 import {RAW_OBJECTS,createRawObject} from './raw-object-assets.js?v=raw-2';
-import {tableSupport,surfaceSupport,localBounds,placeOnSupport} from './object-supports.js?v=supports-3';
+import {tableSupport,seatSupport,surfaceSupport,localBounds,placeOnSupport} from './object-supports.js?v=supports-4';
 
 // Authored low-detail household shapes. All resources belong to one streamed room.
-export function addDomesticDetails({THREE,group,room,seed,curvize,spots,photos,spriteMat,ceiling,forceRoof=false,forceArrangement=null}){
+export function addDomesticDetails({THREE,group,room,seed,curvize,spots,photos,spriteMat,ceiling,forceRoof=false,forceArrangement=null,forceSeat=null}){
   let state=seed>>>0;const random=()=>{state=(Math.imul(state,1664525)+1013904223)>>>0;return state/4294967296;};
   const owner=new THREE.Group();owner.name='domestic-details';group.add(owner);
   const geometries=new Set(),materials=new Set(),textures=new Set();
@@ -133,20 +133,43 @@ export function addDomesticDetails({THREE,group,room,seed,curvize,spots,photos,s
     }
     parent.scale.setScalar(scale);parent.userData.arrangement=id;
   }
+  function seatItem(parent,id){
+    if(id==='clothing'||id==='paperwork'){arrangement(parent,id,true);return;}
+    const m=palette[Math.floor(random()*palette.length)];
+    if(id==='bag'){
+      mesh(parent,box,m,0,0.085,0,0.2,0.17,0.12).name='seat-bag';
+      mesh(parent,box,palette[4],0,0.065,0.064,0.14,0.08,0.012);
+      mesh(parent,loop,m,0,0.205,0,0.11,0.12,0.045);
+      mesh(parent,box,palette[5],0,0.17,0,0.17,0.005,0.018);
+    }else{
+      mesh(parent,box,m,0,0.045,0,0.23,0.09,0.16);
+      mesh(parent,box,palette[5],0,0.096,0,0.238,0.012,0.168);
+    }
+    parent.userData.arrangement='seat-'+id;
+  }
+  function seatClear(object,chair){
+    const b=localBounds(THREE,object,chair);
+    return chair.userData.seatGeometry.blockers.every(r=>!(b.min.x<r.maxX&&b.max.x>r.minX&&b.min.y<r.maxY&&b.max.y>r.minY&&b.min.z<r.maxZ&&b.max.z>r.minZ));
+  }
   const supportChecks=[];
   function populate(parent,support,count,kind){
     parent.userData.supportSurface=support;
     const record={kind,arrangements:[],support:parent.name||parent.userData.fixture||parent.userData.modelName,accepted:0,rejected:0,reasons:{}};supportChecks.push(record);
-    const others=group.children.filter(o=>o!==parent&&(o.userData.floorProp||o.userData.roomSet||o.userData.utilityProp||o.userData.wallTv||o.userData.pipeRun));
+    const others=group.children.filter(o=>o!==parent&&(o.userData.floorProp||o.userData.roomSet||o.userData.utilityProp||o.userData.diningTable||o.userData.diningChair||o.userData.wallTv||o.userData.pipeRun));
     function accept(object){
       const b=new THREE.Box3().setFromObject(object);
       return b.max.y<=room.height+0.001&&b.min.x>=-room.width/2+0.08&&b.max.x<=room.width/2-0.08&&
-        !others.some(o=>{if(o===parent||o.getObjectById(parent.id))return false;return b.intersectsBox(new THREE.Box3().setFromObject(o));});
+        !others.some(o=>{if(o===parent||o.getObjectById(parent.id))return false;return b.intersectsBox(new THREE.Box3().setFromObject(o));})&&
+        (kind!=='seat'||seatClear(object,parent));
     }
     for(let i=0;i<count;i++){
       const item=new THREE.Group();item.name=kind+'-clutter';
       const compact=kind!=='table';
-      if(i<2){
+      if(kind==='seat'){
+        const pool=['clothing','clothing','bag','box','paperwork'];
+        const id=pool.includes(forceSeat)?forceSeat:pool[Math.floor(random()*pool.length)];
+        seatItem(item,id);item.name='seat-'+id+'-arrangement';
+      }else if(i<2){
         const pool=kitchen?(kind==='table'?['food','storage','food']:['storage','food']):room.type==='bedroom'?['clothing','storage','paperwork']:['paperwork','storage','clothing'];
         const id=arrangementIds.includes(forceArrangement)?forceArrangement:pool[Math.floor(random()*pool.length)];
         arrangement(item,id,compact);item.name=id+'-arrangement';
@@ -171,6 +194,18 @@ export function addDomesticDetails({THREE,group,room,seed,curvize,spots,photos,s
     const b=localBounds(THREE,surface,surface);if(b.isEmpty())continue;
     const support=surfaceSupport({minX:b.min.x,maxX:b.max.x,minZ:b.min.z,maxZ:b.max.z,height:b.max.y},0.035);
     populate(surface,support,2,'cabinet');
+  }
+  // Only a few upright floor chairs receive items; stacks remain empty.
+  if(forceSeat!=='off'){
+    const chairs=group.children.filter(o=>o.userData.diningChair&&seatSupport(o.userData.placement));
+    const ranked=chairs.map(chair=>({chair,rank:random()})).sort((a,b)=>a.rank-b.rank);
+    const chosen=ranked.filter(o=>forceSeat||o.rank<0.32).slice(0,3);
+    for(const {chair} of chosen){
+      const support=seatSupport(chair.userData.placement);
+      if(!chair.userData.seatGeometry)continue;
+      support.height=chair.userData.seatGeometry.height;
+      populate(chair,support,1,'seat');
+    }
   }
   const occupied=group.children.filter(o=>o.userData.floorProp||o.userData.utilityProp||o.userData.diningTable||o.userData.diningChair||o.userData.billboard||o.userData.door||o.userData.wallTv||o.userData.pipeRun)
     .map(o=>new THREE.Box3().setFromObject(o).expandByScalar(0.04));
@@ -255,7 +290,7 @@ export function addDomesticDetails({THREE,group,room,seed,curvize,spots,photos,s
   group.traverse(o=>{if(o.userData.detailCutout)cutouts++;if(['generic-bottle','clutter-pitcher','chopping-board','household-mop'].includes(o.name))tools++;});
   const supported=[];group.traverse(o=>{if(o.userData.supportPlacement){
     const b=localBounds(THREE,o,o.parent),s=o.parent.userData.supportSurface;
-    supported.push({kind:o.name,arrangement:o.userData.arrangement??null,footprint:o.userData.supportPlacement.footprint,inside:b.min.x>=s.minX-1e-6&&b.max.x<=s.maxX+1e-6&&b.min.z>=s.minZ-1e-6&&b.max.z<=s.maxZ+1e-6,contactGap:b.min.y-s.height});
+    supported.push({kind:o.name,arrangement:o.userData.arrangement??null,support:o.parent.userData.diningChair?'seat':'surface',seatClear:o.parent.userData.diningChair?seatClear(o,o.parent):null,footprint:o.userData.supportPlacement.footprint,inside:b.min.x>=s.minX-1e-6&&b.max.x<=s.maxX+1e-6&&b.min.z>=s.minZ-1e-6&&b.max.z<=s.maxZ+1e-6,contactGap:b.min.y-s.height});
   }});
   owner.userData.details={shelves,floorClusters,exposedRoof:exposed,roaches,cutouts,tools,supportChecks,supported};
   owner.userData.dispose=()=>{for(const g of geometries)g.dispose();for(const m of materials)m.dispose();for(const t of textures)t.dispose();};
