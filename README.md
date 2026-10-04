@@ -10,7 +10,7 @@ Serve this folder over HTTP, then open `index.html`. It is a static site with no
 python -m http.server 8141 --bind 127.0.0.1
 ```
 
-Open [the local demo](http://127.0.0.1:8141/). Use **Pause** or the space bar to stop movement, **Restart** to return to the beginning, and **Fullscreen** to fill the display. Reduced-motion preferences start playback paused. There is no sound, navigation objective, or win state.
+Open [the local demo](http://127.0.0.1:8141/). Movement starts automatically. Use **WASD**, **Take control**, or click the scene to walk manually. Click the scene for mouse-look; dragging also works when mouse capture is unavailable. **Space** returns to the forward route and resumes automatic movement. **Pause** stops movement, **Restart** returns to the beginning, and **Fullscreen** fills the display. Reduced-motion preferences start playback paused. There is no sound, navigation objective, or win state.
 
 ## Procedural arrangement
 
@@ -20,7 +20,7 @@ Each block contains six to eight rooms. Its last room is an exception, so consec
 
 Most exceptions change proportions, ceiling height, furniture arrangement, or add a side passage or dead-end stairs. About one in eight exception blocks can instead produce a 24-metre ceiling, a 48-metre-wide enclosed space with an outdoor-like scale, or an auditorium. The first two exception blocks stay modest. These are scale and orientation changes; true non-Euclidean reconnections are not implemented.
 
-The camera remains locally upright as the route twists. A bounded stream retains up to six room groups around it. Furniture reserves the walking aisle, room ends, and architecture. Daylight, shade, and night profiles vary between rooms; tube lights and bare bulbs can be lit or unlit. The camera passes through main doorways and does not enter side corridors.
+The camera remains locally upright as the route twists. The stream retains three batches of two rooms: previous, current, and next. Passing a batch boundary discards the distant batch and builds another. Going backward rebuilds discarded rooms deterministically; another seeded sequence extends behind the initial room. Furniture reserves the walking aisle, room ends, and architecture. Daylight, shade, and night profiles vary between rooms; tube lights and bare bulbs can be lit or unlit. Automatic movement follows the main route; manual movement can enter side corridors. Returning to automatic movement finds a path back to the main route.
 
 ## Development page and previews
 
@@ -45,9 +45,12 @@ node scripts/check_wire_runs.mjs
 node scripts/check_raw_objects.mjs
 node scripts/check_demo_sequence.mjs
 node scripts/check_pipes.mjs
+node scripts/check_navigation.mjs
 ```
 
 Browser inspection checks placement and renders. The clearance reports use logical geometry and do not independently ray-test the GPU deformation. Lighting has no cast shadows; mirrors do not reflect. Upright object cutouts have no volume. Sustained performance and memory measurements across devices remain unfinished.
+
+Manual walking uses floor regions, doorway limits, and furniture bounds with a small body radius. It follows floor elevation but does not climb decorative stairs or raised seating platforms. Mouse capture remains browser-dependent; drag-to-look is available. Descriptor distance prefixes remain cached while streamed GPU geometry is discarded.
 
 See [CONCEPT.md](CONCEPT.md) for the concept, [NOTES.md](NOTES.md) for dated implementation and verification, and [ASSETS.md](ASSETS.md) for provenance.
 

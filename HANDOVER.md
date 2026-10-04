@@ -145,3 +145,7 @@ No publication was requested. Supplied image licences and original authors remai
 ## TV and pipe integration — 2026-10-04
 
 index.html now uses wall-utilities.js with authored modules copied from fgc-ag and fgc-c. TVs use cached wall-mounted prototypes, while pipes use shared unit fittings. Preview with ?start=3&tv=noSignalBlue&still=1 or ?start=2&pipes=stack&still=1. Pipes stay in clear two-metre wall sections of rectangular, level-floor, standard-height rooms. TV and pipe metadata are in room-inspection. Read the latest NOTES.md entry for checks and the deferred placement cases. Xyh reports v0.5 is published; this integration remains local until pushed.
+
+## Manual movement and backward streaming — 2026-10-04
+
+index.html supports WASD, mouse-look, and Space to restore automatic movement. Click the canvas for pointer lock or drag to look; Pause remains a separate button. navigation.js supplies logical collision, route-return path search, three retained two-room batches, and a separately seeded sequence behind room 0. Discarded cells rebuild deterministically in either direction. Inspect with ?start=-8&inspect=1 or ?sequence=passages&space=twist&offset=14&inspect=1. scripts/check_navigation.mjs covers reconstruction, batching, collision, and route return. Captured mouse-look in an ordinary browser, climbable stairs, touch controls, and cross-device streaming measurements remain unfinished. The root roadmap and latest NOTES.md entry name the next evaluation step.
