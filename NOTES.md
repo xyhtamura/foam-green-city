@@ -684,3 +684,13 @@ Updated all renamed raw-object paths and expanded the placement manifest from 11
 check_raw_objects.mjs passed all 45 paths, PNG dimensions, unique IDs and tabletop size limits. Viewed the running straight kitchen with utilities=all and raw=rawLigoSardinesGreen. The broom's exposed upper stalks and lower binding were visible beside the table; the new sardine cutout loaded on the table. The six-room inspector reported clear utility bounds and no utility overlap; one crowded room omitted the broom through the existing placement check. Browser logs had no warnings or errors. Saved broom-cutouts-preview.png. All new cutouts have not been individually viewed in-scene.
 
 Next remains navigation, hallway access and bidirectional streaming evaluation across devices; ROADMAP.md remains accurate. Wall electrical mounting, individual cutout placement refinement, and sustained performance checks remain undone. The supplied image renames and additions are included in this commit. Nothing was pushed or published.
+
+## 2026-10-05 — Codex — existing pipe kit variation
+
+Checked the supplied raw-object folder: it still contains the same 47 named PNGs from the preceding integration, with no untracked additions or modified files. All 45 active cutout entries pass check_raw_objects.mjs. The two electrical wall cutouts remain deferred. Compared SHA-256 hashes of pipe-runs.js and pipe-parts.js against fgc-c: both copies are identical. Read fgc-c/HANDOFF.md; no newer pipe implementation needed copying.
+
+Expanded wall-utilities.js selection to use supply, riser, loop, meander, overhead and bundle water styles, and stack, drain and riser in bathrooms. All eight pipe style IDs are accepted by the pipes query override. Existing room eligibility, clear wall-slot checks and pipe occurrence rates remain unchanged. The kit's local two-metre wall sections still end with caps; runs are not connected between rooms.
+
+check_pipes.mjs passed 48,000 seeded cases; check_raw_objects.mjs passed 45 paths and placement sizes. Viewed ?room=bare&space=straight&pipes=bundle&offset=3&inspect=1&still=1 in-browser: blue parallel pipes were visible above the raw drawer cutout, and all six retained rooms reported bundle runs. Browser logs had no warnings or errors. Saved pipe-variation-preview.png. Other newly enabled styles have not each been viewed in the integrated walkthrough during this pass.
+
+Next remains navigation, hallway access and bidirectional streaming evaluation across devices; ROADMAP.md remains accurate. No additional raw files were found, so there was nothing to import from that folder. Cross-room pipe connections, drainage reducers and sustained performance measurements remain undone. Nothing was pushed or published.

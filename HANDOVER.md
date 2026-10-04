@@ -165,3 +165,7 @@ room-sets.js assembles an authored two-burner tabletop stove on a plain stand an
 ## Named cutouts and broom correction — 2026-10-05
 
 utility-props.js narrows the walis tingting at its twine binding and retains a short bundle of stalks above it. The cutout manifest uses the descriptive filenames in 2d/raw objects and includes 45 placement entries. Rebuild with python scripts/index_raw_objects.py and validate with node scripts/check_raw_objects.mjs after further renames. Existing raw-object IDs remain supported. The electrical outlet and surface receptacle cutouts are stored but await wall placement. See the latest NOTES.md entry for browser checks and limits.
+
+## Pipe selection expanded — 2026-10-05
+
+The local pipe kit matches fgc-c byte for byte. wall-utilities.js selects six water styles and three bathroom choices, including drainage; all eight pipe style names work with ?pipes=<style>. Existing clear wall-section placement and standard-height room restrictions remain. The raw folder still has 47 supplied PNGs, with 45 active cutouts and two electrical cutouts awaiting wall mounting. See the latest NOTES.md entry for checks and remaining work.

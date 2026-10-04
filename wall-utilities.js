@@ -1,6 +1,6 @@
 import {createLedTv} from './led-tv.js';
 import {createPipeKit} from './pipe-parts.js';
-import {generatePipeRun, checkPipeRun} from './pipe-runs.js';
+import {generatePipeRun, checkPipeRun, PIPE_STYLE_IDS} from './pipe-runs.js';
 
 // Cached prototypes and unit fittings survive room culls. Clones own no GPU resources.
 export function createWallUtilities({THREE,curvize}){
@@ -43,7 +43,8 @@ export function createWallUtilities({THREE,curvize}){
     // These source routes assume a 2.58 m ceiling. Keep that contract initially.
     const forced=params.get('pipes');
     if(forced==='0'||descriptor.height!==2.58||!(forced||['bathroom','kitchen'].includes(descriptor.type)&&index%3!==1||index%7===3))return;
-    const style=['riser','supply','loop','stack'].includes(forced)?forced:descriptor.type==='bathroom'?'stack':index%2?'riser':'supply';
+    const pool=descriptor.type==='bathroom'?['stack','drain','riser']:['supply','riser','loop','meander','overhead','bundle'];
+    const style=PIPE_STYLE_IDS.includes(forced)?forced:pool[(Math.imul(index+19,2654435761)>>>0)%pool.length];
     for(const spot of [...spots].sort((a,b)=>Math.abs(a.z+descriptor.length*0.65)-Math.abs(b.z+descriptor.length*0.65))){
       const pieces=generatePipeRun({width:descriptor.width,length:2,seed:index+13+Math.round(-spot.z*17),style,side:spot.side});
       if(!pieces.length||!checkPipeRun(pieces,{width:descriptor.width,length:2}).ok)continue;
