@@ -193,3 +193,7 @@ Read [Object arrangements](ARRANGEMENTS.md) for the proposed catalogue and place
 ## Tabletop TV placement — 2026-10-05
 
 wall-utilities.js can fit a 32-inch TV with feet or a pedestal to upright monobloc/wooden tables through object-supports.js. Existing props and neighboring furniture can reject a candidate; wall placement remains the fallback. Accepted TV tables skip later clutter. Inspect with ?start=1&room=sala&tvMount=table&tv=colorBars&lighting=daylight&offset=3&inspect=1&still=1. Next is migrating existing clutter to the same support rules. Read the latest NOTES.md entry for rendered contact checks and remaining tests.
+
+## Shared clutter supports — 2026-10-05
+
+object-supports.js fits and reserves surface areas for TVs and domestic clutter. Tables, authored wall shelves, selected closed cabinets and fridge tops use these rules. Cutouts reserve space to turn toward the viewer, accounting for parent rotations. Empty or partly filled supports report rejected-placement counts and categories through the room inspector. Open racks and seats remain outside this pass. Next: arrangement presets for food preparation, paperwork, clothing and storage; see ARRANGEMENTS.md and the latest NOTES.md entry.

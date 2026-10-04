@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import {tableSupport,reserveSupport} from '../object-supports.js';
+import {tableSupport,reserveSupport,surfaceSupport} from '../object-supports.js';
 
 const ordinary={role:'table',kind:'monoblocTable',inverted:false,stack:null};
 assert.equal(tableSupport({...ordinary,inverted:true}),null);
@@ -15,4 +15,8 @@ for(const kind of ['monoblocTable','woodTable']){
   assert.equal(reserveSupport(support,{minX:0.16,maxX:0.26,minZ:-0.1,maxZ:0.1}),true,'free space beside TV');
   assert.equal(reserveSupport(support,{minX:-0.37,maxX:0.37,minZ:-0.12,maxZ:0.12}),false,'TV across short table width');
 }
-console.log('PASS upright table eligibility, TV bounds, reservations, and remaining support area');
+const shelf=surfaceSupport({minX:-0.425,maxX:0.425,minZ:0,maxZ:0.22,height:0.9175});
+assert.equal(reserveSupport(shelf,{minX:-0.1,maxX:0.1,minZ:0.03,maxZ:0.19}),true);
+assert.equal(reserveSupport(shelf,{minX:0.2,maxX:0.3,minZ:0.01,maxZ:0.23}),false,'overhanging shelf item');
+assert.equal(reserveSupport(shelf,{minX:-0.02,maxX:0.02,minZ:0.08,maxZ:0.13}),false,'occupied shelf');
+console.log('PASS table/shelf bounds, upright eligibility, occupied areas, and remaining support area');

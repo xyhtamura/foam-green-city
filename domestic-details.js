@@ -1,5 +1,6 @@
 import {floorHeight} from './room-sequences.js';
 import {RAW_OBJECTS,createRawObject} from './raw-object-assets.js?v=raw-2';
+import {tableSupport,surfaceSupport,localBounds,placeOnSupport} from './object-supports.js?v=supports-3';
 
 // Authored low-detail household shapes. All resources belong to one streamed room.
 export function addDomesticDetails({THREE,group,room,seed,curvize,spots,photos,spriteMat,ceiling,forceRoof=false}){
@@ -86,21 +87,40 @@ export function addDomesticDetails({THREE,group,room,seed,curvize,spots,photos,s
       if(shape===3)for(let k=1;k<3;k++)mesh(parent,box,m,cx+k*0.012,y+h/2+k*0.025,cz,w*1.2,h,w*1.6).rotation.y=k*0.08;
     }
   }
-  // Everyday objects collect at table edges instead of filling the walking aisle.
-  for(const table of group.children.filter(o=>o.userData.diningTable&&!o.userData.tabletopTv&&!o.userData.placement?.inverted&&o.userData.placement?.stack===null).slice(0,6)){
-    const cluster=new THREE.Group();cluster.name='table-clutter';assortment(cluster,0,0.768,0.28,3+Math.floor(random()*2));
-    supplied(cluster,0,0.77,-0.25,kitchen?condiments:papers,2);
-    if(kitchen&&random()<0.65)board(cluster,0.22,0.77,0);
-    table.add(cluster);
+  const supportChecks=[];
+  function populate(parent,support,count,kind){
+    parent.userData.supportSurface=support;
+    const record={kind,support:parent.name||parent.userData.fixture||parent.userData.modelName,accepted:0,rejected:0,reasons:{}};supportChecks.push(record);
+    const others=group.children.filter(o=>o!==parent&&(o.userData.floorProp||o.userData.roomSet||o.userData.utilityProp||o.userData.wallTv||o.userData.pipeRun));
+    function accept(object){
+      const b=new THREE.Box3().setFromObject(object);
+      return b.max.y<=room.height+0.001&&b.min.x>=-room.width/2+0.08&&b.max.x<=room.width/2-0.08&&
+        !others.some(o=>{if(o===parent||o.getObjectById(parent.id))return false;return b.intersectsBox(new THREE.Box3().setFromObject(o));});
+    }
+    for(let i=0;i<count;i++){
+      const item=new THREE.Group();item.name=kind+'-clutter';
+      if(i<2)supplied(item,0,0,0,kitchen?condiments:kind==='cabinet'&&random()<0.5?clothes:papers,1,kind==='shelf'?0.14:0.18);
+      else if(kitchen&&i===2)board(item,0,0,0);
+      else assortment(item,0,0,0,1);
+      if(placeOnSupport({THREE,parent,object:item,support,random,accept}))record.accepted++;
+      else {record.rejected++;const reason=item.userData.supportRejected;record.reasons[reason]=(record.reasons[reason]??0)+1;}
+    }
+  }
+  // Reserve existing objects before fitting new groups, including tables with TVs.
+  for(const table of group.children.filter(o=>o.userData.diningTable).slice(0,6)){
+    const support=table.userData.supportSurface??tableSupport(table.userData.placement);if(!support)continue;
+    for(const o of table.children.filter(o=>o.name!=='scallopedRunner'&&!o.userData.tableTv&&(!o.isMesh||o.userData.rawObject))){
+      const b=localBounds(THREE,o,table);if(!b.isEmpty())support.reservations.push({minX:b.min.x,maxX:b.max.x,minZ:b.min.z,maxZ:b.max.z});
+    }
+    populate(table,support,4+Math.floor(random()*3),'table');
   }
   group.updateMatrixWorld(true);
   const surfaces=[];
-  group.traverse(o=>{if(['sideTableDrawers','bookcaseOpenLow','phBookshelf','phRack'].includes(o.userData.modelName)||['kitchenCabinet','kitchenFridge'].includes(o.userData.fixture))surfaces.push(o);});
+  group.traverse(o=>{if(['sideTableDrawers','bookcaseOpenLow'].includes(o.userData.modelName)||['kitchenCabinet','kitchenFridge'].includes(o.userData.fixture))surfaces.push(o);});
   for(const surface of surfaces.slice(0,4)){
-    const b=new THREE.Box3().setFromObject(surface),cluster=new THREE.Group();cluster.name='surface-clutter';
-    assortment(cluster,0,0,0,2);
-    supplied(cluster,0,0.005,0.12,kitchen?condiments:random()<0.5?clothes:papers,1,0.15);
-    cluster.position.set((b.min.x+b.max.x)/2,b.max.y+0.004,(b.min.z+b.max.z)/2-room.startZ);group.add(cluster);
+    const b=localBounds(THREE,surface,surface);if(b.isEmpty())continue;
+    const support=surfaceSupport({minX:b.min.x,maxX:b.max.x,minZ:b.min.z,maxZ:b.max.z,height:b.max.y},0.035);
+    populate(surface,support,3,'cabinet');
   }
   const occupied=group.children.filter(o=>o.userData.floorProp||o.userData.utilityProp||o.userData.diningTable||o.userData.diningChair||o.userData.billboard||o.userData.door||o.userData.wallTv||o.userData.pipeRun)
     .map(o=>new THREE.Box3().setFromObject(o).expandByScalar(0.04));
@@ -115,16 +135,18 @@ export function addDomesticDetails({THREE,group,room,seed,curvize,spots,photos,s
   const candidates=[...spots,...group.children.filter(o=>o.userData.wallPhoto).map(o=>({side:Math.sign(o.position.x),z:o.position.z}))];
   for(const spot of candidates.slice(0,8)){
     const shelf=new THREE.Group();shelf.name='household-shelf';shelf.userData.floorProp=true;
-    mesh(shelf,box,palette[1],0,0.9,0.11,0.85,0.035,0.22);assortment(shelf,0,0.92,0.1,3);
-    supplied(shelf,0.15,0.94,0.14,kitchen?condiments:papers,1,0.14);
+    mesh(shelf,box,palette[1],0,0.9,0.11,0.85,0.035,0.22);
+    const support=surfaceSupport({minX:-0.425,maxX:0.425,minZ:0,maxZ:0.22,height:0.9175});
     if(photos.length){
       const photo=photos[Math.floor(random()*photos.length)],w=0.16,h=Math.min(0.2,w*photo.aspect);
-      mesh(shelf,box,palette[4],-0.28,0.94+h/2,0.13,w+0.025,h+0.025,0.025);
-      const picture=new THREE.Mesh(geo(new THREE.PlaneGeometry(w,h)),spriteMat(photo.file));picture.position.set(-0.28,0.94+h/2,0.145);shelf.add(picture);
+      const frameY=support.height+0.002+(h+0.025)/2;
+      mesh(shelf,box,palette[4],-0.28,frameY,0.13,w+0.025,h+0.025,0.025);
+      const picture=new THREE.Mesh(geo(new THREE.PlaneGeometry(w,h)),spriteMat(photo.file));picture.position.set(-0.28,frameY,0.145);shelf.add(picture);
+      support.reservations.push({minX:-0.28-(w+0.025)/2,maxX:-0.28+(w+0.025)/2,minZ:0.11,maxZ:0.16});
     }
     shelf.rotation.y=spot.side>0?-Math.PI/2:Math.PI/2;
     shelf.position.set(spot.side*(room.width/2-0.12),floorHeight(room,spot.z),spot.z);
-    if(clear(shelf)){shelves++;const at=spots.indexOf(spot);if(at>=0)spots.splice(at,1);if(shelves===2)break;}
+    if(clear(shelf)){populate(shelf,support,3,'shelf');shelves++;const at=spots.indexOf(spot);if(at>=0)spots.splice(at,1);if(shelves===2)break;}
   }
   if(room.type!=='bathroom')for(let i=0;i<10&&floorClusters<3;i++){
     const side=random()<0.5?-1:1,z=-0.8-random()*(room.length-1.6),cluster=new THREE.Group();cluster.name='floor-clutter';cluster.userData.floorProp=true;
@@ -181,7 +203,11 @@ export function addDomesticDetails({THREE,group,room,seed,curvize,spots,photos,s
   }
   cutouts=0;tools=0;
   group.traverse(o=>{if(o.userData.detailCutout)cutouts++;if(['generic-bottle','clutter-pitcher','chopping-board','household-mop'].includes(o.name))tools++;});
-  owner.userData.details={shelves,floorClusters,exposedRoof:exposed,roaches,cutouts,tools};
+  const supported=[];group.traverse(o=>{if(o.userData.supportPlacement){
+    const b=localBounds(THREE,o,o.parent),s=o.parent.userData.supportSurface;
+    supported.push({kind:o.name,inside:b.min.x>=s.minX-1e-6&&b.max.x<=s.maxX+1e-6&&b.min.z>=s.minZ-1e-6&&b.max.z<=s.maxZ+1e-6,contactGap:b.min.y-s.height});
+  }});
+  owner.userData.details={shelves,floorClusters,exposedRoof:exposed,roaches,cutouts,tools,supportChecks,supported};
   owner.userData.dispose=()=>{for(const g of geometries)g.dispose();for(const m of materials)m.dispose();for(const t of textures)t.dispose();};
   return owner;
 }

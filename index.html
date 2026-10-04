@@ -59,9 +59,9 @@ import { MODEL_ASSETS, loadModelAssets } from './model-assets.js';
 import { createRoomSet, createRoomFixture } from './room-sets.js?v=sets-8';
 import { createUratexSofa } from './uratex-sofa.js';
 import { createWireRun } from './wire-runs.js';
-import { createWallUtilities } from './wall-utilities.js?v=walls-4';
+import { createWallUtilities } from './wall-utilities.js?v=walls-6';
 import {createWalkSequence,retainedRooms,walkRegions,canOccupy,moveWalker,pathToRoute} from './navigation.js';
-import {addDomesticDetails} from './domestic-details.js?v=details-4';
+import {addDomesticDetails} from './domestic-details.js?v=details-6';
 let wallUtilities;
 import { roomLighting } from './room-lighting.js?v=lighting-2';
 import { spatialFrame, spatialPoint, SPATIAL_GLSL, SPATIAL_PROFILES } from './spatial-route.js';
@@ -711,7 +711,7 @@ function tick(){
   cam.rotation.z = manual?0:0.02*Math.sin(t*0.047*PHI);
   for (const grp of segments.values()) grp.traverse(o=>{
     if (o.userData.billboard){ o.getWorldPosition(_wp);
-      const parentYaw=o.userData.rawObject&&o.parent.userData.diningTable?o.parent.rotation.y:0;
+      let parentYaw=0;for(let p=o.parent;p;p=p.parent)parentYaw+=p.rotation.y;
       o.rotation.y = Math.atan2(cam.position.x-_wp.x, cam.position.z-_wp.z)-parentYaw; }
     else if (o.userData.spin){ o.rotation.y += delta*4.8; }
   });
