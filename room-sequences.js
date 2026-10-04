@@ -86,7 +86,7 @@ function mixedFloor(room,index){
   return {...room,floor:roll<85?'bare':roll<90?'concrete':patterns[hash(Math.floor(index/2)+4311)%patterns.length]};
 }
 function createDemoRooms(seed){
-  const ends=[0],blockLength=block=>6+hash(block+seed*97+701)%3;
+  const ends=[0],rareCounts=[0],blockLength=block=>6+hash(block+seed*97+701)%3;
   const intro=[spec(6,6,'sala','sparse','bare',{kitchenCorner:true}),spec(6,8,'kitchen','pairedDining','bare'),spec(4,6,'bathroom','sparse','bare'),spec(4,8,'bedroom','sparse','bare')];
   const unusual=[
     spec(6,12,'bedroom','sparse','bare',{height:6}),
@@ -94,17 +94,26 @@ function createDemoRooms(seed){
     spec(6,16,'hall','sparse','bare',{height:4,shape:'deadStairs'}),
     spec(8,16,'hall','sparse','bare',{height:5,shape:'branches'}),
     spec(6,14,'sala','chairStacks','bare',{height:3.6}),
+    spec(14,20,'hall','sparse','bare',{height:6}),
+    spec(10,24,'hall','sparse','concrete',{height:8,shape:'cross'}),
+    spec(8,24,'sala','perimeter','bare',{height:5,rise:-0.8}),
+  ];
+  const vast=[
+    spec(6,14,'sala','sparse','bare',{height:36,spaceVariation:'verticalVoid'}),
+    spec(80,48,'hall','sparse','bare',{height:32,spaceVariation:'distantWalls'}),
+    spec(64,36,'hall','sparse','concrete',{height:3.6,spaceVariation:'lowCanopy'}),
+    spec(56,48,'hall','sparse','bare',{height:18,shape:'colonnade',spaceVariation:'columnField'}),
+    spec(12,64,'hall','sparse','bare',{height:20,spaceVariation:'deepHall'}),
+    spec(32,40,'auditorium','chairRows','bare',{height:12,shape:'auditorium',spaceVariation:'assemblyHall'}),
   ];
   return index=>{
-    while(ends.at(-1)<=index){const block=ends.length-1;ends.push(ends.at(-1)+blockLength(block));}
+    while(ends.at(-1)<=index){const block=ends.length-1;ends.push(ends.at(-1)+blockLength(block));rareCounts.push(rareCounts.at(-1)+Number(block>=2&&hash(block+seed*71+4001)%8===0));}
     let lo=0,hi=ends.length-1;
     while(lo+1<hi){const mid=(lo+hi)>>1;if(ends[mid]<=index)lo=mid;else hi=mid;}
     const h=hash(index+seed*193+1709),exception=index===ends[lo+1]-1;
     if(exception){
       if(lo>=2&&hash(lo+seed*71+4001)%8===0){
-        const room=h%3===0?spec(6,10,'sala','sparse','bare',{height:24}):
-          h%3===1?spec(48,24,'hall','sparse','bare',{height:24}):
-          spec(24,28,'auditorium','chairRows','bare',{height:10,shape:'auditorium'});
+        const room=vast[rareCounts[lo]===0?1:h%vast.length];
         return {...room,category:'rare'};
       }
       return {...unusual[h%unusual.length],category:'strange'};

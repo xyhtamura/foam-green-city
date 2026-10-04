@@ -153,3 +153,7 @@ index.html supports WASD, mouse-look, and Space to restore automatic movement. C
 ## Domestic clutter and exposed roofs — 2026-10-04
 
 index.html adds domestic-details.js after furnishing. It places seeded abstract household shapes on tables, selected furniture tops, small framed-photo shelves, and clear floor edges; wear marks leave bare floors untiled. Occasional standard-height rooms have exposed rafters and corrugated metal sheets; ?roof=yero forces the preview. Cockroach silhouettes are small and static. Detail resources are disposed with each streamed room, and shelf/floor objects participate in walking collision. development.html retains its preceding furnishing entry point. See the latest NOTES.md entry for checks and limits.
+
+## Broader unusual spaces — 2026-10-05
+
+The demo exception pool includes more modest variations and six rare vast forms: distant walls, low canopy, column field, deep hall, assembly hall, and vertical void. Roughly 2% of rooms remain vast; exception spacing stays six to eight rooms. The first vast exception for each seed uses distant walls. Default seed 5 reaches the 80-metre-wide expanse at room 29: ?start=29&offset=12&inspect=1&still=1. Camera clipping and lateral fog depth accommodate wider rooms. Read the latest NOTES.md entry for sequence, navigation, spatial-route and browser checks. Cross-device performance evaluation remains next; these changes are local until pushed.

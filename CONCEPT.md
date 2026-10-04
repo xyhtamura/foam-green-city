@@ -42,9 +42,9 @@ Low rendering resolution, nearest-filtered textures, restrained lighting, fog, a
 
 The project began with the Windows 3D Maze screensaver as a reference for autonomous movement. Development discussions also invoked the Backrooms, Escherian architecture, and *Manifold Garden*. These locate the questions being explored; the project does not claim to reproduce those works or to have invented curved or impossible architecture.
 
-## Implemented state on 2026-10-04
+## Implemented state on 2026-10-05
 
-The v0.5 demo uses seeded blocks of six to eight rooms along a curved route with vertical undulation and a varying twist rate. Each block ends with an exception. Domestic lengths vary from six to twelve metres, mixing compact rooms with longer ones. Rare exceptions include 24-metre ceilings, a 48-metre-wide enclosed room, and an auditorium. The preceding six-room evaluation entry point remains in development.html.
+The v0.5 demo uses seeded blocks of six to eight rooms along a curved route with vertical undulation and a varying twist rate. Each block ends with an exception. Domestic lengths vary from six to twelve metres, mixing compact rooms with longer ones. Rare exceptions include an 80-metre-wide enclosed expanse, broad low ceilings, column fields, deep halls, larger auditoriums, and narrow rooms with 36-metre ceilings. Their walls can feel distant enough to suggest an outdoor space. The preceding six-room evaluation entry point remains in development.html.
 
 The rooms include assembled kitchen work areas, a kitchen corner in a sala, and a smaller bathroom with a wall-mounted shower nozzle, toilet, sink, mirror, and bucket. Lighting varies between daylight, overcast, shaded daytime, dark daytime, and night. Daytime rooms have brighter patches toward one side; simple ceiling tubes and bare LED bulbs light the night rooms and remain off in daytime rooms. Other profiles offer a steady half-turn, reverse twisting, twisting that unwinds, and a swaying passage. The camera shares each profile's local frame and uses a fixed field of view.
 

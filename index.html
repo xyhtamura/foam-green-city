@@ -101,7 +101,7 @@ scene.background = new THREE.Color(COL.wall);
 // fog near wall color: hides ends, adds dread, free depth
 scene.fog = new THREE.Fog(COL.wall, 4, 26);
 
-const cam = new THREE.PerspectiveCamera(70, 1, 0.1, 100);
+const cam = new THREE.PerspectiveCamera(70, 1, 0.1, 180);
 cam.position.set(0, 1.6, 0);           // eye height ~1.6m
 
 // flat lighting — screensaver had none; one soft ambient + faint dir
@@ -673,7 +673,11 @@ function tick(){
   const streamFront=Math.min(...[...segments.values()].map(g=>g.position.z-g.userData.length));
   const streamBack=Math.max(...[...segments.values()].map(g=>g.position.z));
   const available=manual||rejoin?Math.min(cam.position.z-streamFront,streamBack-cam.position.z):cam.position.z-streamFront;
-  scene.fog.far=Math.min(current.width>=18||current.height>=10?50:26,Math.max(8,available-0.4));
+  // Wide rooms need lateral depth even when the streamed longitudinal edge is near.
+  const spacious=current.width>=40;
+  const lateral=Math.abs(Math.sin(manual||rejoin?walker.yaw:travelYaw));
+  const viewDepth=spacious?available+(Math.max(available,current.width*0.8)-available)*lateral:available;
+  scene.fog.far=Math.min(spacious?100:current.height>=10?70:26,Math.max(8,viewDepth-0.4));
   if(!manual&&!rejoin)cam.position.x+=Math.sin(t*0.6)*0.12;
   const viewYaw=manual||rejoin?walker.yaw:travelYaw+Math.sin(t*0.3)*0.05,viewPitch=manual||rejoin?walker.pitch:0;
   cam.rotation.order='YXZ';cam.rotation.set(viewPitch,viewYaw,0);
