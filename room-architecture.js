@@ -2,8 +2,8 @@ import * as THREE from 'three';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 import {floorHeight} from './room-sequences.js';
 
-import {branchOpenings,sideSpacePlan} from './side-spaces.js';
-export {branchOpenings} from './side-spaces.js';
+import {branchOpenings,sideSpacePlan} from './side-spaces.js?v=bedrooms-2';
+export {branchOpenings} from './side-spaces.js?v=bedrooms-2';
 
 // Bake a floor's local transforms before changing its owned vertex positions.
 export function raiseFloor(floor,room){
@@ -48,9 +48,9 @@ export function createRoomArchitecture(room,curvize){
       for(const dz of [-plan.opening/2,plan.opening/2])box('trim',0.16,2.15,0.06,portal.side*W,y+1.075,portal.z+dz);
       box('trim',0.16,0.06,plan.opening,portal.side*W,y+2.15,portal.z);
       if(portal.door)box('trim',plan.opening-0.1,2.05,0.045,portal.side*(W+(plan.opening-0.1)/2),y+1.025,portal.z+plan.opening/2);
-      for(const f of plan.fixtures){box('trim',f.w,f.h,f.d,f.x,y+f.h/2,f.z);box('floor',f.w+0.015,0.025,f.d+0.015,f.x,y+f.h+0.0125,f.z);}
+      for(const f of plan.fixtures.filter(f=>!f.role)){box('trim',f.w,f.h,f.d,f.x,y+f.h/2,f.z);box('floor',f.w+0.015,0.025,f.d+0.015,f.x,y+f.h+0.0125,f.z);}
       sideBlocks.push(...plan.blocks.map(b=>({...b,minY:y,maxY:y+height})));
-      sideSpaces.push({...portal,roomRect:plan.roomRect,opening:plan.opening,height,regions:plan.regions});
+      sideSpaces.push({...portal,furnishing:plan.bedroom?'bedroom':'ledge',roomRect:plan.roomRect,opening:plan.opening,height,regions:plan.regions});
       continue;
     }
     const {side,z}=portal,y=floorHeight(room,z),reach=room.shape==='cross'?8:10,cx=side*(W+reach/2);

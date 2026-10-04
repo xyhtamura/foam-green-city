@@ -1,4 +1,4 @@
-import {sideSpacePlan} from './side-spaces.js';
+import {sideSpacePlan} from './side-spaces.js?v=bedrooms-2';
 import {createRoomSequence,cameraRoute,routePoint} from './room-sequences.js';
 
 // Geometry is disposable; seeded descriptors and distance prefixes reconstruct it.
@@ -7,7 +7,7 @@ export function createWalkSequence(options){
   const backward=createRoomSequence({...options,seed:(options.seed??5)+7919});
   return {
     room(index){
-      const decorate=r=>({...r,sideSpaces:options.sideSpaces,branchSeed:options.seed??5});
+      const decorate=r=>({...r,sideSpaces:options.sideSpaces,sideRoom:options.sideRoom,branchSeed:options.seed??5});
       if(index>=0)return decorate(forward.room(index));
       const source=backward.room(-index-1);
       return decorate({...source,index,generationIndex:10000-index,startZ:-source.startZ+source.length});

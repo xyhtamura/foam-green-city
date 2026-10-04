@@ -212,3 +212,7 @@ object-supports.js fits and reserves surface areas for TVs and domestic clutter.
 ## Connected side spaces — 2026-10-05
 
 Domestic rectangular rooms can include a direct side room or a short hallway leading to one. `side-spaces.js` supplies seeded rectangles, doorway bounds, perimeter walls, and collision regions to rendering and navigation. Existing branch/cross corridors remain. Doors stand open; plain openings also occur. Previews: `?sideSpaces=room|hallway|off`, with `&sideStart=1&inspect=1&still=1` to start inside an annex. Space returns to the main automatic route. See `scripts/check_side_spaces.mjs` and the latest `NOTES.md` entry for checks and limits. Next: furnish annexes as bedrooms, storage rooms, or washrooms; open shelf supports remain deferred.
+
+## Side bedrooms — 2026-10-05
+
+`side-spaces.js` reserves bed and drawer footprints for two of the three domestic annex variants. `side-bedrooms.js` fits existing single-bed/daybed and plastic-drawer assets, adds bedding, a flat garment, and a small supplied family photo. Shared prototype resources remain cached; authored bedroom geometry and materials are disposed with the owning cell. Inspector entries include model bounds and floor contact. Force a preview with `?start=1&room=sala&sideSpaces=room&sideRoom=bedroom&sideStart=1&lighting=daylight&inspect=1&still=1`; `sideRoom=bare` retains the ledge. See the latest `NOTES.md` entry for checks. Next: storage arrangements in annexes, then washroom fittings.
