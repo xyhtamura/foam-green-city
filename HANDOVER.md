@@ -141,3 +141,7 @@ Use the in-app browser through `cua_repl`; after session restoration, read its d
 ## Housekeeping and limitations
 
 No publication was requested. Supplied image licences and original authors remain unverified in `ASSETS.md`; keep those facts visible. No new bitmap generation is required for the planned first pass. Root files had unrelated changes in `.agents/skills/abstract-to-minipaper/SKILL.md`, `scholarship/abstract-to-minipaper.md`, `serve_diary.bat`, and `.claude/skills/indeterminate-juxtaposition/`; leave them alone. The preceding scoped roadmap commit was `1ff5c7f`.
+
+## TV and pipe integration — 2026-10-04
+
+index.html now uses wall-utilities.js with authored modules copied from fgc-ag and fgc-c. TVs use cached wall-mounted prototypes, while pipes use shared unit fittings. Preview with ?start=3&tv=noSignalBlue&still=1 or ?start=2&pipes=stack&still=1. Pipes stay in clear two-metre wall sections of rectangular, level-floor, standard-height rooms. TV and pipe metadata are in room-inspection. Read the latest NOTES.md entry for checks and the deferred placement cases. Xyh reports v0.5 is published; this integration remains local until pushed.

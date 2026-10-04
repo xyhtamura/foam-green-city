@@ -26,6 +26,8 @@ The camera remains locally upright as the route twists. A bounded stream retains
 
 `development.html` preserves the preceding index entry point and its six-room evaluation route. It shares the JavaScript modules and assets with the demo; it is not a frozen copy of the entire project.
 
+The continued local version adds occasional wall-mounted flat-screen TVs and short PVC pipe runs. Preview with `?start=3&tv=noSignalBlue&still=1` or `?start=2&pipes=stack&still=1`. `tv=0` and `pipes=0` disable them. Pipes currently use clear wall sections in rectangular, level-floor rooms with 2.58-metre ceilings.
+
 For inspection, `?start=7&offset=1&still=1&inspect=1` selects a room without forward movement. The inspection data is in hidden DOM reports. `?route=twist|reverse|unwind|sway|mixed` selects the spatial profile. `?fixture=bulb|tube` and `?lighting=daylight|overcast|shaded|darkDay|night` force visual variants. Separate `props-preview.html` and `windows-preview.html` pages inspect models and windows.
 
 ## Publish on GitHub Pages
@@ -42,6 +44,7 @@ node scripts/check_spatial_route.mjs
 node scripts/check_wire_runs.mjs
 node scripts/check_raw_objects.mjs
 node scripts/check_demo_sequence.mjs
+node scripts/check_pipes.mjs
 ```
 
 Browser inspection checks placement and renders. The clearance reports use logical geometry and do not independently ray-test the GPU deformation. Lighting has no cast shadows; mirrors do not reflect. Upright object cutouts have no volume. Sustained performance and memory measurements across devices remain unfinished.

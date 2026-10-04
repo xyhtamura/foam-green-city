@@ -201,3 +201,9 @@ Eleven files supplied by Xyh in `2d/raw objects/` are integrated unchanged. The 
 ## 2026-10-04 — authored bare LED bulbs
 
 The ceiling socket, tapered body, and diffuser are Codex-authored primitive geometry in room-sets.js. They use plain material colours and require no third-party mesh or image. Lit/unlit states come from the room lighting profile. The tube geometry remains available.
+
+## Authored TV and modular pipes — 2026-10-04
+
+`led-tv.js` is copied from Antigravity's authored procedural TV in `../fgc-ag/led-tv.js`. The integrated presets are off/standby, no signal, and colour bars; screens are drawn on canvas without external images. The source's other presets and tabletop mounts remain available in the module but are not selected by the walkthrough.
+
+`pipe-runs.js` and `pipe-parts.js` are copied from Claude Code's authored procedural PVC kit in `../fgc-c/`. Meshes use shared unit geometries and solid materials, without downloaded textures. The integration uses blue water pipes and orange/grey drainage stacks. Project code uses MIT; authored visual assets remain within the project artwork licence. These copies are local snapshots, with no runtime dependency on either sibling folder.
