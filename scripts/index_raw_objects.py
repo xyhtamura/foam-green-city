@@ -12,7 +12,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--root', type=Path, default=Path(__file__).resolve().parents[1])
     args = parser.parse_args()
-    aliases = dict(zip(['sunny_pitcher_pink','sunny_pitcher_turquoise','orocan_drawer_chest','orocan_icebox_15l','cooking_pot_wire_handles','cooking_pot_black_handles','stockpot_stainless','intermediate_pad','intermediate_pad_cover','frying_pan_stainless','yellowpad'], ['rawPitcherPink','rawPitcherBlue','rawDrawers','rawCooler','rawPotSilver','rawPotGlass','rawPotLid','rawIntermediatePad','rawPadCover','rawFryingPan','rawYellowPad']))
+    aliases = dict(zip(['sunny_pitcher_pink','sunny_pitcher_turquoise','orocan_drawer_chest','orocan_icebox_15l','stockpot_stainless','cooking_pot_black_handles','cooking_pot_wire_handles','intermediate_pad','intermediate_pad_cover','frying_pan_stainless','yellowpad'], ['rawPitcherPink','rawPitcherBlue','rawDrawers','rawCooler','rawPotSilver','rawPotGlass','rawPotLid','rawIntermediatePad','rawPadCover','rawFryingPan','rawYellowPad']))
     entries = []
     for path in sorted((args.root / '2d/raw objects').glob('*.png')):
         name = path.stem

@@ -57,7 +57,7 @@ export const RAW_OBJECTS=[
     ]
   },
   {
-    "id": "rawPotSilver",
+    "id": "rawPotLid",
     "file": "2d/raw objects/cooking_pot_wire_handles.png",
     "aspect": 0.6291079812206573,
     "width": 0.3,
@@ -347,7 +347,7 @@ export const RAW_OBJECTS=[
     ]
   },
   {
-    "id": "rawPotLid",
+    "id": "rawPotSilver",
     "file": "2d/raw objects/stockpot_stainless.png",
     "aspect": 0.6954022988505747,
     "width": 0.3,
