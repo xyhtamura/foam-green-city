@@ -61,6 +61,7 @@ import { createUratexSofa } from './uratex-sofa.js';
 import { createWireRun } from './wire-runs.js';
 import { createWallUtilities } from './wall-utilities.js';
 import {createWalkSequence,retainedRooms,walkRegions,canOccupy,moveWalker,pathToRoute} from './navigation.js';
+import {addDomesticDetails} from './domestic-details.js';
 let wallUtilities;
 import { roomLighting } from './room-lighting.js';
 import { spatialFrame, spatialPoint, SPATIAL_GLSL, SPATIAL_PROFILES } from './spatial-route.js';
@@ -250,7 +251,7 @@ function placeModel(group, name, { x=0, z=0, ry=0, targetH=null, scale=null, mod
   box = new THREE.Box3().setFromObject(obj);
   obj.position.set(x, mode==='ceiling' ? group.userData.height-box.max.y : -box.min.y+floorHeight(group.userData,z), z);
   if (spin) obj.userData.spin = true;
-  obj.userData.floorProp=mode==='floor';group.add(obj);
+  obj.userData.floorProp=mode==='floor';obj.userData.modelName=name;group.add(obj);
 }
 function addWallSprite(group, file, asp, w, side, z, baseY=0){
   const h = w*asp; const mesh = new THREE.Mesh(plane(w,h), spriteMat(file));
@@ -534,6 +535,7 @@ function buildSegment(index){
   }
   furnishUtilities(grp,room.name,r);
   wallUtilities.add({group:grp,descriptor,index:i,spots:solidWalls,params});
+  grp.userData.domesticDetails=addDomesticDetails({THREE,group:grp,room:descriptor,seed:i,curvize,spots:solidWalls,photos:WALL_HANGINGS,spriteMat,ceiling:c,forceRoof:params.get('roof')==='yero'});
   if(!descriptor.rise&&r()<0.65){
     const rug=FURNI.rugDoormat.clone();const box=new THREE.Box3().setFromObject(rug),size=box.getSize(new THREE.Vector3());
     rug.scale.setScalar(0.8/Math.max(size.x,size.z));const fitted=new THREE.Box3().setFromObject(rug);
@@ -555,7 +557,7 @@ function ensureSegments(){
   for (const i of retained) if (!segments.has(i)) buildSegment(i);
   for (const [i,grp] of segments){
     if (!retained.includes(i)){
-      scene.remove(grp);grp.userData.floorGroup.userData.dispose();grp.userData.architecture.userData.dispose();
+      scene.remove(grp);grp.userData.floorGroup.userData.dispose();grp.userData.architecture.userData.dispose();grp.userData.domesticDetails.userData.dispose();
       grp.traverse(o=>{ if (o.isMesh && o.userData.own && o.geometry) o.geometry.dispose();
       if(o.userData.ownMaterial)o.material.dispose();
  });
@@ -776,6 +778,7 @@ function inspectRooms(){
       item.wireRuns=g.children.filter(o=>o.userData.wireRun).map(o=>({side:Math.sign(o.position.x),z:o.position.z,plan:o.userData.plan}));
       item.televisions=g.children.filter(o=>o.userData.wallTv).map(o=>({...o.userData.wallTv,x:o.position.x,z:o.position.z}));
       item.pipes=g.children.filter(o=>o.userData.pipeRun).map(o=>({...o.userData.pipeRun,z:o.position.z}));
+      item.domesticDetails=g.userData.domesticDetails.userData.details;
       item.lightColor=g.userData.lightFixture.userData.lightColor;
       item.lightFixture=g.userData.lightFixture.userData.fixtureType;
       item.lighting=g.userData.lighting.name;

@@ -56,6 +56,8 @@ Small wall photographs include eight additional coarse family portraits. Supplie
 
 Distant-room views, connected storeys, non-Euclidean reconnections, and pipes remain unfinished or deferred. Wiring has a first static texture implementation; dangling cables and animated wires are not implemented. Sustained performance evaluation across devices is also unfinished. The v0.5 demo implements the domestic-first exception rhythm, while development.html retains the earlier evaluation entry point.
 
+The continued local version adds domestic accumulation: small framed photos and abstract containers, bundles, and stacks on shelves and other surfaces, plus occasional floor clutter. Bare floors show wear without becoming tiled. Some rooms expose timber rafters and corrugated metal roofing. Small, static cockroach silhouettes sometimes appear along the walls.
+
 ## Using this reference
 
 Draw descriptions from the artwork's form, domestic details, color, and changing local upright. Keep intended effects separate from claims about viewers' actual responses. Treat the dated implementation section as the limit on present-tense feature claims. Further interpretation is welcome, but should be identified as interpretation rather than attributed to the artist as an established position.

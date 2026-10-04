@@ -207,3 +207,7 @@ The ceiling socket, tapered body, and diffuser are Codex-authored primitive geom
 `led-tv.js` is copied from Antigravity's authored procedural TV in `../fgc-ag/led-tv.js`. The integrated presets are off/standby, no signal, and colour bars; screens are drawn on canvas without external images. The source's other presets and tabletop mounts remain available in the module but are not selected by the walkthrough.
 
 `pipe-runs.js` and `pipe-parts.js` are copied from Claude Code's authored procedural PVC kit in `../fgc-c/`. Meshes use shared unit geometries and solid materials, without downloaded textures. The integration uses blue water pipes and orange/grey drainage stacks. Project code uses MIT; authored visual assets remain within the project artwork licence. These copies are local snapshots, with no runtime dependency on either sibling folder.
+
+## Abstract household clutter, wear, and exposed roofs — 2026-10-04
+
+Codex-authored geometry and canvas marks in domestic-details.js, made for this project. Boxes, low-sided cylinders, and rounded shapes suggest containers, small bottles, bundles, and paper stacks. Shelves and photo-frame surrounds, corrugated roofing, timber rafters, and tiny cockroach silhouettes use authored meshes. Floor and wall wear is drawn on canvas. Framed photos reuse the already-cleared WALL_HANGINGS pool. No external images, models, or fonts were added. Code uses the project MIT licence; authored artwork uses CC BY 4.0.

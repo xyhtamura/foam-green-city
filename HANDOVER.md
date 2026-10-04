@@ -149,3 +149,7 @@ index.html now uses wall-utilities.js with authored modules copied from fgc-ag a
 ## Manual movement and backward streaming — 2026-10-04
 
 index.html supports WASD, mouse-look, and Space to restore automatic movement. Click the canvas for pointer lock or drag to look; Pause remains a separate button. navigation.js supplies logical collision, route-return path search, three retained two-room batches, and a separately seeded sequence behind room 0. Discarded cells rebuild deterministically in either direction. Inspect with ?start=-8&inspect=1 or ?sequence=passages&space=twist&offset=14&inspect=1. scripts/check_navigation.mjs covers reconstruction, batching, collision, and route return. Captured mouse-look in an ordinary browser, climbable stairs, touch controls, and cross-device streaming measurements remain unfinished. The root roadmap and latest NOTES.md entry name the next evaluation step.
+
+## Domestic clutter and exposed roofs — 2026-10-04
+
+index.html adds domestic-details.js after furnishing. It places seeded abstract household shapes on tables, selected furniture tops, small framed-photo shelves, and clear floor edges; wear marks leave bare floors untiled. Occasional standard-height rooms have exposed rafters and corrugated metal sheets; ?roof=yero forces the preview. Cockroach silhouettes are small and static. Detail resources are disposed with each streamed room, and shelf/floor objects participate in walking collision. development.html retains its preceding furnishing entry point. See the latest NOTES.md entry for checks and limits.
