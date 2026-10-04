@@ -60,13 +60,14 @@ import { createRoomSet, createRoomFixture } from './room-sets.js?v=sets-8';
 import { createUratexSofa } from './uratex-sofa.js';
 import { createWireRun } from './wire-runs.js';
 import { createWallUtilities } from './wall-utilities.js?v=walls-7';
-import {createWalkSequence,retainedRooms,walkRegions,canOccupy,moveWalker,pathToRoute} from './navigation.js';
+import {createWalkSequence,retainedRooms,walkRegions,canOccupy,moveWalker,pathToRoute} from './navigation.js?v=side-rooms-1';
 import {addDomesticDetails} from './domestic-details.js?v=details-9';
 let wallUtilities;
 import { roomLighting } from './room-lighting.js?v=lighting-2';
 import { spatialFrame, spatialPoint, SPATIAL_GLSL, SPATIAL_PROFILES } from './spatial-route.js';
 import { floorHeight, cameraRoute, routePoint } from './room-sequences.js?v=room-lengths-3';
-import { branchOpenings, raiseFloor, createRoomArchitecture } from './room-architecture.js?v=architecture-1';
+import {sideSpacePlan} from './side-spaces.js';
+import { branchOpenings, raiseFloor, createRoomArchitecture } from './room-architecture.js?v=architecture-2';
 
 // ---- palette (DepEd MPSS, stylized: green walls) ----
 const COL = {
@@ -171,7 +172,7 @@ const params=new URLSearchParams(location.search);
 const previewWidths=(params.get('widths')??params.get('width')??'').split(',').map(Number).filter(w=>ROOM_WIDTHS.includes(w));
 const previewLengths=(params.get('lengths')??'').split(',').map(Number).filter(n=>Number.isInteger(n)&&n>=6&&n<=48&&n%2===0);
 const demoSeed=Number.isInteger(Number(params.get('seed')))&&params.has('seed')?Number(params.get('seed')):5;
-const sequence=createWalkSequence({sequence:params.get('sequence')||'demo',seed:demoSeed,widths:previewWidths,lengths:previewLengths,type:['sala','kitchen','bedroom','bathroom','bare','hall','auditorium'].includes(params.get('room'))?params.get('room'):undefined});
+const sequence=createWalkSequence({sequence:params.get('sequence')||'demo',seed:demoSeed,sideSpaces:params.get('sideSpaces'),widths:previewWidths,lengths:previewLengths,type:['sala','kitchen','bedroom','bathroom','bare','hall','auditorium'].includes(params.get('room'))?params.get('room'):undefined});
 const roomWidth=i=>sequence.room(i).width;
 const previewStart=Number(params.get('start'));
 if(Number.isInteger(previewStart)){const room=sequence.room(previewStart),offset=Number(params.get('offset'));cam.position.z=room.startZ-Math.max(0.5,Math.min(room.length-0.5,offset||0.5));}
@@ -564,6 +565,7 @@ function buildSegment(index){
   grp.userData.walkBlocks=grp.children.filter(o=>o.userData.floorProp||o.userData.billboard||o.userData.diningTable||o.userData.diningChair||o.userData.utilityProp||o.userData.door).map(o=>{
     const b=new THREE.Box3().setFromObject(o);return {minX:b.min.x,maxX:b.max.x,minZ:b.min.z,maxZ:b.max.z,minY:b.min.y,maxY:b.max.y};
   });
+  for(const b of architecture.userData.sideBlocks)grp.userData.walkBlocks.push({...b,minZ:b.minZ+descriptor.startZ,maxZ:b.maxZ+descriptor.startZ});
   if(['deadStairs','auditorium','colonnade'].includes(descriptor.shape))for(const b of architecture.userData.reservations)
     grp.userData.walkBlocks.push({...b,minZ:b.minZ+descriptor.startZ,maxZ:b.maxZ+descriptor.startZ,minY:-10,maxY:100});
 }
@@ -596,8 +598,12 @@ let travelDistance=initialLeg?initialLeg.distance+initialLeg.start.z-initialLoca
 const routeOffset=Number(params.get('routeOffset'));
 if(params.has('routeOffset')&&Number.isFinite(routeOffset))travelDistance=Math.max(0,Math.min(travelRoute.length-0.1,routeOffset));
 let travelYaw=0;
-const walker={x:cam.position.x,z:cam.position.z,yaw:0,pitch:0};
-let manual=false,rejoin=null;
+let manual=false,rejoin=null,sideYaw=0;
+if(params.has('sideStart')){
+  const room=sequence.room(travelRoom),portal=branchOpenings(room).find(p=>p.kind!=='legacy');
+  if(portal){const r=sideSpacePlan(room,portal).roomRect;cam.position.x=(r.minX+r.maxX)/2;cam.position.z=room.startZ+portal.z;travelDistance=-portal.z;manual=true;sideYaw=portal.side*Math.PI/2;}
+}
+const walker={x:cam.position.x,z:cam.position.z,yaw:sideYaw,pitch:0};
 const keys=new Set();
 function canWalk(x,z){
   const room=sequence.atDistance(-z),localZ=z-room.startZ;
@@ -787,7 +793,7 @@ function inspectRooms(){
       }).every(Boolean);
       const photos=g.children.filter(o=>o.userData.wallPhoto).map(o=>new THREE.Box3().setFromObject(o).getSize(new THREE.Vector3()).toArray());
       const imported=[];g.traverse(o=>{if(o.userData.importedModel)imported.push(o.userData.importedModel);});
-      report.push({i,imported,routeSurfaceClear:surfaceSamples.every(Boolean),branchesOpen,branchBlockers,type:g.userData.type,shape:g.userData.shape,height:g.userData.height,rise:g.userData.rise,branches:g.userData.architecture.userData.openings.length,architectureClear:[...furniture,...utilities].every(o=>!architectureCollision(g,new THREE.Box3().setFromObject(o))),cameraFloor:floorHeight(g.userData,cam.position.z-g.position.z),layoutCheck:layoutCheck.ok,layoutFailures:layoutCheck.failures,floorBoundsClear,photos,doors:g.children.filter(o=>o.userData.door).map(o=>o.userData.door),utilities:utilities.map(o=>o.userData.utilityProp),omittedUtilities:g.userData.omittedUtilities,utilityBoundsClear,utilityOverlapFree,furnitureInside,startZ:g.position.z,length:g.userData.length,phrase:g.userData.phrase,layout:g.userData.layout,floor:g.userData.floor,width:g.userData.width,nextWidth:roomWidth(i+1),doorClear:!blocked(0),shouldersClosed:shoulders.every(Boolean),aisleClear:clear,tables:furniture.filter(o=>o.userData.diningTable).length,chairs:furniture.filter(o=>o.userData.diningChair).length});
+      report.push({i,imported,routeSurfaceClear:surfaceSamples.every(Boolean),branchesOpen,branchBlockers,type:g.userData.type,shape:g.userData.shape,height:g.userData.height,rise:g.userData.rise,branches:g.userData.architecture.userData.openings.length,sideSpaces:g.userData.architecture.userData.sideSpaces,architectureClear:[...furniture,...utilities].every(o=>!architectureCollision(g,new THREE.Box3().setFromObject(o))),cameraFloor:floorHeight(g.userData,cam.position.z-g.position.z),layoutCheck:layoutCheck.ok,layoutFailures:layoutCheck.failures,floorBoundsClear,photos,doors:g.children.filter(o=>o.userData.door).map(o=>o.userData.door),utilities:utilities.map(o=>o.userData.utilityProp),omittedUtilities:g.userData.omittedUtilities,utilityBoundsClear,utilityOverlapFree,furnitureInside,startZ:g.position.z,length:g.userData.length,phrase:g.userData.phrase,layout:g.userData.layout,floor:g.userData.floor,width:g.userData.width,nextWidth:roomWidth(i+1),doorClear:!blocked(0),shouldersClosed:shoulders.every(Boolean),aisleClear:clear,tables:furniture.filter(o=>o.userData.diningTable).length,chairs:furniture.filter(o=>o.userData.diningChair).length});
     }
     for(const item of report){
       const g=segments.get(item.i),sets=g.children.filter(o=>o.userData.roomSet);

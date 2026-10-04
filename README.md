@@ -20,7 +20,7 @@ Each block contains six to eight rooms. Its last room is an exception, so consec
 
 Most exceptions change proportions, ceiling height, furniture arrangement, or add a side passage or dead-end stairs. About one in eight exception blocks can instead produce a vast space: distant walls across an 80-metre-wide room, a broad low ceiling, a column field, a deep hall, a larger auditorium, or a narrow room with a 36-metre ceiling. The first two exception blocks stay modest; the first vast exception has distant walls. These are scale and orientation changes; true non-Euclidean reconnections are not implemented.
 
-The camera remains locally upright as the route twists. The stream retains three batches of two rooms: previous, current, and next. Passing a batch boundary discards the distant batch and builds another. Going backward rebuilds discarded rooms deterministically; another seeded sequence extends behind the initial room. Furniture reserves the walking aisle, room ends, and architecture. Daylight, shade, and night profiles vary between rooms; tube lights and bare bulbs can be lit or unlit. Automatic movement follows the main route; manual movement can enter side corridors. Returning to automatic movement finds a path back to the main route.
+The camera remains locally upright as the route twists. The stream retains three batches of two rooms: previous, current, and next. Passing a batch boundary discards the distant batch and builds another. Going backward rebuilds discarded rooms deterministically; another seeded sequence extends behind the initial room. Furniture reserves the walking aisle, room ends, and architecture. Daylight, shade, and night profiles vary between rooms; tube lights and bare bulbs can be lit or unlit. Automatic movement follows the main route; manual movement can enter side rooms through open doors or plain openings, as well as short hallways and the larger side corridors. Returning to automatic movement finds a path back to the main route.
 
 ## Development page and previews
 
@@ -59,3 +59,6 @@ See [CONCEPT.md](CONCEPT.md) for the concept, [NOTES.md](NOTES.md) for dated imp
 ## Licences
 
 Project code and documentation: [MIT](LICENSE). Project artwork: [CC BY 4.0](LICENSE-ARTWORK.md). Third-party models and dependencies retain the licences in [THIRD_PARTY.md](THIRD_PARTY.md).
+
+
+For side-space inspection, use `?sideSpaces=room` or `?sideSpaces=hallway`; `?sideSpaces=off` disables domestic side spaces while retaining unusual branch/cross rooms. Add `&sideStart=1&inspect=1&still=1` to begin inside a side room. Doors in this pass stand open and do not toggle. Side rooms have a shallow storage ledge; room-specific furnishing remains planned.

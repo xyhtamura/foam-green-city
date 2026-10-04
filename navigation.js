@@ -1,3 +1,4 @@
+import {sideSpacePlan} from './side-spaces.js';
 import {createRoomSequence,cameraRoute,routePoint} from './room-sequences.js';
 
 // Geometry is disposable; seeded descriptors and distance prefixes reconstruct it.
@@ -6,12 +7,13 @@ export function createWalkSequence(options){
   const backward=createRoomSequence({...options,seed:(options.seed??5)+7919});
   return {
     room(index){
-      if(index>=0)return forward.room(index);
+      const decorate=r=>({...r,sideSpaces:options.sideSpaces,branchSeed:options.seed??5});
+      if(index>=0)return decorate(forward.room(index));
       const source=backward.room(-index-1);
-      return {...source,index,generationIndex:10000-index,startZ:-source.startZ+source.length};
+      return decorate({...source,index,generationIndex:10000-index,startZ:-source.startZ+source.length});
     },
     atDistance(distance){
-      if(distance>=0)return forward.atDistance(distance);
+      if(distance>=0)return this.room(forward.atDistance(distance).index);
       // A join belongs to the cell on its forward side.
       const source=backward.atDistance(Math.max(0,-distance-1e-8));
       return this.room(-source.index-1);
@@ -36,6 +38,7 @@ export function nearestRouteDistance(room,x,z){
 export function walkRegions(room,openings=[]){
   const regions=[{minX:-room.width/2+0.12,maxX:room.width/2-0.12,minZ:room.startZ-room.length,maxZ:room.startZ}];
   for(const portal of openings){
+    if(portal.kind&&portal.kind!=='legacy'){regions.push(...sideSpacePlan(room,portal).regions.map(r=>({...r,minZ:r.minZ+room.startZ,maxZ:r.maxZ+room.startZ})));continue;}
     const reach=room.shape==='cross'?8:10,side=portal.side,z=room.startZ+portal.z;
     const edge=side*(room.width/2+reach),turnX=side*(room.width/2+reach-1.5);
     regions.push({minX:side<0?edge+0.12:room.width/2-0.4,maxX:side<0?-room.width/2+0.4:edge-0.12,minZ:z-1.88,maxZ:z+1.88});

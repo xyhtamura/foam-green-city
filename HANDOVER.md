@@ -207,3 +207,8 @@ object-supports.js fits and reserves surface areas for TVs and domestic clutter.
 ## Chair seat supports — 2026-10-05
 
 `object-supports.js` includes eligible floor-chair seats. `domestic-props.js` stores seat height and obstruction bounds before chair mesh merging; retain this metadata when changing chair geometry. Domestic details fit compact clothing/paperwork, authored bags, and boxes to up to three chairs per room. Force inspection with `?seats=mixed|clothing|paperwork|bag|box`, or disable with `?seats=off`. The inspector records seat bounds, contact gaps, and clearance from arms/backrest. Read `NOTES.md` for browser checks and limits. Next: open shelf interiors.
+
+
+## Connected side spaces — 2026-10-05
+
+Domestic rectangular rooms can include a direct side room or a short hallway leading to one. `side-spaces.js` supplies seeded rectangles, doorway bounds, perimeter walls, and collision regions to rendering and navigation. Existing branch/cross corridors remain. Doors stand open; plain openings also occur. Previews: `?sideSpaces=room|hallway|off`, with `&sideStart=1&inspect=1&still=1` to start inside an annex. Space returns to the main automatic route. See `scripts/check_side_spaces.mjs` and the latest `NOTES.md` entry for checks and limits. Next: furnish annexes as bedrooms, storage rooms, or washrooms; open shelf supports remain deferred.

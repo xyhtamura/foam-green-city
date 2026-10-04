@@ -2,11 +2,8 @@ import * as THREE from 'three';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 import {floorHeight} from './room-sequences.js';
 
-export function branchOpenings(room){
-  if(room.length<12||!['branches','cross'].includes(room.shape))return [];
-  const j=Math.floor(room.length/4);
-  return (room.shape==='cross'?[-1,1]:[room.index%2?-1:1]).map(side=>({side,j,z:-j*2-2}));
-}
+import {branchOpenings,sideSpacePlan} from './side-spaces.js';
+export {branchOpenings} from './side-spaces.js';
 
 // Bake a floor's local transforms before changing its owned vertex positions.
 export function raiseFloor(floor,room){
@@ -31,7 +28,7 @@ export function createRoomArchitecture(room,curvize){
     const geo=new THREE.BoxGeometry(w,h,d,Math.max(1,Math.ceil(w/2)),1,Math.max(1,Math.ceil(d/2)));geo.translate(x,y,z);
     if(!batches.has(kind))batches.set(kind,[]);batches.get(kind).push(geo);
   }
-  const openings=branchOpenings(room);
+  const openings=branchOpenings(room),sideBlocks=[],sideSpaces=[];
   // Full-height walls behind window modules keep the perimeter closed above them.
   const upperBase=2.58+Math.min(0,room.rise);
   if(H>upperBase)for(const side of [-1,1])for(let j=0;j<L/2;j++){
@@ -39,6 +36,23 @@ export function createRoomArchitecture(room,curvize){
     box('wall',0.12,H-upperBase,2,side*(W+0.04),(H+upperBase)/2,-j*2-1);
   }
   for(const portal of openings){
+    if(portal.kind!=='legacy'){
+      const plan=sideSpacePlan(room,portal),y=floorHeight(room,portal.z),height=plan.height;
+      reserve(portal.side*(W+0.6)/2,portal.z,W-0.6,plan.opening+0.4);
+      for(const r of plan.rectangles){
+        const w=r.maxX-r.minX,d=r.maxZ-r.minZ,x=(r.minX+r.maxX)/2,z=(r.minZ+r.maxZ)/2;
+        box('floor',w,0.12,d,x,y-0.06,z);box('wall',w,0.12,d,x,y+height+0.06,z);
+      }
+      for(const w of plan.walls)box('wall',w.axis==='x'?0.12:w.b-w.a,height,w.axis==='x'?w.b-w.a:0.12,w.axis==='x'?w.edge:(w.a+w.b)/2,y+height/2,w.axis==='x'?(w.a+w.b)/2:w.edge);
+      box('wall',0.12,room.height-2.15,plan.opening,portal.side*W,y+(room.height+2.15)/2,portal.z);
+      for(const dz of [-plan.opening/2,plan.opening/2])box('trim',0.16,2.15,0.06,portal.side*W,y+1.075,portal.z+dz);
+      box('trim',0.16,0.06,plan.opening,portal.side*W,y+2.15,portal.z);
+      if(portal.door)box('trim',plan.opening-0.1,2.05,0.045,portal.side*(W+(plan.opening-0.1)/2),y+1.025,portal.z+plan.opening/2);
+      for(const f of plan.fixtures){box('trim',f.w,f.h,f.d,f.x,y+f.h/2,f.z);box('floor',f.w+0.015,0.025,f.d+0.015,f.x,y+f.h+0.0125,f.z);}
+      sideBlocks.push(...plan.blocks.map(b=>({...b,minY:y,maxY:y+height})));
+      sideSpaces.push({...portal,roomRect:plan.roomRect,opening:plan.opening,height,regions:plan.regions});
+      continue;
+    }
     const {side,z}=portal,y=floorHeight(room,z),reach=room.shape==='cross'?8:10,cx=side*(W+reach/2);
     reserve(side*(W+0.6)/2,z,W-0.6,4);
     // A real side passage with a right-angle return and a closed end.
@@ -77,6 +91,7 @@ export function createRoomArchitecture(room,curvize){
   }
   for(const [kind,pieces] of batches){const geometry=mergeGeometries(pieces);pieces.forEach(g=>g.dispose());group.add(new THREE.Mesh(geometry,materials[kind]));}
   group.userData.openings=openings;
+  group.userData.sideSpaces=sideSpaces;group.userData.sideBlocks=sideBlocks;
   group.userData.reservations=reservations;
   group.userData.dispose=()=>{group.traverse(o=>{if(o.isMesh)o.geometry.dispose();});Object.values(materials).forEach(m=>m.dispose());};
   return group;

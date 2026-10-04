@@ -1,0 +1,48 @@
+// Seeded local rectangles shared by rendering and manual navigation.
+function hash(n){let h=Math.imul(n+1,0x45d9f3b)>>>0;h=Math.imul(h^(h>>>16),0x45d9f3b)>>>0;return (h^(h>>>16))>>>0;}
+export function branchOpenings(room){
+  if(room.length>=12&&['branches','cross'].includes(room.shape)){
+    const j=Math.floor(room.length/4);
+    return (room.shape==='cross'?[-1,1]:[room.index%2?-1:1]).map(side=>({side,j,z:-j*2-2,kind:'legacy'}));
+  }
+  if(room.sideSpaces==='off'||room.length<6||room.width>8||room.height>4||room.rise||room.shape!=='rectangle')return [];
+  const h=hash((room.index??0)+(room.branchSeed??5)*193);
+  if(!['room','hallway'].includes(room.sideSpaces)&&h%100>=34)return [];
+  const j=Math.max(0,Math.floor(room.length/4)-1),side=h%2?-1:1;
+  return [{side,j,z:-j*2-2,kind:room.sideSpaces==='hallway'||(room.sideSpaces!=='room'&&h%3===0)?'hallway':'room',door:h%3!==1,variant:h%3}];
+}
+export function sideSpacePlan(room,portal){
+  const {side,z}=portal,W=room.width/2,depth=3+(portal.variant??0)*0.4;
+  const corridor=portal.kind==='hallway'?2.4+(portal.variant??0)*0.6:0;
+  const span=2.8+(portal.variant??0)*0.3,opening=portal.door?1.15:1.6;
+  const rect=(from,to,half)=>({minX:side>0?from:-to,maxX:side>0?to:-from,minZ:z-half,maxZ:z+half});
+  const rectangles=[];
+  if(corridor)rectangles.push(rect(W,W+corridor,0.85));
+  const roomRect=rect(W+corridor,W+corridor+depth,span/2);rectangles.push(roomRect);
+  const xs=[...new Set(rectangles.flatMap(r=>[r.minX,r.maxX]))].sort((a,b)=>a-b);
+  const zs=[...new Set(rectangles.flatMap(r=>[r.minZ,r.maxZ]))].sort((a,b)=>a-b);
+  const inside=(x,z)=>rectangles.some(r=>x>r.minX&&x<r.maxX&&z>r.minZ&&z<r.maxZ);
+  const walls=[];
+  for(let i=0;i<xs.length-1;i++)for(let j=0;j<zs.length-1;j++){
+    const x=(xs[i]+xs[i+1])/2,cz=(zs[j]+zs[j+1])/2;if(!inside(x,cz))continue;
+    for(const [axis,edge,a,b,checkX,checkZ] of [
+      ['x',xs[i],zs[j],zs[j+1],xs[i]-0.001,cz],['x',xs[i+1],zs[j],zs[j+1],xs[i+1]+0.001,cz],
+      ['z',zs[j],xs[i],xs[i+1],x,zs[j]-0.001],['z',zs[j+1],xs[i],xs[i+1],x,zs[j+1]+0.001]]){
+      if(inside(checkX,checkZ)||(axis==='x'&&Math.abs(edge-side*W)<1e-6))continue;
+      walls.push({axis,edge,a,b});
+    }
+  }
+  // Replace the skipped four-metre wall strip with a narrower usable doorway.
+  walls.push({axis:'x',edge:side*W,a:z-2,b:z-opening/2},{axis:'x',edge:side*W,a:z+opening/2,b:z+2});
+  const regions=rectangles.map(r=>({minX:r.minX+0.12,maxX:r.maxX-0.12,minZ:r.minZ+0.12,maxZ:r.maxZ-0.12}));
+  const join=rect(W-0.35,W+(corridor||depth)-0.15,opening/2);regions.push(join);
+  if(corridor)regions.push(rect(W+corridor-0.35,W+corridor+0.35,0.73));
+  const blocks=walls.map(w=>w.axis==='x'?{minX:w.edge-0.06,maxX:w.edge+0.06,minZ:w.a,maxZ:w.b}:{minX:w.a,maxX:w.b,minZ:w.edge-0.06,maxZ:w.edge+0.06});
+  const fixtures=[];
+  // A shallow storage ledge leaves the centre and entrance clear.
+  const fx=side*(W+corridor+depth-0.3);
+  fixtures.push({x:fx,z:z+span/2-0.45,w:0.4,d:0.65,h:0.7});
+  for(const f of fixtures)blocks.push({minX:f.x-f.w/2,maxX:f.x+f.w/2,minZ:f.z-f.d/2,maxZ:f.z+f.d/2});
+  if(portal.door)blocks.push({minX:side>0?W: -W-opening+0.1,maxX:side>0?W+opening-0.1:-W,minZ:z+opening/2-0.025,maxZ:z+opening/2+0.025});
+  return {rectangles,regions,walls,blocks,fixtures,roomRect,opening,height:Math.min(room.height,2.8),kind:portal.kind,door:portal.door};
+}

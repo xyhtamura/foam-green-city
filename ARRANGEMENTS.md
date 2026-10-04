@@ -72,7 +72,7 @@ Unexplained arrangements should be occasional deviations from this pattern. Most
 1. Extend support descriptions to open shelf interiors. Preserve seeded color, size, and orientation choices per object family. Tabletop TVs, shared surface fitting, four surface presets, and upright monobloc seat supports are implemented.
 2. Add room-level density choices and occasional unexplained arrangements. Judge their frequency in a sustained domestic walkthrough.
 
-Manual navigation, hallway access, and streaming performance evaluation remain pending after this arrangement pass. Cross-room plumbing, exterior scenes, and connected storeys remain separate proposals.
+Cross-device movement and streaming performance evaluation remain pending. Side rooms and hallways are traversable through the existing manual controls. Cross-room plumbing, exterior scenes, and connected storeys remain separate proposals.
 
 ## Acceptance checks
 
