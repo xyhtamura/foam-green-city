@@ -197,3 +197,8 @@ wall-utilities.js can fit a 32-inch TV with feet or a pedestal to upright monobl
 ## Shared clutter supports — 2026-10-05
 
 object-supports.js fits and reserves surface areas for TVs and domestic clutter. Tables, authored wall shelves, selected closed cabinets and fridge tops use these rules. Cutouts reserve space to turn toward the viewer, accounting for parent rotations. Empty or partly filled supports report rejected-placement counts and categories through the room inspector. Open racks and seats remain outside this pass. Next: arrangement presets for food preparation, paperwork, clothing and storage; see ARRANGEMENTS.md and the latest NOTES.md entry.
+
+
+## Domestic arrangement presets — 2026-10-05
+
+`domestic-details.js` fits food preparation, paperwork, clothing, and storage groups as whole reserved footprints. Room use weights their selection; shelves and cabinet tops receive compact versions. Force inspection with `?arrangement=food`, `paperwork`, `clothing`, or `storage`. The inspector includes accepted preset IDs and footprints. Read `ARRANGEMENTS.md` for the implemented scope and `NOTES.md` for browser checks and limits. Next: supports on chair seats and inside open shelves. User edits to the two sardine PNGs remain outside this commit.

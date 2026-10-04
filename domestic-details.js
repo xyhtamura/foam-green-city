@@ -3,7 +3,7 @@ import {RAW_OBJECTS,createRawObject} from './raw-object-assets.js?v=raw-2';
 import {tableSupport,surfaceSupport,localBounds,placeOnSupport} from './object-supports.js?v=supports-3';
 
 // Authored low-detail household shapes. All resources belong to one streamed room.
-export function addDomesticDetails({THREE,group,room,seed,curvize,spots,photos,spriteMat,ceiling,forceRoof=false}){
+export function addDomesticDetails({THREE,group,room,seed,curvize,spots,photos,spriteMat,ceiling,forceRoof=false,forceArrangement=null}){
   let state=seed>>>0;const random=()=>{state=(Math.imul(state,1664525)+1013904223)>>>0;return state/4294967296;};
   const owner=new THREE.Group();owner.name='domestic-details';group.add(owner);
   const geometries=new Set(),materials=new Set(),textures=new Set();
@@ -87,10 +87,56 @@ export function addDomesticDetails({THREE,group,room,seed,curvize,spots,photos,s
       if(shape===3)for(let k=1;k<3;k++)mesh(parent,box,m,cx+k*0.012,y+h/2+k*0.025,cz,w*1.2,h,w*1.6).rotation.y=k*0.08;
     }
   }
+  // Each group reserves one footprint; deliberate overlaps are confined to stacks.
+  const arrangementIds=['food','paperwork','clothing','storage'];
+  function arrangement(parent,id,compact){
+    const scale=compact?0.72:0.9+random()*0.15;
+    const m=palette[Math.floor(random()*palette.length)];
+    function stack(x,z,w,d,layers,mat){
+      let y=0;
+      for(let k=0;k<layers;k++){
+        const h=id==='paperwork'?0.006:0.028;
+        const piece=mesh(parent,box,k===layers-1?mat:palette[5],x,y+h/2,z,w,h,d);
+        piece.rotation.y=(random()-0.5)*0.12;y+=h;
+      }
+      return y;
+    }
+    function bottle(x,z){
+      const height=0.15+random()*0.08,width=0.065;
+      mesh(parent,bottleBodies[Math.floor(random()*3)],m,x,0,z,width,height,width).name='generic-bottle';
+      mesh(parent,round,palette[5],x,height+0.008,z,0.026,0.016,0.026);
+      mesh(parent,round,palette[5],x,height*0.45,z,width*0.96,0.04,width*0.96);
+    }
+    if(id==='food'){
+      board(parent,-0.05,0,0);
+      for(let i=0;i<3;i++){
+        const size=0.035+random()*0.015;
+        mesh(parent,ball,food[Math.floor(random()*food.length)],-0.09+i*0.045,0.016+size/2,0.04,size,size,size);
+      }
+      bottle(0.18,0.02);
+    }else if(id==='paperwork'){
+      stack(-0.06,0,0.19,compact?0.14:0.23,3+Math.floor(random()*5),m);
+      mesh(parent,box,palette[5],0.065,0.003,0.02,0.16,0.006,compact?0.12:0.2).rotation.y=0.17;
+      // Pads and envelopes remain flat rather than camera-facing.
+      if(papers.length)cutout(parent,{...papers[Math.floor(random()*papers.length)],mode:'flat'},0.08,0.008,0.025,compact?0.09:0.13);
+      mesh(parent,box,palette[4],0.12,0.014,-0.045,0.085,0.028,0.06);
+    }else if(id==='clothing'){
+      stack(-0.06,0,0.17,compact?0.14:0.23,2+Math.floor(random()*3),m);
+      if(clothes.length)cutout(parent,{...clothes[Math.floor(random()*clothes.length)],mode:'flat'},0.11,0,0,compact?0.12:0.18);
+    }else{
+      const w=0.18,d=compact?0.14:0.24,h=0.085;
+      mesh(parent,box,m,-0.075,h/2,0,w,h,d);
+      mesh(parent,box,palette[5],-0.075,h+0.006,0,w+0.008,0.012,d+0.008);
+      mesh(parent,box,palette[4],-0.075,h+0.012+0.025,0,0.12,0.05,d*0.8);
+      mesh(parent,box,palette[2],-0.075,h+0.012+0.05+0.004,0,0.126,0.008,d*0.8+0.006);
+      bottle(0.095,0);
+    }
+    parent.scale.setScalar(scale);parent.userData.arrangement=id;
+  }
   const supportChecks=[];
   function populate(parent,support,count,kind){
     parent.userData.supportSurface=support;
-    const record={kind,support:parent.name||parent.userData.fixture||parent.userData.modelName,accepted:0,rejected:0,reasons:{}};supportChecks.push(record);
+    const record={kind,arrangements:[],support:parent.name||parent.userData.fixture||parent.userData.modelName,accepted:0,rejected:0,reasons:{}};supportChecks.push(record);
     const others=group.children.filter(o=>o!==parent&&(o.userData.floorProp||o.userData.roomSet||o.userData.utilityProp||o.userData.wallTv||o.userData.pipeRun));
     function accept(object){
       const b=new THREE.Box3().setFromObject(object);
@@ -99,10 +145,14 @@ export function addDomesticDetails({THREE,group,room,seed,curvize,spots,photos,s
     }
     for(let i=0;i<count;i++){
       const item=new THREE.Group();item.name=kind+'-clutter';
-      if(i<2)supplied(item,0,0,0,kitchen?condiments:kind==='cabinet'&&random()<0.5?clothes:papers,1,kind==='shelf'?0.14:0.18);
-      else if(kitchen&&i===2)board(item,0,0,0);
+      const compact=kind!=='table';
+      if(i<2){
+        const pool=kitchen?(kind==='table'?['food','storage','food']:['storage','food']):room.type==='bedroom'?['clothing','storage','paperwork']:['paperwork','storage','clothing'];
+        const id=arrangementIds.includes(forceArrangement)?forceArrangement:pool[Math.floor(random()*pool.length)];
+        arrangement(item,id,compact);item.name=id+'-arrangement';
+      }else if(i===2)supplied(item,0,0,0,kitchen?condiments:papers,1,compact?0.12:0.16);
       else assortment(item,0,0,0,1);
-      if(placeOnSupport({THREE,parent,object:item,support,random,accept}))record.accepted++;
+      if(placeOnSupport({THREE,parent,object:item,support,random,accept})){record.accepted++;if(item.userData.arrangement)record.arrangements.push(item.userData.arrangement);}
       else {record.rejected++;const reason=item.userData.supportRejected;record.reasons[reason]=(record.reasons[reason]??0)+1;}
     }
   }
@@ -112,7 +162,7 @@ export function addDomesticDetails({THREE,group,room,seed,curvize,spots,photos,s
     for(const o of table.children.filter(o=>o.name!=='scallopedRunner'&&!o.userData.tableTv&&(!o.isMesh||o.userData.rawObject))){
       const b=localBounds(THREE,o,table);if(!b.isEmpty())support.reservations.push({minX:b.min.x,maxX:b.max.x,minZ:b.min.z,maxZ:b.max.z});
     }
-    populate(table,support,4+Math.floor(random()*3),'table');
+    populate(table,support,3+Math.floor(random()*2),'table');
   }
   group.updateMatrixWorld(true);
   const surfaces=[];
@@ -120,7 +170,7 @@ export function addDomesticDetails({THREE,group,room,seed,curvize,spots,photos,s
   for(const surface of surfaces.slice(0,4)){
     const b=localBounds(THREE,surface,surface);if(b.isEmpty())continue;
     const support=surfaceSupport({minX:b.min.x,maxX:b.max.x,minZ:b.min.z,maxZ:b.max.z,height:b.max.y},0.035);
-    populate(surface,support,3,'cabinet');
+    populate(surface,support,2,'cabinet');
   }
   const occupied=group.children.filter(o=>o.userData.floorProp||o.userData.utilityProp||o.userData.diningTable||o.userData.diningChair||o.userData.billboard||o.userData.door||o.userData.wallTv||o.userData.pipeRun)
     .map(o=>new THREE.Box3().setFromObject(o).expandByScalar(0.04));
@@ -146,7 +196,7 @@ export function addDomesticDetails({THREE,group,room,seed,curvize,spots,photos,s
     }
     shelf.rotation.y=spot.side>0?-Math.PI/2:Math.PI/2;
     shelf.position.set(spot.side*(room.width/2-0.12),floorHeight(room,spot.z),spot.z);
-    if(clear(shelf)){populate(shelf,support,3,'shelf');shelves++;const at=spots.indexOf(spot);if(at>=0)spots.splice(at,1);if(shelves===2)break;}
+    if(clear(shelf)){populate(shelf,support,2,'shelf');shelves++;const at=spots.indexOf(spot);if(at>=0)spots.splice(at,1);if(shelves===2)break;}
   }
   if(room.type!=='bathroom')for(let i=0;i<10&&floorClusters<3;i++){
     const side=random()<0.5?-1:1,z=-0.8-random()*(room.length-1.6),cluster=new THREE.Group();cluster.name='floor-clutter';cluster.userData.floorProp=true;
@@ -205,7 +255,7 @@ export function addDomesticDetails({THREE,group,room,seed,curvize,spots,photos,s
   group.traverse(o=>{if(o.userData.detailCutout)cutouts++;if(['generic-bottle','clutter-pitcher','chopping-board','household-mop'].includes(o.name))tools++;});
   const supported=[];group.traverse(o=>{if(o.userData.supportPlacement){
     const b=localBounds(THREE,o,o.parent),s=o.parent.userData.supportSurface;
-    supported.push({kind:o.name,inside:b.min.x>=s.minX-1e-6&&b.max.x<=s.maxX+1e-6&&b.min.z>=s.minZ-1e-6&&b.max.z<=s.maxZ+1e-6,contactGap:b.min.y-s.height});
+    supported.push({kind:o.name,arrangement:o.userData.arrangement??null,footprint:o.userData.supportPlacement.footprint,inside:b.min.x>=s.minX-1e-6&&b.max.x<=s.maxX+1e-6&&b.min.z>=s.minZ-1e-6&&b.max.z<=s.maxZ+1e-6,contactGap:b.min.y-s.height});
   }});
   owner.userData.details={shelves,floorClusters,exposedRoof:exposed,roaches,cutouts,tools,supportChecks,supported};
   owner.userData.dispose=()=>{for(const g of geometries)g.dispose();for(const m of materials)m.dispose();for(const t of textures)t.dispose();};

@@ -1,6 +1,6 @@
 # Object arrangements
 
-This is a proposed arrangement system for Foam Green City. It records how the existing objects could form varied domestic scenes, with occasional unexplained arrangements. It is a development plan, not a description of completed features.
+This document records the implemented surface arrangements and planned extensions for Foam Green City. Tables, authored wall shelves, and selected cabinet tops use shared fitting rules. Seats, open shelf interiors, room-level density, and unexplained arrangements remain planned.
 
 The reference remains a modernish lower-middle-income Filipino household. Ordinary uses and recognizable object sizes should establish that baseline. Variation comes from which objects collect together, what supports them, and how much of a room stays empty.
 
@@ -9,6 +9,14 @@ The reference remains a modernish lower-middle-income Filipino household. Ordina
 `domestic-details.js` creates seeded clusters on tables, selected furniture tops, wall shelves, and floor edges. Its pool includes generic bottles, pitchers, boards and knives, paper stacks, folded clothing-like shapes, containers, and supplied cutouts. Tables, authored shelves, selected closed cabinets, and fridge tops use the bounds and reservations in `object-supports.js`. Each accepted item fits a free area and has measured contact with its support. Floor clusters and mops retain their room-bound, overlap, and doorway checks.
 
 As of 2026-10-05, the walkthrough selects wall or tabletop mounting for flat-screen TVs. Tabletop placement uses the existing feet or pedestal from `led-tv.js` and the support bounds and reservations in `object-supports.js`. It fits a 32-inch TV on an upright monobloc or wooden table, rejects occupied or obstructed placements, and falls back to wall mounting when possible. Later clutter can occupy the remaining space beside the TV. Supports on seats and within open racks remain planned.
+
+## Implemented presets
+
+`domestic-details.js` assembles four groups: food preparation (board, knife, ingredient-like shapes, and a bottle), paperwork (files, overlapping sheets, a supplied pad or envelope, and a small box), clothing (folded blocks beside a supplied flat garment), and storage (two lidded boxes with a bottle). A group reserves its whole footprint, including its internal gaps. Groups that cannot fit are rejected rather than split apart.
+
+Selection is seeded and weighted by room use. Kitchen tables favor food preparation; bedrooms favor clothing and storage. Shelves and cabinet tops receive compact versions. Tables attempt two groups and one or two individual items, with limits of six tables, four cabinet tops, and two wall shelves per room. Floor clutter keeps its preceding placement rules.
+
+Use `?arrangement=food`, `paperwork`, `clothing`, or `storage` to force a preset for inspection. The room inspector reports accepted preset IDs, footprints, measured contact gaps, and rejection reasons. These presets reuse authored primitive geometry and supplied images; they add no external assets.
 
 ## Arrangement catalogue
 
@@ -55,9 +63,8 @@ Unexplained arrangements should be occasional deviations from this pattern. Most
 
 ## Implementation order
 
-1. Implement food preparation, paperwork, clothing, and storage presets on the shared support system. Tabletop TV placement and clutter fitting on tables, shelves, and selected closed furniture tops are implemented.
-2. Extend support descriptions to seats and open shelf interiors. Preserve existing seeded color, size, and orientation choices per object family.
-3. Add room-level density choices and occasional unexplained arrangements. Judge their frequency in a sustained domestic walkthrough.
+1. Extend support descriptions to seats and open shelf interiors. Preserve seeded color, size, and orientation choices per object family. Tabletop TVs, shared surface fitting, and the four surface presets are implemented.
+2. Add room-level density choices and occasional unexplained arrangements. Judge their frequency in a sustained domestic walkthrough.
 
 Manual navigation, hallway access, and streaming performance evaluation remain pending after this arrangement pass. Cross-room plumbing, exterior scenes, and connected storeys remain separate proposals.
 

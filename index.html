@@ -61,7 +61,7 @@ import { createUratexSofa } from './uratex-sofa.js';
 import { createWireRun } from './wire-runs.js';
 import { createWallUtilities } from './wall-utilities.js?v=walls-6';
 import {createWalkSequence,retainedRooms,walkRegions,canOccupy,moveWalker,pathToRoute} from './navigation.js';
-import {addDomesticDetails} from './domestic-details.js?v=details-6';
+import {addDomesticDetails} from './domestic-details.js?v=details-7';
 let wallUtilities;
 import { roomLighting } from './room-lighting.js?v=lighting-2';
 import { spatialFrame, spatialPoint, SPATIAL_GLSL, SPATIAL_PROFILES } from './spatial-route.js';
@@ -553,7 +553,7 @@ function buildSegment(index){
   }
   furnishUtilities(grp,room.name,r);
   wallUtilities.add({group:grp,descriptor,index:i,spots:solidWalls,params});
-  grp.userData.domesticDetails=addDomesticDetails({THREE,group:grp,room:descriptor,seed:i,curvize,spots:solidWalls,photos:WALL_HANGINGS,spriteMat,ceiling:c,forceRoof:params.get('roof')==='yero'});
+  grp.userData.domesticDetails=addDomesticDetails({THREE,group:grp,room:descriptor,seed:i,curvize,spots:solidWalls,photos:WALL_HANGINGS,spriteMat,ceiling:c,forceRoof:params.get('roof')==='yero',forceArrangement:params.get('arrangement')});
   if(!descriptor.rise&&r()<0.65){
     const rug=FURNI.rugDoormat.clone();const box=new THREE.Box3().setFromObject(rug),size=box.getSize(new THREE.Vector3());
     rug.scale.setScalar(0.8/Math.max(size.x,size.z));const fitted=new THREE.Box3().setFromObject(rug);
