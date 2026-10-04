@@ -16,6 +16,8 @@ Open [the local demo](http://127.0.0.1:8141/). Movement starts automatically. Us
 
 Selected rafters and chopping boards use the supplied wood texture. Domestic rooms can also contain wood wall sections, short dividers, and loose boards. Preview with `?wood=all`, or force additional `walls`, `divider`, or `planks`; `wood=off` disables the added wood details while existing wooden objects retain their texture.
 
+Most dead-end stairs use thin wooden treads with open risers and two sloping side supports. Occasional solid stairs remain. Use `stairs=wood` or `stairs=solid` to force the style in rooms containing stairs. These features are not climbable.
+
 The default seed is `5`. Append `?seed=42` to choose another reproducible room sequence. The sequence is generated from integer hashes rather than independent random decisions each frame.
 
 Each block contains six to eight rooms. Its last room is an exception, so consecutive exceptions are six to eight rooms apart. Domestic rooms are generally four to eight metres wide and six to twelve metres long. Most floors are bare. The opening establishes a sala, kitchen, bathroom, and bedroom before the first exception.

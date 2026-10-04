@@ -20,12 +20,12 @@ export function raiseFloor(floor,room){
   });
 }
 
-export function createRoomArchitecture(room,curvize){
+export function createRoomArchitecture(room,curvize,{woodTexture=null,stairs=null}={}){
   const group=new THREE.Group(),batches=new Map(),W=room.width/2,L=room.length,H=room.height,reservations=[];
   const reserve=(x,z,w,d)=>reservations.push({minX:x-w/2-0.12,maxX:x+w/2+0.12,minZ:z-d/2-0.12,maxZ:z+d/2+0.12});
-  const materials={wall:curvize(new THREE.MeshLambertMaterial({color:0xbfdcc9})),floor:curvize(new THREE.MeshLambertMaterial({color:0x9c9c95})),trim:curvize(new THREE.MeshLambertMaterial({color:0x4e7c63}))};
-  function box(kind,w,h,d,x,y,z){
-    const geo=new THREE.BoxGeometry(w,h,d,Math.max(1,Math.ceil(w/2)),1,Math.max(1,Math.ceil(d/2)));geo.translate(x,y,z);
+  const materials={wood:curvize(new THREE.MeshLambertMaterial({map:woodTexture,color:0xbda887})),wall:curvize(new THREE.MeshLambertMaterial({color:0xbfdcc9})),floor:curvize(new THREE.MeshLambertMaterial({color:0x9c9c95})),trim:curvize(new THREE.MeshLambertMaterial({color:0x4e7c63}))};
+  function box(kind,w,h,d,x,y,z,rx=0){
+    const geo=new THREE.BoxGeometry(w,h,d,Math.max(1,Math.ceil(w/2)),1,Math.max(1,Math.ceil(d/2)));geo.rotateX(rx);geo.translate(x,y,z);
     if(!batches.has(kind))batches.set(kind,[]);batches.get(kind).push(geo);
   }
   const openings=branchOpenings(room),sideBlocks=[],sideSpaces=[];
@@ -81,11 +81,17 @@ export function createRoomArchitecture(room,curvize){
   }
   if(W>=3&&L>=14&&room.shape==='deadStairs'){
     const side=room.index%2?-1:1,x=side*(W-1.5),base=-L*0.36,y=floorHeight(room,base);
-    for(let i=0;i<12;i++){const h=(i+1)*0.18;box('floor',1.6,h,0.36,x,y+h/2,base-i*0.36);}
-    const end=base-12*0.36;
-    box('floor',1.6,0.16,1.5,x,y+2.16-0.08,end-0.57);
+    const wooden=stairs!=='solid'&&(stairs==='wood'||room.index%4!==0),run=wooden?.25:.36;
+    for(let i=0;i<12;i++){const h=(i+1)*.18;box(wooden?'wood':'floor',1.6,wooden?.045:h,wooden?.27:.36,x,wooden?y+h-.0225:y+h/2,base-i*run);}
+    if(wooden){
+      const dz=11*run+.28,dy=2.16,angle=Math.atan2(dy,dz),length=Math.hypot(dy,dz);
+      for(const dx of [-.81,.81])box('wood',.055,.24,length,x+dx,y+dy/2,base-11*run/2,angle);
+    }
+    const end=base-12*run;
+    box(wooden?'wood':'floor',1.6,wooden?.055:.16,1.5,x,y+2.16-(wooden?.0275:.08),end-.57);
     box('wall',1.9,Math.max(0.5,H-y-2.16),0.15,x,(H+y+2.16)/2,end-1.32);
-    box('trim',0.09,2.16,4.6,x+side*0.85,y+1.08,base-2.15);
+    if(!wooden)box('trim',0.09,2.16,4.6,x+side*0.85,y+1.08,base-2.15);
+    group.userData.stairStyle=wooden?'openWood':'solid';
     reserve(x,base-2.7,2,6.1);
     group.userData.deadStairs=true;
   }

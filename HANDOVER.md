@@ -228,3 +228,7 @@ The third seeded annex variant now contains storage. `sideRoom=storage` forces i
 ## Wood surfaces and boards — 2026-10-05
 
 `index.html` loads the supplied `models/textures/wood.png` once with mipmaps. `domestic-details.js` uses it on chopping boards and exposed roof beams. `wood-details.js` adds seeded wall sections, short dividers, and pairs of loose boards in eligible domestic rectangles. Divider bounds join `walkBlocks`; loose boards remain below the walking obstruction threshold. Placement rejects bounds outside the room and conflicts with existing furniture/collision bounds. Preview with `wood=all|walls|divider|planks|off`; category overrides add that category alongside natural selection. Authored wood geometry and materials belong to their cell, while the texture remains shared. See the latest notes entry for browser checks. Next remains independent side-room lighting.
+
+## Open wooden stairs — 2026-10-05
+
+`room-architecture.js` accepts the shared wood texture and an optional stair style. Most `deadStairs` rooms now use twelve thin treads, two sloping side boards, and a thin landing. The spaces between and beneath the treads remain open. Solid stairs remain on indices divisible by four; `stairs=wood|solid` overrides the style. Preview with `?sequence=passages&start=3&offset=4&stairs=wood&lighting=daylight&inspect=1&still=1&space=straight`. Existing stair reservations still block manual traversal; climbing and upper-floor connections remain unfinished. Next remains independent side-room lighting.
