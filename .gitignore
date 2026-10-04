@@ -1,0 +1,46 @@
+/*
+!/.gitignore
+!/.gitattributes
+!/index.html
+!/development.html
+!/props-preview.html
+!/windows-preview.html
+!/*.js
+!/README.md
+!/CONCEPT.md
+!/NOTES.md
+!/HANDOVER.md
+!/ASSETS.md
+!/LICENSE
+!/LICENSE-ARTWORK.md
+!/THIRD_PARTY.md
+!/.nojekyll
+!/scripts/
+/scripts/*
+!/scripts/*.py
+!/scripts/*.mjs
+!/scripts/*.html
+!/models/
+/models/*
+!/models/GLTF format/
+!/models/polyhaven/
+!/models/textures/
+!/models/domestic/
+/models/textures/*
+!/models/textures/floor_linoleum_red.png
+!/models/plant.png
+!/models/kutsarat_tinidor.png
+!/models/stand_fan.png
+!/models/wall_calendar.png
+!/models/tabo_timba.png
+!/models/water_dispenser.png
+!/2d/
+/2d/*
+!/2d/raw objects/
+!/2d/wiring/
+!/2d/wall hanging/
+/2d/wall hanging/*
+!/2d/wall hanging/photos/
+!/2d/wall hanging/kurtina/
+__pycache__/
+*.pyc

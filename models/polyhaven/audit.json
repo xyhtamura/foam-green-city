@@ -1,0 +1,158 @@
+[
+  {
+    "asset": "pot_enamel_01",
+    "source": "F:\\xyh\\3d\\models\\pot_enamel_01_4k.blend",
+    "sourceSha256": "80e16c3e8a9767d1e60a7828083881c6320c7eed4bc1953a0e442c4fc362f4bd",
+    "objects": [
+      {
+        "name": "pot_enamel_01_lid",
+        "vertices": 1664,
+        "polygons": 1700,
+        "dimensions": [
+          0.1804744154214859,
+          0.1804744154214859,
+          0.04943358898162842
+        ]
+      },
+      {
+        "name": "pot_enamel_01_base",
+        "vertices": 4042,
+        "polygons": 4060,
+        "dimensions": [
+          0.26293012499809265,
+          0.18042047321796417,
+          0.13155460357666016
+        ]
+      }
+    ]
+  },
+  {
+    "asset": "wooden_spoon",
+    "source": "F:\\xyh\\3d\\models\\wooden_spoon_4k.blend",
+    "sourceSha256": "d0bef98549034c9c019be8bdf776d798ee69dd55d334cc1f385b0b7850d9a850",
+    "objects": [
+      {
+        "name": "wooden_spoon",
+        "vertices": 3290,
+        "polygons": 3288,
+        "dimensions": [
+          0.08666010200977325,
+          0.2776350975036621,
+          0.025113526731729507
+        ]
+      }
+    ]
+  },
+  {
+    "asset": "plastic_crate_01",
+    "source": "F:\\xyh\\3d\\models\\plastic_crate_01_4k.blend",
+    "sourceSha256": "eb5c01d1b27f09342e5c445ffef9e7d651a287d3677cb7b19003004669187464",
+    "objects": [
+      {
+        "name": "plastic_crate_01",
+        "vertices": 8634,
+        "polygons": 11092,
+        "dimensions": [
+          0.29800063371658325,
+          0.40800413489341736,
+          0.2641694247722626
+        ]
+      }
+    ]
+  },
+  {
+    "asset": "wooden_bookshelf_worn",
+    "source": "F:\\xyh\\3d\\models\\wooden_bookshelf_worn_4k.blend",
+    "sourceSha256": "7cfcc50721b6842571c8ad78d3bd33bfd39a50692473d512a4caae1a279a22fb",
+    "objects": [
+      {
+        "name": "wooden_bookshelf_worn",
+        "vertices": 5963,
+        "polygons": 5510,
+        "dimensions": [
+          1.37395179271698,
+          0.5813020467758179,
+          2.0634419918060303
+        ]
+      }
+    ]
+  },
+  {
+    "asset": "vintage_day_bed",
+    "source": "F:\\xyh\\3d\\models\\vintage_day_bed_4k.blend",
+    "sourceSha256": "f260b6743ed740a6eca6a6f00efac0080fb810cc9df34d84fb6e885174dd57b7",
+    "objects": [
+      {
+        "name": "vintage_day_bed",
+        "vertices": 1389,
+        "polygons": 2715,
+        "dimensions": [
+          1.972555160522461,
+          0.85477614402771,
+          1.1273465156555176
+        ]
+      }
+    ]
+  },
+  {
+    "asset": "plastic_monobloc_chair_01",
+    "source": "F:\\xyh\\3d\\models\\plastic_monobloc_chair_01_4k.blend",
+    "sourceSha256": "9c38daa3d3677d5b00c13103dc3bf9f0186ee7feae4fd448d735e0085eadc543",
+    "objects": [
+      {
+        "name": "plastic_monobloc_chair_01",
+        "vertices": 1660,
+        "polygons": 1724,
+        "dimensions": [
+          0.6418611407279968,
+          0.6275919079780579,
+          0.8798412084579468
+        ]
+      }
+    ]
+  },
+  {
+    "asset": "food_apple_01",
+    "source": "F:\\xyh\\3d\\models\\food_apple_01_4k.blend",
+    "sourceSha256": "34d22b6e73e2a64926ad26c3909c3b3acaf0dd960eec5df19513c41effa24803",
+    "objects": [
+      {
+        "name": "food_apple_01",
+        "vertices": 3504,
+        "polygons": 7012,
+        "dimensions": [
+          0.09756118059158325,
+          0.09590171277523041,
+          0.08538994193077087
+        ]
+      }
+    ]
+  },
+  {
+    "asset": "throw_pillows_01",
+    "source": "F:\\xyh\\3d\\models\\throw_pillows_01_4k.blend",
+    "sourceSha256": "c1b71589a7b559b4abca792984f182cdc2df1dba6f2712e5868ecce631694193",
+    "objects": [
+      {
+        "name": "throw_pillows_01_pillow02",
+        "vertices": 1564,
+        "polygons": 3124,
+        "dimensions": [
+          0.518796980381012,
+          0.4425937533378601,
+          0.2865079939365387
+        ]
+      },
+      {
+        "name": "throw_pillows_01_pillow01",
+        "vertices": 1621,
+        "polygons": 3238,
+        "dimensions": [
+          0.565116822719574,
+          0.4501592516899109,
+          0.34343722462654114
+        ]
+      }
+    ]
+  }
+]

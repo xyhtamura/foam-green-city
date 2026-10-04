@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Foam Green City — domestic props</title>
+<style>
+body{margin:0;background:#bfdcc9;color:#273c32;font:15px system-ui}header{padding:16px;position:absolute;z-index:1}h1{font-size:19px;margin:0 0 8px}button,select{font:inherit;margin:4px;padding:8px}canvas{display:block}#status{max-width:500px}
+</style>
+<header><h1>Domestic props</h1><select id="asset" aria-label="Asset"></select><button id="export">Download GLB</button><label><input id="saved" type="checkbox">Preview saved GLB</label><p>Drag to orbit. Scroll to zoom.</p><p id="status" role="status"></p></header>
+<script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"}}</script>
+<script type="module">
+import * as THREE from 'three';
+import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
+import {GLTFExporter} from 'three/addons/exporters/GLTFExporter.js';
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+import {MODEL_ASSETS,loadModelAssets} from './model-assets.js';
+import {createDomesticProps,animateDomesticProps,createFurnitureVariants,FURNITURE_FINISHES} from './domestic-props.js?v=domestic-6';
+const props={...createDomesticProps(),...await loadModelAssets()}, scene=new THREE.Scene();scene.background=new THREE.Color(0xbfdcc9);
+const renderer=new THREE.WebGLRenderer({antialias:true});document.body.append(renderer.domElement);
+const camera=new THREE.PerspectiveCamera(40,1,0.01,20);camera.position.set(0.8,0.55,1.2);
+const controls=new OrbitControls(camera,renderer.domElement);controls.target.set(0,0.25,0);controls.update();
+scene.add(new THREE.HemisphereLight(0xffffff,0x61735e,2));const light=new THREE.DirectionalLight(0xffffff,2);light.position.set(2,3,4);scene.add(light);
+const select=document.querySelector('#asset'), status=document.querySelector('#status');
+const labels={bucket:'Blue bucket',bucketPink:'Pink bucket',gasul:'Gasul cylinder',plasticDrawers:'Plastic drawers',walisTambo:'Walis tambo',walisTingting:'Walis tingting',wallFan:'Wall fan',deskFan:'Desk fan',riceCooker:'Rice cooker',foodCover:'Mesh food cover',monoblocChair:'Monobloc chair',scallopedRunner:'Scalloped table runner',monoblocTable:'Monobloc table',woodTable:'Wood table'};
+Object.entries(MODEL_ASSETS).forEach(([name,spec])=>labels[name]=spec.label);
+const saved={}, loader=new GLTFLoader(), savedToggle=document.querySelector('#saved');
+const variants=createFurnitureVariants(props),finish=document.createElement('select');finish.setAttribute('aria-label','Furniture finish');
+FURNITURE_FINISHES.forEach((f,i)=>finish.add(new Option(f.name,String(i))));document.querySelector('header').insertBefore(finish,document.querySelector('#export'));
+for(const list of Object.values(variants))for(const model of list)scene.add(model);
+for(const [name,prop] of Object.entries(props)){select.add(new Option(labels[name],name));scene.add(prop);}
+function show(){finish.disabled=!variants[select.value];
+for(const [name,prop] of Object.entries(props))prop.visible=name===select.value&&!savedToggle.checked&&!variants[name];
+for(const [name,list] of Object.entries(variants))list.forEach((model,i)=>model.visible=name===select.value&&i===Number(finish.value)&&!savedToggle.checked);
+for(const [name,prop] of Object.entries(saved))prop.visible=name===select.value&&savedToggle.checked;
+const active=savedToggle.checked?saved[select.value]:(variants[select.value]?.[Number(finish.value)]??props[select.value]);
+if(!active)return;
+const box=new THREE.Box3().setFromObject(active), size=box.getSize(new THREE.Vector3());controls.target.copy(box.getCenter(new THREE.Vector3()));controls.update();
+camera.position.copy(controls.target).add(new THREE.Vector3(0.8,0.55,1.2).normalize().multiplyScalar(Math.max(size.x,size.y,size.z)*Math.max(2.5,2.5/camera.aspect)));controls.update();
+status.textContent=`${labels[select.value]} · ${size.x.toFixed(2)} × ${size.y.toFixed(2)} × ${size.z.toFixed(2)} m`;}
+const requested=new URLSearchParams(location.search).get('asset');if(props[requested])select.value=requested;
+select.onchange=show;show();
+savedToggle.onchange=async()=>{try{if(savedToggle.checked&&!saved[select.value]){const name=select.value;const gltf=await loader.loadAsync('./models/domestic/'+name+'.glb');saved[name]=gltf.scene;scene.add(gltf.scene);}show();}catch(e){status.textContent='Saved GLB failed to load: '+e.message;}};
+select.onchange=()=>{
+savedToggle.disabled=!['wallFan','deskFan','riceCooker','foodCover'].includes(select.value);
+if(savedToggle.disabled)savedToggle.checked=false;
+savedToggle.onchange();};
+select.onchange();
+finish.onchange=show;
+const exporter=new GLTFExporter();
+// Export a neutral pose, retaining named rotor and head nodes for animation.
+window.exportProp=async(name)=>{const prop=(variants[name]?.[Number(finish.value)]??props[name]).clone();prop.visible=true;prop.traverse(o=>{if(o.name==='fan-rotor'||o.name==='fan-head')o.rotation.set(0,0,0);});return exporter.parseAsync(prop,{binary:true});};
+let exportUrl;
+document.querySelector('#export').onclick=async()=>{try{const name=select.value;const data=await window.exportProp(name);if(exportUrl)URL.revokeObjectURL(exportUrl);exportUrl=URL.createObjectURL(new Blob([data],{type:'model/gltf-binary'}));const a=document.createElement('a');a.href=exportUrl;a.download=name+'.glb';a.textContent='Save '+name+'.glb';status.replaceChildren(a);}catch(e){status.textContent='Export failed: '+e.message;}};
+function resize(){renderer.setSize(innerWidth,innerHeight);camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();}addEventListener('resize',resize);resize();
+renderer.setAnimationLoop(time=>{animateDomesticProps(scene,time/1000);renderer.render(scene,camera);});
+window.props=props;window.renderer=renderer;
+</script>
+</html>

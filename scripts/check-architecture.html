@@ -1,0 +1,48 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Room architecture checks</title>
+<pre id="output">Running rendered architecture checks…</pre>
+<script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"}}</script>
+<script type="module">
+import * as THREE from 'three';
+import {createRoomArchitecture,raiseFloor,branchOpenings} from '../room-architecture.js';
+import {floorHeight,cameraRoute,routePoint} from '../room-sequences.js';
+import {createFloorVariant} from '../floor-variants.js';
+const out=document.getElementById('output');
+try{
+  const renderer=new THREE.WebGLRenderer(),scene=new THREE.Scene(),camera=new THREE.PerspectiveCamera(70,1,0.1,100);
+  renderer.setSize(160,160);scene.add(new THREE.AmbientLight(0xffffff));camera.position.set(0,2,1);camera.lookAt(0,1,-8);
+  const failures=[],ray=new THREE.Raycaster();let cases=0,peak=0;
+  for(const width of [4,6,10,18,24])for(const length of [8,16,24,40])for(const shape of ['rectangle','auditorium','colonnade','deadStairs','branches','cross'])for(const rise of [0,1.5,-1.2]){
+    const room={index:cases,width,length,height:8,shape,rise};
+    const architecture=createRoomArchitecture(room,m=>m),floor=createFloorVariant({THREE,width,length,variant:'bare'});raiseFloor(floor,room);
+    scene.add(architecture,floor);scene.updateMatrixWorld(true);
+    for(let i=1;i<20;i++){
+      const z=-length*i/20,y=floorHeight(room,z);
+      ray.set(new THREE.Vector3(0,y+0.4,z),new THREE.Vector3(0,-1,0));
+      const hit=ray.intersectObject(floor,true)[0];
+      if(!hit||Math.abs(hit.point.y-y)>0.001)failures.push({width,length,shape,rise,z,problem:'floor height'});
+      ray.set(new THREE.Vector3(-0.6,y+1,z),new THREE.Vector3(1,0,0));
+      if(ray.intersectObject(architecture,true).some(h=>h.distance<1.2))failures.push({width,length,shape,rise,z,problem:'route obstruction'});
+    }
+    const b=new THREE.Box3().setFromObject(architecture);
+    if(!b.isEmpty()&&(b.min.z< -length-0.16||b.max.z>0.16))failures.push({width,length,shape,rise,problem:'room end overshoot',bounds:[b.min.z,b.max.z]});
+    const openings=branchOpenings(room),route=cameraRoute(room,openings);
+    for(let distance=0.1;distance<route.length;distance+=0.5){
+      const p=routePoint(route,distance),portal=openings.find(o=>Math.sign(p.x)===o.side);
+      const y=portal&&Math.abs(p.x)>width/2?floorHeight(room,portal.z):floorHeight(room,p.z);
+      ray.set(new THREE.Vector3(p.x,y+0.3,p.z),new THREE.Vector3(0,-1,0));
+      const hit=ray.intersectObjects([floor,architecture],true)[0];
+      if(!hit||Math.abs(hit.point.y-y)>0.001)failures.push({width,length,shape,rise,distance,problem:'route floor'});
+      ray.set(new THREE.Vector3(p.x,y+1.6,p.z),new THREE.Vector3(-Math.sin(p.yaw),0,-Math.cos(p.yaw)));
+      if(ray.intersectObject(architecture,true).some(h=>h.distance<0.25))failures.push({width,length,shape,rise,distance,problem:'route wall'});
+    }
+    renderer.render(scene,camera);peak=Math.max(peak,renderer.info.memory.geometries);
+    scene.remove(architecture,floor);architecture.userData.dispose();floor.userData.dispose();renderer.render(scene,camera);
+    if(renderer.info.memory.geometries!==0||renderer.info.memory.textures!==0)failures.push({problem:'GPU resource retained',memory:{...renderer.info.memory}});
+    cases++;
+  }
+  out.textContent=JSON.stringify({cases,surfaceSamples:cases*19,peakGeometries:peak,failures:failures.slice(0,12),failureCount:failures.length,finalMemory:{...renderer.info.memory},pass:failures.length===0},null,2);
+  renderer.dispose();
+}catch(error){out.textContent=error.stack;}
+</script>

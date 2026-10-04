@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Foam Green City — curtained windows</title>
+<style>body{margin:0;background:#bfdcc9;font:15px system-ui;color:#273c32}header{position:absolute;padding:16px}h1{font-size:19px}select{font:inherit;padding:8px}canvas{display:block}</style>
+<header><h1>Windows</h1><select aria-label="Window style"><option value="cream">Cream gathered curtains</option><option value="rose">Rose gathered curtains</option><option value="cafe">Kitchen café curtains</option><option value="normal">Normal window</option><option value="sliding">Sliding window</option></select><p>Drag to orbit. Scroll to zoom.</p></header>
+<script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"}}</script>
+<script type="module">
+import * as THREE from 'three';
+import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+import {loadCurtainPatterns} from './photo-assets.js';
+import {createJalousieWall,setCurtainOpenness} from './jalousie.js?v=curtains-3';
+const renderer=new THREE.WebGLRenderer({antialias:true});document.body.append(renderer.domElement);
+const scene=new THREE.Scene();scene.background=new THREE.Color(0xbfdcc9);
+scene.add(new THREE.HemisphereLight(0xffffff,0x627760,2));
+const light=new THREE.DirectionalLight(0xffffff,1.5);light.position.set(3,5,4);scene.add(light);
+const camera=new THREE.PerspectiveCamera(45,1,0.05,30);camera.position.set(3,2.4,4.6);
+const controls=new OrbitControls(camera,renderer.domElement);controls.target.set(1,1.3,0);controls.update();
+const windows={};
+for(const [name,style,color] of [['cream','gathered',0xe6dbbf],['rose','gathered',0xc79691],['cafe','cafe',0xd8e0c5]]){
+const model=createJalousieWall({height:2.58,wallColor:0xbfdcc9,trimColor:0x4e7c63,curvize:m=>m,curtains:{style,color}});windows[name]=model;scene.add(model);}
+const select=document.querySelector('select');
+const patterns=loadCurtainPatterns(),patternSelect=document.createElement('select');
+patternSelect.setAttribute('aria-label','Curtain pattern');patternSelect.add(new Option('Plain fabric','-1'));
+patterns.forEach((texture,i)=>patternSelect.add(new Option('Pattern '+(i+1),String(i))));document.querySelector('header').append(patternSelect);
+const label=document.createElement('label');label.textContent='Curtain openness ';
+const slider=document.createElement('input');slider.type='range';slider.min=0;slider.max=100;slider.value=35;slider.setAttribute('aria-label','Curtain openness');
+const output=document.createElement('output');label.append(slider,output);document.querySelector('header').append(label);
+function show(){for(const [name,model] of Object.entries(windows))model.visible=select.value===name;
+slider.disabled=['normal','sliding'].includes(select.value);output.textContent=slider.disabled?'No curtains':slider.value+'% open';
+patternSelect.disabled=slider.disabled;
+if(!slider.disabled){const model=windows[select.value],map=patterns[Number(patternSelect.value)]??null;
+model.traverse(o=>{if(o.userData.curtain){if(o.material.map!==map){o.material.map=map;o.material.needsUpdate=true;}o.material.color.setHex(map?0xffffff:select.value==='rose'?0xc79691:select.value==='cafe'?0xd8e0c5:0xe6dbbf);}});
+setCurtainOpenness(model,Number(slider.value)/100);}}
+slider.oninput=show;select.onchange=show;patternSelect.onchange=show;show();
+const loader=new GLTFLoader();
+await Promise.all([['normal','wallWindow'],['sliding','wallWindowSlide']].map(async([name,file])=>{
+const gltf=await loader.loadAsync('./models/GLTF%20format/'+file+'.glb');const model=gltf.scene;model.scale.setScalar(2);
+model.traverse(o=>{if(o.isMesh){o.material=o.material.clone();o.material.color.setHex(0xbfdcc9);}});
+windows[name]=model;scene.add(model);}));show();
+function resize(){renderer.setSize(innerWidth,innerHeight);camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();}addEventListener('resize',resize);resize();
+renderer.setAnimationLoop(()=>renderer.render(scene,camera));
+</script>
+</html>

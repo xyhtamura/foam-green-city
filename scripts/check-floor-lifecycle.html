@@ -1,0 +1,37 @@
+<!doctype html><meta charset="utf-8"><title>Rendered floor lifecycle check</title>
+<pre id="output">Loading texture and rendering floor lifecycle checks…</pre>
+<script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js"}}</script>
+<script type="module">
+import * as THREE from 'three';
+import {FLOOR_IDS,createFloorVariant} from '../floor-variants.js?v=integrated-1';
+const out=document.getElementById('output');
+try{
+  const renderer=new THREE.WebGLRenderer();renderer.setSize(320,240);document.body.append(renderer.domElement);
+  const scene=new THREE.Scene();scene.add(new THREE.AmbientLight(0xffffff));
+  const camera=new THREE.PerspectiveCamera(65,4/3,0.1,100);camera.position.set(0,3,2);camera.lookAt(0,0,-6);
+  const texture=await new THREE.TextureLoader().loadAsync('../models/textures/floor_linoleum_red.png');
+  texture.wrapS=texture.wrapT=THREE.RepeatWrapping;texture.colorSpace=THREE.SRGBColorSpace;
+  let sharedDisposed=0,compiled=0;texture.addEventListener('dispose',()=>sharedDisposed++);
+  function curvize(mat){mat.onBeforeCompile=shader=>{
+    shader.vertexShader='uniform float reviewCurve;\n'+shader.vertexShader;
+    shader.uniforms.reviewCurve={value:0.006};
+    shader.vertexShader=shader.vertexShader.replace('#include <project_vertex>',
+      '#include <project_vertex>\nmvPosition.y += reviewCurve * mvPosition.z * mvPosition.z;\ngl_Position = projectionMatrix * mvPosition;');compiled++;
+  };return mat;}
+  const make=(variant,seed,length)=>createFloorVariant({THREE,width:8,length,variant,seed,curvize,sharedLinoleumTexture:texture});
+  const survivor=make('redLinoleum',0,12);scene.add(survivor);renderer.render(scene,camera);
+  const baseline={...renderer.info.memory};let peakGeometries=baseline.geometries,peakTextures=baseline.textures;
+  const failures=[];
+  for(let i=0;i<42;i++){
+    const floor=make(FLOOR_IDS[i%FLOOR_IDS.length],i,[8,12,16,24,32][i%5]);scene.add(floor);renderer.render(scene,camera);
+    peakGeometries=Math.max(peakGeometries,renderer.info.memory.geometries);peakTextures=Math.max(peakTextures,renderer.info.memory.textures);
+    scene.remove(floor);floor.userData.dispose();floor.userData.dispose();renderer.render(scene,camera);
+    if(renderer.info.memory.geometries!==baseline.geometries||renderer.info.memory.textures!==baseline.textures)failures.push({i,memory:{...renderer.info.memory}});
+    if(i%6===5)await new Promise(requestAnimationFrame);
+  }
+  const result={cycles:42,baseline,peakGeometries,peakTextures,after:{...renderer.info.memory},compiledHooks:compiled,sharedDisposed,failures};
+  scene.remove(survivor);survivor.userData.dispose();texture.dispose();renderer.render(scene,camera);result.final={...renderer.info.memory};
+  result.pass=failures.length===0&&compiled>0&&sharedDisposed===1&&result.final.geometries===0&&result.final.textures===0&&peakTextures>baseline.textures;
+  out.textContent=JSON.stringify(result,null,2);
+}catch(error){out.textContent=error.stack;}
+</script>

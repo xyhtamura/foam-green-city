@@ -1,0 +1,40 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>External module review checks</title>
+<pre id="output">Running actual geometry checks…</pre>
+<script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"}}</script>
+<script type="module">
+import * as THREE from 'three';
+import {FLOOR_IDS,createFloorVariant} from '../floor-variants.js?v=integrated-1';
+import {LAYOUT_IDS,generateFurnitureLayout,checkFurnitureLayout} from '../furniture-layouts.js?v=integrated-1';
+import {createDomesticProps,createFurnitureVariants} from '../domestic-props.js?v=domestic-6';
+const output=document.getElementById('output');
+try{
+  const variants=createFurnitureVariants(createDomesticProps());
+  const floors=[],furniture=[];
+  const sharedTexture=new THREE.Texture(); // No asynchronous image load during bounds checks.
+  for(const length of [8,12,16,24])for(const width of [4,6,8,10,12]){
+    for(const variant of FLOOR_IDS)for(let seed=0;seed<12;seed++){
+      const g=createFloorVariant({THREE,width,length,seed,variant,sharedLinoleumTexture:sharedTexture});
+      const b=new THREE.Box3().setFromObject(g);
+      if(Math.abs(b.min.x+width/2)>0.005||Math.abs(b.max.x-width/2)>0.005||Math.abs(b.min.z+length)>0.005||Math.abs(b.max.z)>0.005)
+        floors.push({variant,width,length,seed,min:b.min.toArray(),max:b.max.toArray()});
+      g.userData.dispose();
+    }
+    for(const layout of LAYOUT_IDS)for(let seed=0;seed<12;seed++){
+      const records=generateFurnitureLayout({width,length,seed,layout,filter:false});
+      const boxes=records.map(p=>{
+        const obj=variants[p.kind][p.finishIndex].clone();obj.position.set(p.x,p.y,p.z);obj.rotation.set(0,p.rotationY,p.inverted?Math.PI:0);
+        const b=new THREE.Box3().setFromObject(obj,true);
+        return {minX:b.min.x,maxX:b.max.x,minZ:b.min.z,maxZ:b.max.z,minY:b.min.y,maxY:b.max.y};
+      });
+      const result=checkFurnitureLayout(records,{width,length,boxes});
+      const removed=records.length-generateFurnitureLayout({width,length,seed,layout}).length;
+      if(!result.ok||removed)furniture.push({layout,width,length,seed,removed,failures:result.failures});
+    }
+  }
+  const summarize=(rows,key)=>Object.fromEntries([...new Set(rows.map(r=>r[key]))].map(name=>[name,rows.filter(r=>r[key]===name).length]));
+  output.textContent=JSON.stringify({floorCases:FLOOR_IDS.length*4*5*12,furnitureCases:LAYOUT_IDS.length*4*5*12,floorFailures:floors.length,furnitureFailures:furniture.length,
+    floorByVariant:summarize(floors,'variant'),furnitureByLayout:summarize(furniture,'layout'),floorExamples:floors.filter((r,i)=>i===floors.findIndex(p=>p.variant===r.variant&&p.length===r.length)).slice(0,12),furnitureExamples:furniture.slice(0,3)},null,2);
+}catch(error){output.textContent=error.stack;}
+</script>
