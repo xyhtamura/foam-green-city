@@ -3,11 +3,18 @@ export const LIGHTING={
   overcast:{base:0.8,window:0.35,lamp:0,fog:0.88,tint:0xe4edf2},
   shaded:{base:0.4,window:0.65,lamp:0,fog:0.68,tint:0xdce7df},
   darkDay:{base:0.22,window:0.85,lamp:0,fog:0.52,tint:0xdde5eb},
-  night:{base:0.3,window:0,lamp:4,fog:0.35,tint:0xe9dcc5},
+  night:{base:0.12,window:0,lamp:4,fog:0.18,tint:0xc4cbdc},
+  deepNight:{base:0.045,window:0.015,lamp:0,fog:0.055,tint:0x7784b5},
+  dawn:{base:0.48,window:0.75,lamp:0,fog:0.62,tint:0xe8b6a9},
+  dusk:{base:0.3,window:0.55,lamp:1.5,fog:0.4,tint:0xcf9aa9},
+  red:{base:0.27,window:0,lamp:4,fog:0.24,tint:0xff5540,lightColor:0xff3420},
+  violet:{base:0.23,window:0,lamp:4,fog:0.22,tint:0x9472ff,lightColor:0x7652ff},
 };
 export function roomLighting(index,override){
-  const names=Object.keys(LIGHTING);
+  const names=['daylight','overcast','shaded','darkDay','night'];
   const seed=Math.imul(index+31,0x45d9f3b)>>>0;
-  const chosen=LIGHTING[override]?override:index<5?names[index]:names[((seed^(seed>>>16))>>>0)%names.length];
+  const roll=((seed^(seed>>>16))>>>0)%100;
+  const selected=roll<24?'daylight':roll<40?'overcast':roll<55?'shaded':roll<65?'darkDay':roll<78?'night':roll<84?'deepNight':roll<91?'dawn':roll<96?'dusk':roll<98?'red':'violet';
+  const chosen=LIGHTING[override]?override:index>=0&&index<5?names[index]:selected;
   return {name:chosen,...LIGHTING[chosen],side:index%2?1:-1};
 }

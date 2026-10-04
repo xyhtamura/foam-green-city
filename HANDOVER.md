@@ -177,3 +177,7 @@ Water runs use thin blue 21–27 mm pipes; thicker drainage uses orange. Window 
 ## Hollow-block walls — 2026-10-05
 
 Occasional solid side-wall sections use models/textures/hollow-blocks.png. Preview with ?walls=blocks or disable with ?walls=paint. Window surrounds, partitions and upper tall-wall sections retain their preceding finish. See NOTES.md for the rendered check and texture-repeat limitation.
+
+## Plain openings and lighting profiles — 2026-10-05
+
+Plain openings dominate the window pool. room-lighting.js includes daylight, overcast, shaded, darkDay, night, deepNight, dawn, dusk, red and violet. Force a profile with ?lighting=<name>. Deep night switches the fixture off; red and violet colour the ceiling point light as well as room tint and fog. Read the latest NOTES.md entry for frequencies and rendered checks.

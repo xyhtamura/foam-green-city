@@ -45,7 +45,7 @@ window.addEventListener('unhandledrejection',reportLoadFailure);
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { createJalousieWall } from './jalousie.js?v=curtains-4';
+import { createJalousieWall } from './jalousie.js?v=curtains-5';
 import { createDomesticProps, animateDomesticProps, createFurnitureVariants, FURNITURE_FINISHES } from './domestic-props.js?v=domestic-7';
 import { WALL_HANGINGS } from './wall-assets.js?v=photos-2';
 import { RAW_OBJECTS, createRawObject } from './raw-object-assets.js?v=raw-2';
@@ -63,7 +63,7 @@ import { createWallUtilities } from './wall-utilities.js?v=walls-3';
 import {createWalkSequence,retainedRooms,walkRegions,canOccupy,moveWalker,pathToRoute} from './navigation.js';
 import {addDomesticDetails} from './domestic-details.js?v=details-2';
 let wallUtilities;
-import { roomLighting } from './room-lighting.js';
+import { roomLighting } from './room-lighting.js?v=lighting-2';
 import { spatialFrame, spatialPoint, SPATIAL_GLSL, SPATIAL_PROFILES } from './spatial-route.js';
 import { floorHeight, cameraRoute, routePoint } from './room-sequences.js?v=room-lengths-3';
 import { branchOpenings, raiseFloor, createRoomArchitecture } from './room-architecture.js?v=architecture-1';
@@ -405,8 +405,8 @@ function buildSegment(index){
     const forcedWindow=['narrow','wide','high','open','grille'].indexOf(params.get('window'));
     if(forcedWindow>=0)return WALLP.windowVariants[forcedWindow];
     if(r()>=(room.name==='bathroom'?0.42:0.48))return WALLP.wall;
-    if(r()<0.45)return WALLP.windowVariants[Math.floor(r()*WALLP.windowVariants.length)];
-    if(r()<0.35)return r()<0.5?WALLP.normalWindow:WALLP.slidingWindow;
+    if(r()<0.72)return WALLP.plainWindows[Math.floor(r()*WALLP.plainWindows.length)];
+    if(r()<0.5)return r()<0.5?WALLP.normalWindow:WALLP.slidingWindow;
     if(room.name==='kitchen'&&r()<0.65)return curtainWindow('windowCafe',r);
     if((room.name==='sala'||room.name==='bedroom')&&r()<0.7)
       return curtainWindow(r()<0.5?'windowCream':'windowRose',r);
@@ -725,13 +725,13 @@ function tick(){
     }
     for(;band<6;band++)lightingBands[band].y=0;
     const currentLighting=segments.get(travelRoom).userData.lighting;
-    scene.fog.color.lerp(new THREE.Color(COL.wall).multiplyScalar(currentLighting.fog),Math.min(1,delta*2));scene.background.copy(scene.fog.color);
+    scene.fog.color.lerp(new THREE.Color(COL.wall).multiply(new THREE.Color(currentLighting.tint)).multiplyScalar(currentLighting.fog),Math.min(1,delta*2));scene.background.copy(scene.fog.color);
     for(let n=0;n<roomLights.length;n++){
       const g=segments.get(travelRoom+n-1),light=roomLights[n];
       if(!g){light.intensity=0;continue;}
       const fixture=g.userData.lightFixture,local=[0,fixture.userData.lightY,g.position.z+fixture.position.z];
       light.position.fromArray(twisted?spatialPoint(...local,routeProfile):local);
-      light.color.setHex(fixture.userData.lightColor);
+      light.color.setHex(g.userData.lighting.lightColor??fixture.userData.lightColor);
       light.intensity=g.userData.lighting.lamp*Math.exp(-Math.pow((logicalZ-local[2])/11,2));
     }
     if(twisted){
@@ -831,6 +831,7 @@ function inspectRooms(){
   WALLP.wallWindow = createJalousieWall({ height: H, wallColor: COL.wall,
     trimColor: COL.trim, curvize });
   WALLP.windowVariants=['narrow','wide','high','open','grille'].map(variant=>createJalousieWall({height:H,wallColor:COL.wall,trimColor:COL.trim,curvize,variant}));
+  WALLP.plainWindows=['open','plainNarrow','plainWide','plainHigh'].map(variant=>createJalousieWall({height:H,wallColor:COL.wall,trimColor:COL.trim,curvize,variant}));
   for(const [name,style,color] of [['windowCafe','cafe',0xd8e0c5],
       ['windowCream','gathered',0xe6dbbf],['windowRose','gathered',0xc79691]])
     WALLP[name]=[0,0.25,0.5,0.75,1].map(openness=>createJalousieWall({height:H,wallColor:COL.wall,trimColor:COL.trim,
