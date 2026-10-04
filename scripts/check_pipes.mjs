@@ -46,4 +46,3 @@ for(const style of PIPE_STYLE_IDS)for(const width of widths){
 }
 console.log(failed?`\n${failed} failing cases of ${PIPE_STYLE_IDS.length*widths.length*seeds*2}.`:`\nAll ${PIPE_STYLE_IDS.length*widths.length*seeds*2} cases pass.`);
 process.exit(failed?1:0);
-
