@@ -173,3 +173,7 @@ The local pipe kit matches fgc-c byte for byte. wall-utilities.js selects six wa
 ## Windows and pipe proportions — 2026-10-05
 
 Water runs use thin blue 21–27 mm pipes; thicker drainage uses orange. Window sections are more frequent, with narrow, wide, high-set, open-frame and grilled variants. ?window=<variant> forces inspection. Open frames have a light backdrop, and hallway connectivity remains unchanged. See the latest NOTES.md entry for rendered checks and unfinished work.
+
+## Hollow-block walls — 2026-10-05
+
+Occasional solid side-wall sections use models/textures/hollow-blocks.png. Preview with ?walls=blocks or disable with ?walls=paint. Window surrounds, partitions and upper tall-wall sections retain their preceding finish. See NOTES.md for the rendered check and texture-repeat limitation.

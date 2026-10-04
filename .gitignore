@@ -28,6 +28,7 @@
 !/models/domestic/
 /models/textures/*
 !/models/textures/floor_linoleum_red.png
+!/models/textures/hollow-blocks.png
 !/models/plant.png
 !/models/kutsarat_tinidor.png
 !/models/stand_fan.png

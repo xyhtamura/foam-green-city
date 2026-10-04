@@ -219,3 +219,7 @@ Codex-authored primitive geometry in room-sets.js creates the two-burner tableto
 ## Renamed and expanded supplied cutouts — 2026-10-05
 
 The user supplied and renamed the PNGs in 2d/raw objects. They remain covered by the user's confirmation that supplied images are theirs or cleared for redistribution, under the project's CC BY 4.0 artwork terms. raw-object-assets.js uses 45 files; the two electrical wall cutouts are stored but not selected. scripts/index_raw_objects.py records filenames and reads their original dimensions without editing the images. utility-props.js uses authored geometry revised from the user's broom reference; the reference photograph is not shipped.
+
+## Hollow-block texture — 2026-10-05
+
+models/textures/hollow-blocks.png is supplied by Xyh and covered by the standing confirmation that supplied images are theirs or cleared for redistribution. It is shipped unchanged under the project artwork terms and used on occasional solid wall sections. No reference image from an external site was fetched.

@@ -177,6 +177,12 @@ const previewStart=Number(params.get('start'));
 if(Number.isInteger(previewStart)){const room=sequence.room(previewStart),offset=Number(params.get('offset'));cam.position.z=room.startZ-Math.max(0.5,Math.min(room.length-0.5,offset||0.5));}
 const roomHalf=group=>group.userData.width/2;
 const texLoader = new THREE.TextureLoader();
+const blockTexture=texLoader.load('models/textures/hollow-blocks.png');
+blockTexture.colorSpace=THREE.SRGBColorSpace;
+blockTexture.wrapS=blockTexture.wrapT=THREE.RepeatWrapping;
+blockTexture.repeat.set(1.25,2.35);
+blockTexture.magFilter=THREE.NearestFilter;
+const blockWallMaterial=curvize(new THREE.MeshLambertMaterial({map:blockTexture,color:0xd9d9ce}));
 const curtainPatterns=loadCurtainPatterns();
 const patternedWindows=new Map();
 const curtainStyles={windowCafe:{style:'cafe',color:0xd8e0c5},windowCream:{style:'gathered',color:0xe6dbbf},windowRose:{style:'gathered',color:0xc79691}};
@@ -394,6 +400,7 @@ function buildSegment(index){
   c.rotation.x=Math.PI/2; c.position.set(0,descriptor.height,-SEG_LEN/2); c.userData.own=true; grp.add(c);
   // side walls, seeded windows
   const solidWalls=[];
+  const unfinishedWalls=params.get('walls')==='blocks'||(params.get('walls')!=='paint'&&r()<0.22);
   const windowTile=()=>{
     const forcedWindow=['narrow','wide','high','open','grille'].indexOf(params.get('window'));
     if(forcedWindow>=0)return WALLP.windowVariants[forcedWindow];
@@ -410,6 +417,12 @@ function buildSegment(index){
       if(branchOpenings(descriptor).some(p=>p.side===side&&(j===p.j||j===p.j+1)))continue;
       const tile=windowTile();addWall(grp,tile,side*half,side>0?lz-TSCALE:lz,side>0?-Math.PI/2:Math.PI/2);
       grp.children.at(-1).position.y=Math.min(floorHeight(descriptor,lz),floorHeight(descriptor,lz-2));
+      if(tile===WALLP.wall&&unfinishedWalls&&(params.get('walls')==='blocks'||r()<0.65)){
+        const face=new THREE.Mesh(new THREE.PlaneGeometry(2,H,4,6),blockWallMaterial);
+        face.rotation.y=side>0?-Math.PI/2:Math.PI/2;
+        face.position.set(side*(half-0.105),H/2+Math.min(floorHeight(descriptor,lz),floorHeight(descriptor,lz-2)),lz-1);
+        face.userData.own=true;face.name='hollow-block-wall';grp.add(face);
+      }
       if(tile===WALLP.wall&&j>0&&r()<0.16){
         const style=DOOR_STYLES[Math.floor(r()*DOOR_STYLES.length)],door=DOORS[style].clone();
         door.rotation.y=side>0?-Math.PI/2:Math.PI/2;

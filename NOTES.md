@@ -704,3 +704,9 @@ Added narrow, wide, high-set, open-frame and grilled variants to createJalousieW
 Viewed the default mixed window selection and the forced high-set variant in the running straight-room preview using drag mouse-look. High windows rendered as short openings near the ceiling; saved window-variation-preview.png. The mixed preview had no browser warnings or errors. check_navigation.mjs passed 2,000 descriptors and 48 reconstructions. git diff --check passed. Individual visual checks of the other four variants and sustained performance remain undone.
 
 Next remains navigation, hallway access and bidirectional streaming evaluation across devices; ROADMAP.md remains accurate. More traversable openings, exterior views and connected plumbing remain deferred. Nothing was pushed or published.
+
+## 2026-10-05 — Codex — hollow-block wall sections
+
+Added the supplied models/textures/hollow-blocks.png to occasional solid side-wall sections. Roughly 22% of rooms select the unfinished-wall treatment, and 65% of their eligible solid sections receive it. Painted window surrounds and partitions remain. The texture repeats at a fixed scale on subdivided planes so it follows the route deformation; shared texture/material resources survive room disposal while overlay geometries are released. ?walls=blocks forces eligible sections, and ?walls=paint disables them.
+
+Viewed the forced straight-room preview in-browser: block courses were visible behind the broom and small family photo without covering windows. Browser logs had no warnings or errors; saved hollow-block-preview.png. The texture's edges are visibly repeated; seamless reworking, window-surround masonry and upper sections of tall walls remain undone. No image edits were made. Next remains navigation, hallway access and bidirectional streaming evaluation across devices, matching ROADMAP.md. Nothing was pushed or published.
