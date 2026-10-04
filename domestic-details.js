@@ -3,12 +3,13 @@ import {RAW_OBJECTS,createRawObject} from './raw-object-assets.js?v=raw-2';
 import {tableSupport,seatSupport,surfaceSupport,localBounds,placeOnSupport} from './object-supports.js?v=supports-4';
 
 // Authored low-detail household shapes. All resources belong to one streamed room.
-export function addDomesticDetails({THREE,group,room,seed,curvize,spots,photos,spriteMat,ceiling,forceRoof=false,forceArrangement=null,forceSeat=null}){
+export function addDomesticDetails({THREE,group,room,seed,curvize,spots,photos,spriteMat,ceiling,forceRoof=false,forceArrangement=null,forceSeat=null,woodTexture=null}){
   let state=seed>>>0;const random=()=>{state=(Math.imul(state,1664525)+1013904223)>>>0;return state/4294967296;};
   const owner=new THREE.Group();owner.name='domestic-details';group.add(owner);
   const geometries=new Set(),materials=new Set(),textures=new Set();
   const material=color=>{const m=curvize(new THREE.MeshLambertMaterial({color}));materials.add(m);return m;};
   const palette=[0x7b8f79,0xbb9a6a,0xaaa8a0,0x547c88,0x937065,0xd0c8b1].map(material);
+  const wood=curvize(new THREE.MeshLambertMaterial({color:0xbba17b,map:woodTexture}));materials.add(wood);
   const food=[0xb75a43,0xc7a75a,0x7e9a53,0xd09c79,0xc5c1a4].map(material);
   const geo=g=>{geometries.add(g);return g;};
   const box=geo(new THREE.BoxGeometry(1,1,1)),round=geo(new THREE.CylinderGeometry(0.5,0.5,1,8)),ball=geo(new THREE.SphereGeometry(0.5,6,4));
@@ -42,7 +43,7 @@ export function addDomesticDetails({THREE,group,room,seed,curvize,spots,photos,s
     mesh(parent,box,m,x-0.072,y+0.2,z,0.055,0.02,0.045).rotation.z=-0.2;tools++;
   }
   function board(parent,x,y,z){
-    const plank=mesh(parent,box,palette[1],x,y+0.008,z,0.27,0.016,0.17);plank.name='chopping-board';
+    const plank=mesh(parent,box,wood,x,y+0.008,z,0.27,0.016,0.17);plank.name='chopping-board';
     const blade=mesh(parent,box,metal,x+0.01,y+0.023,z,0.13,0.005,0.028);blade.rotation.y=0.24;blade.name='kitchen-knife';
     mesh(parent,box,palette[4],x-0.105,y+0.025,z-0.02,0.075,0.015,0.025).rotation.y=0.24;tools++;
   }
@@ -273,8 +274,8 @@ export function addDomesticDetails({THREE,group,room,seed,curvize,spots,photos,s
     for(let i=0;i<vertices.count;i+=3){const x=(vertices.getX(i)+vertices.getX(i+1)+vertices.getX(i+2))/3;const shade=Math.floor((x+room.width/2)/0.12)%2?0.78:1;for(let k=0;k<3;k++)colors.push(shade,shade,shade);}
     folded.setAttribute('color',new THREE.Float32BufferAttribute(colors,3));
     const sheet=material(0x8c918b);sheet.side=THREE.DoubleSide;sheet.flatShading=true;sheet.vertexColors=true;const panel=new THREE.Mesh(folded,sheet);panel.position.z=-room.length/2;owner.add(panel);
-    for(let z=-1;z>-room.length;z-=2){const beam=new THREE.Mesh(geo(new THREE.BoxGeometry(room.width,0.14,0.09,Math.ceil(room.width/2),1,1)),palette[1]);beam.position.set(0,room.height-0.15,z);owner.add(beam);}
-    for(const x of [-room.width/4,room.width/4]){const beam=new THREE.Mesh(geo(new THREE.BoxGeometry(0.1,0.13,room.length,1,1,Math.ceil(room.length))),palette[4]);beam.position.set(x,room.height-0.24,-room.length/2);owner.add(beam);}
+    for(let z=-1;z>-room.length;z-=2){const beam=new THREE.Mesh(geo(new THREE.BoxGeometry(room.width,0.14,0.09,Math.ceil(room.width/2),1,1)),wood);beam.position.set(0,room.height-0.15,z);owner.add(beam);}
+    for(const x of [-room.width/4,room.width/4]){const beam=new THREE.Mesh(geo(new THREE.BoxGeometry(0.1,0.13,room.length,1,1,Math.ceil(room.length))),wood);beam.position.set(x,room.height-0.24,-room.length/2);owner.add(beam);}
   }
   // Tiny silhouettes at skirting level, occasional and static in this first pass.
   let roaches=0;if(seed%5===1){

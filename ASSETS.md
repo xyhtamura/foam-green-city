@@ -2,6 +2,10 @@
 
 Visual and 3D assets used in the installation, with source and licence records.
 
+## Supplied wood texture — 2026-10-05
+
+`models/textures/wood.png` was supplied by Xyh for rafters, boards, dividers, and wall sections. It is covered by the user's supplied-image clearance and the project's CC BY 4.0 artwork licence. The runtime shares one texture with mipmap filtering; no external texture was added.
+
 ## v0.5 publication clearance — 2026-10-04
 
 Xyh confirmed that all supplied images are owned or cleared for public redistribution, and selected MIT for code and CC BY 4.0 for project artwork. This covers the supplied photos, curtain patterns, raw object cutouts, wire textures, and prototype sprites included in the demo. The confirmation supersedes earlier publication holds in this development ledger; it records the publisher's assertion rather than an independent rights audit. Kenney and Poly Haven models retain CC0, and Three.js retains MIT. See [LICENSE-ARTWORK.md](LICENSE-ARTWORK.md) and [THIRD_PARTY.md](THIRD_PARTY.md).
