@@ -181,3 +181,7 @@ Occasional solid side-wall sections use models/textures/hollow-blocks.png. Previ
 ## Plain openings and lighting profiles — 2026-10-05
 
 Plain openings dominate the window pool. room-lighting.js includes daylight, overcast, shaded, darkDay, night, deepNight, dawn, dusk, red and violet. Force a profile with ?lighting=<name>. Deep night switches the fixture off; red and violet colour the ceiling point light as well as room tint and fog. Read the latest NOTES.md entry for frequencies and rendered checks.
+
+## Household tools and small clusters — 2026-10-05
+
+Domestic clutter includes authored pitchers, chopping boards and knives, folded clothing-like blocks, paper/file stacks, occasional mops and three generic bottle profiles with cap and label variations. Condiments, envelopes/pads and clothing use small category-specific cutout groups on tables, surfaces and clear floor edges. Per-room geometries are disposed with the room. See the latest NOTES.md entry for rendered checks and performance limits.

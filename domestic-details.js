@@ -1,4 +1,5 @@
 import {floorHeight} from './room-sequences.js';
+import {RAW_OBJECTS,createRawObject} from './raw-object-assets.js?v=raw-2';
 
 // Authored low-detail household shapes. All resources belong to one streamed room.
 export function addDomesticDetails({THREE,group,room,seed,curvize,spots,photos,spriteMat,ceiling,forceRoof=false}){
@@ -10,11 +11,52 @@ export function addDomesticDetails({THREE,group,room,seed,curvize,spots,photos,s
   const food=[0xb75a43,0xc7a75a,0x7e9a53,0xd09c79,0xc5c1a4].map(material);
   const geo=g=>{geometries.add(g);return g;};
   const box=geo(new THREE.BoxGeometry(1,1,1)),round=geo(new THREE.CylinderGeometry(0.5,0.5,1,8)),ball=geo(new THREE.SphereGeometry(0.5,6,4));
+  const loop=geo(new THREE.TorusGeometry(0.5,0.09,4,12));
+  const bottleBodies=[
+    [[0,0],[0.42,0],[0.46,0.64],[0.36,0.76],[0.16,0.83],[0.16,1],[0,1]],
+    [[0,0],[0.35,0],[0.5,0.14],[0.5,0.56],[0.32,0.72],[0.13,0.82],[0.13,1],[0,1]],
+    [[0,0],[0.4,0],[0.4,0.79],[0.18,0.85],[0.18,1],[0,1]],
+  ].map(points=>geo(new THREE.LatheGeometry(points.map(p=>new THREE.Vector2(...p)),8)));
+  const metal=material(0xaeb8b5),fabric=material(0xaaa995);
+  const kitchen=room.type==='kitchen'||room.kitchenCorner;
+  let cutouts=0,tools=0;
+  const condiments=RAW_OBJECTS.filter(p=>/silverswan|datu_puti|mang_tomas|ligo|bagoong|ube_halaya/.test(p.file));
+  const papers=RAW_OBJECTS.filter(p=>/envelope|pad/.test(p.file));
+  const clothes=RAW_OBJECTS.filter(p=>/jeans|tshirt|shorts/.test(p.file));
+  function cutout(parent,p,x,y,z,width){
+    const asset={...p,width:Math.min(p.width,width)},obj=createRawObject({THREE,asset,material:spriteMat(p.file)});
+    geometries.add(obj.geometry);obj.userData.own=false;obj.userData.detailCutout=true;
+    obj.position.x=x;obj.position.z=z;obj.position.y+=y;parent.add(obj);cutouts++;
+  }
+  // Separate pools keep small household images from competing with every large prop.
+  function supplied(parent,x,y,z,pool,n=2,width=0.18){
+    if(!pool.length)return;
+    const start=Math.floor(random()*pool.length);
+    for(let i=0;i<n;i++)cutout(parent,pool[(start+i)%pool.length],x+(i-(n-1)/2)*0.25,y,z,width);
+  }
+  function pitcher(parent,x,y,z){
+    const points=[[0,0],[0.07,0],[0.085,0.2],[0.075,0.21],[0.065,0.2],[0.054,0.018],[0,0.018]].map(p=>new THREE.Vector2(...p));
+    const m=palette[3],body=mesh(parent,geo(new THREE.LatheGeometry(points,10)),m,x,y,z,1,1,1);
+    body.name='clutter-pitcher';mesh(parent,loop,m,x+0.095,y+0.105,z,0.12,0.17,0.1);
+    mesh(parent,box,m,x-0.072,y+0.2,z,0.055,0.02,0.045).rotation.z=-0.2;tools++;
+  }
+  function board(parent,x,y,z){
+    const plank=mesh(parent,box,palette[1],x,y+0.008,z,0.27,0.016,0.17);plank.name='chopping-board';
+    const blade=mesh(parent,box,metal,x+0.01,y+0.023,z,0.13,0.005,0.028);blade.rotation.y=0.24;blade.name='kitchen-knife';
+    mesh(parent,box,palette[4],x-0.105,y+0.025,z-0.02,0.075,0.015,0.025).rotation.y=0.24;tools++;
+  }
   function mesh(parent,geometry,mat,x,y,z,w,h,d){const m=new THREE.Mesh(geometry,mat);m.position.set(x,y,z);m.scale.set(w,h,d);parent.add(m);return m;}
   function assortment(parent,x,y,z,n=3){
     for(let i=0;i<n;i++){
-      const shape=Math.floor(random()*7),w=0.07+random()*0.09,h=shape===0?0.16+random()*0.13:0.025+random()*0.09;
+      const shape=Math.floor(random()*13),w=0.07+random()*0.09,h=shape===0?0.16+random()*0.13:0.025+random()*0.09;
       const cx=x+(i-(n-1)/2)*0.18,cz=z+(random()-0.5)*0.1,m=palette[Math.floor(random()*palette.length)];
+      if(shape>=10){
+        const height=0.14+random()*0.16,width=0.055+random()*0.055;
+        const bottle=mesh(parent,bottleBodies[shape-10],m,cx,y,cz,width,height,width);bottle.name='generic-bottle';
+        mesh(parent,round,palette[Math.floor(random()*palette.length)],cx,y+height+0.009,cz,width*0.38,0.018,width*0.38);
+        if(random()<0.75)mesh(parent,round,palette[5],cx,y+height*0.43,cz,width*0.94,height*0.23,width*0.94);
+        tools++;continue;
+      }
       if(shape===4){
         const width=w*1.8,depth=w*1.25;
         mesh(parent,box,m,cx,y+h/2,cz,width,h,depth);
@@ -22,7 +64,18 @@ export function addDomesticDetails({THREE,group,room,seed,curvize,spots,photos,s
         mesh(parent,box,palette[2],cx+width/2+0.001,y+h*0.55,cz,0.002,h*0.38,depth*0.4);
         continue;
       }
-      if(shape>=5){
+      if(shape===7){pitcher(parent,cx,y,cz);continue;}
+      if(shape===8){
+        const width=0.15+random()*0.09,depth=0.12+random()*0.13;
+        for(let k=0;k<3;k++)mesh(parent,box,k===2?m:palette[5],cx+k*0.006,y+0.005+k*0.012,cz,width,0.008,depth).rotation.y=(random()-0.5)*0.15;
+        continue;
+      }
+      if(shape===9){
+        mesh(parent,box,m,cx,y+0.014,cz,0.14,0.028,0.18);
+        for(const side of [-1,1])mesh(parent,box,m,cx+side*0.078,y+0.015,cz-0.04,0.065,0.02,0.075).rotation.y=side*0.4;
+        continue;
+      }
+      if(shape===5||shape===6){
         const skin=food[Math.floor(random()*food.length)],size=shape===6?0.035:w;
         mesh(parent,ball,skin,cx,y+size*0.4,cz,size,size*0.8,size*1.1);
         if(shape===6)for(const side of [-1,1])mesh(parent,box,skin,cx+side*size*0.65,y+size*0.4,cz,size*0.45,size*0.45,size*0.65).rotation.y=side*0.45;
@@ -35,14 +88,19 @@ export function addDomesticDetails({THREE,group,room,seed,curvize,spots,photos,s
   }
   // Everyday objects collect at table edges instead of filling the walking aisle.
   for(const table of group.children.filter(o=>o.userData.diningTable&&!o.userData.placement?.inverted&&o.userData.placement?.stack===null).slice(0,6)){
-    const cluster=new THREE.Group();cluster.name='table-clutter';assortment(cluster,0,0.768,0.28,3+Math.floor(random()*2));table.add(cluster);
+    const cluster=new THREE.Group();cluster.name='table-clutter';assortment(cluster,0,0.768,0.28,3+Math.floor(random()*2));
+    supplied(cluster,0,0.77,-0.25,kitchen?condiments:papers,2);
+    if(kitchen&&random()<0.65)board(cluster,0.22,0.77,0);
+    table.add(cluster);
   }
   group.updateMatrixWorld(true);
   const surfaces=[];
   group.traverse(o=>{if(['sideTableDrawers','bookcaseOpenLow','phBookshelf','phRack'].includes(o.userData.modelName)||['kitchenCabinet','kitchenFridge'].includes(o.userData.fixture))surfaces.push(o);});
   for(const surface of surfaces.slice(0,4)){
     const b=new THREE.Box3().setFromObject(surface),cluster=new THREE.Group();cluster.name='surface-clutter';
-    assortment(cluster,0,0,0,2);cluster.position.set((b.min.x+b.max.x)/2,b.max.y+0.004,(b.min.z+b.max.z)/2-room.startZ);group.add(cluster);
+    assortment(cluster,0,0,0,2);
+    supplied(cluster,0,0.005,0.12,kitchen?condiments:random()<0.5?clothes:papers,1,0.15);
+    cluster.position.set((b.min.x+b.max.x)/2,b.max.y+0.004,(b.min.z+b.max.z)/2-room.startZ);group.add(cluster);
   }
   const occupied=group.children.filter(o=>o.userData.floorProp||o.userData.utilityProp||o.userData.diningTable||o.userData.diningChair||o.userData.billboard||o.userData.door||o.userData.wallTv||o.userData.pipeRun)
     .map(o=>new THREE.Box3().setFromObject(o).expandByScalar(0.04));
@@ -58,6 +116,7 @@ export function addDomesticDetails({THREE,group,room,seed,curvize,spots,photos,s
   for(const spot of candidates.slice(0,8)){
     const shelf=new THREE.Group();shelf.name='household-shelf';shelf.userData.floorProp=true;
     mesh(shelf,box,palette[1],0,0.9,0.11,0.85,0.035,0.22);assortment(shelf,0,0.92,0.1,3);
+    supplied(shelf,0.15,0.94,0.14,kitchen?condiments:papers,1,0.14);
     if(photos.length){
       const photo=photos[Math.floor(random()*photos.length)],w=0.16,h=Math.min(0.2,w*photo.aspect);
       mesh(shelf,box,palette[4],-0.28,0.94+h/2,0.13,w+0.025,h+0.025,0.025);
@@ -67,10 +126,20 @@ export function addDomesticDetails({THREE,group,room,seed,curvize,spots,photos,s
     shelf.position.set(spot.side*(room.width/2-0.12),floorHeight(room,spot.z),spot.z);
     if(clear(shelf)){shelves++;const at=spots.indexOf(spot);if(at>=0)spots.splice(at,1);if(shelves===2)break;}
   }
-  if(room.type!=='bathroom')for(let i=0;i<6&&floorClusters<2;i++){
+  if(room.type!=='bathroom')for(let i=0;i<10&&floorClusters<3;i++){
     const side=random()<0.5?-1:1,z=-0.8-random()*(room.length-1.6),cluster=new THREE.Group();cluster.name='floor-clutter';cluster.userData.floorProp=true;
-    assortment(cluster,0,0,0,2+Math.floor(random()*2));cluster.position.set(side*(room.width/2-0.45),floorHeight(room,z),z);
+    assortment(cluster,0,0,0,2+Math.floor(random()*2));
+    if(clothes.length&&random()<0.7)supplied(cluster,0,0.008,0.19,clothes,1,0.28);
+    cluster.position.set(side*(room.width/2-0.45),floorHeight(room,z),z);
     if(clear(cluster))floorClusters++;
+  }
+  // Mop candidates use the same collision and doorway reservations as floor clutter.
+  if(seed%3===0)for(const side of [-1,1]){
+    const mop=new THREE.Group();mop.name='household-mop';mop.userData.floorProp=true;
+    mesh(mop,round,palette[3],0,0.64,0,0.018,1.18,0.018).rotation.z=0.08;
+    for(let k=0;k<9;k++)mesh(mop,box,fabric,(k%3-1)*0.035,0.06,Math.floor(k/3)*0.035-0.035,0.024,0.12,0.024).rotation.z=(k%3-1)*0.18;
+    const z=-room.length*0.7;mop.position.set(side*(room.width/2-0.22),floorHeight(room,z),z);
+    if(clear(mop)){tools++;break;}
   }
   // Broad stains and scuffs on the existing floor; bare floors remain untiled.
   const canvas=document.createElement('canvas');canvas.width=canvas.height=256;const ctx=canvas.getContext('2d');
@@ -110,7 +179,9 @@ export function addDomesticDetails({THREE,group,room,seed,curvize,spots,photos,s
       roaches++;
     }
   }
-  owner.userData.details={shelves,floorClusters,exposedRoof:exposed,roaches};
+  cutouts=0;tools=0;
+  group.traverse(o=>{if(o.userData.detailCutout)cutouts++;if(['generic-bottle','clutter-pitcher','chopping-board','household-mop'].includes(o.name))tools++;});
+  owner.userData.details={shelves,floorClusters,exposedRoof:exposed,roaches,cutouts,tools};
   owner.userData.dispose=()=>{for(const g of geometries)g.dispose();for(const m of materials)m.dispose();for(const t of textures)t.dispose();};
   return owner;
 }
