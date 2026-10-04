@@ -1,4 +1,4 @@
-import {sideSpacePlan} from './side-spaces.js?v=bedrooms-2';
+import {sideSpacePlan} from './side-spaces.js?v=storage-1';
 import {createRoomSequence,cameraRoute,routePoint} from './room-sequences.js';
 
 // Geometry is disposable; seeded descriptors and distance prefixes reconstruct it.

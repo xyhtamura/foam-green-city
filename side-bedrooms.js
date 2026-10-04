@@ -1,4 +1,4 @@
-import {branchOpenings,sideSpacePlan} from './side-spaces.js?v=bedrooms-2';
+import {branchOpenings,sideSpacePlan} from './side-spaces.js?v=storage-1';
 import {localBounds} from './object-supports.js?v=supports-4';
 import {RAW_OBJECTS,createRawObject} from './raw-object-assets.js?v=raw-2';
 

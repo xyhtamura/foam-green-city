@@ -2,12 +2,16 @@ import assert from 'node:assert/strict';
 import {branchOpenings,sideSpacePlan} from '../side-spaces.js';
 import {createWalkSequence,walkRegions,canOccupy,moveWalker,pathToRoute} from '../navigation.js';
 let cases=0;
-for(const sideRoom of ['bedroom','bare',undefined])for(const kind of ['room','hallway'])for(const width of [4,6,8])for(const length of [6,8,12,16])for(const index of [-5,-2,0,1,7]){
+for(const sideRoom of ['bedroom','storage','bare',undefined])for(const kind of ['room','hallway'])for(const width of [4,6,8])for(const length of [6,8,12,16])for(const index of [-5,-2,0,1,7]){
   const room={index,width,length,startZ:13,height:2.58,rise:0,shape:'rectangle',sideSpaces:kind,sideRoom};
   const portal=branchOpenings(room)[0],plan=sideSpacePlan(room,portal);
   assert.deepEqual(plan,sideSpacePlan({...room}, {...portal}));
   for(const r of plan.rectangles){assert.ok(r.minZ>=-length+.2&&r.maxZ<=-.2,'annex stays within its owning cell');}
   for(const f of plan.fixtures){assert.ok(f.x-f.w/2>=plan.roomRect.minX+.06&&f.x+f.w/2<=plan.roomRect.maxX-.06&&f.z-f.d/2>=plan.roomRect.minZ+.06&&f.z+f.d/2<=plan.roomRect.maxZ-.06,'furniture fits inside side room');}
+  for(let a=0;a<plan.fixtures.length;a++)for(let b=a+1;b<plan.fixtures.length;b++){
+    const x=plan.fixtures[a],y=plan.fixtures[b];
+    assert.ok(Math.abs(x.x-y.x)>=(x.w+y.w)/2||Math.abs(x.z-y.z)>=(x.d+y.d)/2,'fixture reservations do not overlap');
+  }
   const regions=walkRegions(room,[portal]),blocks=plan.blocks.map(b=>({...b,minZ:b.minZ+room.startZ,maxZ:b.maxZ+room.startZ}));
   const canMove=(x,z)=>canOccupy(x,z,{regions,blocks});
   const target={x:(plan.roomRect.minX+plan.roomRect.maxX)/2,z:room.startZ+portal.z};
@@ -16,6 +20,7 @@ for(const sideRoom of ['bedroom','bare',undefined])for(const kind of ['room','ha
   assert.ok(Math.abs(walker.x-target.x)<1e-8,'walk from main room into annex');
   assert.ok(!canMove(portal.side*(width/2),room.startZ+portal.z+plan.opening/2+.3),'doorway infill blocks lateral exit');
   assert.ok(!canMove(portal.side*(width/2+10),target.z),'outer wall bounds');
+  for(const f of plan.fixtures)assert.ok(!canMove(f.x,room.startZ+f.z),'fixture footprint blocks walking');
   if(plan.bedroom){const bed=plan.fixtures.find(f=>f.role==='bed');assert.ok(!canMove(bed.x,room.startZ+bed.z),'bed footprint blocks walking');}
   const path=pathToRoute(target,room,canMove);assert.ok(path&&path.path.length,'return from annex to main route');
   for(const p of path.path)assert.ok(canMove(p.x,p.z));

@@ -41,12 +41,18 @@ export function sideSpacePlan(room,portal){
   const fixtures=[];
   // A shallow storage ledge leaves the centre and entrance clear.
   const fx=side*(W+corridor+depth-0.3);
-  const bedroom=room.sideRoom==='bedroom'||(room.sideRoom!=='bare'&&(portal.variant??0)<2);
+  const furnishing=['bedroom','storage','bare'].includes(room.sideRoom)?room.sideRoom:((portal.variant??0)<2?'bedroom':'storage');
+  const bedroom=furnishing==='bedroom',storage=furnishing==='storage';
   if(bedroom){
     fixtures.push({role:'bed',x:side*(W+corridor+depth/2+0.18),z:z-span/2+0.64,w:2.05,d:0.95,h:1.25,model:(portal.variant??0)===0?'phDaybed':'bedSingle'});
     fixtures.push({role:'drawers',x:side*(W+corridor+depth-.36),z:z+span/2-0.45,w:0.5,d:0.46,h:0.82,model:'plasticDrawers'});
+  }else if(storage){
+    fixtures.push({role:'storageShelf',x:side*(W+corridor+depth-.75),z:z-span/2+.4,w:1.1,d:.48,h:1.7});
+    fixtures.push({role:'storageStack',x:side*(W+corridor+.65),z:z-span/2+.42,w:.65,d:.52,h:.85});
+    fixtures.push({role:'drawers',x:side*(W+corridor+depth-.36),z:z+span/2-.45,w:.5,d:.46,h:.82,model:'plasticDrawers'});
+    fixtures.push({role:'bucket',x:side*(W+corridor+depth-1.25),z:z+span/2-.4,w:.4,d:.4,h:.4,model:(portal.variant??0)%2?'bucketPink':'bucket'});
   }else fixtures.push({x:fx,z:z+span/2-0.45,w:0.4,d:0.65,h:0.7});
   for(const f of fixtures)blocks.push({minX:f.x-f.w/2,maxX:f.x+f.w/2,minZ:f.z-f.d/2,maxZ:f.z+f.d/2});
   if(portal.door)blocks.push({minX:side>0?W: -W-opening+0.1,maxX:side>0?W+opening-0.1:-W,minZ:z+opening/2-0.025,maxZ:z+opening/2+0.025});
-  return {rectangles,regions,walls,blocks,fixtures,bedroom,variant:portal.variant??0,roomRect,opening,height:Math.min(room.height,2.8),kind:portal.kind,door:portal.door};
+  return {rectangles,regions,walls,blocks,fixtures,bedroom,storage,furnishing,variant:portal.variant??0,roomRect,opening,height:Math.min(room.height,2.8),kind:portal.kind,door:portal.door};
 }
