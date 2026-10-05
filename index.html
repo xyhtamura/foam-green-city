@@ -90,19 +90,19 @@ import { createRoomSet, createRoomFixture } from './room-sets.js?v=sets-8';
 import { createUratexSofa } from './uratex-sofa.js';
 import { createWireRun } from './wire-runs.js';
 import { createWallUtilities } from './wall-utilities.js?v=walls-7';
-import {createWalkSequence,retainedRooms,walkRegions,canOccupy,moveWalker,pathToRoute} from './navigation.js?v=salts-1';
+import {createWalkSequence,retainedRooms,walkRegions,canOccupy,moveWalker,pathToRoute,roomExits} from './navigation.js?v=exits-1';
 import {addDomesticDetails} from './domestic-details.js?v=details-10';
 let wallUtilities;
 import { roomLighting } from './room-lighting.js?v=lighting-3';
 import { scatterLevel, planScatter, planSideScatter, scatterBlocks, createScatterMesh } from './floor-scatter.js?v=scatter-4';
 import { spatialFrame, spatialPoint, SPATIAL_GLSL, SPATIAL_PROFILES } from './spatial-route.js';
-import { floorHeight, cameraRoute, routePoint, passageExit, exitRoute } from './room-sequences.js?v=forks-1';
+import { floorHeight, cameraRoute, routePoint } from './room-sequences.js?v=forks-1';
 import {sideSpacePlan} from './side-spaces.js?v=washrooms-1';
 import {addWoodDetails} from './wood-details.js?v=wood-2';
 import {addSideWashrooms} from './side-washrooms.js?v=washrooms-2';
 import {addSideStorage} from './side-storage.js?v=storage-2';
 import {addSideBedrooms} from './side-bedrooms.js?v=bedrooms-6';
-import { branchOpenings, raiseFloor, createRoomArchitecture } from './room-architecture.js?v=architecture-9';
+import { branchOpenings, raiseFloor, createRoomArchitecture } from './room-architecture.js?v=architecture-10';
 
 // ---- palette (DepEd MPSS, stylized: green walls) ----
 const COL = {
@@ -207,7 +207,7 @@ const params=new URLSearchParams(location.search);
 const previewWidths=(params.get('widths')??params.get('width')??'').split(',').map(Number).filter(w=>ROOM_WIDTHS.includes(w));
 const previewLengths=(params.get('lengths')??'').split(',').map(Number).filter(n=>Number.isInteger(n)&&n>=6&&n<=48&&n%2===0);
 const demoSeed=Number.isInteger(Number(params.get('seed')))&&params.has('seed')?Number(params.get('seed')):5;
-const sequence=createWalkSequence({sequence:params.get('sequence')||'demo',seed:demoSeed,sideSpaces:params.get('sideSpaces'),sideRoom:params.get('sideRoom'),widths:previewWidths,lengths:previewLengths,type:['sala','kitchen','bedroom','bathroom','bare','hall','auditorium'].includes(params.get('room'))?params.get('room'):undefined});
+const sequence=createWalkSequence({sequence:params.get('sequence')||'demo',seed:demoSeed,sideSpaces:params.get('sideSpaces'),sideRoom:params.get('sideRoom'),sideExits:params.get('sideExits'),widths:previewWidths,lengths:previewLengths,type:['sala','kitchen','bedroom','bathroom','bare','hall','auditorium'].includes(params.get('room'))?params.get('room'):undefined});
 const roomWidth=i=>sequence.room(i).width;
 const previewStart=Number(params.get('start'));
 if(Number.isInteger(previewStart)){const room=sequence.room(previewStart),offset=Number(params.get('offset'));cam.position.z=room.startZ-Math.max(0.5,Math.min(room.length-0.5,offset||0.5));}
@@ -668,9 +668,8 @@ function ensureSegments(){
 }
 
 // ---- autonomous camera: crawl forward forever, warp perception ----
-const legacyForks=room=>branchOpenings(room).filter(p=>p.kind==='legacy');
 let travelRoom=sequence.atDistance(-cam.position.z).index;
-let travelRoute=params.get('fork')==='always'&&legacyForks(sequence.room(travelRoom)).length?exitRoute(sequence.room(travelRoom),legacyForks(sequence.room(travelRoom))[0]):cameraRoute(sequence.room(travelRoom));
+let travelRoute=params.get('fork')==='always'&&roomExits(sequence.room(travelRoom)).length?roomExits(sequence.room(travelRoom))[0].route:cameraRoute(sequence.room(travelRoom));
 const initialLocalZ=cam.position.z-sequence.room(travelRoom).startZ;
 // A preview offset after the portal starts on the returning main leg.
 const initialLeg=travelRoute.legs.filter(l=>l.start.x===0&&l.end.x===0&&initialLocalZ<=l.start.z&&initialLocalZ>=l.end.z).at(-1);
@@ -697,13 +696,13 @@ function canWalk(x,z){
   }
   return canOccupy(x,z,{regions,blocks});
 }
-// At a room with side passages, automatic movement picks the main doorway or a passage at random.
+// At a room with exits, automatic movement picks the main doorway or one of the exits at random.
 function chooseRoute(room){
-  const forks=legacyForks(room),mode=params.get('fork');
-  if(forks.length&&mode!=='never'&&(mode==='always'||Math.random()<forks.length/(forks.length+1)))return exitRoute(room,forks[Math.floor(Math.random()*forks.length)]);
+  const exits=roomExits(room),mode=params.get('fork');
+  if(exits.length&&mode!=='never'&&(mode==='always'||Math.random()<exits.length/(exits.length+1)))return exits[Math.floor(Math.random()*exits.length)].route;
   return cameraRoute(room);
 }
-// A passage exit is a cut: every room is discarded and the walk resumes in a distant, rerolled one.
+// An exit is a cut: every room is discarded and the walk resumes in a distant, rerolled one.
 const veil=document.getElementById('veil');
 let cut=null;
 function beginCut(){if(cut)return;cut={time:0,swapped:false};veil.style.opacity=1;}
@@ -719,7 +718,8 @@ function takeBranch(){
 }
 function atPassageExit(){
   const room=sequence.room(travelRoom);
-  return Math.abs(walker.x)>room.width/2&&legacyForks(room).some(p=>{const e=passageExit(room,p);return Math.abs(walker.x-e.x)<1.45&&walker.z-room.startZ<e.z+0.8;});
+  const z=walker.z-room.startZ;
+  return Math.abs(walker.x)>room.width/2&&roomExits(room).some(e=>walker.x>=e.zone.minX&&walker.x<=e.zone.maxX&&z>=e.zone.minZ&&z<=e.zone.maxZ);
 }
 function takeControl(){manual=true;rejoin=null;paused=false;updatePause();}
 function automate(){

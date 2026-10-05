@@ -14,6 +14,10 @@ The route is still one straight logical line; nothing here adds a second axis. A
 
 Side rooms get scatter from `planSideScatter`, fitted to the room rectangle, off fixture blocks and off the strip from the doorway across the room; the objects join the owning room's single scatter mesh. Movement no longer starts paused under `prefers-reduced-motion`; Xyh asked for it to start on Enter. `scripts/check_forks.mjs` covers exit routes and salts.
 
+## Side-room exits — 2026-10-05
+
+`sideSpacePlan` returns `exit` for 30% of side rooms by hash, dropped where a fixture stands within 0.95 m in front of the doorway; washrooms never keep one, so the measured share is 23%. The doorway is 0.86 m wide in the far wall, 0.25 m off the room's centre line, and the far wall is split around it. `roomExits(room)` in `navigation.js` lists every exit of a room, passage or side room, each with a trigger zone and a one-way route; `index.html` uses it for both the automatic choice and the manual trigger. `?sideExits=all|off` overrides the hash. Side hallways lead to a side room, so a hallway is a passageway when its room has an exit.
+
 ## Floor scatter and lighting weights — 2026-10-05
 
 `floor-scatter.js` plans small floor objects per room and builds them as one merged, vertex-coloured mesh: one draw call per room, sharing `scatterMaterial` from `index.html`. Thirteen shapes (bottles, cans, jugs, cartons, carton stacks, crumpled paper, tied bags, sacks, tubs, flat sheets, slippers) are assembled from seven unit geometries. Colour comes from per-kind palettes, mixed 22% toward a floor grey. `RATE` sets objects per metre of side wall for each level; `MIX` sets the kinds per room type. Halls and auditoriums get 40% of the domestic rate, bathrooms 50%, and no room exceeds 170 objects.

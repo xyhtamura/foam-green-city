@@ -879,3 +879,13 @@ Not done. The cut itself was not watched in motion, only its before and after st
 Dropped: real turns, where rooms continue at right angles in one continuous space. Lighting bands, the twist shader, collision, and every placement rule assume the route runs along one axis, so that is a rewrite of the room builder rather than an addition. The cut gives the branch without it.
 
 Root ROADMAP.md's Mechanism line was updated and left uncommitted, because that file carries other agents' uncommitted edits. Next remains independent side-room lighting. Antigravity's uncommitted notes entry and the supplied raw-image changes were left unstaged. Nothing was pushed or published.
+
+## 2026-10-05 — Claude Code — exits in some side rooms
+
+Xyh asked for some side hallways and rooms to be dead ends and some to be passageways. About 23% of side rooms, reached directly or by a side hallway, now have a dark doorway in the far wall that behaves like the passage exits; the rest are dead ends as before. Washrooms are always dead ends, because their fixtures stand in front of the doorway. Details are in HANDOVER.md.
+
+Checks. `check_forks.mjs` found 397 exits in 1,703 side rooms over 6,000 demo rooms (bedrooms and storage rooms, direct and by hallway), walked each exit route through the walkable regions and past the fixture blocks, and confirmed the far wall is open at the doorway. The side-space, navigation, and scatter checks still pass. In the browser on the root server, with `sideExits=all`: viewed the doorway in the side bedroom of room 8, between the family photo and the drawers; ran the automatic exit from that room, which landed in room 622 with six salted rooms, clear aisles, and no console errors.
+
+Not done. The manual trigger in a side room was not walked by hand. The default 30% hash was only measured in the node check, not seen in a default run. Furnishing meshes in side rooms are placed from the same fixture boxes the doorway test uses, but their rendered bounds were not compared against the doorway. The cut's timing is still unjudged in motion.
+
+Root ROADMAP.md's Mechanism line was updated again and left uncommitted. Next remains independent side-room lighting. Nothing was pushed or published.

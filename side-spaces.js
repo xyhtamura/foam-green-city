@@ -37,8 +37,8 @@ export function sideSpacePlan(room,portal){
   const regions=rectangles.map(r=>({minX:r.minX+0.12,maxX:r.maxX-0.12,minZ:r.minZ+0.12,maxZ:r.maxZ-0.12}));
   const join=rect(W-0.35,W+(corridor||depth)-0.15,opening/2);regions.push(join);
   if(corridor)regions.push(rect(W+corridor-0.35,W+corridor+0.35,0.73));
-  const blocks=walls.map(w=>w.axis==='x'?{minX:w.edge-0.06,maxX:w.edge+0.06,minZ:w.a,maxZ:w.b}:{minX:w.a,maxX:w.b,minZ:w.edge-0.06,maxZ:w.edge+0.06});
-  const fixtures=[];
+  const wallBlocks=()=>walls.map(w=>w.axis==='x'?{minX:w.edge-0.06,maxX:w.edge+0.06,minZ:w.a,maxZ:w.b}:{minX:w.a,maxX:w.b,minZ:w.edge-0.06,maxZ:w.edge+0.06});
+  const blocks=[],fixtures=[];
   // A shallow storage ledge leaves the centre and entrance clear.
   const fx=side*(W+corridor+depth-0.3);
   const furnishing=['bedroom','storage','washroom','bare'].includes(room.sideRoom)?room.sideRoom:['bedroom','bedroom','storage','storage','washroom'][hash((room.index??0)+(room.branchSeed??5)*307)%5];
@@ -56,7 +56,20 @@ export function sideSpacePlan(room,portal){
     fixtures.push({role:'sink',x:side*(W+corridor+depth-.4),z:z-span/2+.5,w:.5,d:.65,h:.84,model:'bathroomSink'});
     fixtures.push({role:'bucket',x:side*(W+corridor+depth-.75),z,w:.4,d:.4,h:.36,model:(portal.variant??0)%2?'bucketPink':'bucket'});
   }else fixtures.push({x:fx,z:z+span/2-0.45,w:0.4,d:0.65,h:0.7});
+  // Walls are added after the exit is cut, with the doorway itself closed to the walker.
+  const addWalls=()=>{blocks.push(...wallBlocks());};
   for(const f of fixtures)blocks.push({minX:f.x-f.w/2,maxX:f.x+f.w/2,minZ:f.z-f.d/2,maxZ:f.z+f.d/2});
+  // Some side rooms are passageways: a doorway in the far wall, kept only where no fixture stands in front of it.
+  const farX=side*(W+corridor+depth),exitZ=z+0.25,exitHalf=0.43;
+  const approach={minX:Math.min(farX,farX-side*0.95),maxX:Math.max(farX,farX-side*0.95),minZ:exitZ-exitHalf,maxZ:exitZ+exitHalf};
+  const wanted=room.sideExits==='all'||(room.sideExits!=='off'&&hash((room.index??0)+(room.branchSeed??5)*457)%100<30);
+  const exit=wanted&&!fixtures.some(f=>f.x+f.w/2>approach.minX&&f.x-f.w/2<approach.maxX&&f.z+f.d/2>approach.minZ&&f.z-f.d/2<approach.maxZ)
+    ?{x:farX,z:exitZ,half:exitHalf,side,zone:{minX:Math.min(farX,farX-side*0.75),maxX:Math.max(farX,farX-side*0.75),minZ:exitZ-exitHalf,maxZ:exitZ+exitHalf}}:null;
+  if(exit){
+    const at=walls.findIndex(w=>w.axis==='x'&&Math.abs(w.edge-farX)<1e-6&&w.a<exitZ&&w.b>exitZ),wall=walls[at];
+    walls.splice(at,1,{...wall,b:exitZ-exitHalf},{...wall,a:exitZ+exitHalf});
+  }
   if(portal.door)blocks.push({minX:side>0?W: -W-opening+0.1,maxX:side>0?W+opening-0.1:-W,minZ:z+opening/2-0.025,maxZ:z+opening/2+0.025});
-  return {rectangles,regions,walls,blocks,fixtures,bedroom,storage,washroom,furnishing,variant:portal.variant??0,roomRect,opening,height:Math.min(room.height,2.8),kind:portal.kind,door:portal.door};
+  addWalls();
+  return {exit,rectangles,regions,walls,blocks,fixtures,bedroom,storage,washroom,furnishing,variant:portal.variant??0,roomRect,opening,height:Math.min(room.height,2.8),kind:portal.kind,door:portal.door};
 }

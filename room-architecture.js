@@ -45,12 +45,19 @@ export function createRoomArchitecture(room,curvize,{woodTexture=null,stairs=nul
       }
       for(const w of plan.walls)box('wall',w.axis==='x'?0.12:w.b-w.a,height,w.axis==='x'?w.b-w.a:0.12,w.axis==='x'?w.edge:(w.a+w.b)/2,y+height/2,w.axis==='x'?(w.a+w.b)/2:w.edge);
       box('wall',0.12,room.height-2.15,plan.opening,portal.side*W,y+(room.height+2.15)/2,portal.z);
+      if(plan.exit){
+        const e=plan.exit,width=e.half*2;
+        if(height>2.05)box('wall',0.12,height-2.05,width,e.x,y+(height+2.05)/2,e.z);
+        for(const dz of [-e.half,e.half])box('trim',0.16,2.05,0.06,e.x,y+1.025,e.z+dz);
+        box('trim',0.16,0.06,width+0.06,e.x,y+2.05,e.z);
+        box('exit',0.04,2.05,width,e.x+e.side*0.1,y+1.025,e.z);
+      }
       for(const dz of [-plan.opening/2,plan.opening/2])box('trim',0.16,2.15,0.06,portal.side*W,y+1.075,portal.z+dz);
       box('trim',0.16,0.06,plan.opening,portal.side*W,y+2.15,portal.z);
       if(portal.door)box('trim',plan.opening-0.1,2.05,0.045,portal.side*(W+(plan.opening-0.1)/2),y+1.025,portal.z+plan.opening/2);
       for(const f of plan.fixtures.filter(f=>!f.role)){box('trim',f.w,f.h,f.d,f.x,y+f.h/2,f.z);box('floor',f.w+0.015,0.025,f.d+0.015,f.x,y+f.h+0.0125,f.z);}
       sideBlocks.push(...plan.blocks.map(b=>({...b,minY:y,maxY:y+height})));
-      sideSpaces.push({...portal,furnishing:plan.furnishing,roomRect:plan.roomRect,opening:plan.opening,height,regions:plan.regions});
+      sideSpaces.push({...portal,exit:!!plan.exit,furnishing:plan.furnishing,roomRect:plan.roomRect,opening:plan.opening,height,regions:plan.regions});
       continue;
     }
     const {side,z}=portal,y=floorHeight(room,z),reach=room.shape==='cross'?8:10,cx=side*(W+reach/2);

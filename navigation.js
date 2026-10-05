@@ -1,5 +1,5 @@
-import {sideSpacePlan} from './side-spaces.js?v=washrooms-1';
-import {createRoomSequence,cameraRoute,routePoint} from './room-sequences.js';
+import {branchOpenings,sideSpacePlan} from './side-spaces.js?v=washrooms-1';
+import {createRoomSequence,cameraRoute,routePoint,passageExit,exitRoute} from './room-sequences.js';
 
 // Geometry is disposable; seeded descriptors and distance prefixes reconstruct it.
 export function createWalkSequence(options){
@@ -14,7 +14,7 @@ export function createWalkSequence(options){
     reroll(){held.clear();era++;},
     room(index){
       const salt=held.get(index)??era;
-      const decorate=r=>({...r,sideSpaces:options.sideSpaces,sideRoom:options.sideRoom,branchSeed:(options.seed??5)+salt*31,
+      const decorate=r=>({...r,sideSpaces:options.sideSpaces,sideRoom:options.sideRoom,sideExits:options.sideExits,branchSeed:(options.seed??5)+salt*31,
         ...(salt?{generationIndex:(r.generationIndex??r.index)+salt*1000003}:{})});
       if(index>=0)return decorate(forward.room(index));
       const source=backward.room(-index-1);
@@ -27,6 +27,25 @@ export function createWalkSequence(options){
       return this.room(-source.index-1);
     }
   };
+}
+// Every way out of a room other than its main doorway: a zone that triggers the cut, and a one-way route to it.
+export function roomExits(room){
+  const exits=[];
+  for(const portal of branchOpenings(room)){
+    if(portal.kind==='legacy'){
+      const e=passageExit(room,portal);
+      exits.push({zone:{minX:e.x-1.45,maxX:e.x+1.45,minZ:e.z,maxZ:e.z+0.8},route:exitRoute(room,portal)});
+      continue;
+    }
+    const e=sideSpacePlan(room,portal).exit;if(!e)continue;
+    const points=[{x:0,z:0},{x:0,z:portal.z},{x:portal.side*(room.width/2+0.3),z:portal.z},{x:e.x-e.side*0.45,z:e.z}];
+    let distance=0;
+    const legs=points.slice(1).map((to,i)=>{
+      const start=points[i],length=Math.hypot(to.x-start.x,to.z-start.z),leg={start,end:to,length,distance};distance+=length;return leg;
+    });
+    exits.push({zone:e.zone,route:{legs,length:distance,exit:true}});
+  }
+  return exits;
 }
 export function retainedRooms(index,batchSize=2){
   const batch=Math.floor(index/batchSize),result=[];
