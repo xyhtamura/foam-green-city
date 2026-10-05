@@ -2,8 +2,8 @@
 
 | Material | Licence | Source |
 | --- | --- | --- |
-| Permanent Marker title font | Apache 2.0 | [Google Fonts source](https://github.com/google/fonts/tree/main/apache/permanentmarker), [bundled licence](fonts/LICENSE.txt) |
-| Three.js r160, loaded from unpkg | MIT | [Three.js licence](https://github.com/mrdoob/three.js/blob/r160/LICENSE) |
+| Yatra One title font | SIL Open Font License 1.1 | [Google Fonts source](https://github.com/google/fonts/tree/main/ofl/yatraone), [bundled licence](fonts/YatraOne-OFL.txt) |
+| Three.js r160, bundled in `vendor/three/` | MIT | [bundled licence](vendor/three/LICENSE), [source](https://github.com/mrdoob/three.js/tree/r160) |
 | Kenney Furniture & Architecture Kit GLBs | CC0 1.0 | [Kenney](https://kenney.nl) |
 | Fourteen converted Poly Haven models and diffuse maps | CC0 | Individual source pages and creators in [ASSETS.md](ASSETS.md) |
 

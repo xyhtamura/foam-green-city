@@ -240,6 +240,15 @@ models/textures/hollow-blocks.png is supplied by Xyh and covered by the standing
 
 Codex-authored geometry in domestic-details.js creates hollow pitchers, chopping boards, knives, folded clothing-like shapes, paper/file stacks, string mops and generic bottles. Caps and label bands use solid colours; no packaging image or new third-party model is included. The denser cutout groups reuse the already-cleared supplied PNGs. Code uses MIT; authored artwork uses CC BY 4.0.
 
+## Yatra One title font and bundled Three.js — 2026-10-06
+
+`fonts/YatraOne-Regular.ttf` and `fonts/YatraOne-OFL.txt` were downloaded from the [official Google Fonts repository](https://github.com/google/fonts/tree/main/ofl/yatraone). Yatra One is under the SIL Open Font License 1.1, which permits bundling and web embedding. It replaces Permanent Marker for the title; the Permanent Marker file and its licence were removed from `fonts/`. The file is the full font, 276 KB, with its Devanagari glyphs; it was not subset.
+
+`vendor/three/` holds Three.js r160 as published on npm, downloaded from `unpkg.com/three@0.160.0`: `build/three.module.js`, the add-ons `GLTFLoader`, `BufferGeometryUtils`, `OrbitControls`, `GLTFExporter`, and `TextureUtils`, and the MIT `LICENSE`. The files are unmodified. Every page's import map points to them, so nothing is fetched from another site at run time.
+
 ## Permanent Marker title font — 2026-10-05
+
+Superseded on 2026-10-06; see the section above. Kept as history.
+
 
 PermanentMarker-Regular.ttf and its Apache 2.0 licence are stored in fonts/. Both were downloaded from the [official Google Fonts repository](https://github.com/google/fonts/tree/main/apache/permanentmarker). The title uses the bundled font without a runtime Google Fonts request. HousePaint was considered first; its web embedding permission was not established, and Xyh authorized a Google Fonts alternative. HousePaint remains unused and excluded from Git.

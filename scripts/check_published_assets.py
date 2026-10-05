@@ -31,6 +31,9 @@ def referenced(root: Path) -> set[str]:
         refs.add(f'models/GLTF format/{name}.glb')
     model_assets = (root / 'model-assets.js').read_text(encoding='utf-8')
     refs.update(f'models/polyhaven/{name}.glb' for name in re.findall(r"file:'([a-z0-9_]+)'", model_assets))
+    # Three.js is vendored: the import map targets, and each add-on a module imports.
+    refs.update(path[2:] for path in re.findall(r'"(\./vendor/[^"]+\.js)"', text))
+    refs.update(f'vendor/three/examples/jsm/{name}' for name in re.findall(r"from 'three/addons/([^']+)'", text))
     # Sprite materials built from two-part names, e.g. spriteMat('2d/wiring/wireline.png').
     return {r for r in refs if not r.startswith('models/wire')}
 

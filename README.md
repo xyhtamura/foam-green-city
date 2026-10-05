@@ -4,7 +4,7 @@ An autonomous browser-based 3D walkthrough of a procedurally arranged Filipino d
 
 ## Try the demo
 
-Open [Foam Green City](https://xyhtamura.github.io/foam-green-city/). It needs WebGL and a connection that can reach unpkg.com, which serves Three.js r160.
+Open [Foam Green City](https://xyhtamura.github.io/foam-green-city/). It needs WebGL. Three.js r160 is bundled in `vendor/three/`, so the page loads nothing from other sites.
 
 To run it from a copy of this repository, serve the folder over HTTP and open `index.html`. It is a static site with no build step.
 

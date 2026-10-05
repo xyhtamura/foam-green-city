@@ -25,6 +25,7 @@
 /references/*
 !/references/index.html
 !/fonts/
+!/vendor/
 !/models/
 /models/*
 !/models/GLTF format/

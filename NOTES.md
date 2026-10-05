@@ -1046,3 +1046,15 @@ Checks. `check_published_assets.py` failed on the bamboo chair before the fix an
 Not done. None of this is published until it is pushed, and I did not push. The soak ran with exits disabled, so the cut to a new run of rooms was not soaked. A lost WebGL context is not handled. Draw calls were 980 to 1,320 per frame during the soak, which may be slow on weak graphics hardware; that was not measured as frame time. Three.js is still loaded from unpkg.com: on a network that blocks it the page cannot load. Bundling Three.js into the repository would remove that dependency and needs Xyh's go-ahead to download the files. If "cannot be reached" was the github.io address itself rather than the README link, the cause is outside this repository.
 
 Root ROADMAP.md needed no change. Next remains independent side-room lighting. Nothing was pushed or published.
+
+## 2026-10-06 — Claude Code — bundled Three.js, Yatra One title
+
+Xyh approved bundling Three.js and asked for the title in Yatra One, or in capitals with large and small sizes. Did both: the title is Yatra One in capitals, with F, G, and C at 1.4 times the other letters.
+
+Three.js r160 and five add-ons are in `vendor/three/`, unmodified, with the MIT licence; all seven pages' import maps point there. Yatra One and its Open Font License are in `fonts/`; Permanent Marker and its licence were removed. Provenance is in ASSETS.md and THIRD_PARTY.md.
+
+Checks. Downloads: `three.module.js` reports revision 160, the font file has a TrueType header and is 276 KB, and both licence files open with the expected text. `check_published_assets.py` passes with 127 assets, now including the font and the vendored modules; `stamp_versions.py --check` passes. In the browser on the root server, the page reached Ready with no request to any other origin, Three.js and its two add-ons loaded from `vendor/`, no console errors, the heading's computed font was Yatra One with the font reported as loaded, text-transform uppercase, and the three initials at 1.4 times the base size; the heading stayed inside an 800-pixel-wide viewport with no horizontal scroll.
+
+Not done. The title was not seen: the preview pane was hidden and screenshots timed out, so letter spacing, line height, and the size ratio are set by number, not by eye. Widths other than 800 pixels were not measured, so the 360-pixel phone width is unchecked. The dev pages in `scripts/` and the two preview pages were repointed but not opened. Nothing was pushed, so the published site still loads Three.js from unpkg and shows Permanent Marker.
+
+Root ROADMAP.md needed no change. Next remains independent side-room lighting.

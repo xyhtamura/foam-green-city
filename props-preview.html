@@ -7,7 +7,7 @@
 body{margin:0;background:#bfdcc9;color:#273c32;font:15px system-ui}header{padding:16px;position:absolute;z-index:1}h1{font-size:19px;margin:0 0 8px}button,select{font:inherit;margin:4px;padding:8px}canvas{display:block}#status{max-width:500px}
 </style>
 <header><h1>Domestic props</h1><select id="asset" aria-label="Asset"></select><button id="export">Download GLB</button><label><input id="saved" type="checkbox">Preview saved GLB</label><p>Drag to orbit. Scroll to zoom.</p><p id="status" role="status"></p></header>
-<script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"}}</script>
+<script type="importmap">{"imports":{"three":"./vendor/three/build/three.module.js","three/addons/":"./vendor/three/examples/jsm/"}}</script>
 <script type="module">
 import * as THREE from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';

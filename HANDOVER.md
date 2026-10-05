@@ -24,7 +24,9 @@ Two scripts now guard publication, and both should run before a commit that touc
 
 `index.html` separates two failures. Until `walkReady` is set at the end of `init`, any error shows the load-failure message. After it, an uncaught error shows "The walk stopped because of an error" and an asset that fails to load is only logged. `?speed=<m/s>` hurries automatic movement for soak tests.
 
-Three.js still comes from unpkg.com at run time. A network that blocks unpkg cannot load the page.
+Three.js r160 is bundled in `vendor/three/` as of 2026-10-06 and every import map points there, including the dev pages in `scripts/`. To change version, replace the files from the same npm release and keep the folder layout, because `GLTFLoader` imports `../utils/BufferGeometryUtils.js` by relative path. `check_published_assets.py` covers the import-map targets and each `three/addons/` import.
+
+The title is set in bundled Yatra One, in capitals with the first letter of each word at 1.4 times the size of the rest. The heading carries `aria-label="Foam Green City"` because its text is split across spans.
 
 ## Basketball — 2026-10-05
 
