@@ -23,8 +23,7 @@ export function floorHeight(room,localZ){
 export function cameraRoute(room,openings=[]){
   const points=[{x:0,z:0}],portal=openings[Math.floor(room.index/4)%Math.max(1,openings.length)];
   if(portal){
-    const reach=room.shape==='cross'?8:10,x=portal.side*(room.width/2+reach-1.5);
-    const endZ=portal.z-2-Math.min(8,room.length+portal.z-2)+1;
+    const end=passageExit(room,portal),x=end.x,endZ=end.z+1;
     points.push({x:0,z:portal.z},{x,z:portal.z},{x,z:endZ},{x,z:portal.z},{x:0,z:portal.z});
   }
   points.push({x:0,z:-room.length});
@@ -37,8 +36,8 @@ export function cameraRoute(room,openings=[]){
 
 // The far end of a side passage, where its return leg meets the exit doorway.
 export function passageExit(room,portal){
-  const reach=room.shape==='cross'?8:10;
-  return {x:portal.side*(room.width/2+reach-1.5),z:portal.z-2-Math.min(8,room.length+portal.z-2)};
+  const reach=portal.reach??(room.shape==='cross'?8:10),turn=portal.turn??Math.min(8,room.length+portal.z-2);
+  return {x:portal.side*(room.width/2+reach-1.5),z:portal.z-2-turn};
 }
 // A one-way route: into the side passage and up to its exit, with no return leg.
 export function exitRoute(room,portal){

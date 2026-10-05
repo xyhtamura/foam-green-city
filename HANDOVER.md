@@ -14,6 +14,16 @@ The route is still one straight logical line; nothing here adds a second axis. A
 
 Side rooms get scatter from `planSideScatter`, fitted to the room rectangle, off fixture blocks and off the strip from the doorway across the room; the objects join the owning room's single scatter mesh. Movement no longer starts paused under `prefers-reduced-motion`; Xyh asked for it to start on Enter. `scripts/check_forks.mjs` covers exit routes and salts.
 
+## Parametric passages, platforms, and side rooms — 2026-10-05
+
+Every opening returned by `branchOpenings` now carries its own dimensions, and rendering, routes, and navigation read them from the portal instead of recomputing them from the room shape.
+
+Passages: `generateRoom` emits `passages:[{side,j,reach,turn,height}]`, one or two, never two on one side. `j` is the wall module (any from 1 to where a 2 m return leg still fits), `reach` is 5 to 14 m, `turn` is the return leg at 2 to 10 m capped at the room's far end, and `height` is 2.4 to 4.8 m capped at the room height. `shape` is still set to `branches` or `cross` as a label. Authored shapes without a `passages` array get the old values: mid-room, 8 or 10 m, full height. The opening is still 4 m wide because it replaces two wall modules, and the return leg is still 3 m wide and turns toward the far end.
+
+Platforms: `platform:{depth,height,inset,sides}` — 2 to 8 m deep and at most a quarter of the room length, 0.3 to 1.2 m high, set back 1.2 m or more from the centre line, on both sides or one. `platform:true` and the `auditorium` shape select the old 4 × 0.6 m block.
+
+Side rooms: position along the wall, depth (3 to 5.5 m), span (2.8 to 4.8 m, limited so the room stays inside its owning cell), hallway length (1.8 to 5.5 m), doorway width, and ceiling height (2.35 to 2.8 m) are separate draws. A quarter of rooms 8 m or longer that have a side room get a second one on the opposite wall. Fixtures keep their offsets from the walls, so larger rooms have more open floor. `variant` remains as a style index for bedding, cartons, and buckets.
+
 ## Generated room shells — 2026-10-05
 
 `room-generator.js` replaces the demo run's `unusual` and `vast` lists. `roomPressure(index,seed)` returns two values in 0–1 from value noise over the room index: `strange` (zero unless a 4.5-room-period wave passes 0.78, plus a 2.5% single-room spike) and `scale` (a 31-room-period drift). `generateRoom` then draws, each from its own hash: width, length, and height as a domestic base plus a tail scaled by the pressures; a floor rise limited to a slope of 0.3; side passages (`branches` or `cross`); `stairs:{steps,side,wooden}`; `columns:{inset,across,spacing,rows}`; `platform`; type; and layout, with odd layouts at 7% plus half the strangeness. `category` is read off the result: `domestic` when nothing departs from the base, `rare` at 24 m wide, 12 m high, or 40 m long, otherwise `strange`. To change how often something appears, change its rate there; there is no list to edit.

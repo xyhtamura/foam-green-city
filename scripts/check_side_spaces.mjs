@@ -1,10 +1,11 @@
 import assert from 'node:assert/strict';
 import {branchOpenings,sideSpacePlan} from '../side-spaces.js';
 import {createWalkSequence,walkRegions,canOccupy,moveWalker,pathToRoute} from '../navigation.js';
-let cases=0;
-for(const sideRoom of ['bedroom','storage','washroom','bare',undefined])for(const kind of ['room','hallway'])for(const width of [4,6,8])for(const length of [6,8,12,16])for(const index of [-5,-2,0,1,7]){
+let cases=0,seconds=0;const varied=new Set();
+for(const sideRoom of ['bedroom','storage','washroom','bare',undefined])for(const kind of ['room','hallway'])for(const width of [4,6,8])for(const length of [6,8,12,16])for(const index of [-5,-2,0,1,7,11,23,40,77,131]){
   const room={index,width,length,startZ:13,height:2.58,rise:0,shape:'rectangle',sideSpaces:kind,sideRoom};
-  const portal=branchOpenings(room)[0],plan=sideSpacePlan(room,portal);
+  for(const portal of branchOpenings(room)){
+  const plan=sideSpacePlan(room,portal);varied.add(portal.j+':'+portal.depth.toFixed(2)+':'+portal.span.toFixed(2));if(portal.n)seconds++;
   assert.deepEqual(plan,sideSpacePlan({...room}, {...portal}));
   for(const r of plan.rectangles){assert.ok(r.minZ>=-length+.2&&r.maxZ<=-.2,'annex stays within its owning cell');}
   for(const f of plan.fixtures){assert.ok(f.x-f.w/2>=plan.roomRect.minX+.06&&f.x+f.w/2<=plan.roomRect.maxX-.06&&f.z-f.d/2>=plan.roomRect.minZ+.06&&f.z+f.d/2<=plan.roomRect.maxZ-.06,'furniture fits inside side room');}
@@ -25,7 +26,9 @@ for(const sideRoom of ['bedroom','storage','washroom','bare',undefined])for(cons
   const path=pathToRoute(target,room,canMove);assert.ok(path&&path.path.length,'return from annex to main route');
   for(const p of path.path)assert.ok(canMove(p.x,p.z));
   cases++;
+  }
 }
+assert.ok(varied.size>=30&&seconds>20,`side rooms vary (${varied.size} distinct of ${cases}, ${seconds} second rooms)`);
 for(const sideSpaces of ['room','hallway','off']){
   const stream=createWalkSequence({sequence:'demo',seed:5,sideSpaces});
   for(const i of [-8,-1,0,3,15]){

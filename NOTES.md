@@ -905,3 +905,13 @@ Not done. Generated rooms were not viewed on the twisting route, and none wider 
 Dropped: keeping an exception at a fixed interval. A schedule and emergence contradict each other, and Xyh asked for emergence.
 
 Root ROADMAP.md's Mechanism line was updated and left uncommitted. Next remains independent side-room lighting. Antigravity's uncommitted notes entry and the supplied raw-image changes were left unstaged. Nothing was pushed or published.
+
+## 2026-10-05 — Claude Code — parametric passages, platforms, and side rooms
+
+Xyh asked for passages, platforms, and side rooms to be parametric too. Each now draws its own position and dimensions; ranges are in HANDOVER.md. A room can have a passage on each side at different positions, reaches, and heights, and a domestic room can have a side room on each wall.
+
+Checks. `check_demo_sequence.mjs` asserts, over 40,000 rooms, that every passage opening and return leg stays within the room length, that there is one passage per side, that stairs take the wall opposite the first passage, that platforms fit, and that reaches, positions, and platform depths vary. `check_side_spaces.mjs` now runs 1,560 side rooms, including 360 second rooms, through its existing tests: inside the owning cell, fixtures inside the room and not overlapping, walk in from the main room, walls and fixtures block, and a path back to the route. `check_forks.mjs` walked the exit routes of 97 passage rooms and 480 side-room exits. The navigation check was changed to build its test portal with `branchOpenings`, since a bare `{side,z}` no longer describes a passage. Scatter and room-sequence checks pass. In the browser on the root server, straight route: viewed inside a passage of room 17 (two passages, 14 m and 12 m, different heights), the platform of room 18 (2 m deep, both sides), and room 57 from inside one of its two side rooms with the opposite doorway in view; the inspector reported clear aisles, open entrances, clear architecture, and side-room furniture inside its bounds for the rooms read, with no console errors.
+
+Not done. Nothing here was viewed on the twisting route. A one-sided platform and a second side room reached by hallway were not viewed. Passages lower than a tall main room were seen from inside only; the join at the opening was not inspected from the main room. The passage opening width, the return leg's width and direction, and side-room fixture layouts are still fixed. `development.html` is unchanged.
+
+Next remains independent side-room lighting. Root ROADMAP.md needed no change. Antigravity's uncommitted notes entry and the supplied raw-image changes were left unstaged. Nothing was pushed or published.

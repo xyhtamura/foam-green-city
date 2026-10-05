@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import {branchOpenings} from '../side-spaces.js';
 import {createWalkSequence,retainedRooms,walkRegions,canOccupy,moveWalker,pathToRoute} from '../navigation.js';
 const stream=createWalkSequence({sequence:'demo',seed:5}),copy=createWalkSequence({sequence:'demo',seed:5});
 for(let i=-1000;i<1000;i++){
@@ -16,7 +17,7 @@ for(const i of [0,10,25,3,-12,-1,25,0]){
   for(const j of live.keys())if(!wanted.includes(j))live.delete(j);
   assert.equal(live.size,6);for(const [j,room] of live)assert.deepEqual(room,copy.room(j));
 }
-const room={width:6,length:16,height:4,startZ:0,shape:'branches'},regions=walkRegions(room,[{side:1,z:-10}]);
+const room={width:6,length:16,height:4,startZ:0,shape:'branches'},regions=walkRegions(room,branchOpenings({...room,index:0}));
 assert.ok(canOccupy(10,-10,{regions}));assert.ok(canOccupy(11.5,-14,{regions}));
 assert.ok(!canOccupy(10,-14,{regions}));assert.ok(!canOccupy(0,1,{regions}));
 const bounds=[{minX:-4,maxX:4,minZ:-10,maxZ:0}],blocks=[{minX:-0.5,maxX:0.5,minZ:-5,maxZ:-4}];

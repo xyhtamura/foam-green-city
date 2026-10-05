@@ -60,26 +60,26 @@ export function createRoomArchitecture(room,curvize,{woodTexture=null,stairs=nul
       sideSpaces.push({...portal,exit:!!plan.exit,furnishing:plan.furnishing,roomRect:plan.roomRect,opening:plan.opening,height,regions:plan.regions});
       continue;
     }
-    const {side,z}=portal,y=floorHeight(room,z),reach=room.shape==='cross'?8:10,cx=side*(W+reach/2);
+    const {side,z,reach,turn:turnLen}=portal,P=portal.height,y=floorHeight(room,z),cx=side*(W+reach/2);
     reserve(side*(W+0.6)/2,z,W-0.6,4);
-    // A real side passage with a right-angle return and a closed end.
+    // A real side passage with a right-angle return, as long and as high as its opening says.
     box('floor',reach,0.12,4,cx,y-0.06,z);
-    box('wall',reach,H,0.12,cx,y+H/2,z+2);
-    box('wall',Math.max(1,reach-3),H,0.12,side*(W+(reach-3)/2),y+H/2,z-2);
-    box('wall',0.12,H,4,side*(W+reach),y+H/2,z);
-    const turnX=side*(W+reach-1.5),turnLen=Math.min(8,L+z-2);
+    box('wall',reach,P,0.12,cx,y+P/2,z+2);
+    box('wall',Math.max(1,reach-3),P,0.12,side*(W+(reach-3)/2),y+P/2,z-2);
+    box('wall',0.12,P,4,side*(W+reach),y+P/2,z);
+    const turnX=side*(W+reach-1.5);
     box('floor',3,0.12,turnLen,turnX,y-0.06,z-2-turnLen/2);
-    for(const dx of [-1.5,1.5])box('wall',0.12,H,turnLen,turnX+dx,y+H/2,z-2-turnLen/2);
+    for(const dx of [-1.5,1.5])box('wall',0.12,P,turnLen,turnX+dx,y+P/2,z-2-turnLen/2);
+    box('wall',reach,0.12,4,cx,y+P,z);
+    box('wall',3,0.12,turnLen,turnX,y+P,z-2-turnLen/2);
+    box('wall',0.12,H-2.2,4,side*W,y+(H+2.2)/2,z);
     // The passage ends in a dark doorway: the way out of this run of rooms.
     const endZ=z-2-turnLen;
-    for(const dx of [-1.05,1.05])box('wall',0.9,H,0.12,turnX+dx,y+H/2,endZ);
-    box('wall',1.2,H-2.15,0.12,turnX,y+(H+2.15)/2,endZ);
+    for(const dx of [-1.05,1.05])box('wall',0.9,P,0.12,turnX+dx,y+P/2,endZ);
+    if(P>2.15)box('wall',1.2,P-2.15,0.12,turnX,y+(P+2.15)/2,endZ);
     for(const dx of [-0.6,0.6])box('trim',0.06,2.15,0.16,turnX+dx,y+1.075,endZ);
     box('trim',1.26,0.06,0.16,turnX,y+2.15,endZ);
     box('exit',1.2,2.15,0.04,turnX,y+1.075,endZ-0.1);
-    box('wall',reach,0.12,4,cx,y+H,z);
-    box('wall',3,0.12,turnLen,turnX,y+H,z-2-turnLen/2);
-    box('wall',0.12,H-2.2,4,side*W,y+(H+2.2)/2,z);
   }
   // Stairs, platform, and columns are separate features. Old shape names still select their defaults.
   const solids=[],solid=(x,z,w,d)=>{reserve(x,z,w,d);solids.push(reservations.at(-1));};
@@ -101,9 +101,12 @@ export function createRoomArchitecture(room,curvize,{woodTexture=null,stairs=nul
     solid(x,(base+.35+end-1.45)/2,2,base+.35-(end-1.45));
     group.userData.deadStairs=true;
   }
-  if((room.platform??room.shape==='auditorium')&&W>=5&&!room.rise){
-    for(const side of [-1,1]){box('floor',W-1.2,0.6,4,side*(W+1.2)/2,0.3,-L+3);solid(side*(W+1.2)/2,-L+3,W-1.2,4);}
-    for(const side of [-1,1])box('trim',W-1.2,0.12,0.18,side*(W+1.2)/2,0.66,-L+5);
+  // A platform: raised blocks at the far end, either side of the aisle or on one side only.
+  const stage=room.platform===true||(room.platform==null&&room.shape==='auditorium')?{depth:4,height:0.6,inset:1.2,sides:[-1,1]}:room.platform||null;
+  if(stage&&W>=5&&!room.rise)for(const side of stage.sides){
+    const w=W-stage.inset,cx=side*(W+stage.inset)/2,cz=-L+1+stage.depth/2;
+    box('floor',w,stage.height,stage.depth,cx,stage.height/2,cz);solid(cx,cz,w,stage.depth);
+    box('trim',w,0.12,0.18,cx,stage.height+0.06,cz+stage.depth/2);
   }
   // Columns stand in rows from each side wall inward, and give way to anything already placed.
   const cols=room.columns??(['auditorium','colonnade'].includes(room.shape)?{inset:3,across:6,spacing:6,rows:1}:null);

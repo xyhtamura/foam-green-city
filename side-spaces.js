@@ -2,21 +2,33 @@
 function hash(n){let h=Math.imul(n+1,0x45d9f3b)>>>0;h=Math.imul(h^(h>>>16),0x45d9f3b)>>>0;return (h^(h>>>16))>>>0;}
 // A plain shell has no passages, stairs, columns, or platform.
 export const plainRoom=room=>room.shape==='rectangle'&&!room.stairs&&!room.columns&&!room.platform;
+// Every opening carries its own dimensions, so rendering, routes, and navigation read one description.
 export function branchOpenings(room){
-  if(room.length>=12&&['branches','cross'].includes(room.shape)){
-    const j=Math.floor(room.length/4);
-    return (room.shape==='cross'?[-1,1]:[room.index%2?-1:1]).map(side=>({side,j,z:-j*2-2,kind:'legacy'}));
+  if(room.length>=12&&(room.passages?.length||['branches','cross'].includes(room.shape))){
+    // Authored shapes keep their old passage: mid-room, 8 or 10 m out, full height.
+    const list=room.passages??(room.shape==='cross'?[-1,1]:[room.index%2?-1:1]).map(side=>({side}));
+    return list.map(p=>{
+      const j=p.j??Math.floor(room.length/4),z=-j*2-2;
+      return {side:p.side,j,z,kind:'legacy',reach:p.reach??(room.shape==='cross'?8:10),turn:Math.min(p.turn??8,room.length+z-2),height:Math.min(room.height,p.height??room.height)};
+    });
   }
   if(room.sideSpaces==='off'||room.length<6||room.width>8||room.height>4||room.rise||!plainRoom(room))return [];
-  const h=hash((room.index??0)+(room.branchSeed??5)*193);
+  const seed=(room.index??0)+(room.branchSeed??5)*193,h=hash(seed);
   if(!['room','hallway'].includes(room.sideSpaces)&&h%100>=34)return [];
-  const j=Math.max(0,Math.floor(room.length/4)-1),side=h%2?-1:1;
-  return [{side,j,z:-j*2-2,kind:room.sideSpaces==='hallway'||(room.sideSpaces!=='room'&&h%3===0)?'hallway':'room',door:h%3!==1,variant:h%3}];
+  const first=h%2?-1:1,count=room.length>=8&&hash(seed*31+7)%100<25?2:1;
+  return Array.from({length:count},(_,n)=>{
+    const u=k=>hash(seed*31+n*64+k+11)/4294967296;
+    // Any wall module can hold the doorway; the room behind it must stay inside this cell.
+    const j=Math.floor(u(0)*(room.length/2-1)),z=-j*2-2,limit=2*Math.min(2*j+1.79,room.length-2*j-2.21);
+    const door=u(1)<0.67;
+    return {side:n?-first:first,n,j,z,kind:room.sideSpaces==='hallway'||(room.sideSpaces!=='room'&&u(2)<0.34)?'hallway':'room',door,variant:Math.floor(u(3)*3),
+      depth:3+u(4)*2.5,span:Math.min(limit,2.8+u(5)*2),corridor:1.8+u(6)*3.7,opening:door?1.05+u(7)*0.25:1.3+u(7)*0.7,height:Math.min(room.height,2.35+u(8)*0.45)};
+  });
 }
 export function sideSpacePlan(room,portal){
-  const {side,z}=portal,W=room.width/2,depth=3+(portal.variant??0)*0.4;
-  const corridor=portal.kind==='hallway'?2.4+(portal.variant??0)*0.6:0;
-  const span=2.8+(portal.variant??0)*0.3,opening=portal.door?1.15:1.6;
+  const {side,z}=portal,W=room.width/2,depth=portal.depth??3+(portal.variant??0)*0.4;
+  const corridor=portal.kind==='hallway'?portal.corridor??2.4+(portal.variant??0)*0.6:0;
+  const span=portal.span??2.8+(portal.variant??0)*0.3,opening=portal.opening??(portal.door?1.15:1.6);
   const rect=(from,to,half)=>({minX:side>0?from:-to,maxX:side>0?to:-from,minZ:z-half,maxZ:z+half});
   const rectangles=[];
   if(corridor)rectangles.push(rect(W,W+corridor,0.85));
@@ -43,7 +55,7 @@ export function sideSpacePlan(room,portal){
   const blocks=[],fixtures=[];
   // A shallow storage ledge leaves the centre and entrance clear.
   const fx=side*(W+corridor+depth-0.3);
-  const furnishing=['bedroom','storage','washroom','bare'].includes(room.sideRoom)?room.sideRoom:['bedroom','bedroom','storage','storage','washroom'][hash((room.index??0)+(room.branchSeed??5)*307)%5];
+  const furnishing=['bedroom','storage','washroom','bare'].includes(room.sideRoom)?room.sideRoom:['bedroom','bedroom','storage','storage','washroom'][hash((room.index??0)+(room.branchSeed??5)*307+(portal.n??0)*17)%5];
   const bedroom=furnishing==='bedroom',storage=furnishing==='storage',washroom=furnishing==='washroom';
   if(bedroom){
     fixtures.push({role:'bed',x:side*(W+corridor+depth/2+0.18),z:z-span/2+0.64,w:2.05,d:0.95,h:1.25,model:(portal.variant??0)===0?'phDaybed':'bedSingle'});
@@ -73,5 +85,5 @@ export function sideSpacePlan(room,portal){
   }
   if(portal.door)blocks.push({minX:side>0?W: -W-opening+0.1,maxX:side>0?W+opening-0.1:-W,minZ:z+opening/2-0.025,maxZ:z+opening/2+0.025});
   addWalls();
-  return {exit,rectangles,regions,walls,blocks,fixtures,bedroom,storage,washroom,furnishing,variant:portal.variant??0,roomRect,opening,height:Math.min(room.height,2.8),kind:portal.kind,door:portal.door};
+  return {exit,rectangles,regions,walls,blocks,fixtures,bedroom,storage,washroom,furnishing,variant:portal.variant??0,roomRect,opening,height:portal.height??Math.min(room.height,2.8),kind:portal.kind,door:portal.door};
 }

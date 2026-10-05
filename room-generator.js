@@ -52,12 +52,20 @@ export function generateRoom(index,seed=5){
   if(height-rise<2.58)height=2.58+rise;
   height=tidy(height);
   // Features are independent draws, so they can coincide.
-  const passages=length>=12&&r(9)<0.02+s*0.5?(r(10)<0.35?2:1):0;
-  const shape=passages===2?'cross':passages===1?'branches':'rectangle';
+  // Each passage draws its own wall position, reach, return length, and height.
+  const passages=[];
+  if(length>=12&&r(9)<0.02+s*0.5){
+    const first=r(26)<0.5?-1:1;
+    for(let n=0;n<(r(10)<0.35?2:1);n++){
+      const q=k=>r(30+n*8+k),j=1+Math.floor(q(0)*((length-6)/2));
+      passages.push({side:n?-first:first,j,reach:5+Math.round(q(1)*9),turn:2+Math.round(q(2)*8),height:Math.min(height,tidy(2.4+q(3)*q(3)*2.4))});
+    }
+  }
+  const shape=passages.length===2?'cross':passages.length===1?'branches':'rectangle';
   let stairs=null;
-  if(width>=6&&length>=14&&passages<2&&r(11)<s*0.4){
+  if(width>=6&&length>=14&&passages.length<2&&r(11)<s*0.4){
     const most=Math.min(20,Math.floor((height-1.1)/0.18));
-    if(most>=4)stairs={steps:clamp(Math.round(4+r(12)*16),4,most),side:(index%2?-1:1)*(passages?-1:1),wooden:r(13)<0.7};
+    if(most>=4)stairs={steps:clamp(Math.round(4+r(12)*16),4,most),side:passages.length?-passages[0].side:r(27)<0.5?-1:1,wooden:r(13)<0.7};
   }
   let columns=null;
   if(width>=10&&r(14)<(width>=24?0.55:0.15)+s*0.35){
@@ -65,7 +73,8 @@ export function generateRoom(index,seed=5){
     columns={inset,across,spacing:4+2*Math.round(r(17)*2),rows:1+Math.floor(r(18)*r(18)*Math.max(0,(width/2-inset-1.5)/across+1))};
   }
   // A platform spans the far end, so it does not share a room with stairs or passages.
-  const platform=width>=10&&length>=16&&!rise&&!stairs&&!passages&&r(19)<s*0.45;
+  const platform=width>=10&&length>=16&&!rise&&!stairs&&!passages.length&&r(19)<s*0.45
+    ?{depth:2+Math.round(r(28)*Math.min(6,length/4-2)),height:tidy(0.3+r(29)*0.9),inset:tidy(1.2+r(50)*r(50)*Math.min(3,width/2-4)),sides:r(51)<0.7?[-1,1]:[r(52)<0.5?-1:1]}:null;
   // Use: large shells stop being domestic rooms.
   const large=width>=10||length>=20||height>=5;
   let type=platform?'auditorium':large?'hall':pick(width===4?['sala','sala','kitchen','bedroom','bedroom','bathroom','bathroom','bare']:['sala','sala','sala','kitchen','kitchen','bedroom','bedroom','bare'],r(20));
@@ -79,5 +88,5 @@ export function generateRoom(index,seed=5){
   const plain=shape==='rectangle'&&!stairs&&!columns&&!platform&&!rise&&height===2.58&&width<=8&&length<=12;
   const category=plain?'domestic':width>=24||height>=12||length>=40?'rare':'strange';
   return {width,length,height,rise,shape,type,layout,floor:'bare',category,strangeness:Math.round(s*100)/100,
-    ...(stairs?{stairs}:{}),...(columns?{columns}:{}),...(platform?{platform}:{}),...(kitchenCorner?{kitchenCorner}:{})};
+    ...(passages.length?{passages}:{}),...(stairs?{stairs}:{}),...(columns?{columns}:{}),...(platform?{platform}:{}),...(kitchenCorner?{kitchenCorner}:{})};
 }

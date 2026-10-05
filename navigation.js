@@ -67,10 +67,10 @@ export function walkRegions(room,openings=[]){
   const regions=[{minX:-room.width/2+0.12,maxX:room.width/2-0.12,minZ:room.startZ-room.length,maxZ:room.startZ}];
   for(const portal of openings){
     if(portal.kind&&portal.kind!=='legacy'){regions.push(...sideSpacePlan(room,portal).regions.map(r=>({...r,minZ:r.minZ+room.startZ,maxZ:r.maxZ+room.startZ})));continue;}
-    const reach=room.shape==='cross'?8:10,side=portal.side,z=room.startZ+portal.z;
+    const reach=portal.reach,side=portal.side,z=room.startZ+portal.z;
     const edge=side*(room.width/2+reach),turnX=side*(room.width/2+reach-1.5);
     regions.push({minX:side<0?edge+0.12:room.width/2-0.4,maxX:side<0?-room.width/2+0.4:edge-0.12,minZ:z-1.88,maxZ:z+1.88});
-    regions.push({minX:turnX-1.38,maxX:turnX+1.38,minZ:z-2-Math.min(8,room.length+portal.z-2)+0.12,maxZ:z+1.88});
+    regions.push({minX:turnX-1.38,maxX:turnX+1.38,minZ:z-2-portal.turn+0.12,maxZ:z+1.88});
   }
   return regions;
 }
