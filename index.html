@@ -560,8 +560,11 @@ function buildSegment(index){
   const leafRoll=mulberry32((i*362437+8191)>>>0)();
   grp.userData.thresholdDoor=params.get('door')==='none'?0:params.get('door')==='one'||leafRoll<0.55?(leafRoll<0.275?-1:1):0;
   if(grp.userData.thresholdDoor){
-    const door=repaint(DOORS[thresholdStyle].clone(),grp);door.position.set(grp.userData.thresholdDoor*0.96,0,-SEG_LEN+0.14);
-    door.rotation.y=-Math.PI/2;door.userData.door=thresholdStyle;grp.add(door);
+    // The doorway model's frame ends 0.486 m from the centre line and its room-side face is 0.04 m
+    // proud of the partition plane. The hinge goes on that jamb, and the leaf stands open past square.
+    const leafSide=grp.userData.thresholdDoor,swing=0.12+((leafRoll*977)%1)*0.6;
+    const door=repaint(DOORS[thresholdStyle].clone(),grp);door.position.set(leafSide*0.47,0,-SEG_LEN+0.05);
+    door.rotation.y=-Math.PI/2+leafSide*swing;door.userData.door=thresholdStyle;grp.add(door);
   }
   // ceiling fan sometimes
   if (room.name!=='bathroom'&&r()<0.6) placeModel(grp,'ceilingFan',{ x:0, z:-SEG_LEN*0.7, scale:2.4, mode:'ceiling', spin:true });
@@ -984,7 +987,7 @@ function inspectRooms(){
       item.lightColor=g.userData.lightFixture.userData.lightColor;
       item.lightFixture=g.userData.lightFixture.userData.fixtureType;
       item.lighting=g.userData.lighting.name;
-      item.scatter=g.userData.scatter;item.doormat=g.userData.doormat??null;item.thresholdDoor=g.userData.thresholdDoor;item.oddSizes=[];g.traverse(o=>{if(o.userData.oddSize)item.oddSizes.push(o.userData.rawObject+'x'+o.userData.oddSize.toFixed(1));});item.cutoutHeights=[];g.traverse(o=>{if(o.userData.rawObject&&o.geometry?.parameters)item.cutoutHeights.push(o.userData.rawObject.replace('raw','')+':'+Math.max(o.geometry.parameters.width,o.geometry.parameters.height).toFixed(2));});item.zone=g.userData.zone??null;item.drawers=[];g.traverse(o=>{if(o.userData.drawers)item.drawers.push(o.userData.drawers);});item.household=g.userData.household;item.strangeness=g.userData.strangeness??null;item.features=[g.userData.stairs&&'stairs'+g.userData.stairs.steps,g.userData.columns&&'columns'+g.userData.columns.rows,g.userData.platform&&'platform'].filter(Boolean);item.solids=g.userData.architecture.userData.solids.length;item.generation=g.userData.generationIndex??item.i;
+      item.scatter=g.userData.scatter;item.doormat=g.userData.doormat??null;item.thresholdDoor=g.userData.thresholdDoor;item.leaf=g.children.filter(o=>o.userData.door&&Math.abs(o.position.x)<1).map(o=>{const b=new THREE.Box3().setFromObject(o);return {hingeX:+o.position.x.toFixed(2),minX:+b.min.x.toFixed(2),maxX:+b.max.x.toFixed(2),depth:+(b.max.z-b.min.z).toFixed(2)};});item.oddSizes=[];g.traverse(o=>{if(o.userData.oddSize)item.oddSizes.push(o.userData.rawObject+'x'+o.userData.oddSize.toFixed(1));});item.cutoutHeights=[];g.traverse(o=>{if(o.userData.rawObject&&o.geometry?.parameters)item.cutoutHeights.push(o.userData.rawObject.replace('raw','')+':'+Math.max(o.geometry.parameters.width,o.geometry.parameters.height).toFixed(2));});item.zone=g.userData.zone??null;item.drawers=[];g.traverse(o=>{if(o.userData.drawers)item.drawers.push(o.userData.drawers);});item.household=g.userData.household;item.strangeness=g.userData.strangeness??null;item.features=[g.userData.stairs&&'stairs'+g.userData.stairs.steps,g.userData.columns&&'columns'+g.userData.columns.rows,g.userData.platform&&'platform'].filter(Boolean);item.solids=g.userData.architecture.userData.solids.length;item.generation=g.userData.generationIndex??item.i;
     }
     let output=document.getElementById('room-inspection');
     if(!output){output=document.createElement('pre');output.id='room-inspection';output.hidden=true;document.body.append(output);}

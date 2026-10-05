@@ -1058,3 +1058,13 @@ Checks. Downloads: `three.module.js` reports revision 160, the font file has a T
 Not done. The title was not seen: the preview pane was hidden and screenshots timed out, so letter spacing, line height, and the size ratio are set by number, not by eye. Widths other than 800 pixels were not measured, so the 360-pixel phone width is unchecked. The dev pages in `scripts/` and the two preview pages were repointed but not opened. Nothing was pushed, so the published site still loads Three.js from unpkg and shows Permanent Marker.
 
 Root ROADMAP.md needed no change. Next remains independent side-room lighting.
+
+## 2026-10-06 — Claude Code — doorway leaf hung on its frame
+
+Xyh reported that door hinges still do not meet the door frames: a left door sits to the left of the frame and a right door to the right.
+
+Cause: the leaf at each room's far doorway was hung 0.96 m from the centre line. Measuring the doorway model's vertices gives a frame that ends 0.486 m from the centre, so every leaf stood about half a metre along the wall from the frame it belongs to. The hinge is now on the jamb, and the leaf stands open a varying amount past square. My earlier fix (2026-10-05) attached the handle to the leaf and did not touch this; I had taken "hinge" to mean the floating handle and did not measure the frame.
+
+Checks, in the browser on the root server, straight route: six rooms reported hinges at 0.47 m on the leaf's side, leaves between 0.40 and 1.06 m from the centre, clear doorways and aisles, and no console errors; viewed room 22, where the green leaf meets the right jamb of the doorway and swings toward the wall, and a screen door on the jamb of the next doorway beyond it.
+
+Not done. A left-hand leaf was read from the inspector but not viewed. Leaves are 2.04 m tall against a 1.96 m opening, so a closed leaf would not fit; they are only ever shown open. Doors on side walls are leaves laid against plain wall with no frame at all, unchanged here. Nothing was viewed on the twisting route. Nothing was pushed.
