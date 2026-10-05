@@ -84,7 +84,7 @@ import { ROOM_WIDTHS, partitionPieces } from './room-widths.js';
 
 import { LAYOUT_IDS, generateFurnitureLayout, checkFurnitureLayout } from './furniture-layouts.js?v=integrated-1';
 import { FLOOR_IDS, createFloorVariant } from './floor-variants.js?v=integrated-1';
-import { DOOR_STYLES, createDoorLeaves } from './doors.js?v=doors-4';
+import { DOOR_STYLES, createDoorLeaves } from './doors.js?v=doors-5';
 import { MODEL_ASSETS, loadModelAssets } from './model-assets.js';
 import { createRoomSet, createRoomFixture } from './room-sets.js?v=sets-8';
 import { createUratexSofa } from './uratex-sofa.js';
@@ -444,6 +444,7 @@ function mulberry32(a){ return ()=>{ a|=0; a=a+0x6D2B79F5|0;
   return ((t^t>>>14)>>>0)/4294967296; }; }
 // A range rather than one specified value: batches of the same paint differ, and so do these.
 const WALL_PAINTS={foamGreen:0xbfdcc9,foamMint:0xb2dcc1,foamSage:0xc4d9be,foamAqua:0xb8dbd0,foamDeep:0xa8cfb6,crispEcru:0xfcedbe,brightWonder:0xf9f1d2,yellowRain:0xedd381,white:0xf1f1ec};
+const MAT_COLOURS=[0xc2885e,0x8f6a4a,0x6f7d5a,0x4e6b7a,0x9c4a42,0xb9a26a,0x7a7a74,0x5a4a6e,0xc7b79a,0x3f5a4a,0xa8644e,0x8fa3a8,0xd2c9b4,0x70573d];
 const TRIM_GREENS=[[0x6b8a3a,30],[0x7d9a45,18],[0x5a7a34,16],[0x6e8f55,12],[0x86a04e,10],[0x4e7c63,8],[0x3f7466,6]];
 const segments = new Map();
 function architectureCollision(group,box){
@@ -651,7 +652,15 @@ function buildSegment(index){
   grp.userData.domesticDetails=addDomesticDetails({THREE,group:grp,room:descriptor,seed:i,curvize,spots:solidWalls,photos:WALL_HANGINGS,spriteMat,ceiling:c,forceRoof:params.get('roof')==='yero',forceArrangement:params.get('arrangement'),forceSeat:params.get('seats'),woodTexture});
   if(!descriptor.rise&&r()<0.65){
     const rug=FURNI.rugDoormat.clone();const box=new THREE.Box3().setFromObject(rug),size=box.getSize(new THREE.Vector3());
-    rug.scale.setScalar(0.8/Math.max(size.x,size.z));const fitted=new THREE.Box3().setFromObject(rug);
+    // Each room's mat takes its own colour and size, from a hash that leaves the furniture stream alone.
+    const matRoll=mulberry32((i*69069+4447)>>>0),matColour=MAT_COLOURS[Math.floor(matRoll()*MAT_COLOURS.length)];
+    rug.traverse(o=>{if(o.isMesh){
+      const key='doormat:'+o.material.uuid;
+      if(!grp.userData.wallPaintMaterials.has(key))grp.userData.wallPaintMaterials.set(key,curvize(Object.assign(o.material.clone(),{color:new THREE.Color(matColour)})));
+      o.material=grp.userData.wallPaintMaterials.get(key);
+    }});
+    grp.userData.doormat=matColour.toString(16);
+    rug.scale.setScalar((0.6+matRoll()*0.35)/Math.max(size.x,size.z));const fitted=new THREE.Box3().setFromObject(rug);
     rug.position.set(-(fitted.min.x+fitted.max.x)/2,0.003-fitted.min.y,-0.65-(fitted.min.z+fitted.max.z)/2);grp.add(rug);
   }
   grp.updateMatrixWorld(true);
@@ -966,7 +975,7 @@ function inspectRooms(){
       item.lightColor=g.userData.lightFixture.userData.lightColor;
       item.lightFixture=g.userData.lightFixture.userData.fixtureType;
       item.lighting=g.userData.lighting.name;
-      item.scatter=g.userData.scatter;item.thresholdDoor=g.userData.thresholdDoor;item.oddSizes=[];g.traverse(o=>{if(o.userData.oddSize)item.oddSizes.push(o.userData.rawObject+'x'+o.userData.oddSize.toFixed(1));});item.cutoutHeights=[];g.traverse(o=>{if(o.userData.rawObject&&o.geometry?.parameters)item.cutoutHeights.push(o.userData.rawObject.replace('raw','')+':'+Math.max(o.geometry.parameters.width,o.geometry.parameters.height).toFixed(2));});item.zone=g.userData.zone??null;item.drawers=[];g.traverse(o=>{if(o.userData.drawers)item.drawers.push(o.userData.drawers);});item.household=g.userData.household;item.strangeness=g.userData.strangeness??null;item.features=[g.userData.stairs&&'stairs'+g.userData.stairs.steps,g.userData.columns&&'columns'+g.userData.columns.rows,g.userData.platform&&'platform'].filter(Boolean);item.solids=g.userData.architecture.userData.solids.length;item.generation=g.userData.generationIndex??item.i;
+      item.scatter=g.userData.scatter;item.doormat=g.userData.doormat??null;item.thresholdDoor=g.userData.thresholdDoor;item.oddSizes=[];g.traverse(o=>{if(o.userData.oddSize)item.oddSizes.push(o.userData.rawObject+'x'+o.userData.oddSize.toFixed(1));});item.cutoutHeights=[];g.traverse(o=>{if(o.userData.rawObject&&o.geometry?.parameters)item.cutoutHeights.push(o.userData.rawObject.replace('raw','')+':'+Math.max(o.geometry.parameters.width,o.geometry.parameters.height).toFixed(2));});item.zone=g.userData.zone??null;item.drawers=[];g.traverse(o=>{if(o.userData.drawers)item.drawers.push(o.userData.drawers);});item.household=g.userData.household;item.strangeness=g.userData.strangeness??null;item.features=[g.userData.stairs&&'stairs'+g.userData.stairs.steps,g.userData.columns&&'columns'+g.userData.columns.rows,g.userData.platform&&'platform'].filter(Boolean);item.solids=g.userData.architecture.userData.solids.length;item.generation=g.userData.generationIndex??item.i;
     }
     let output=document.getElementById('room-inspection');
     if(!output){output=document.createElement('pre');output.id='room-inspection';output.hidden=true;document.body.append(output);}

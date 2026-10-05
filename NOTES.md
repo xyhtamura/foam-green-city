@@ -991,3 +991,15 @@ Not done. The sizes in `REAL_SIZE` are my estimates from the product types, not 
 A mistake caught before commit: the first regeneration indexed those seven unnamed files and dropped a function I had just added to `raw-object-assets.js`, because the script kept only the text from `createRawObject` onward. Both are fixed in the script.
 
 Root ROADMAP.md needed no change. Next remains independent side-room lighting. Antigravity's uncommitted notes entry and the supplied raw-image changes were left unstaged. Nothing was pushed or published.
+
+## 2026-10-05 — Claude Code — door hardware attached, doormat colours
+
+Xyh reported a gap between the door hinge and the door, and asked for varied welcome-mat colours.
+
+The floating part was the handle, not the hinge: it sat 1.75 cm off one face of the leaf, and on screen doors it was beside the stile, over the mesh. The hinges already overlapped the leaf. The handle is now a plate flush on both faces with a grip, and the hinges are re-seated on the hinge edge with a third added at mid-height. Doormats draw one of fourteen colours and a width per room.
+
+Checks, in the browser on the root server, straight route: viewed a green leaf in room 22 with the handle plate on its face, and six rooms reported five mats in four colours (one room has no mat) with all far doorways clear and no console errors.
+
+Not done. The hinges were not seen close up, and a screen door's handle was not viewed. If the gap Xyh saw was something other than the handle, it is still there. Nothing was viewed on the twisting route.
+
+Root ROADMAP.md needed no change. Next remains independent side-room lighting. Antigravity's uncommitted notes entry and the supplied raw-image changes were left unstaged. Nothing was pushed or published.

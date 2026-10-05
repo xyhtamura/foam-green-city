@@ -21,8 +21,14 @@ export function createDoorLeaves(curvize,trimColor=0x4e7c63){
       box('leaf',0.44,1.02,0,0.88,2.04,0.045);
       for(const y of [0.48,1.43])box('recessed-panel',0.44,y,0.025,0.69,0.77,0.015,inset);
     }
-    box('handle',0.78,1.02,0.065,0.035,0.13,0.05,metal);
-    for(const y of [0.25,1.78])box('hinge',0.015,y,0.025,0.026,0.095,0.045,metal);
+    // Hardware touches the leaf: a plate flush on each face with a grip on it, set on the
+    // stile of a screen door. Hinge knuckles sit on the hinge edge and bite into it.
+    const grip=style==='screen'?0.845:0.80;
+    for(const face of [-1,1]){
+      box('handle-plate',grip,1.02,face*0.0265,0.05,0.17,0.008,metal);
+      box('handle',grip,1.02,face*0.048,0.026,0.11,0.035,metal);
+    }
+    for(const y of [0.25,1.02,1.78])box('hinge',0.006,y,0,0.03,0.1,0.07,metal);
     // One draw per material rather than one draw per screen wire.
     const buckets=new Map();group.updateMatrixWorld(true);
     for(const obj of [...group.children]){

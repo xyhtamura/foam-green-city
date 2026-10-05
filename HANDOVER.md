@@ -14,6 +14,10 @@ The route is still one straight logical line; nothing here adds a second axis. A
 
 Side rooms get scatter from `planSideScatter`, fitted to the room rectangle, off fixture blocks and off the strip from the doorway across the room; the objects join the owning room's single scatter mesh. Movement no longer starts paused under `prefers-reduced-motion`; Xyh asked for it to start on Enter. `scripts/check_forks.mjs` covers exit routes and salts.
 
+## Door hardware and doormat colours — 2026-10-05
+
+`doors.js`: each leaf has a handle plate flush on both faces with a grip on it, placed on the stile of a screen door, and three hinge knuckles centred on the hinge edge. The old handle was a single block 1.75 cm clear of one face, and on a screen door it hung in the mesh beside the stile. `index.html`: the entry doormat takes one of fourteen `MAT_COLOURS` and a width of 0.6 to 0.95 m from its own hash; its material is cloned into the room's material cache and disposed with the room.
+
 ## Cutout sizes and doorway leaves — 2026-10-05
 
 `scripts/index_raw_objects.py` now holds `REAL_SIZE`: the real height or width in metres of each supplied cutout, from which the generated `width` follows. Before, every tabletop cutout was scaled to 0.43 m tall or 0.3 m wide and every floor cutout to 0.4 m wide, which made a sardine can 0.43 m and a bleach bottle 1.26 m. A cutout missing from `REAL_SIZE` falls back to the generic size and the script names it. Files whose names start with a digit — unnamed captures — are skipped and named. The script keeps everything after the generated table, so functions added to `raw-object-assets.js` survive a rebuild.
