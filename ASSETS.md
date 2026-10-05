@@ -80,7 +80,7 @@ for the deliberate crunchy lo-fi aesthetic.
 - **Files**:
   - `models/kutsarat_tinidor.png` (422×894) — Traditional giant carved wooden spoon and fork wall decor.
   - `models/stand_fan.png` (508×962) — Classic Philippine retro electric stand fan with bright teal plastic blades.
-  - `models/wall_calendar.png` (510×797) — Chinese-Filipino commercial tear-off daily wall calendar with red/gold top.
+  - `models/wall_calendar.png` (510×797) — Chinese-Filipino commercial tear-off daily wall calendar with red/gold top. Withdrawn 2026-10-06: Xyh pointed out that single-day tear-off calendars are not what Philippine households hang. It also carries an airline's logo. The file is no longer used or published; the monthly `2d/wall hanging/photos/Calendar.png` takes its place.
   - `models/tabo_timba.png` (689×754) — Pastel blue plastic *timba* (pail) with *tabo* (water dipper).
   - `models/water_dispenser.png` (348×944) — Compact home water dispenser with inverted 5-gallon translucent blue jug.
 

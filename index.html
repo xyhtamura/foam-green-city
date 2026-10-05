@@ -279,7 +279,7 @@ const SPRMAT = {};       // sprite materials by filename
 const ASP = { sofa: 162/273, curtain: 808/810, plant: 370/335,
               monobloc: 419/234,
               kutsaraTinidor: 894/422, standFan: 962/508,
-              wallCalendar: 797/510, taboTimba: 754/689,
+              wallCalendar: 1.309608540925267,   // the monthly calendar, about 0.4 m by 0.52 m taboTimba: 754/689,
               waterDispenser: 944/348 };
 function spriteMat(file){
   if (SPRMAT[file]) return SPRMAT[file];
@@ -423,7 +423,7 @@ const ROOMS = [
       wallModel('phBookshelf',1.65),floorModel('phChair',0.88),floorModel('phCrate',0.32),wallModel('phDaybed',0.85),wallModel('bookcaseOpenLow',0.85),wallModel('sideTableDrawers',0.65),wallModel('loungeSofa',0.75), wallModel('televisionVintage',0.55),
       floorModel('pottedPlant',0.9), billb('plant.png',ASP.plant,0.9),
       wallModel('uratexNavy',0.62),wallModel('uratexFloral',0.62),wallModel('uratexMaroon',0.62),
-      billb('stand_fan.png',ASP.standFan,0.65), wallSpr('wall_calendar.png',ASP.wallCalendar,0.35,1.2),
+      billb('stand_fan.png',ASP.standFan,0.65), wallSpr('2d/wall hanging/photos/Calendar.png',ASP.wallCalendar,0.4,1.15),
       billb('water_dispenser.png',ASP.waterDispenser,0.38) ] },
   { name:'kitchen', pool:[
       rawFloor('rawDrawers'),rawFloor('rawCooler'),
@@ -438,7 +438,7 @@ const ROOMS = [
       rawFloor('rawDrawers'),
       domesticWallFan, floorModel('deskFan',0.59),
       wallModel('phDaybed',0.85),floorModel('phPillows',0.25),wallModel('phBookshelf',1.65),wallModel('sideTableDrawers',0.65),wallModel('bedSingle',0.5), floorModel('pottedPlant',0.9),
-      billb('stand_fan.png',ASP.standFan,0.65), wallSpr('wall_calendar.png',ASP.wallCalendar,0.35,1.2) ] },
+      billb('stand_fan.png',ASP.standFan,0.65), wallSpr('2d/wall hanging/photos/Calendar.png',ASP.wallCalendar,0.4,1.15) ] },
   { name:'bare', pool:[rawFloor('rawDrawers'),rawFloor('rawCooler'),wallModel('phRack',1.7),floorModel('phCrate2',0.32),floorModel('phCrate',0.32),floorModel('phChair',0.88),
       billb('plant.png',ASP.plant,0.9), floorModel('pottedPlant',0.9),
       billb('stand_fan.png',ASP.standFan,0.65),

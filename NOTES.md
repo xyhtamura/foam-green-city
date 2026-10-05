@@ -1068,3 +1068,11 @@ Cause: the leaf at each room's far doorway was hung 0.96 m from the centre line.
 Checks, in the browser on the root server, straight route: six rooms reported hinges at 0.47 m on the leaf's side, leaves between 0.40 and 1.06 m from the centre, clear doorways and aisles, and no console errors; viewed room 22, where the green leaf meets the right jamb of the doorway and swings toward the wall, and a screen door on the jamb of the next doorway beyond it.
 
 Not done. A left-hand leaf was read from the inspector but not viewed. Leaves are 2.04 m tall against a 1.96 m opening, so a closed leaf would not fit; they are only ever shown open. Doors on side walls are leaves laid against plain wall with no frame at all, unchanged here. Nothing was viewed on the twisting route. Nothing was pushed.
+
+## 2026-10-06 — Claude Code — tear-off calendar withdrawn
+
+Xyh pointed out a calendar with one large number filling the page, and said that is not used in the Philippines. It was `models/wall_calendar.png`, a single-day tear-off calendar drawn as a wall sprite in salas and bedrooms; it also carried an airline's logo. Its two prop-pool entries now draw the monthly calendar already in the wall-hanging set, `2d/wall hanging/photos/Calendar.png`, at 0.4 m wide. The old image is no longer tracked or whitelisted, so it will leave the published site on the next push; the file stays on disk. ASSETS.md records the withdrawal.
+
+Checks. `check_published_assets.py` passes with 126 assets and the stamp check passes. In the browser on the root server, a fast run through 114 rooms requested the monthly calendar and never the old one, with no error and no missing-asset warning.
+
+Not done. The monthly calendar was not viewed at its new pool size. It is dated January 2023, and so every calendar in the walk shows the same month. Nothing was pushed.
