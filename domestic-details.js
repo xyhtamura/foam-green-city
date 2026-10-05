@@ -264,7 +264,7 @@ export function addDomesticDetails({THREE,group,room,seed,curvize,spots,photos,s
   }
   const floor=geo(new THREE.PlaneGeometry(room.width,room.length,Math.ceil(room.width/2),Math.ceil(room.length)).rotateX(-Math.PI/2).translate(0,0,-room.length/2));
   const positions=floor.attributes.position;for(let i=0;i<positions.count;i++)positions.setY(i,floorHeight(room,positions.getZ(i))+0.008);floor.computeVertexNormals();owner.add(new THREE.Mesh(floor,wear));
-  const exposed=forceRoof||(seed%7===2&&room.height<4&&room.shape==='rectangle');
+  const exposed=forceRoof||(seed%7===2&&room.height<4&&room.shape==='rectangle'&&!room.stairs&&!room.columns&&!room.platform);
   if(exposed){
     group.remove(ceiling);ceiling.geometry.dispose();
     const roof=geo(new THREE.PlaneGeometry(room.width,room.length,Math.ceil(room.width/0.12),Math.ceil(room.length/2)).rotateX(Math.PI/2));

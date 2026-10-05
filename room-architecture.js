@@ -81,37 +81,46 @@ export function createRoomArchitecture(room,curvize,{woodTexture=null,stairs=nul
     box('wall',3,0.12,turnLen,turnX,y+H,z-2-turnLen/2);
     box('wall',0.12,H-2.2,4,side*W,y+(H+2.2)/2,z);
   }
-  if(W>=5&&['auditorium','colonnade'].includes(room.shape)){
-    for(const side of [-1,1])for(let z=-5;z> -L+3;z-=6){
-      box('wall',0.65,H,0.65,side*(W-3),H/2,z);
-      box('trim',0.85,0.18,0.85,side*(W-3),0.09,z);
-      reserve(side*(W-3),z,0.85,0.85);
-    }
-    if(room.shape==='auditorium'){
-      for(const side of [-1,1]){box('floor',W-1.2,0.6,4,side*(W+1.2)/2,0.3,-L+3);reserve(side*(W+1.2)/2,-L+3,W-1.2,4);}
-      for(const side of [-1,1])box('trim',W-1.2,0.12,0.18,side*(W+1.2)/2,0.66,-L+5);
-    }
-  }
-  if(W>=3&&L>=14&&room.shape==='deadStairs'){
-    const side=room.index%2?-1:1,x=side*(W-1.5),base=-L*0.36,y=floorHeight(room,base);
-    const wooden=stairs!=='solid'&&(stairs==='wood'||room.index%4!==0),run=wooden?.25:.36;
-    for(let i=0;i<12;i++){const h=(i+1)*.18;box(wooden?'wood':'floor',1.6,wooden?.045:h,wooden?.27:.36,x,wooden?y+h-.0225:y+h/2,base-i*run);}
+  // Stairs, platform, and columns are separate features. Old shape names still select their defaults.
+  const solids=[],solid=(x,z,w,d)=>{reserve(x,z,w,d);solids.push(reservations.at(-1));};
+  const stair=room.stairs??(room.shape==='deadStairs'?{steps:12,side:room.index%2?-1:1,wooden:room.index%4!==0}:null);
+  if(stair&&W>=3&&L>=14){
+    const side=stair.side,x=side*(W-1.5),base=-L*0.36,y=floorHeight(room,base);
+    const wooden=stairs!=='solid'&&(stairs==='wood'||stair.wooden),run=wooden?.25:.36;
+    const n=Math.max(3,Math.min(stair.steps,Math.floor((0.64*L-1.95)/run))),top=n*.18;
+    for(let i=0;i<n;i++){const h=(i+1)*.18;box(wooden?'wood':'floor',1.6,wooden?.045:h,wooden?.27:.36,x,wooden?y+h-.0225:y+h/2,base-i*run);}
     if(wooden){
-      const dz=11*run+.28,dy=2.16,angle=Math.atan2(dy,dz),length=Math.hypot(dy,dz);
-      for(const dx of [-.81,.81])box('wood',.055,.24,length,x+dx,y+dy/2,base-11*run/2,angle);
+      const dz=(n-1)*run+.28,angle=Math.atan2(top,dz),length=Math.hypot(top,dz);
+      for(const dx of [-.81,.81])box('wood',.055,.24,length,x+dx,y+top/2,base-(n-1)*run/2,angle);
     }
-    const end=base-12*run;
-    box(wooden?'wood':'floor',1.6,wooden?.055:.16,1.5,x,y+2.16-(wooden?.0275:.08),end-.57);
-    box('wall',1.9,Math.max(0.5,H-y-2.16),0.15,x,(H+y+2.16)/2,end-1.32);
-    if(!wooden)box('trim',0.09,2.16,4.6,x+side*0.85,y+1.08,base-2.15);
+    const end=base-n*run;
+    box(wooden?'wood':'floor',1.6,wooden?.055:.16,1.5,x,y+top-(wooden?.0275:.08),end-.57);
+    box('wall',1.9,Math.max(0.5,H-y-top),0.15,x,(H+y+top)/2,end-1.32);
+    if(!wooden)box('trim',0.09,top,n*run+.28,x+side*0.85,y+top/2,base-n*run/2+.01);
     group.userData.stairStyle=wooden?'openWood':'solid';
-    reserve(x,base-2.7,2,6.1);
+    solid(x,(base+.35+end-1.45)/2,2,base+.35-(end-1.45));
     group.userData.deadStairs=true;
+  }
+  if((room.platform??room.shape==='auditorium')&&W>=5&&!room.rise){
+    for(const side of [-1,1]){box('floor',W-1.2,0.6,4,side*(W+1.2)/2,0.3,-L+3);solid(side*(W+1.2)/2,-L+3,W-1.2,4);}
+    for(const side of [-1,1])box('trim',W-1.2,0.12,0.18,side*(W+1.2)/2,0.66,-L+5);
+  }
+  // Columns stand in rows from each side wall inward, and give way to anything already placed.
+  const cols=room.columns??(['auditorium','colonnade'].includes(room.shape)?{inset:3,across:6,spacing:6,rows:1}:null);
+  if(cols&&W>=5)for(const side of [-1,1])for(let row=0;row<cols.rows;row++){
+    const x=side*(W-cols.inset-row*cols.across);if(Math.abs(x)<1.6)break;
+    for(let z=-5;z> -L+3;z-=cols.spacing){
+      if(reservations.some(b=>x+0.45>b.minX&&x-0.45<b.maxX&&z+0.45>b.minZ&&z-0.45<b.maxZ))continue;
+      const y=floorHeight(room,z);
+      box('wall',0.65,H-y,0.65,x,(H+y)/2,z);
+      box('trim',0.85,0.18,0.85,x,y+0.09,z);
+      solid(x,z,0.85,0.85);
+    }
   }
   for(const [kind,pieces] of batches){const geometry=mergeGeometries(pieces);pieces.forEach(g=>g.dispose());group.add(new THREE.Mesh(geometry,materials[kind]));}
   group.userData.openings=openings;
   group.userData.sideSpaces=sideSpaces;group.userData.sideBlocks=sideBlocks;
-  group.userData.reservations=reservations;
+  group.userData.reservations=reservations;group.userData.solids=solids;
   group.userData.dispose=()=>{group.traverse(o=>{if(o.isMesh)o.geometry.dispose();});Object.values(materials).forEach(m=>m.dispose());};
   return group;
 }

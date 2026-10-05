@@ -889,3 +889,19 @@ Checks. `check_forks.mjs` found 397 exits in 1,703 side rooms over 6,000 demo ro
 Not done. The manual trigger in a side room was not walked by hand. The default 30% hash was only measured in the node check, not seen in a default run. Furnishing meshes in side rooms are placed from the same fixture boxes the doorway test uses, but their rendered bounds were not compared against the doorway. The cut's timing is still unjudged in motion.
 
 Root ROADMAP.md's Mechanism line was updated again and left uncommitted. Next remains independent side-room lighting. Nothing was pushed or published.
+
+## 2026-10-05 — Claude Code — generated room shells
+
+Xyh asked for unusual geometry to emerge from generation rather than be set, for odd furniture layouts to be let in, and for most things to be procedural.
+
+The default run no longer draws strange rooms from the ten `unusual` and six `vast` shells; those lists are deleted. `room-generator.js` draws every room's width, length, height, floor rise, passages, stairs, columns, platform, type, and layout from separate seeded distributions, whose tails open under two slow pressure fields along the route. Unusual rooms are whatever the draws coincide in. The six-to-eight-room exception schedule is gone with the lists; unusual rooms now arrive in short stretches. Stairs, columns, and platforms became parameters in `room-architecture.js` and can share a room. Odd layouts appear in about 7% of ordinary rooms and more often under pressure. Details are in HANDOVER.md.
+
+Measured over 10,000 rooms at seed 5: 8,198 domestic, 1,625 unusual, 177 very large or tall; 135 with stairs, 325 with columns, 27 with a platform, 380 with passages, 218 with a raised or sunken floor, 234 with two or more features, and 541 ordinary rooms with an odd layout. Fork rooms fell from 5.0% to 3.2%, and the first is now room 17.
+
+Checks. `check_demo_sequence.mjs` was rewritten for the generator and passed 40,000 rooms across four seeds: determinism, joins, the size and feature limits the builder assumes, furniture validity and the 160-piece limit on every seventh room, and that every feature and every layout occurs. A sweep of all twelve layouts over 99 room sizes found no invalid layout. The fork, side-space, navigation, scatter, room-sequence, and object-support checks pass. In the browser on the root server, straight route: viewed room 19 (34 × 46 m hall with two column rows, a nine-step stair, a ring of chairs, and a passage), room 20 (32 × 20 m, 16.8 m high, three column rows, raised floor), and room 139 (12 × 26 m with stairs, columns, and a passage); the inspector reported clear aisles, open branch entrances, clear architecture, and closed partition shoulders for all twelve rooms read, with no console errors.
+
+Not done. Generated rooms were not viewed on the twisting route, and none wider than 34 m was viewed at all; the generator reaches 62 m in these seeds. Frame time in large column rooms was not measured. Sunken-floor rooms with columns were not viewed after the change that starts columns at floor height. Stairs steeper or longer than the old twelve steps were checked for fit by rule, not by eye. Passage geometry — reach, position, turn — is still fixed, as are platform size and the side-room plan, so those are the next things to parameterise. `development.html` and the `mixed` sequence keep the old lists. The 2.5% rates and thresholds were set to land near the earlier 85/14/1 mix, not tuned by watching a long run.
+
+Dropped: keeping an exception at a fixed interval. A schedule and emergence contradict each other, and Xyh asked for emergence.
+
+Root ROADMAP.md's Mechanism line was updated and left uncommitted. Next remains independent side-room lighting. Antigravity's uncommitted notes entry and the supplied raw-image changes were left unstaged. Nothing was pushed or published.

@@ -89,20 +89,20 @@ import { MODEL_ASSETS, loadModelAssets } from './model-assets.js';
 import { createRoomSet, createRoomFixture } from './room-sets.js?v=sets-8';
 import { createUratexSofa } from './uratex-sofa.js';
 import { createWireRun } from './wire-runs.js';
-import { createWallUtilities } from './wall-utilities.js?v=walls-7';
-import {createWalkSequence,retainedRooms,walkRegions,canOccupy,moveWalker,pathToRoute,roomExits} from './navigation.js?v=exits-1';
-import {addDomesticDetails} from './domestic-details.js?v=details-10';
+import { createWallUtilities } from './wall-utilities.js?v=walls-8';
+import {createWalkSequence,retainedRooms,walkRegions,canOccupy,moveWalker,pathToRoute,roomExits} from './navigation.js?v=generator-1';
+import {addDomesticDetails} from './domestic-details.js?v=details-11';
 let wallUtilities;
 import { roomLighting } from './room-lighting.js?v=lighting-3';
 import { scatterLevel, planScatter, planSideScatter, scatterBlocks, createScatterMesh } from './floor-scatter.js?v=scatter-4';
 import { spatialFrame, spatialPoint, SPATIAL_GLSL, SPATIAL_PROFILES } from './spatial-route.js';
-import { floorHeight, cameraRoute, routePoint } from './room-sequences.js?v=forks-1';
+import { floorHeight, cameraRoute, routePoint } from './room-sequences.js?v=generator-1';
 import {sideSpacePlan} from './side-spaces.js?v=washrooms-1';
-import {addWoodDetails} from './wood-details.js?v=wood-2';
+import {addWoodDetails} from './wood-details.js?v=wood-3';
 import {addSideWashrooms} from './side-washrooms.js?v=washrooms-2';
 import {addSideStorage} from './side-storage.js?v=storage-2';
 import {addSideBedrooms} from './side-bedrooms.js?v=bedrooms-6';
-import { branchOpenings, raiseFloor, createRoomArchitecture } from './room-architecture.js?v=architecture-10';
+import { branchOpenings, raiseFloor, createRoomArchitecture } from './room-architecture.js?v=architecture-11';
 
 // ---- palette (DepEd MPSS, stylized: green walls) ----
 const COL = {
@@ -552,7 +552,8 @@ function buildSegment(index){
   }
   const generated=room.name==='bathroom'?[]:generateFurnitureLayout({width,length:SEG_LEN,seed:i+41,layout,finishCount:FURNITURE_FINISHES.length});
   const placements=generated.filter((p,n)=>{
-    if(descriptor.type==='auditorium'&&n%Math.ceil(generated.length/160)!==0)return false;
+    // Independent pieces thin out in very large rooms; paired layouts are kept to rooms they fit.
+    if(generated.length>160&&['chairRows','perimeter'].includes(layout)&&n%Math.ceil(generated.length/160)!==0)return false;
     if(descriptor.rise&&(p.z> -SEG_LEN*0.3||p.z< -SEG_LEN*0.7))return false;
     const box=new THREE.Box3(new THREE.Vector3(p.x-0.65,0,grp.position.z+p.z-0.65),new THREE.Vector3(p.x+0.65,3,grp.position.z+p.z+0.65));
     return !architectureCollision(grp,box)&&!(roomSet?.parent&&box.intersectsBox(new THREE.Box3().setFromObject(roomSet).expandByScalar(0.12)))&&!(domesticSofa&&box.intersectsBox(new THREE.Box3().setFromObject(domesticSofa).expandByScalar(0.12)));
@@ -627,7 +628,7 @@ function buildSegment(index){
     const b=new THREE.Box3().setFromObject(o);return {minX:b.min.x,maxX:b.max.x,minZ:b.min.z,maxZ:b.max.z,minY:b.min.y,maxY:b.max.y};
   });
   for(const b of architecture.userData.sideBlocks)grp.userData.walkBlocks.push({...b,minZ:b.minZ+descriptor.startZ,maxZ:b.maxZ+descriptor.startZ});
-  if(['deadStairs','auditorium','colonnade'].includes(descriptor.shape))for(const b of architecture.userData.reservations)
+  for(const b of architecture.userData.solids)
     grp.userData.walkBlocks.push({...b,minZ:b.minZ+descriptor.startZ,maxZ:b.maxZ+descriptor.startZ,minY:-10,maxY:100});
   grp.userData.woodDetails=addWoodDetails({THREE,group:grp,room:descriptor,spots:solidWalls,texture:woodTexture,curvize,force:params.get('wood')});
   // Floor scatter is fitted last, around everything already standing in the room.
@@ -710,7 +711,7 @@ function takeBranch(){
   for(const i of [...segments.keys()])dropSegment(i);
   sequence.reroll();
   let target=Math.max(0,travelRoom)+20+Math.floor(Math.random()*600);
-  for(let n=0;n<40;n++,target++){const r=sequence.room(target);if(r.category==='domestic'&&r.shape==='rectangle'&&!r.rise)break;}
+  for(let n=0;n<40;n++,target++){const r=sequence.room(target);if(r.category==='domestic')break;}
   const room=sequence.room(target);
   travelRoom=target;travelRoute=cameraRoute(room);travelDistance=0.4;travelYaw=0;rejoin=null;
   walker.x=0;walker.z=room.startZ-0.4;walker.yaw=0;walker.pitch=0;cam.position.x=0;cam.position.z=walker.z;
@@ -927,7 +928,7 @@ function inspectRooms(){
       item.lightColor=g.userData.lightFixture.userData.lightColor;
       item.lightFixture=g.userData.lightFixture.userData.fixtureType;
       item.lighting=g.userData.lighting.name;
-      item.scatter=g.userData.scatter;item.generation=g.userData.generationIndex??item.i;
+      item.scatter=g.userData.scatter;item.strangeness=g.userData.strangeness??null;item.features=[g.userData.stairs&&'stairs'+g.userData.stairs.steps,g.userData.columns&&'columns'+g.userData.columns.rows,g.userData.platform&&'platform'].filter(Boolean);item.solids=g.userData.architecture.userData.solids.length;item.generation=g.userData.generationIndex??item.i;
     }
     let output=document.getElementById('room-inspection');
     if(!output){output=document.createElement('pre');output.id='room-inspection';output.hidden=true;document.body.append(output);}

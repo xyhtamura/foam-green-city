@@ -1,10 +1,11 @@
 import {branchOpenings,sideSpacePlan} from './side-spaces.js?v=washrooms-1';
+import {generateRoom} from './room-generator.js';
 import {createRoomSequence,cameraRoute,routePoint,passageExit,exitRoute} from './room-sequences.js';
 
 // Geometry is disposable; seeded descriptors and distance prefixes reconstruct it.
 export function createWalkSequence(options){
-  const forward=createRoomSequence(options);
-  const backward=createRoomSequence({...options,seed:(options.seed??5)+7919});
+  const forward=createRoomSequence({generate:generateRoom,...options});
+  const backward=createRoomSequence({generate:generateRoom,...options,seed:(options.seed??5)+7919});
   // A room's shell depends on its index alone. Its contents also depend on a salt, fixed
   // while the room is built and changed once it is discarded, so a revisit differs.
   const held=new Map();let era=0;

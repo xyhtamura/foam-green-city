@@ -1,9 +1,10 @@
-// Run: node scripts/check_room_sequences.mjs
+// Run: node --experimental-default-type=module scripts/check_room_sequences.mjs
 import {readFile} from 'node:fs/promises';
 import assert from 'node:assert/strict';
 const source=await readFile(new URL('../room-sequences.js',import.meta.url),'utf8');
 const {createRoomSequence,SEQUENCE_NAMES,floorHeight,cameraRoute,routePoint}=await import(`data:text/javascript;base64,${Buffer.from(source).toString('base64')}`);
-for(const options of [{},...SEQUENCE_NAMES.map(sequence=>({sequence})),{widths:[4,8,6],lengths:[8,24,12]}]){
+const {generateRoom}=await import('../room-generator.js');
+for(const options of [{},...SEQUENCE_NAMES.map(sequence=>({sequence,generate:generateRoom})),{widths:[4,8,6],lengths:[8,24,12]}]){
   const stream=createRoomSequence(options),copy=createRoomSequence(options);
   let distance=0;
   for(let i=0;i<1000;i++){

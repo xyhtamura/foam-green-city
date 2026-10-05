@@ -20,7 +20,7 @@ export function addWoodDetails({THREE,group,room,spots,texture,curvize,force=nul
     if(solid)group.userData.walkBlocks.push(b);
     report.push({kind,inside,clear:kind==='wall'?null:clear,bounds:{minX:bounds.min.x,maxX:bounds.max.x,minZ:bounds.min.z,maxZ:bounds.max.z},contactGap:kind==='plank'?bounds.min.y-floorHeight(room,z):null});return true;
   }
-  if(room.shape==='rectangle'&&!room.rise&&room.width<=8&&room.type!=='bathroom'){
+  if(room.shape==='rectangle'&&!room.stairs&&!room.columns&&!room.platform&&!room.rise&&room.width<=8&&room.type!=='bathroom'){
     if(enabled('walls'))for(const spot of spots){
       if(board('wall',spot.side*(room.width/2-.085),.86,spot.z,.024,1.6,1.6))break;
     }

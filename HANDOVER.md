@@ -14,6 +14,16 @@ The route is still one straight logical line; nothing here adds a second axis. A
 
 Side rooms get scatter from `planSideScatter`, fitted to the room rectangle, off fixture blocks and off the strip from the doorway across the room; the objects join the owning room's single scatter mesh. Movement no longer starts paused under `prefers-reduced-motion`; Xyh asked for it to start on Enter. `scripts/check_forks.mjs` covers exit routes and salts.
 
+## Generated room shells — 2026-10-05
+
+`room-generator.js` replaces the demo run's `unusual` and `vast` lists. `roomPressure(index,seed)` returns two values in 0–1 from value noise over the room index: `strange` (zero unless a 4.5-room-period wave passes 0.78, plus a 2.5% single-room spike) and `scale` (a 31-room-period drift). `generateRoom` then draws, each from its own hash: width, length, and height as a domestic base plus a tail scaled by the pressures; a floor rise limited to a slope of 0.3; side passages (`branches` or `cross`); `stairs:{steps,side,wooden}`; `columns:{inset,across,spacing,rows}`; `platform`; type; and layout, with odd layouts at 7% plus half the strangeness. `category` is read off the result: `domestic` when nothing departs from the base, `rare` at 24 m wide, 12 m high, or 40 m long, otherwise `strange`. To change how often something appears, change its rate there; there is no list to edit.
+
+Constraints live in the generator and are asserted by `check_demo_sequence.mjs`: stairs need 6 m width and 14 m length, stop 1.1 m below the ceiling, and take the wall opposite a passage; columns and platforms need 10 m width; a platform excludes stairs, passages, and a rise; paired furniture layouts stay in rooms of 120 m² or less, because only `chairRows` and `perimeter` can be thinned to the 160-piece cap.
+
+`room-architecture.js` now reads `room.stairs`, `room.columns`, and `room.platform`, so features combine; the old `deadStairs`, `colonnade`, and `auditorium` shape names still select the same defaults for the authored phrases. Columns stand in rows from each wall inward, start at the local floor height, and skip anything already reserved. `userData.solids` lists what stops the walker, separately from `reservations`, which also hold passage mouths. `plainRoom` in `side-spaces.js` is the test for a shell with no features.
+
+`room-sequences.js` stays import-free: `createRoomSequence` takes `generate`, and `createWalkSequence` passes `generateRoom`. The authored phrases and the `mixed` sequence still use their lists and are reachable with `?sequence=<name>`.
+
 ## Side-room exits — 2026-10-05
 
 `sideSpacePlan` returns `exit` for 30% of side rooms by hash, dropped where a fixture stands within 0.95 m in front of the doorway; washrooms never keep one, so the measured share is 23%. The doorway is 0.86 m wide in the far wall, 0.25 m off the room's centre line, and the far wall is split around it. `roomExits(room)` in `navigation.js` lists every exit of a room, passage or side room, each with a trigger zone and a one-way route; `index.html` uses it for both the automatic choice and the manual trigger. `?sideExits=all|off` overrides the hash. Side hallways lead to a side room, so a hallway is a passageway when its room has an exit.

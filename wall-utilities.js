@@ -14,7 +14,7 @@ export function createWallUtilities({THREE,curvize}){
     return tvs.get(key).clone();
   }
   function add({group,descriptor,index,spots,params}){
-    if(descriptor.rise||descriptor.shape!=='rectangle')return;
+    if(descriptor.rise||descriptor.shape!=='rectangle'||descriptor.stairs||descriptor.columns||descriptor.platform)return;
     group.updateMatrixWorld(true);
     const occupied=group.children.filter(o=>o.userData.floorProp||o.userData.billboard||o.userData.diningTable||o.userData.diningChair||o.userData.utilityProp||o.userData.door||o.userData.roomSet);
     // Include the assembled kitchen/bathroom set and sofa, whose flags differ.

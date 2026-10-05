@@ -1,11 +1,13 @@
 // Seeded local rectangles shared by rendering and manual navigation.
 function hash(n){let h=Math.imul(n+1,0x45d9f3b)>>>0;h=Math.imul(h^(h>>>16),0x45d9f3b)>>>0;return (h^(h>>>16))>>>0;}
+// A plain shell has no passages, stairs, columns, or platform.
+export const plainRoom=room=>room.shape==='rectangle'&&!room.stairs&&!room.columns&&!room.platform;
 export function branchOpenings(room){
   if(room.length>=12&&['branches','cross'].includes(room.shape)){
     const j=Math.floor(room.length/4);
     return (room.shape==='cross'?[-1,1]:[room.index%2?-1:1]).map(side=>({side,j,z:-j*2-2,kind:'legacy'}));
   }
-  if(room.sideSpaces==='off'||room.length<6||room.width>8||room.height>4||room.rise||room.shape!=='rectangle')return [];
+  if(room.sideSpaces==='off'||room.length<6||room.width>8||room.height>4||room.rise||!plainRoom(room))return [];
   const h=hash((room.index??0)+(room.branchSeed??5)*193);
   if(!['room','hallway'].includes(room.sideSpaces)&&h%100>=34)return [];
   const j=Math.max(0,Math.floor(room.length/4)-1),side=h%2?-1:1;

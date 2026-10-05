@@ -100,52 +100,19 @@ function mixedFloor(room,index){
   const patterns=['creamCeramic','redLinoleum','greenCheckerboard','mismatchedTiles','abruptPatches'];
   return {...room,floor:roll<85?'bare':roll<90?'concrete':patterns[hash(Math.floor(index/2)+4311)%patterns.length]};
 }
-function createDemoRooms(seed){
-  const ends=[0],rareCounts=[0],blockLength=block=>6+hash(block+seed*97+701)%3;
+// The demo run: a fixed four-room opening, then generated shells.
+function createDemoRooms(seed,generate){
   const intro=[spec(6,6,'sala','sparse','bare',{kitchenCorner:true}),spec(6,8,'kitchen','pairedDining','bare'),spec(4,6,'bathroom','sparse','bare'),spec(4,8,'bedroom','sparse','bare')];
-  const unusual=[
-    spec(6,12,'bedroom','sparse','bare',{height:6}),
-    spec(10,14,'sala','perimeter','bare',{height:8}),
-    spec(6,16,'hall','sparse','bare',{height:4,shape:'deadStairs'}),
-    spec(8,16,'hall','sparse','bare',{height:5,shape:'branches'}),
-    spec(6,14,'sala','chairStacks','bare',{height:3.6}),
-    spec(14,20,'hall','sparse','bare',{height:6}),
-    spec(10,24,'hall','sparse','concrete',{height:8,shape:'cross'}),
-    spec(8,24,'sala','perimeter','bare',{height:5,rise:-0.8}),
-    spec(6,16,'hall','sparse','bare',{height:3.6,shape:'branches'}),
-    spec(8,20,'sala','perimeter','bare',{height:3.6,shape:'cross'}),
-  ];
-  const vast=[
-    spec(6,14,'sala','sparse','bare',{height:36,spaceVariation:'verticalVoid'}),
-    spec(80,48,'hall','sparse','bare',{height:32,spaceVariation:'distantWalls'}),
-    spec(64,36,'hall','sparse','concrete',{height:3.6,spaceVariation:'lowCanopy'}),
-    spec(56,48,'hall','sparse','bare',{height:18,shape:'colonnade',spaceVariation:'columnField'}),
-    spec(12,64,'hall','sparse','bare',{height:20,spaceVariation:'deepHall'}),
-    spec(32,40,'auditorium','chairRows','bare',{height:12,shape:'auditorium',spaceVariation:'assemblyHall'}),
-  ];
-  return index=>{
-    while(ends.at(-1)<=index){const block=ends.length-1;ends.push(ends.at(-1)+blockLength(block));rareCounts.push(rareCounts.at(-1)+Number(block>=2&&hash(block+seed*71+4001)%8===0));}
-    let lo=0,hi=ends.length-1;
-    while(lo+1<hi){const mid=(lo+hi)>>1;if(ends[mid]<=index)lo=mid;else hi=mid;}
-    const h=hash(index+seed*193+1709),exception=index===ends[lo+1]-1;
-    if(exception){
-      if(lo>=2&&hash(lo+seed*71+4001)%8===0){
-        const room=vast[rareCounts[lo]===0?1:h%vast.length];
-        return {...room,category:'rare'};
-      }
-      return {...unusual[h%unusual.length],category:'strange'};
-    }
-    const room=index<intro.length?intro[index]:{...DOMESTIC[h%DOMESTIC.length],length:6+2*(hash(index+seed*37+29)%4)};
-    return mixedFloor({...room,category:'domestic'},index);
-  };
+  return index=>mixedFloor(index<intro.length?{...intro[index],category:'domestic'}:generate(index,seed),index);
 }
 
-export function createRoomSequence({sequence,widths=[],lengths=[],type,seed=5}={}){
+// `generate(index,seed)` supplies demo shells; this module stays free of imports.
+export function createRoomSequence({sequence,widths=[],lengths=[],type,seed=5,generate}={}){
   // Cache phrase starts, rather than retaining every room in an endless run.
   const starts=[0];
   const forced=SEQUENCE_NAMES.includes(sequence);
-  const demoRooms=createDemoRooms(seed);
-  const raw=i=>sequence==='demo'?demoRooms(i):forced?PHRASES[sequence][i%PHRASES[sequence].length]:mixedFloor(mixedRoom(i),i);
+  const demoRooms=generate&&createDemoRooms(seed,generate);
+  const raw=i=>sequence==='demo'&&demoRooms?demoRooms(i):forced?PHRASES[sequence][i%PHRASES[sequence].length]:mixedFloor(mixedRoom(i),i);
   const lengthAt=i=>lengths.length?lengths[i%lengths.length]:raw(i).length;
   function room(index){
     if(!Number.isInteger(index)||index<0)throw new RangeError('Room index must be a nonnegative integer');

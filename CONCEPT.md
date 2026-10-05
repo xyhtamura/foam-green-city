@@ -20,7 +20,7 @@ The rooms draw their character from ordinary domestic details: monobloc chairs, 
 
 The intended atmosphere is liminal and eerie, with rooms suggesting habitation while the camera encounters no inhabitants. Repetition and slow movement allow small discrepancies to become noticeable. The work has no enemy, task, destination, or win state; its installation form allows it to run unattended.
 
-Most spaces should retain domestic proportions. The v0.5 direction places an unusual room every six to eight rooms, with much rarer very large or extremely tall spaces. Some enclosed rooms can have walls far enough away to suggest an outdoor scale. Bare gray floors are an important part of the visual language; patterned floors should be occasional.
+Most spaces should retain domestic proportions. Unusual rooms are not placed on a schedule: they arrive in short stretches where the generator's pressure rises, with much rarer very large or extremely tall spaces. Some enclosed rooms can have walls far enough away to suggest an outdoor scale. Bare gray floors are an important part of the visual language; patterned floors should be occasional.
 
 ## The title and color
 
@@ -44,7 +44,7 @@ The project began with the Windows 3D Maze screensaver as a reference for autono
 
 ## Implemented state on 2026-10-05
 
-The v0.5 demo uses seeded blocks of six to eight rooms along a curved route with vertical undulation and a varying twist rate. Each block ends with an exception. Domestic lengths vary from six to twelve metres, mixing compact rooms with longer ones. Rare exceptions include an 80-metre-wide enclosed expanse, broad low ceilings, column fields, deep halls, larger auditoriums, and narrow rooms with 36-metre ceilings. Their walls can feel distant enough to suggest an outdoor space. The preceding six-room evaluation entry point remains in development.html.
+The demo generates each room's proportions and features from seeded distributions along a curved route with vertical undulation and a varying twist rate. Domestic lengths vary from six to twelve metres, mixing compact rooms with longer ones. No unusual room is authored as such: wide expanses, broad low ceilings, column fields, deep halls, stairs that stop at a wall, and narrow rooms with very high ceilings are combinations the draws happen to produce.
 
 The rooms include assembled kitchen work areas, a kitchen corner in a sala, and a smaller bathroom with a wall-mounted shower nozzle, toilet, sink, mirror, and bucket. Lighting varies between daylight, overcast, shaded daytime, dark daytime, and night. Daytime rooms have brighter patches toward one side; simple ceiling tubes and bare LED bulbs light the night rooms and remain off in daytime rooms. Other profiles offer a steady half-turn, reverse twisting, twisting that unwinds, and a swaying passage. The camera shares each profile's local frame and uses a fixed field of view.
 
