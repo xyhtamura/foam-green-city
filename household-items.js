@@ -1,9 +1,9 @@
 // Places tableware, plastics, and linens in a room, then bakes them into one vertex-coloured mesh.
-import {createTablewareKit,TABLEWARE_COLOURS} from './tableware.js';
-import {createPlasticKit,PLASTIC_COLOURS} from './plastics.js';
-import {createLinenKit,LINEN_COLOURS} from './linens.js';
-import {placeOnSupport} from './object-supports.js?v=supports-4';
-import {createBasketball,BALL_COLOURS} from './basketball.js';
+import {createTablewareKit,TABLEWARE_COLOURS} from './tableware.js?v=659fdf9552';
+import {createPlasticKit,PLASTIC_COLOURS} from './plastics.js?v=659fdf9552';
+import {createLinenKit,LINEN_COLOURS} from './linens.js?v=659fdf9552';
+import {placeOnSupport} from './object-supports.js?v=659fdf9552';
+import {createBasketball,BALL_COLOURS} from './basketball.js?v=659fdf9552';
 
 // The kits only lend their geometry and colours to the bake, so one set serves every room.
 let kits=null;

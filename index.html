@@ -59,7 +59,14 @@
 </div>
 <div id="movement-help" style="position:fixed;left:8px;top:8px;color:#dce8df;font:12px monospace;background:#253b30bb;padding:7px;pointer-events:none">WASD: walk · Click scene: mouse-look · Space: automatic</div>
 <script>
-function reportLoadFailure(){const state=document.getElementById('status');state.hidden=false;state.textContent='The demo could not load. Check your connection, then reload the page.';document.getElementById('title-status').textContent=state.textContent;document.getElementById('enter').disabled=true;}
+// Before the walk is ready, any failure means it could not load. Afterwards a failure is a
+// fault in the running page, and says so; a missing optional image is only logged.
+let walkReady=false;
+function reportLoadFailure(){
+  const state=document.getElementById('status');state.hidden=false;
+  state.textContent=walkReady?'The walk stopped because of an error. Reload the page to start again.':'The demo could not load. Check your connection, then reload the page.';
+  if(!walkReady){document.getElementById('title-status').textContent=state.textContent;document.getElementById('enter').disabled=true;}
+}
 window.addEventListener('error',event=>{if(event instanceof ErrorEvent||event.target?.tagName==='SCRIPT')reportLoadFailure();},true);
 window.addEventListener('unhandledrejection',reportLoadFailure);
 </script>
@@ -75,36 +82,36 @@ window.addEventListener('unhandledrejection',reportLoadFailure);
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { createJalousieWall } from './jalousie.js?v=curtains-5';
-import { createDomesticProps, animateDomesticProps, createFurnitureVariants, FURNITURE_FINISHES } from './domestic-props.js?v=domestic-9';
-import { WALL_HANGINGS } from './wall-assets.js?v=photos-2';
-import { RAW_OBJECTS, createRawObject, oddSize } from './raw-object-assets.js?v=raw-3';
-import { loadCurtainPatterns } from './photo-assets.js';
-import { ROOM_WIDTHS, partitionPieces } from './room-widths.js';
+import { createJalousieWall } from './jalousie.js?v=659fdf9552';
+import { createDomesticProps, animateDomesticProps, createFurnitureVariants, FURNITURE_FINISHES } from './domestic-props.js?v=659fdf9552';
+import { WALL_HANGINGS } from './wall-assets.js?v=659fdf9552';
+import { RAW_OBJECTS, createRawObject, oddSize } from './raw-object-assets.js?v=659fdf9552';
+import { loadCurtainPatterns } from './photo-assets.js?v=659fdf9552';
+import { ROOM_WIDTHS, partitionPieces } from './room-widths.js?v=659fdf9552';
 
-import { LAYOUT_IDS, generateFurnitureLayout, checkFurnitureLayout } from './furniture-layouts.js?v=integrated-1';
-import { FLOOR_IDS, createFloorVariant } from './floor-variants.js?v=integrated-1';
-import { DOOR_STYLES, createDoorLeaves } from './doors.js?v=doors-5';
-import { MODEL_ASSETS, loadModelAssets } from './model-assets.js';
-import { createRoomSet, createRoomFixture } from './room-sets.js?v=sets-8';
-import { createUratexSofa } from './uratex-sofa.js';
-import { createWireRun } from './wire-runs.js';
-import { createWallUtilities } from './wall-utilities.js?v=walls-8';
-import {createWalkSequence,retainedRooms,walkRegions,canOccupy,moveWalker,pathToRoute,roomExits} from './navigation.js?v=zones-1';
-import {addDomesticDetails} from './domestic-details.js?v=details-12';
+import { LAYOUT_IDS, generateFurnitureLayout, checkFurnitureLayout } from './furniture-layouts.js?v=659fdf9552';
+import { FLOOR_IDS, createFloorVariant } from './floor-variants.js?v=659fdf9552';
+import { DOOR_STYLES, createDoorLeaves } from './doors.js?v=659fdf9552';
+import { MODEL_ASSETS, loadModelAssets } from './model-assets.js?v=659fdf9552';
+import { createRoomSet, createRoomFixture } from './room-sets.js?v=659fdf9552';
+import { createUratexSofa } from './uratex-sofa.js?v=659fdf9552';
+import { createWireRun } from './wire-runs.js?v=659fdf9552';
+import { createWallUtilities } from './wall-utilities.js?v=659fdf9552';
+import {createWalkSequence,retainedRooms,walkRegions,canOccupy,moveWalker,pathToRoute,roomExits} from './navigation.js?v=659fdf9552';
+import {addDomesticDetails} from './domestic-details.js?v=659fdf9552';
 let wallUtilities;
-import { roomLighting } from './room-lighting.js?v=lighting-3';
-import { scatterLevel, planScatter, planSideScatter, scatterBlocks, createScatterMesh } from './floor-scatter.js?v=scatter-4';
-import { createBaseboards } from './baseboards.js?v=baseboards-1';
-import { addHouseholdItems } from './household-items.js?v=household-3';
-import { spatialFrame, spatialPoint, SPATIAL_GLSL, SPATIAL_PROFILES } from './spatial-route.js?v=inversion-1';
-import { floorHeight, cameraRoute, routePoint } from './room-sequences.js?v=parametric-1';
-import {sideSpacePlan,DRAWER_VARIANTS} from './side-spaces.js?v=washrooms-1';
-import {addWoodDetails} from './wood-details.js?v=wood-3';
-import {addSideWashrooms} from './side-washrooms.js?v=washrooms-2';
-import {addSideStorage} from './side-storage.js?v=storage-3';
-import {addSideBedrooms} from './side-bedrooms.js?v=bedrooms-8';
-import { branchOpenings, raiseFloor, createRoomArchitecture } from './room-architecture.js?v=architecture-14';
+import { roomLighting } from './room-lighting.js?v=659fdf9552';
+import { scatterLevel, planScatter, planSideScatter, scatterBlocks, createScatterMesh } from './floor-scatter.js?v=659fdf9552';
+import { createBaseboards } from './baseboards.js?v=659fdf9552';
+import { addHouseholdItems } from './household-items.js?v=659fdf9552';
+import { spatialFrame, spatialPoint, SPATIAL_GLSL, SPATIAL_PROFILES } from './spatial-route.js?v=659fdf9552';
+import { floorHeight, cameraRoute, routePoint } from './room-sequences.js?v=659fdf9552';
+import {sideSpacePlan,DRAWER_VARIANTS} from './side-spaces.js?v=659fdf9552';
+import {addWoodDetails} from './wood-details.js?v=659fdf9552';
+import {addSideWashrooms} from './side-washrooms.js?v=659fdf9552';
+import {addSideStorage} from './side-storage.js?v=659fdf9552';
+import {addSideBedrooms} from './side-bedrooms.js?v=659fdf9552';
+import { branchOpenings, raiseFloor, createRoomArchitecture } from './room-architecture.js?v=659fdf9552';
 
 // ---- palette (DepEd MPSS, stylized: green walls) ----
 const COL = {
@@ -220,7 +227,7 @@ const roomHalf=group=>group.userData.width/2;
 let assetsPending=false,resolveAssets=null,assetFailure=false;
 THREE.DefaultLoadingManager.onStart=()=>{assetsPending=true;};
 THREE.DefaultLoadingManager.onLoad=()=>{assetsPending=false;resolveAssets?.();resolveAssets=null;};
-THREE.DefaultLoadingManager.onError=()=>{assetFailure=true;reportLoadFailure();};
+THREE.DefaultLoadingManager.onError=url=>{if(walkReady){console.warn('Asset did not load:',url);return;}assetFailure=true;reportLoadFailure();};
 const texLoader = new THREE.TextureLoader();
 const woodTexture=texLoader.load('models/textures/wood.png');
 woodTexture.wrapS=woodTexture.wrapT=THREE.RepeatWrapping;woodTexture.colorSpace=THREE.SRGBColorSpace;
@@ -268,7 +275,7 @@ const WALLP = {};        // scaled+tinted wall-tile prototypes
 const FURNI = {};        // raw furniture prototypes (scaled per clone)
 const SPRMAT = {};       // sprite materials by filename
 const ASP = { sofa: 162/273, curtain: 808/810, plant: 370/335,
-              monobloc: 419/234, bamboo: 253/224,
+              monobloc: 419/234,
               kutsaraTinidor: 894/422, standFan: 962/508,
               wallCalendar: 797/510, taboTimba: 754/689,
               waterDispenser: 944/348 };
@@ -421,7 +428,6 @@ const ROOMS = [
       domesticWallFan,
       wallModel('phRack',1.7),floorModel('phCrate2',0.32),floorModel('phCrate',0.32),floorModel('phChair',0.88),wallModel('kitchenFridge',1.7), wallModel('kitchenStove',0.9),
       floorModel('radio',0.28),
-      billb('bamboochair.png',ASP.bamboo,0.6),
       wallSpr('kutsarat_tinidor.png',ASP.kutsaraTinidor,0.45,1.1),
       billb('tabo_timba.png',ASP.taboTimba,0.38),
       billb('water_dispenser.png',ASP.waterDispenser,0.38),
@@ -430,7 +436,6 @@ const ROOMS = [
       rawFloor('rawDrawers'),
       domesticWallFan, floorModel('deskFan',0.59),
       wallModel('phDaybed',0.85),floorModel('phPillows',0.25),wallModel('phBookshelf',1.65),wallModel('sideTableDrawers',0.65),wallModel('bedSingle',0.5), floorModel('pottedPlant',0.9),
-      billb('bamboochair.png',ASP.bamboo,0.6),
       billb('stand_fan.png',ASP.standFan,0.65), wallSpr('wall_calendar.png',ASP.wallCalendar,0.35,1.2) ] },
   { name:'bare', pool:[rawFloor('rawDrawers'),rawFloor('rawCooler'),wallModel('phRack',1.7),floorModel('phCrate2',0.32),floorModel('phCrate',0.32),floorModel('phChair',0.88),
       billb('plant.png',ASP.plant,0.9), floorModel('pottedPlant',0.9),
@@ -725,6 +730,8 @@ let travelDistance=initialLeg?initialLeg.distance+initialLeg.start.z-initialLoca
 const routeOffset=Number(params.get('routeOffset'));
 if(params.has('routeOffset')&&Number.isFinite(routeOffset))travelDistance=Math.max(0,Math.min(travelRoute.length-0.1,routeOffset));
 let travelYaw=0;
+// ?speed=<metres per second> hurries automatic movement, for soak-testing many rooms.
+const travelSpeed=Math.min(80,Math.max(0.1,Number(params.get('speed'))||1.8));
 let manual=false,rejoin=null,sideYaw=0;
 if(params.has('sideStart')){
   const room=sequence.room(travelRoom),portal=branchOpenings(room).find(p=>p.kind!=='legacy');
@@ -794,7 +801,7 @@ function advanceCamera(delta){
     if(distance<0.025){rejoin.path.shift();if(!rejoin.path.length&&Math.abs(walker.pitch)<0.03&&Math.abs(Math.atan2(Math.sin(travelYaw-walker.yaw),Math.cos(travelYaw-walker.yaw)))<0.03){travelDistance=rejoin.distance;rejoin=null;walker.yaw=travelYaw;}}
     cam.position.x=walker.x;cam.position.z=walker.z;
   }else{
-  if(!params.has('still'))travelDistance+=1.8*delta;
+  if(!params.has('still'))travelDistance+=travelSpeed*delta;
   while(travelDistance>=travelRoute.length){
     if(travelRoute.exit){travelDistance=travelRoute.length-0.001;beginCut();break;}
     travelDistance-=travelRoute.length;travelRoom++;travelRoute=chooseRoute(sequence.room(travelRoom));
@@ -1026,6 +1033,7 @@ function inspectRooms(){
   renderer.compile(scene,cam);
   tick();
   document.getElementById('status').hidden=true;
+  walkReady=true;
   document.getElementById('title-status').textContent='Ready';
   const enter=document.getElementById('enter');enter.disabled=false;enter.textContent='Enter';
 }

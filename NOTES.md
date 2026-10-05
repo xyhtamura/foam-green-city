@@ -1028,3 +1028,21 @@ Checks, in the browser on the root server, straight route, with `prop=basketball
 Not done. Only the darkest of the four colours was seen. The 12% default rate was not observed in a default run. The ball does not roll or respond to the walker. No hoop or court markings were added. Nothing was viewed on the twisting route.
 
 Root ROADMAP.md needed no change. Next remains independent side-room lighting. Antigravity's uncommitted notes entry and the supplied raw-image changes were left unstaged. Nothing was pushed or published.
+
+## 2026-10-06 — Claude Code — "could not load" on the published site
+
+Xyh reported that the published page sometimes shows "demo could not load" after a while, and that on some machines it cannot be reached.
+
+Found, by requesting every referenced asset from https://xyhtamura.github.io/foam-green-city/: `models/bamboochair.png` returned 404 and the other 124 returned 200. The file exists locally but git ignores it. Kitchens and bedrooms could draw it as a prop; when one did, the texture loader's error handler showed the load-failure message, whatever the connection. Removed the two pool entries. The file's licence is recorded as unverified, so publishing it is Xyh's decision, not a fix.
+
+Found, by reading README.md: its only demo link was `http://127.0.0.1:8141/`. Followed from GitHub on any machine without a local server on that port, a browser reports that the site cannot be reached. The README now links the published page first and gives the local address as text. Its server command also bound to 127.0.0.1, which the root instructions forbid; removed.
+
+Not found, but real: module imports carried hand-edited version tags, and several modules changed repeatedly under one tag. For up to ten minutes after a push, or longer in a browser cache, a new `index.html` can be paired with an old module and fail to load. Added `scripts/stamp_versions.py`, which puts one content-derived stamp on every local import, and ran it. Details of all three are in HANDOVER.md.
+
+Also changed: an error after the walk has started no longer claims the demo could not load; it says the walk stopped on an error. A missing optional image after that point is logged and the walk continues.
+
+Checks. `check_published_assets.py` failed on the bamboo chair before the fix and passes after, 124 assets. `stamp_versions.py` is stable across two runs and `--check` passes. All nine node checks pass. In the browser on the root server: the stamped page reached Ready with every local module URL carrying the stamp and no console errors; a soak run at 60 m/s on the twisting route passed 1,299 rooms with no error, six rooms retained throughout, and JS heap at 92 MB at room 885 and 97 MB at room 1,299.
+
+Not done. None of this is published until it is pushed, and I did not push. The soak ran with exits disabled, so the cut to a new run of rooms was not soaked. A lost WebGL context is not handled. Draw calls were 980 to 1,320 per frame during the soak, which may be slow on weak graphics hardware; that was not measured as frame time. Three.js is still loaded from unpkg.com: on a network that blocks it the page cannot load. Bundling Three.js into the repository would remove that dependency and needs Xyh's go-ahead to download the files. If "cannot be reached" was the github.io address itself rather than the README link, the cause is outside this repository.
+
+Root ROADMAP.md needed no change. Next remains independent side-room lighting. Nothing was pushed or published.

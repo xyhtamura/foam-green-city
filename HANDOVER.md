@@ -14,6 +14,18 @@ The route is still one straight logical line; nothing here adds a second axis. A
 
 Side rooms get scatter from `planSideScatter`, fitted to the room rectangle, off fixture blocks and off the strip from the doorway across the room; the objects join the owning room's single scatter mesh. Movement no longer starts paused under `prefers-reduced-motion`; Xyh asked for it to start on Enter. `scripts/check_forks.mjs` covers exit routes and salts.
 
+## Publication faults: missing sprite, mixed module versions, error message — 2026-10-06
+
+Two scripts now guard publication, and both should run before a commit that touches a root-level `.js` file.
+
+`scripts/check_published_assets.py` reads every asset path out of the JavaScript and `index.html` and fails if one is not in `git ls-files`, with exact letter case. The repository ignores whatever it does not whitelist, so a file can load locally and be absent from GitHub Pages. That was the case for `models/bamboochair.png`, which the kitchen and bedroom prop pools used: any room that drew it raised a loader error, and the page showed its load-failure message mid-walk. The sprite's licence is recorded as unverified in ASSETS.md and it was never whitelisted, so the two pool entries were removed rather than the file published.
+
+`scripts/stamp_versions.py` rewrites every `./name.js` import in the root modules and pages to carry one stamp, a hash of all module sources. Before, each import had a hand-edited `?v=` tag or none, and several modules changed many times under an unchanged tag, so a browser or the Pages cache could pair a new `index.html` with an old module whose exports no longer matched. `--check` reports stale stamps. The node checks import modules without a query and are unaffected.
+
+`index.html` separates two failures. Until `walkReady` is set at the end of `init`, any error shows the load-failure message. After it, an uncaught error shows "The walk stopped because of an error" and an asset that fails to load is only logged. `?speed=<m/s>` hurries automatic movement for soak tests.
+
+Three.js still comes from unpkg.com at run time. A network that blocks unpkg cannot load the page.
+
 ## Basketball — 2026-10-05
 
 `basketball.js` builds a 24 cm ball: a 14 × 10 sphere with five thin seam rings (three great circles and a smaller circle on each side), stopped at a seeded rotation, in four orange-to-brown colours. `household-items.js` stands one against a wall or on open floor in 12% of salas, bedrooms, bare rooms, halls, and auditoriums at medium clutter, one in seven of them at three-quarter size, and bakes it with the room's other household objects. `?prop=basketball` puts one in every room and the inspector reports its position.

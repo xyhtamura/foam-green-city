@@ -4,13 +4,15 @@ An autonomous browser-based 3D walkthrough of a procedurally arranged Filipino d
 
 ## Try the demo
 
-Serve this folder over HTTP, then open `index.html`. It is a static site with no build step. It requires WebGL and an internet connection to load Three.js r160 from unpkg.
+Open [Foam Green City](https://xyhtamura.github.io/foam-green-city/). It needs WebGL and a connection that can reach unpkg.com, which serves Three.js r160.
+
+To run it from a copy of this repository, serve the folder over HTTP and open `index.html`. It is a static site with no build step.
 
 ```sh
-python -m http.server 8141 --bind 127.0.0.1
+python -m http.server 8141
 ```
 
-Open [the local demo](http://127.0.0.1:8141/). Wait for loading, then select **Enter**. Movement starts automatically. Use **WASD**, **Take control**, or click the scene to walk manually. Click the scene for mouse-look; dragging also works when mouse capture is unavailable. **Space** returns to the forward route and resumes automatic movement. **Pause** stops movement, **Restart** returns to the beginning, and **Fullscreen** fills the display. Reduced-motion preferences start playback paused. There is no sound, navigation objective, or win state.
+Then open `http://localhost:8141/` on that machine. Wait for loading, then select **Enter**. Movement starts automatically. Use **WASD**, **Take control**, or click the scene to walk manually. Click the scene for mouse-look; dragging also works when mouse capture is unavailable. **Space** returns to the forward route and resumes automatic movement. **Pause** stops movement, **Restart** returns to the beginning, and **Fullscreen** fills the display. Reduced-motion preferences start playback paused. There is no sound, navigation objective, or win state.
 
 ## Procedural arrangement
 
@@ -40,7 +42,7 @@ For inspection, `?start=7&offset=1&still=1&inspect=1` selects a room without for
 
 ## Publish on GitHub Pages
 
-Push this repository's `main` branch to your GitHub repository. In **Settings → Pages**, choose **Deploy from a branch**, select **main**, and use **/(root)**. All runtime asset paths are relative to this repository. The `.nojekyll` file keeps publication static. See [GitHub's publishing-source instructions](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site).
+Before committing a change to any root-level `.js` file, run `python scripts/stamp_versions.py` and `python scripts/check_published_assets.py`. The first gives every module import one shared version stamp, so a browser never mixes old and new modules; the second fails if the page refers to a file git does not track. Push this repository's `main` branch to your GitHub repository. In **Settings → Pages**, choose **Deploy from a branch**, select **main**, and use **/(root)**. All runtime asset paths are relative to this repository. The `.nojekyll` file keeps publication static. See [GitHub's publishing-source instructions](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site).
 
 The local v0.5 demo is prepared for sampling. No remote repository, push, public Release, or DOI is created by this preparation. Release tags and publication remain separate actions.
 
