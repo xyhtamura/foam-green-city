@@ -21,6 +21,7 @@
 !/scripts/*.py
 !/scripts/*.mjs
 !/scripts/*.html
+!/fonts/
 !/models/
 /models/*
 !/models/GLTF format/

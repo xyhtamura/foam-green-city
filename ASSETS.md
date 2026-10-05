@@ -231,3 +231,7 @@ models/textures/hollow-blocks.png is supplied by Xyh and covered by the standing
 ## Household tools and generic bottles — 2026-10-05
 
 Codex-authored geometry in domestic-details.js creates hollow pitchers, chopping boards, knives, folded clothing-like shapes, paper/file stacks, string mops and generic bottles. Caps and label bands use solid colours; no packaging image or new third-party model is included. The denser cutout groups reuse the already-cleared supplied PNGs. Code uses MIT; authored artwork uses CC BY 4.0.
+
+## Permanent Marker title font — 2026-10-05
+
+PermanentMarker-Regular.ttf and its Apache 2.0 licence are stored in fonts/. Both were downloaded from the [official Google Fonts repository](https://github.com/google/fonts/tree/main/apache/permanentmarker). The title uses the bundled font without a runtime Google Fonts request. HousePaint was considered first; its web embedding permission was not established, and Xyh authorized a Google Fonts alternative. HousePaint remains unused and excluded from Git.

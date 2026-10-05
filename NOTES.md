@@ -829,3 +829,11 @@ Added an open wooden version of the existing dead-end stair feature, following t
 Viewed the wooden stairs in the straight daylight passages preview. The inspector reported `openWood` for room 3, clear main aisles, and no furniture intrusion into architecture reservations across all six loaded rooms. The screenshot visibly shows open risers, thin treads, and side supports. Browser logs had no warnings or errors; saved `wood-stairs-preview.png`. Navigation checks passed 2,000 bidirectional descriptors and 48 reconstructions, and side-space checks passed 600 cases. `git diff --check` passed.
 
 Stair features remain non-climbable and keep their existing collision reservation. Upper-floor destinations, railings, climbable tread surfaces, actual cull/revisit comparisons, and sustained performance measurements remain unfinished. Next remains independent side-room lighting, matching the root roadmap. The reference image was used for shape only; no new external asset was added. Supplied raw object additions and sardine image edits remain unstaged. Nothing was pushed or published.
+
+## 2026-10-05 — Codex — title screen and loading gate
+
+Added a title screen to index.html with short controls and an Enter button. The initial rooms and assets load behind it; font loading, shader compilation, and the first render finish before entry is enabled. The route waits for entry, and reduced-motion playback stays paused afterward. Loading failures display a reload instruction. The development bypass is `?skipTitle=1`; development.html retains its previous entry behavior.
+
+Used bundled Permanent Marker from the official Google Fonts repository under Apache 2.0, with its licence and provenance recorded. HousePaint web embedding permission was not established; Xyh authorized the Google Fonts alternative. HousePaint remains unused and excluded from Git.
+
+Checked the actual browser loading and ready states, font availability, unchanged route after W before entry, canvas focus after Enter, and forward movement after Space. Title bounds fit at 360×640 and 700×360; saved title-screen-preview.png locally. Network failure injection and sustained loading measurements remain undone. Next remains independent side-room lighting. No push or publication performed.

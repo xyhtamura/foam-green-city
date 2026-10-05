@@ -5,6 +5,20 @@
 <title>Foam Green City — v0.5</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
+  @font-face { font-family:PermanentMarker; src:url('fonts/PermanentMarker-Regular.ttf') format('truetype'); font-display:swap; }
+  #title-screen { position:fixed; inset:0; z-index:20; display:grid; place-items:center; background:#9dbba8; color:#203c30; }
+  .title-card { width:min(760px,84vw); text-align:center; padding:30px 0; }
+  #title-heading { font-family:PermanentMarker,Georgia,serif; font-weight:normal; font-size:clamp(52px,10vw,124px); line-height:.98; margin:0 0 38px; }
+  .title-card p { font:14px/1.7 monospace; margin:8px 0; }
+  #enter { margin-top:25px; padding:12px 34px; font-size:15px; }
+  #enter:disabled { cursor:wait; opacity:.55; }
+  .at-title #controls,.at-title #hud,.at-title #movement-help { visibility:hidden; }
+  @media (max-height:500px) {
+    .title-card { padding:12px 0; }
+    #title-heading { font-size:clamp(38px,8vh,58px); margin-bottom:16px; }
+    .title-card p { font-size:12px; margin:5px 0; }
+    #enter { margin-top:12px; }
+  }
   html,body { margin:0; height:100%; overflow:hidden; background:#000; }
   #c { display:block; width:100%; height:100%; }
   /* lo-fi: let the low internal res upscale crunchy */
@@ -18,9 +32,18 @@
   [hidden] { display:none !important; }
 </style>
 </head>
-<body>
+<body class="at-title">
 <div id="hud">Foam Green City · v0.5</div>
-<div id="status" role="status">Loading rooms…</div>
+<section id="title-screen" aria-labelledby="title-heading">
+  <div class="title-card">
+    <h1 id="title-heading">Foam Green<br>City</h1>
+    <p id="title-playback">Movement starts automatically.</p>
+    <p>WASD: walk · Mouse or drag: look<br>Space: resume automatic movement</p>
+    <button id="enter" type="button" disabled>Loading…</button>
+    <p id="title-status" role="status">Loading rooms…</p>
+  </div>
+</section>
+<div id="status" role="status" hidden></div>
 <div id="controls" aria-label="Playback controls">
   <button id="pause" type="button" aria-pressed="false">Pause</button>
   <button id="walk" type="button">Take control</button>
@@ -29,7 +52,7 @@
 </div>
 <div id="movement-help" style="position:fixed;left:8px;top:8px;color:#dce8df;font:12px monospace;background:#253b30bb;padding:7px;pointer-events:none">WASD: walk · Click scene: mouse-look · Space: automatic</div>
 <script>
-function reportLoadFailure(){const state=document.getElementById('status');state.hidden=false;state.textContent='The demo could not load. Check your connection, then reload the page.';}
+function reportLoadFailure(){const state=document.getElementById('status');state.hidden=false;state.textContent='The demo could not load. Check your connection, then reload the page.';document.getElementById('title-status').textContent=state.textContent;document.getElementById('enter').disabled=true;}
 window.addEventListener('error',event=>{if(event instanceof ErrorEvent||event.target?.tagName==='SCRIPT')reportLoadFailure();},true);
 window.addEventListener('unhandledrejection',reportLoadFailure);
 </script>
@@ -181,6 +204,10 @@ const roomWidth=i=>sequence.room(i).width;
 const previewStart=Number(params.get('start'));
 if(Number.isInteger(previewStart)){const room=sequence.room(previewStart),offset=Number(params.get('offset'));cam.position.z=room.startZ-Math.max(0.5,Math.min(room.length-0.5,offset||0.5));}
 const roomHalf=group=>group.userData.width/2;
+let assetsPending=false,resolveAssets=null,assetFailure=false;
+THREE.DefaultLoadingManager.onStart=()=>{assetsPending=true;};
+THREE.DefaultLoadingManager.onLoad=()=>{assetsPending=false;resolveAssets?.();resolveAssets=null;};
+THREE.DefaultLoadingManager.onError=()=>{assetFailure=true;reportLoadFailure();};
 const texLoader = new THREE.TextureLoader();
 const woodTexture=texLoader.load('models/textures/wood.png');
 woodTexture.wrapS=woodTexture.wrapT=THREE.RepeatWrapping;woodTexture.colorSpace=THREE.SRGBColorSpace;
@@ -665,9 +692,13 @@ function advanceCamera(delta){
   return {room,floor:portal&&Math.abs(p.x)>room.width/2?floorHeight(room,portal.z):floorHeight(room,p.z)};
 }
 let t = 0;
+let entered=params.get('skipTitle')==='1';
+if(entered){document.body.classList.remove('at-title');document.getElementById('title-screen').hidden=true;}
 let paused=matchMedia('(prefers-reduced-motion: reduce)').matches;
+if(paused)document.getElementById('title-playback').textContent='Movement starts paused. Press Space to resume.';
 const pauseButton=document.getElementById('pause');
 function updatePause(){pauseButton.textContent=paused?'Resume':'Pause';pauseButton.setAttribute('aria-pressed',String(paused));document.getElementById('walk').textContent=manual?'Resume automatic':'Take control';document.getElementById('movement-help').textContent=manual?'Manual · WASD: walk · Click or drag scene: look · Space: automatic':'Automatic · WASD or click scene: take control · Space: resume';}
+document.getElementById('enter').addEventListener('click',()=>{entered=true;document.body.classList.remove('at-title');document.getElementById('title-screen').hidden=true;renderer.domElement.tabIndex=0;renderer.domElement.focus();movementClock.getDelta();});
 pauseButton.addEventListener('click',()=>{paused=!paused;updatePause();});updatePause();
 document.getElementById('restart').addEventListener('click',()=>location.reload());
 document.getElementById('fullscreen').addEventListener('click',async()=>{
@@ -677,7 +708,7 @@ document.getElementById('fullscreen').hidden=!document.fullscreenEnabled;
 document.addEventListener('fullscreenchange',()=>{document.getElementById('fullscreen').textContent=document.fullscreenElement?'Exit fullscreen':'Fullscreen';});
 document.getElementById('walk').addEventListener('click',()=>manual?automate():takeControl());
 document.addEventListener('keydown',event=>{
-  if(event.target.matches('input,textarea,select,[contenteditable="true"]'))return;
+  if(!entered||event.target.matches('input,textarea,select,[contenteditable="true"]'))return;
   if(event.code==='Space'){event.preventDefault();if(!event.repeat)automate();}
   if(['KeyW','KeyA','KeyS','KeyD'].includes(event.code)){event.preventDefault();takeControl();keys.add(event.code);}
 });
@@ -698,8 +729,10 @@ document.addEventListener('mousemove',event=>{
 document.addEventListener('pointerlockchange',()=>{if(!document.pointerLockElement){keys.clear();dragging=false;}});
 const movementClock=new THREE.Clock();
 const _wp = new THREE.Vector3();
+let titleRendered=false;
 function tick(){
-  const elapsed=movementClock.getDelta(),delta=paused||document.hidden?0:Math.min(elapsed,0.05);
+  if(!entered&&titleRendered){movementClock.getDelta();requestAnimationFrame(tick);return;}
+  const elapsed=movementClock.getDelta(),delta=!entered||paused||document.hidden?0:Math.min(elapsed,0.05);
   t += delta;
   ensureSegments();
   const travel=advanceCamera(delta),current=travel.room;
@@ -765,7 +798,7 @@ function tick(){
       }
       for(const grp of segments.values())grp.traverse(o=>{if(o.isMesh)o.frustumCulled=false;});
     }
-    renderer.render(scene, cam);
+    renderer.render(scene, cam);titleRendered=true;
   requestAnimationFrame(tick);
 }
 
@@ -866,11 +899,18 @@ function inspectRooms(){
   }
   resize();
 
-  document.getElementById('status').hidden=true;
+  ensureSegments();
+  await new Promise(resolve=>{if(assetsPending)resolveAssets=resolve;else resolve();});
+  await document.fonts.ready;
+  if(assetFailure)return;
+  renderer.compile(scene,cam);
   tick();
+  document.getElementById('status').hidden=true;
+  document.getElementById('title-status').textContent='Ready';
+  const enter=document.getElementById('enter');enter.disabled=false;enter.textContent='Enter';
 }
 window.addEventListener('resize', resize);
-init().catch(error=>{console.error(error);document.getElementById('status').textContent='The demo could not load. Check your connection, then use Restart.';});
+init().catch(error=>{console.error(error);reportLoadFailure();});
 </script>
 </body>
 </html>

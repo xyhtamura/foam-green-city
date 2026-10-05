@@ -10,7 +10,7 @@ Serve this folder over HTTP, then open `index.html`. It is a static site with no
 python -m http.server 8141 --bind 127.0.0.1
 ```
 
-Open [the local demo](http://127.0.0.1:8141/). Movement starts automatically. Use **WASD**, **Take control**, or click the scene to walk manually. Click the scene for mouse-look; dragging also works when mouse capture is unavailable. **Space** returns to the forward route and resumes automatic movement. **Pause** stops movement, **Restart** returns to the beginning, and **Fullscreen** fills the display. Reduced-motion preferences start playback paused. There is no sound, navigation objective, or win state.
+Open [the local demo](http://127.0.0.1:8141/). Wait for loading, then select **Enter**. Movement starts automatically. Use **WASD**, **Take control**, or click the scene to walk manually. Click the scene for mouse-look; dragging also works when mouse capture is unavailable. **Space** returns to the forward route and resumes automatic movement. **Pause** stops movement, **Restart** returns to the beginning, and **Fullscreen** fills the display. Reduced-motion preferences start playback paused. There is no sound, navigation objective, or win state.
 
 ## Procedural arrangement
 

@@ -4,6 +4,12 @@
 
 2026-10-03 — Codex
 
+## Title and loading gate — 2026-10-05
+
+The public index opens with a title screen using bundled Permanent Marker. Enter stays disabled until the initial six cells, their assets, the font, shader compilation, and first render are ready. Movement waits for entry; reduced-motion playback remains paused afterward. WASD and Space do not control the scene while the title is open. Loading failures show a reload instruction. `?skipTitle=1` bypasses the title for development previews. `development.html` retains its earlier entry behavior.
+
+Browser checks covered the loading/ready states, frozen route before entry, canvas focus after entry, Space resumption, and title bounds at 360×640 and 700×360. Network failure injection and sustained loading measurements remain undone. Next remains independent side-room lighting.
+
 ## v0.5 demo and repository — 2026-10-04
 
 `index.html` is the public sampling entry point. `development.html` preserves the previous entry point unchanged, while sharing current modules and assets. The default `demo` sequence uses seed 5; `?seed=42` selects another reproducible sequence. Blocks contain six to eight rooms and finish with one exception. Most exceptions alter domestic proportions or arrangements; about one in eight exception blocks can be a very tall room, a 48-metre-wide enclosed hall, or an auditorium. The first two blocks have modest exceptions. The default route remains curved and twisting.
