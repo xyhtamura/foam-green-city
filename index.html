@@ -78,7 +78,7 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { createJalousieWall } from './jalousie.js?v=curtains-5';
 import { createDomesticProps, animateDomesticProps, createFurnitureVariants, FURNITURE_FINISHES } from './domestic-props.js?v=domestic-9';
 import { WALL_HANGINGS } from './wall-assets.js?v=photos-2';
-import { RAW_OBJECTS, createRawObject } from './raw-object-assets.js?v=raw-2';
+import { RAW_OBJECTS, createRawObject, oddSize } from './raw-object-assets.js?v=raw-3';
 import { loadCurtainPatterns } from './photo-assets.js';
 import { ROOM_WIDTHS, partitionPieces } from './room-widths.js';
 
@@ -91,7 +91,7 @@ import { createUratexSofa } from './uratex-sofa.js';
 import { createWireRun } from './wire-runs.js';
 import { createWallUtilities } from './wall-utilities.js?v=walls-8';
 import {createWalkSequence,retainedRooms,walkRegions,canOccupy,moveWalker,pathToRoute,roomExits} from './navigation.js?v=zones-1';
-import {addDomesticDetails} from './domestic-details.js?v=details-11';
+import {addDomesticDetails} from './domestic-details.js?v=details-12';
 let wallUtilities;
 import { roomLighting } from './room-lighting.js?v=lighting-3';
 import { scatterLevel, planScatter, planSideScatter, scatterBlocks, createScatterMesh } from './floor-scatter.js?v=scatter-4';
@@ -103,7 +103,7 @@ import {sideSpacePlan,DRAWER_VARIANTS} from './side-spaces.js?v=washrooms-1';
 import {addWoodDetails} from './wood-details.js?v=wood-3';
 import {addSideWashrooms} from './side-washrooms.js?v=washrooms-2';
 import {addSideStorage} from './side-storage.js?v=storage-3';
-import {addSideBedrooms} from './side-bedrooms.js?v=bedrooms-7';
+import {addSideBedrooms} from './side-bedrooms.js?v=bedrooms-8';
 import { branchOpenings, raiseFloor, createRoomArchitecture } from './room-architecture.js?v=architecture-14';
 
 // ---- palette (DepEd MPSS, stylized: green walls) ----
@@ -350,7 +350,7 @@ const wallModel = (name,tH) => (g,r)=>{ const s = r()<0.5?-1:1;
 const floorModel = (name,tH) => (g,r)=>{ const s = r()<0.5?-1:1;
   placeModel(g,name,{ x:s*(0.8+r()*(roomHalf(g)-1.4)), z:propZ(g,r), ry:r()*6.28, targetH:tH }); };
 const rawFloor = id => (g,r)=>{
-  const asset=RAW_OBJECTS.find(p=>p.id===id),obj=createRawObject({THREE,asset,material:spriteMat(asset.file)});
+  const asset=oddSize(RAW_OBJECTS.find(p=>p.id===id),g.userData.oddRoll()),obj=createRawObject({THREE,asset,material:spriteMat(asset.file)});
   const side=r()<0.5?-1:1,z=params.get('prop')===id?-g.userData.length*0.55:zin(g,r);
   obj.position.x=side*(roomHalf(g)-0.4);obj.position.z=z;obj.position.y+=floorHeight(g.userData,z);g.add(obj);
 };
@@ -457,6 +457,7 @@ function buildSegment(index){
   const grp = new THREE.Group(); grp.position.z = descriptor.startZ; scene.add(grp); segments.set(index,grp);
   const width=descriptor.width,half=width/2;Object.assign(grp.userData,descriptor);
   const paintRandom=mulberry32((i*2246822519+97531)>>>0),paintRoll=paintRandom();
+  grp.userData.oddRoll=mulberry32((i*40503+271)>>>0);
   let trimRoll=paintRandom()*100;
   grp.userData.trimColor=forcedTrim??TRIM_GREENS.find(([,weight])=>(trimRoll-=weight)<0)?.[0]??COL.trim;
   grp.userData.wallPaint=Object.hasOwn(WALL_PAINTS,params.get('paint'))?params.get('paint'):paintRoll<.30?'foamGreen':paintRoll<.40?'foamMint':paintRoll<.50?'foamSage':paintRoll<.60?'foamAqua':paintRoll<.70?'foamDeep':paintRoll<.80?'crispEcru':paintRoll<.90?'brightWonder':paintRoll<.96?'yellowRain':'white';
@@ -547,8 +548,11 @@ function buildSegment(index){
   const boundaryHeight=Math.max(descriptor.height,sequence.room(index+1).height);
   if(boundaryHeight>H){const upper=new THREE.Mesh(new THREE.BoxGeometry(Math.max(width,roomWidth(index+1)),boundaryHeight-H,0.12),mat.ceiling);upper.position.set(0,(boundaryHeight+H)/2,-SEG_LEN);upper.userData.own=true;partition.add(upper);}
   const thresholdStyle=DOOR_STYLES[i%DOOR_STYLES.length];
-  for(const side of [-1,1]){
-    const door=repaint(DOORS[thresholdStyle].clone(),grp);door.position.set(side*0.96,0,-SEG_LEN+0.14);
+  // A doorway has one leaf, standing open against one side, or none.
+  const leafRoll=mulberry32((i*362437+8191)>>>0)();
+  grp.userData.thresholdDoor=params.get('door')==='none'?0:params.get('door')==='one'||leafRoll<0.55?(leafRoll<0.275?-1:1):0;
+  if(grp.userData.thresholdDoor){
+    const door=repaint(DOORS[thresholdStyle].clone(),grp);door.position.set(grp.userData.thresholdDoor*0.96,0,-SEG_LEN+0.14);
     door.rotation.y=-Math.PI/2;door.userData.door=thresholdStyle;grp.add(door);
   }
   // ceiling fan sometimes
@@ -594,11 +598,11 @@ function buildSegment(index){
     if(p.role==='table'&&!p.inverted&&p.stack===null){
       if(!['tableRows','gathered'].includes(layout)&&r()<0.45){const runner=FURNI.scallopedRunner.clone();runner.position.y=0.761;model.add(runner);}
       const tabletop=room.name==='kitchen'?['riceCooker','foodCover','kitchenBlender','phPot','phSpoon','phApple','phBananas','phGinger','phSweetPotato']:['laptop','books','lampRoundTable','phApple','phNotepads'];
-      const rawPool=RAW_OBJECTS.filter(p=>p.mode!=='floor'&&p.rooms.includes(room.name));
+      const rawPool=RAW_OBJECTS.filter(p=>p.mode!=='floor'&&p.tabletop!==false&&p.rooms.includes(room.name));
       const forcedRaw=RAW_OBJECTS.find(p=>p.id===params.get('raw')&&p.mode!=='floor');
       if(forcedRaw||r()<(room.name==='kitchen'?0.65:0.35)){
         if(forcedRaw||(rawPool.length&&r()<0.5)){
-          const asset=forcedRaw??rawPool[Math.floor(r()*rawPool.length)];
+          const asset=oddSize(forcedRaw??rawPool[Math.floor(r()*rawPool.length)],grp.userData.oddRoll());
           const prop=createRawObject({THREE,asset,material:spriteMat(asset.file)});
           prop.position.y+=0.766;model.add(prop);
         }else{
@@ -962,7 +966,7 @@ function inspectRooms(){
       item.lightColor=g.userData.lightFixture.userData.lightColor;
       item.lightFixture=g.userData.lightFixture.userData.fixtureType;
       item.lighting=g.userData.lighting.name;
-      item.scatter=g.userData.scatter;item.zone=g.userData.zone??null;item.drawers=[];g.traverse(o=>{if(o.userData.drawers)item.drawers.push(o.userData.drawers);});item.household=g.userData.household;item.strangeness=g.userData.strangeness??null;item.features=[g.userData.stairs&&'stairs'+g.userData.stairs.steps,g.userData.columns&&'columns'+g.userData.columns.rows,g.userData.platform&&'platform'].filter(Boolean);item.solids=g.userData.architecture.userData.solids.length;item.generation=g.userData.generationIndex??item.i;
+      item.scatter=g.userData.scatter;item.thresholdDoor=g.userData.thresholdDoor;item.oddSizes=[];g.traverse(o=>{if(o.userData.oddSize)item.oddSizes.push(o.userData.rawObject+'x'+o.userData.oddSize.toFixed(1));});item.cutoutHeights=[];g.traverse(o=>{if(o.userData.rawObject&&o.geometry?.parameters)item.cutoutHeights.push(o.userData.rawObject.replace('raw','')+':'+Math.max(o.geometry.parameters.width,o.geometry.parameters.height).toFixed(2));});item.zone=g.userData.zone??null;item.drawers=[];g.traverse(o=>{if(o.userData.drawers)item.drawers.push(o.userData.drawers);});item.household=g.userData.household;item.strangeness=g.userData.strangeness??null;item.features=[g.userData.stairs&&'stairs'+g.userData.stairs.steps,g.userData.columns&&'columns'+g.userData.columns.rows,g.userData.platform&&'platform'].filter(Boolean);item.solids=g.userData.architecture.userData.solids.length;item.generation=g.userData.generationIndex??item.i;
     }
     let output=document.getElementById('room-inspection');
     if(!output){output=document.createElement('pre');output.id='room-inspection';output.hidden=true;document.body.append(output);}

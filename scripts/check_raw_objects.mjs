@@ -8,7 +8,9 @@ for(const p of RAW_OBJECTS){
   const width=data.readUInt32BE(16),height=data.readUInt32BE(20);
   assert.ok(Math.abs(p.aspect-height/width)<1e-12,p.id+' aspect');
   assert.ok(p.width>0&&['floor','table','flat'].includes(p.mode));
-  if(p.mode!=='floor'){
+  if(p.tabletop===false){
+    assert.ok(p.mode==='flat'&&p.width<=0.6&&p.width*p.aspect<=1.1,p.id+' garment size');
+  }else if(p.mode!=='floor'){
     assert.ok(p.width<=0.46,p.id+' table width');
     assert.ok(p.width*p.aspect<=0.45,p.id+' table height/depth');
   }

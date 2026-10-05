@@ -1,5 +1,5 @@
 import {floorHeight} from './room-sequences.js';
-import {RAW_OBJECTS,createRawObject} from './raw-object-assets.js?v=raw-2';
+import {RAW_OBJECTS,createRawObject,oddSize} from './raw-object-assets.js?v=raw-3';
 import {tableSupport,seatSupport,surfaceSupport,localBounds,placeOnSupport} from './object-supports.js?v=supports-4';
 
 // Authored low-detail household shapes. All resources belong to one streamed room.
@@ -25,8 +25,11 @@ export function addDomesticDetails({THREE,group,room,seed,curvize,spots,photos,s
   const condiments=RAW_OBJECTS.filter(p=>/silverswan|datu_puti|mang_tomas|ligo|bagoong|ube_halaya/.test(p.file));
   const papers=RAW_OBJECTS.filter(p=>/envelope|pad/.test(p.file));
   const clothes=RAW_OBJECTS.filter(p=>/jeans|tshirt|shorts/.test(p.file));
-  function cutout(parent,p,x,y,z,width){
-    const asset={...p,width:Math.min(p.width,width)},obj=createRawObject({THREE,asset,material:spriteMat(p.file)});
+  // A separate stream decides the rare wrong size, so arrangements keep their own sequence.
+  let oddState=(Math.imul(seed+53,2246822519)>>>0)||1;
+  const oddRoll=()=>{oddState=(Math.imul(oddState,1664525)+1013904223)>>>0;return oddState/4294967296;};
+  function cutout(parent,p,x,y,z,width=Infinity){
+    const asset=oddSize({...p,width:Math.min(p.width,width)},oddRoll()),obj=createRawObject({THREE,asset,material:spriteMat(p.file)});
     geometries.add(obj.geometry);obj.userData.own=false;obj.userData.detailCutout=true;
     obj.position.x=x;obj.position.z=z;obj.position.y+=y;parent.add(obj);cutouts++;
   }
@@ -123,7 +126,8 @@ export function addDomesticDetails({THREE,group,room,seed,curvize,spots,photos,s
       mesh(parent,box,palette[4],0.12,0.014,-0.045,0.085,0.028,0.06);
     }else if(id==='clothing'){
       stack(-0.06,0,0.17,compact?0.14:0.23,2+Math.floor(random()*3),m);
-      if(clothes.length)cutout(parent,{...clothes[Math.floor(random()*clothes.length)],mode:'flat'},0.11,0,0,compact?0.12:0.18);
+      // A whole garment shrunk to sit beside the stack is the wrong size by construction, so it is occasional.
+      if(clothes.length){const garment=clothes[Math.floor(random()*clothes.length)];if(oddRoll()<0.1)cutout(parent,{...garment,mode:'flat'},0.11,0,0,compact?0.12:0.18);}
     }else{
       const w=0.18,d=compact?0.14:0.24,h=0.085;
       mesh(parent,box,m,-0.075,h/2,0,w,h,d);
@@ -237,7 +241,7 @@ export function addDomesticDetails({THREE,group,room,seed,curvize,spots,photos,s
   if(room.type!=='bathroom')for(let i=0;i<10&&floorClusters<3;i++){
     const side=random()<0.5?-1:1,z=-0.8-random()*(room.length-1.6),cluster=new THREE.Group();cluster.name='floor-clutter';cluster.userData.floorProp=true;
     assortment(cluster,0,0,0,2+Math.floor(random()*2));
-    if(clothes.length&&random()<0.7)supplied(cluster,0,0.008,0.19,clothes,1,0.28);
+    if(clothes.length&&random()<0.7)supplied(cluster,0,0.008,0.19,clothes,1,Infinity);   // laid out at full size
     cluster.position.set(side*(room.width/2-0.45),floorHeight(room,z),z);
     if(clear(cluster))floorClusters++;
   }

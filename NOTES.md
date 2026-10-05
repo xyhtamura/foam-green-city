@@ -977,3 +977,17 @@ Not done. Only one drawer unit was seen, at the edge of a frame (grey frame, red
 An error of mine, corrected: the first zone measurement showed runs of over thirty rooms and I attributed that to a weak hash. Replacing the hash did not shorten them; runs that long are the expected maximum for this field over 10,000 rooms, and the median is four. The better hash stays, and the comment that blamed the old one was removed.
 
 Root ROADMAP.md's Mechanism line was updated and left uncommitted. Next remains independent side-room lighting. Antigravity's uncommitted notes entry and the supplied raw-image changes were left unstaged. Nothing was pushed or published.
+
+## 2026-10-05 — Claude Code — real cutout sizes, and one door leaf or none
+
+Xyh said the 2D clothes and bottles are often the wrong size, which is interesting sometimes but should not be the norm, and asked why every room ends in double doors when it should be one door or none.
+
+Cause of the sizes: the table generator gave every cutout a generic size rather than its own. Each cutout now has a real size; garments lie on the floor at full size and stay off tabletops; about one cutout in twenty-five is deliberately far too large or too small. Doorways have one leaf or none. Details are in HANDOVER.md.
+
+Checks. `check_raw_objects.mjs` passes on the regenerated table of 45 cutouts, and running the generator twice gives the same file. Object-support, scatter, and sequence checks pass. In the browser on the root server, straight route, twelve rooms: bottles measured 0.17 to 0.27 m, a sardine can 0.09 m, floor jeans 0.95 m and T-shirts 0.59 m; one cutout in those rooms was an oddity, a vinegar bottle at 3.2 times (0.86 m); far doorways had a leaf in six rooms and none in six, all reported clear; no console errors. Viewed the kitchen of room 55 with bottles at table scale and an open doorway with no leaf, and room 22 with a single leaf.
+
+Not done. The sizes in `REAL_SIZE` are my estimates from the product types, not measurements; the pots, pans, flower arrangements, and the Orocan chest and cooler are the least certain. Seven supplied files with timestamp names in `2d/raw objects/` are still unnamed, unsized, and unused; the generator now skips them instead of indexing them. No oversized floor cutout was viewed. Nothing was viewed on the twisting route. Side-wall door leaves are unchanged, since those were always single.
+
+A mistake caught before commit: the first regeneration indexed those seven unnamed files and dropped a function I had just added to `raw-object-assets.js`, because the script kept only the text from `createRawObject` onward. Both are fixed in the script.
+
+Root ROADMAP.md needed no change. Next remains independent side-room lighting. Antigravity's uncommitted notes entry and the supplied raw-image changes were left unstaged. Nothing was pushed or published.

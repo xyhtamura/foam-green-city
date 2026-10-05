@@ -14,6 +14,16 @@ The route is still one straight logical line; nothing here adds a second axis. A
 
 Side rooms get scatter from `planSideScatter`, fitted to the room rectangle, off fixture blocks and off the strip from the doorway across the room; the objects join the owning room's single scatter mesh. Movement no longer starts paused under `prefers-reduced-motion`; Xyh asked for it to start on Enter. `scripts/check_forks.mjs` covers exit routes and salts.
 
+## Cutout sizes and doorway leaves — 2026-10-05
+
+`scripts/index_raw_objects.py` now holds `REAL_SIZE`: the real height or width in metres of each supplied cutout, from which the generated `width` follows. Before, every tabletop cutout was scaled to 0.43 m tall or 0.3 m wide and every floor cutout to 0.4 m wide, which made a sardine can 0.43 m and a bleach bottle 1.26 m. A cutout missing from `REAL_SIZE` falls back to the generic size and the script names it. Files whose names start with a digit — unnamed captures — are skipped and named. The script keeps everything after the generated table, so functions added to `raw-object-assets.js` survive a rebuild.
+
+Garments carry `tabletop:false` and are no longer offered to tabletops, where they had been shrunk to fit; on the floor they are laid out at full size. The whole garment shrunk beside a clothes stack on a table or seat now appears for one arrangement in ten, and the doll-sized garment on side-bedroom drawers in one room in nine.
+
+`oddSize(asset,roll)` is the deliberate exception: 2.5% of cutouts come out 2 to 4 times too large and 1.5% at 0.4 times. Callers pass a roll from a stream of their own (`grp.userData.oddRoll` in `index.html`, `oddRoll` in `domestic-details.js`), so furniture and arrangement streams are untouched. `check_raw_objects.mjs` keeps the tabletop limits for tabletop items and has a separate limit for garments.
+
+The doorway at the far end of a room has one leaf (55%, on either side) or none (45%), from its own hash. `?door=one|none` forces it.
+
 ## Zones, smaller rooms, and drawer variants — 2026-10-05
 
 `roomZone(index,seed)` in `room-generator.js` reads a third value-noise field with a six-room period: above 0.83 the room is in a kitchen zone, below 0.17 a bathroom zone. In a zone every room takes that type, except shells large enough to be a hall or auditorium. A bathroom is always 4 m wide, so the width is set before features are drawn. Ordinary widths are now weighted 4 m 58%, 6 m 33%, 8 m 8%, and lengths 6 m 45%, 8 m 36%, 10 m 9%, 12 m 9%. Shorter rooms mean fewer passage rooms, which need 12 m: 2.0% of rooms, down from 3.2%. The generator's hash was replaced with a full-avalanche mix, so every generated shell differs from the previous commit's.

@@ -4,18 +4,19 @@ export const RAW_OBJECTS=[
     "id": "rawAthleticShortsBlack",
     "file": "2d/raw objects/athletic_shorts_black.png",
     "aspect": 1.3867243867243868,
-    "width": 0.3,
+    "width": 0.42,
     "mode": "flat",
     "rooms": [
       "sala",
       "bedroom"
-    ]
+    ],
+    "tabletop": false
   },
   {
     "id": "rawBackpackOlive",
     "file": "2d/raw objects/backpack_olive.png",
     "aspect": 1.367816091954023,
-    "width": 0.4,
+    "width": 0.32899159663865546,
     "mode": "floor",
     "rooms": [
       "sala",
@@ -26,7 +27,7 @@ export const RAW_OBJECTS=[
     "id": "rawBagoongAlamangJar",
     "file": "2d/raw objects/bagoong_alamang_jar.png",
     "aspect": 1.7937219730941705,
-    "width": 0.239725,
+    "width": 0.0669,
     "mode": "table",
     "rooms": [
       "sala",
@@ -37,7 +38,7 @@ export const RAW_OBJECTS=[
     "id": "rawBatyaGreen",
     "file": "2d/raw objects/batya_green.png",
     "aspect": 0.5147058823529411,
-    "width": 0.4,
+    "width": 0.5,
     "mode": "floor",
     "rooms": [
       "bathroom",
@@ -71,7 +72,7 @@ export const RAW_OBJECTS=[
     "id": "rawDatuPutiVinegar",
     "file": "2d/raw objects/datu_puti_vinegar.png",
     "aspect": 3.3205128205128207,
-    "width": 0.1294980694980695,
+    "width": 0.08131274131274131,
     "mode": "table",
     "rooms": [
       "sala",
@@ -82,7 +83,7 @@ export const RAW_OBJECTS=[
     "id": "rawEnvelopeKraft",
     "file": "2d/raw objects/envelope_kraft.png",
     "aspect": 0.7556818181818182,
-    "width": 0.3,
+    "width": 0.24,
     "mode": "flat",
     "rooms": [
       "sala",
@@ -93,7 +94,7 @@ export const RAW_OBJECTS=[
     "id": "rawFryingPan",
     "file": "2d/raw objects/frying_pan_stainless.png",
     "aspect": 0.9450171821305842,
-    "width": 0.3,
+    "width": 0.28,
     "mode": "table",
     "rooms": [
       "sala",
@@ -104,7 +105,7 @@ export const RAW_OBJECTS=[
     "id": "rawHydrangeaBluePotted",
     "file": "2d/raw objects/hydrangea_blue_potted.png",
     "aspect": 1.4944649446494465,
-    "width": 0.4,
+    "width": 0.3345679012345679,
     "mode": "floor",
     "rooms": [
       "sala",
@@ -115,7 +116,7 @@ export const RAW_OBJECTS=[
     "id": "rawHydrangeaPinkPair",
     "file": "2d/raw objects/hydrangea_pink_pair.png",
     "aspect": 0.8517034068136272,
-    "width": 0.4,
+    "width": 0.39920000000000005,
     "mode": "floor",
     "rooms": [
       "sala",
@@ -126,7 +127,7 @@ export const RAW_OBJECTS=[
     "id": "rawIntermediatePad",
     "file": "2d/raw objects/intermediate_pad.png",
     "aspect": 0.8801571709233792,
-    "width": 0.3,
+    "width": 0.15,
     "mode": "flat",
     "rooms": [
       "sala",
@@ -137,7 +138,7 @@ export const RAW_OBJECTS=[
     "id": "rawPadCover",
     "file": "2d/raw objects/intermediate_pad_cover.png",
     "aspect": 1.1428571428571428,
-    "width": 0.3,
+    "width": 0.15,
     "mode": "flat",
     "rooms": [
       "sala",
@@ -148,18 +149,19 @@ export const RAW_OBJECTS=[
     "id": "rawJeansBlue",
     "file": "2d/raw objects/jeans_blue.png",
     "aspect": 1.9808660624370593,
-    "width": 0.2170767666497204,
+    "width": 0.48,
     "mode": "flat",
     "rooms": [
       "sala",
       "bedroom"
-    ]
+    ],
+    "tabletop": false
   },
   {
     "id": "rawLigoSardinesGreen",
     "file": "2d/raw objects/ligo_sardines_green.png",
     "aspect": 1.5416666666666667,
-    "width": 0.2789189189189189,
+    "width": 0.05837837837837837,
     "mode": "table",
     "rooms": [
       "sala",
@@ -170,7 +172,7 @@ export const RAW_OBJECTS=[
     "id": "rawLigoSardinesRed",
     "file": "2d/raw objects/ligo_sardines_red.png",
     "aspect": 1.7486338797814207,
-    "width": 0.24590625,
+    "width": 0.05146875,
     "mode": "table",
     "rooms": [
       "sala",
@@ -181,7 +183,7 @@ export const RAW_OBJECTS=[
     "id": "rawMangTomasSarsa",
     "file": "2d/raw objects/mang_tomas_sarsa.png",
     "aspect": 3.3203125,
-    "width": 0.12950588235294117,
+    "width": 0.06927058823529413,
     "mode": "table",
     "rooms": [
       "sala",
@@ -192,7 +194,7 @@ export const RAW_OBJECTS=[
     "id": "rawDrawers",
     "file": "2d/raw objects/orocan_drawer_chest.png",
     "aspect": 1.728448275862069,
-    "width": 0.65,
+    "width": 0.6074812967581048,
     "mode": "floor",
     "rooms": [
       "sala",
@@ -205,7 +207,7 @@ export const RAW_OBJECTS=[
     "id": "rawCooler",
     "file": "2d/raw objects/orocan_icebox_15l.png",
     "aspect": 1.002824858757062,
-    "width": 0.4,
+    "width": 0.3290704225352113,
     "mode": "floor",
     "rooms": [
       "sala",
@@ -218,7 +220,7 @@ export const RAW_OBJECTS=[
     "id": "rawSilverswanSukaFlatBottle",
     "file": "2d/raw objects/silverswan_suka_flat_bottle.png",
     "aspect": 2.608695652173913,
-    "width": 0.16483333333333333,
+    "width": 0.07283333333333333,
     "mode": "table",
     "rooms": [
       "sala",
@@ -229,7 +231,7 @@ export const RAW_OBJECTS=[
     "id": "rawSilverswanSukaPouch1L",
     "file": "2d/raw objects/silverswan_suka_pouch_1l.png",
     "aspect": 1.6883116883116882,
-    "width": 0.2546923076923077,
+    "width": 0.14215384615384616,
     "mode": "table",
     "rooms": [
       "sala",
@@ -240,7 +242,7 @@ export const RAW_OBJECTS=[
     "id": "rawSilverswanSukaPouchSmall",
     "file": "2d/raw objects/silverswan_suka_pouch_small.png",
     "aspect": 3.2916666666666665,
-    "width": 0.13063291139240507,
+    "width": 0.04253164556962026,
     "mode": "table",
     "rooms": [
       "sala",
@@ -251,7 +253,7 @@ export const RAW_OBJECTS=[
     "id": "rawSilverswanSukaRoundBottle",
     "file": "2d/raw objects/silverswan_suka_round_bottle.png",
     "aspect": 2.515625,
-    "width": 0.17093167701863354,
+    "width": 0.07950310559006211,
     "mode": "table",
     "rooms": [
       "sala",
@@ -273,7 +275,7 @@ export const RAW_OBJECTS=[
     "id": "rawSilverswanSukaTallBottle",
     "file": "2d/raw objects/silverswan_suka_tall_bottle.png",
     "aspect": 3.436974789915966,
-    "width": 0.12511002444987776,
+    "width": 0.07855745721271394,
     "mode": "table",
     "rooms": [
       "sala",
@@ -284,7 +286,7 @@ export const RAW_OBJECTS=[
     "id": "rawSilverswanToyo1LBottle",
     "file": "2d/raw objects/silverswan_toyo_1l_bottle.png",
     "aspect": 3.4224137931034484,
-    "width": 0.12564231738035264,
+    "width": 0.07889168765743074,
     "mode": "table",
     "rooms": [
       "sala",
@@ -295,7 +297,7 @@ export const RAW_OBJECTS=[
     "id": "rawSilverswanToyoGallon",
     "file": "2d/raw objects/silverswan_toyo_gallon.png",
     "aspect": 1.9777777777777779,
-    "width": 0.21741573033707864,
+    "width": 0.15168539325842695,
     "mode": "table",
     "rooms": [
       "sala",
@@ -306,7 +308,7 @@ export const RAW_OBJECTS=[
     "id": "rawSilverswanToyoPouch1L",
     "file": "2d/raw objects/silverswan_toyo_pouch_1l.png",
     "aspect": 1.8717948717948718,
-    "width": 0.22972602739726028,
+    "width": 0.12821917808219177,
     "mode": "table",
     "rooms": [
       "sala",
@@ -317,7 +319,7 @@ export const RAW_OBJECTS=[
     "id": "rawSilverswanToyoPouchSmall",
     "file": "2d/raw objects/silverswan_toyo_pouch_small.png",
     "aspect": 2.139705882352941,
-    "width": 0.20096219931271478,
+    "width": 0.06542955326460483,
     "mode": "table",
     "rooms": [
       "sala",
@@ -339,7 +341,7 @@ export const RAW_OBJECTS=[
     "id": "rawSilverswanToyoSmallBottle",
     "file": "2d/raw objects/silverswan_toyo_small_bottle.png",
     "aspect": 2.4878048780487805,
-    "width": 0.17284313725490197,
+    "width": 0.06833333333333334,
     "mode": "table",
     "rooms": [
       "sala",
@@ -350,7 +352,7 @@ export const RAW_OBJECTS=[
     "id": "rawPotSilver",
     "file": "2d/raw objects/stockpot_stainless.png",
     "aspect": 0.6954022988505747,
-    "width": 0.3,
+    "width": 0.28,
     "mode": "table",
     "rooms": [
       "sala",
@@ -361,7 +363,7 @@ export const RAW_OBJECTS=[
     "id": "rawSunflowerArrangement",
     "file": "2d/raw objects/sunflower_arrangement.png",
     "aspect": 1.1591511936339522,
-    "width": 0.4,
+    "width": 0.39684210526315794,
     "mode": "floor",
     "rooms": [
       "sala",
@@ -372,7 +374,7 @@ export const RAW_OBJECTS=[
     "id": "rawPitcherPink",
     "file": "2d/raw objects/sunny_pitcher_pink.png",
     "aspect": 1.1918819188191883,
-    "width": 0.3,
+    "width": 0.20975232198142413,
     "mode": "table",
     "rooms": [
       "sala",
@@ -383,7 +385,7 @@ export const RAW_OBJECTS=[
     "id": "rawPitcherBlue",
     "file": "2d/raw objects/sunny_pitcher_turquoise.png",
     "aspect": 1.241509433962264,
-    "width": 0.3,
+    "width": 0.20136778115501522,
     "mode": "table",
     "rooms": [
       "sala",
@@ -394,7 +396,7 @@ export const RAW_OBJECTS=[
     "id": "rawSurfJug",
     "file": "2d/raw objects/surf_jug.png",
     "aspect": 2.039408866995074,
-    "width": 0.4,
+    "width": 0.16181159420289856,
     "mode": "floor",
     "rooms": [
       "bathroom",
@@ -406,7 +408,7 @@ export const RAW_OBJECTS=[
     "id": "rawSurfPouch",
     "file": "2d/raw objects/surf_pouch.png",
     "aspect": 1.58203125,
-    "width": 0.27180246913580247,
+    "width": 0.12641975308641976,
     "mode": "table",
     "rooms": [
       "bathroom",
@@ -418,7 +420,7 @@ export const RAW_OBJECTS=[
     "id": "rawTeddyBearBlue",
     "file": "2d/raw objects/teddy_bear_blue.png",
     "aspect": 1.2646566164154105,
-    "width": 0.4,
+    "width": 0.3162913907284768,
     "mode": "floor",
     "rooms": [
       "sala",
@@ -429,7 +431,7 @@ export const RAW_OBJECTS=[
     "id": "rawTeddyBearBrown",
     "file": "2d/raw objects/teddy_bear_brown.png",
     "aspect": 1.2309941520467835,
-    "width": 0.4,
+    "width": 0.32494061757719717,
     "mode": "floor",
     "rooms": [
       "sala",
@@ -440,18 +442,19 @@ export const RAW_OBJECTS=[
     "id": "rawTshirtRed",
     "file": "2d/raw objects/tshirt_red.png",
     "aspect": 1.072289156626506,
-    "width": 0.3,
+    "width": 0.55,
     "mode": "flat",
     "rooms": [
       "sala",
       "bedroom"
-    ]
+    ],
+    "tabletop": false
   },
   {
     "id": "rawTumblerPlasticBlue",
     "file": "2d/raw objects/tumbler_plastic_blue.png",
     "aspect": 1.3430232558139534,
-    "width": 0.3,
+    "width": 0.0967965367965368,
     "mode": "table",
     "rooms": [
       "sala",
@@ -462,7 +465,7 @@ export const RAW_OBJECTS=[
     "id": "rawUbeHalayaJar",
     "file": "2d/raw objects/ube_halaya_jar.png",
     "aspect": 1.8992537313432836,
-    "width": 0.22640471512770138,
+    "width": 0.057917485265225936,
     "mode": "table",
     "rooms": [
       "sala",
@@ -473,7 +476,7 @@ export const RAW_OBJECTS=[
     "id": "rawYellowPad",
     "file": "2d/raw objects/yellowpad.png",
     "aspect": 1.2941176470588236,
-    "width": 0.3,
+    "width": 0.216,
     "mode": "flat",
     "rooms": [
       "sala",
@@ -484,7 +487,7 @@ export const RAW_OBJECTS=[
     "id": "rawZonroxColorsafe",
     "file": "2d/raw objects/zonrox_colorsafe.png",
     "aspect": 3.1479820627802693,
-    "width": 0.4,
+    "width": 0.08576923076923076,
     "mode": "floor",
     "rooms": [
       "bathroom",
@@ -496,7 +499,7 @@ export const RAW_OBJECTS=[
     "id": "rawZonroxOriginal",
     "file": "2d/raw objects/zonrox_original.png",
     "aspect": 2.7315436241610738,
-    "width": 0.4,
+    "width": 0.09884520884520885,
     "mode": "floor",
     "rooms": [
       "bathroom",
@@ -506,10 +509,18 @@ export const RAW_OBJECTS=[
   }
 ];
 
+// Cutouts are sized to the real object. Now and then one is not: about one in twenty-five
+// comes out several times too large or less than half size. `roll` is a 0-1 random value.
+export function oddSize(asset,roll){
+  const factor=roll<0.025?2+roll*80:roll<0.04?0.4:1;
+  return factor===1?asset:{...asset,width:asset.width*factor,odd:factor};
+}
+
 export function createRawObject({THREE,asset,material}={}){
   const height=asset.width*asset.aspect;
   const mesh=new THREE.Mesh(new THREE.PlaneGeometry(asset.width,height,4,4),material);
   mesh.name=asset.id;mesh.userData.rawObject=asset.id;mesh.userData.own=true;
+  if(asset.odd)mesh.userData.oddSize=asset.odd;
   if(asset.mode==='flat'){
     mesh.rotation.x=-Math.PI/2;mesh.position.y=0.008;
   }else{

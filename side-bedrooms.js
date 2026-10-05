@@ -1,6 +1,6 @@
 import {branchOpenings,sideSpacePlan} from './side-spaces.js?v=washrooms-1';
 import {localBounds} from './object-supports.js?v=supports-4';
-import {RAW_OBJECTS,createRawObject} from './raw-object-assets.js?v=raw-2';
+import {RAW_OBJECTS,createRawObject} from './raw-object-assets.js?v=raw-3';
 
 // Prototype meshes stay shared; bedding and photo planes belong to this room.
 export function addSideBedrooms({THREE,group,room,assets,curvize,photos,spriteMat}){
@@ -43,7 +43,7 @@ export function addSideBedrooms({THREE,group,room,assets,curvize,photos,spriteMa
           for(const k of (f.model==='phDaybed'?[]:[-1,1]))block(cotton,f.x+headSign*(bounds.max.x-bounds.min.x)*.32,top+.035,f.z+k*.16,.28,.06,.24).name='bed-pillow';
           block(cotton,f.x-w*.38,top+.015,f.z,.09,.008,d).name='blanket-edge';
         }
-      }else if(clothes.length){
+      }else if(clothes.length&&Math.abs(room.index??0)%9===0){   // a doll-sized garment on the drawers, rarely
         const asset=clothes[Math.abs(room.index??0)%clothes.length],flat={...asset,mode:'flat',width:Math.min(.16,.28/asset.aspect)};
         const object=createRawObject({THREE,asset:flat,material:spriteMat(asset.file)});geometries.add(object.geometry);object.userData.own=false;
         object.position.set(f.x,bounds.max.y+.003,f.z);object.rotation.y=.15;owner.add(object);
