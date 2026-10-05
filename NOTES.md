@@ -915,3 +915,15 @@ Checks. `check_demo_sequence.mjs` asserts, over 40,000 rooms, that every passage
 Not done. Nothing here was viewed on the twisting route. A one-sided platform and a second side room reached by hallway were not viewed. Passages lower than a tall main room were seen from inside only; the join at the opening was not inspected from the main room. The passage opening width, the return leg's width and direction, and side-room fixture layouts are still fixed. `development.html` is unchanged.
 
 Next remains independent side-room lighting. Root ROADMAP.md needed no change. Antigravity's uncommitted notes entry and the supplied raw-image changes were left unstaged. Nothing was pushed or published.
+
+## 2026-10-05 — Claude Code — tableware, plastics, and linens from fgc-cx
+
+Xyh pointed to Codex's three mesh kits in `F:\xyh\fgc-cx`. Copied `tableware.js`, `plastics.js`, and `linens.js` in unchanged and added `household-items.js`, which places their objects on tables, shelves, and the floor and bakes each room's objects into one mesh. Placement rules are in HANDOVER.md. Nothing in `fgc-cx` was edited.
+
+Checks, in the browser on the root server, straight route. Rooms -2 to 3 at heavy clutter and rooms 44 to 49 at default: the inspector reported between 1 and 16 objects per room, clear aisles, open branch entrances, and no utility overlaps for all twelve rooms, with no console errors. The six default rooms totalled 17,472 household triangles in six draw calls; the kitchen in room 44 took 11 objects on its tables and 5 on the floor, with 18 table candidates rejected because the surfaces were already full. Viewed a basin and pail in the kitchen of room 1 and a laundry basket with towel and pile in the bedroom of room 3. A first attempt failed to load on a duplicate variable name and was fixed before these checks.
+
+Not done. Dishes on tables are confirmed by the placement count only; on the crowded tables in view they could not be told apart from the existing clutter, so their scale and contact with the tabletop are unjudged. Rugs, floor bedding, and shelf items were not viewed. Nothing was viewed on the twisting route. Side rooms and room sets (kitchen counters, sinks) get none of these objects. There is no node check for this placement, because it depends on Three.js and the node checks do not load it. Table surfaces reject about half the candidates; lowering the existing table clutter would make room but would reshuffle its arrangements. Baking flattens the kits' ceramic, plastic, and metal finishes to one matte material. `development.html` is unchanged.
+
+Dropped: draping towels over chair backs. The towel needs a ridge to hang from, and chair-back heights are not exposed the way seats are; the basket rim was the available ridge.
+
+Next remains independent side-room lighting. Root ROADMAP.md needed no change. Antigravity's uncommitted notes entry and the supplied raw-image changes were left unstaged. Nothing was pushed or published.

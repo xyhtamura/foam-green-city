@@ -95,6 +95,7 @@ import {addDomesticDetails} from './domestic-details.js?v=details-11';
 let wallUtilities;
 import { roomLighting } from './room-lighting.js?v=lighting-3';
 import { scatterLevel, planScatter, planSideScatter, scatterBlocks, createScatterMesh } from './floor-scatter.js?v=scatter-4';
+import { addHouseholdItems } from './household-items.js?v=household-1';
 import { spatialFrame, spatialPoint, SPATIAL_GLSL, SPATIAL_PROFILES } from './spatial-route.js';
 import { floorHeight, cameraRoute, routePoint } from './room-sequences.js?v=parametric-1';
 import {sideSpacePlan} from './side-spaces.js?v=washrooms-1';
@@ -252,6 +253,7 @@ const mat = {
 };
 
 const scatterMaterial=curvize(new THREE.MeshLambertMaterial({vertexColors:true}));
+const householdMaterial=curvize(new THREE.MeshLambertMaterial({vertexColors:true,side:THREE.DoubleSide}));
 
 // ---- loaders + caches (load each asset once, clone per placement) ----
 const gltfLoader = new GLTFLoader();
@@ -635,7 +637,13 @@ function buildSegment(index){
   const taken=grp.children.filter(o=>o.userData.floorProp||o.userData.billboard||o.userData.diningTable||o.userData.diningChair||o.userData.utilityProp||o.userData.door||o.userData.roomSet).concat(grp.userData.woodDetails.children.filter(o=>o.name!=='wood-wall')).map(o=>{
     const b=new THREE.Box3().setFromObject(o);return {minX:b.min.x-0.03,maxX:b.max.x+0.03,minZ:b.min.z-grp.position.z-0.03,maxZ:b.max.z-grp.position.z+0.03};
   });
-  const scatterItems=planScatter(descriptor,{seed:i,level:scatterLevel(i,descriptor.type,params.get('clutter')),blocked:[...taken,...architecture.userData.reservations]});
+  const clutterLevel=scatterLevel(i,descriptor.type,params.get('clutter'));
+  // Dishes, bags, vessels, and linens go in first; loose scatter then fills in around them.
+  const items=addHouseholdItems({THREE,group:grp,room:descriptor,seed:i,material:householdMaterial,blocked:[...taken,...architecture.userData.reservations],floorAt:z=>floorHeight(descriptor,z),amount:{none:0,light:0.6,medium:1,heavy:1.4}[clutterLevel]});
+  if(items.mesh)grp.add(items.mesh);
+  grp.userData.household=items.report;
+  for(const b of items.walkBlocks){const y=floorHeight(descriptor,(b.minZ+b.maxZ)/2);grp.userData.walkBlocks.push({minX:b.minX,maxX:b.maxX,minZ:b.minZ+descriptor.startZ,maxZ:b.maxZ+descriptor.startZ,minY:y,maxY:y+b.height});}
+  const scatterItems=planScatter(descriptor,{seed:i,level:clutterLevel,blocked:[...taken,...items.footprints,...architecture.userData.reservations]});
   for(const space of architecture.userData.sideSpaces){
     const plan=sideSpacePlan(descriptor,space),rect=plan.roomRect;
     // The strip from the doorway across the room stays clear.
@@ -928,7 +936,7 @@ function inspectRooms(){
       item.lightColor=g.userData.lightFixture.userData.lightColor;
       item.lightFixture=g.userData.lightFixture.userData.fixtureType;
       item.lighting=g.userData.lighting.name;
-      item.scatter=g.userData.scatter;item.strangeness=g.userData.strangeness??null;item.features=[g.userData.stairs&&'stairs'+g.userData.stairs.steps,g.userData.columns&&'columns'+g.userData.columns.rows,g.userData.platform&&'platform'].filter(Boolean);item.solids=g.userData.architecture.userData.solids.length;item.generation=g.userData.generationIndex??item.i;
+      item.scatter=g.userData.scatter;item.household=g.userData.household;item.strangeness=g.userData.strangeness??null;item.features=[g.userData.stairs&&'stairs'+g.userData.stairs.steps,g.userData.columns&&'columns'+g.userData.columns.rows,g.userData.platform&&'platform'].filter(Boolean);item.solids=g.userData.architecture.userData.solids.length;item.generation=g.userData.generationIndex??item.i;
     }
     let output=document.getElementById('room-inspection');
     if(!output){output=document.createElement('pre');output.id='room-inspection';output.hidden=true;document.body.append(output);}

@@ -14,6 +14,12 @@ The route is still one straight logical line; nothing here adds a second axis. A
 
 Side rooms get scatter from `planSideScatter`, fitted to the room rectangle, off fixture blocks and off the strip from the doorway across the room; the objects join the owning room's single scatter mesh. Movement no longer starts paused under `prefers-reduced-motion`; Xyh asked for it to start on Enter. `scripts/check_forks.mjs` covers exit routes and salts.
 
+## Tableware, plastics, and linens — 2026-10-05
+
+`tableware.js`, `plastics.js`, and `linens.js` are unchanged copies of Codex's kits from the sibling folder `F:\xyh\fgc-cx`, which has no history of its own; re-copy them from there if they change. `household-items.js` is the only consumer. It keeps one set of kits for the whole session at ten radial segments, uses them to assemble objects, and never renders the kit meshes: each room's objects are placed, baked into one non-indexed vertex-coloured mesh in the room's frame, and removed. The room therefore pays one draw call and the generic `userData.own` disposal, and the kits' Phong materials and `patchMaterial` hook are unused. `householdMaterial` in `index.html` is the shared double-sided Lambert material.
+
+Placement runs after wood details and before scatter, on its own random stream. Table and shelf objects go through `placeOnSupport` against the `supportSurface` that `domestic-details.js` left on each table, cabinet, and shelf, so they respect its reservations: place settings, bowls, drinks, cup and saucer, plate and bowl stacks, a tray of cups, containers, dishcloths, folded clothes. Floor objects stand against a wall, clear of the aisle and of furniture: basins, pails, bags, laundry piles, and laundry baskets that may carry a towel over the rim and a pile inside. Salas and bedrooms sometimes get a rug on open floor, and a bedroom rug sometimes carries a pillow and folded blanket. The amount follows the room's scatter level (none 0, light 0.6, medium 1, heavy 1.4), and floor footprints are passed to the scatter planner as blocked. Objects taller than 0.24 m stop the walker.
+
 ## Parametric passages, platforms, and side rooms — 2026-10-05
 
 Every opening returned by `branchOpenings` now carries its own dimensions, and rendering, routes, and navigation read them from the portal instead of recomputing them from the room shape.

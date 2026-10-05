@@ -228,6 +228,10 @@ The user supplied and renamed the PNGs in 2d/raw objects. They remain covered by
 
 models/textures/hollow-blocks.png is supplied by Xyh and covered by the standing confirmation that supplied images are theirs or cleared for redistribution. It is shipped unchanged under the project artwork terms and used on occasional solid wall sections. No reference image from an external site was fetched.
 
+## Tableware, plastics, and linens — 2026-10-05
+
+`tableware.js`, `plastics.js`, and `linens.js` are procedural meshes authored for this project by Codex in `F:\xyh\fgc-cx` and copied here unchanged. They use no models, images, or fonts. Code is MIT and the geometry is CC BY 4.0 under the project's artwork licence.
+
 ## Household tools and generic bottles — 2026-10-05
 
 Codex-authored geometry in domestic-details.js creates hollow pitchers, chopping boards, knives, folded clothing-like shapes, paper/file stacks, string mops and generic bottles. Caps and label bands use solid colours; no packaging image or new third-party model is included. The denser cutout groups reuse the already-cleared supplied PNGs. Code uses MIT; authored artwork uses CC BY 4.0.

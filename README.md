@@ -36,7 +36,7 @@ The continued local version adds occasional wall-mounted flat-screen TVs and sho
 
 Abstract household shapes collect on tables, furniture tops, framed-photo shelves, and floor edges. Stains and scuffs keep bare floors untiled. Occasional rooms expose timber rafters and corrugated metal roofing; `?roof=yero` forces that variation. Small static cockroach silhouettes sometimes appear near walls.
 
-For inspection, `?start=7&offset=1&still=1&inspect=1` selects a room without forward movement. The inspection data is in hidden DOM reports. `?route=twist|reverse|unwind|sway|mixed` selects the spatial profile. `?fixture=bulb|tube` and `?lighting=daylight|overcast|shaded|darkDay|night` force visual variants. `?clutter=none|light|medium|heavy` forces the amount of floor scatter. `?fork=always|never` forces or disables taking an exit, and `?sideExits=all|off` forces or removes exits in side rooms. Separate `props-preview.html` and `windows-preview.html` pages inspect models and windows.
+For inspection, `?start=7&offset=1&still=1&inspect=1` selects a room without forward movement. The inspection data is in hidden DOM reports. `?route=twist|reverse|unwind|sway|mixed` selects the spatial profile. `?fixture=bulb|tube` and `?lighting=daylight|overcast|shaded|darkDay|night` force visual variants. `?clutter=none|light|medium|heavy` forces the amount of floor scatter and of dishes, bags, vessels, and linens. `?fork=always|never` forces or disables taking an exit, and `?sideExits=all|off` forces or removes exits in side rooms. Separate `props-preview.html` and `windows-preview.html` pages inspect models and windows.
 
 ## Publish on GitHub Pages
 
