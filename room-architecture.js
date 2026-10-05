@@ -23,7 +23,7 @@ export function raiseFloor(floor,room){
 export function createRoomArchitecture(room,curvize,{woodTexture=null,stairs=null,wallColor=0xbfdcc9}={}){
   const group=new THREE.Group(),batches=new Map(),W=room.width/2,L=room.length,H=room.height,reservations=[];
   const reserve=(x,z,w,d)=>reservations.push({minX:x-w/2-0.12,maxX:x+w/2+0.12,minZ:z-d/2-0.12,maxZ:z+d/2+0.12});
-  const materials={wood:curvize(new THREE.MeshLambertMaterial({map:woodTexture,color:0xbda887})),wall:curvize(new THREE.MeshLambertMaterial({color:wallColor})),floor:curvize(new THREE.MeshLambertMaterial({color:0x9c9c95})),trim:curvize(new THREE.MeshLambertMaterial({color:0x4e7c63}))};
+  const materials={wood:curvize(new THREE.MeshLambertMaterial({map:woodTexture,color:0xbda887})),wall:curvize(new THREE.MeshLambertMaterial({color:wallColor})),floor:curvize(new THREE.MeshLambertMaterial({color:0x9c9c95})),trim:curvize(new THREE.MeshLambertMaterial({color:0x4e7c63})),exit:curvize(new THREE.MeshBasicMaterial({color:0x080b0a}))};
   function box(kind,w,h,d,x,y,z,rx=0){
     const geo=new THREE.BoxGeometry(w,h,d,Math.max(1,Math.ceil(w/2)),1,Math.max(1,Math.ceil(d/2)));geo.rotateX(rx);geo.translate(x,y,z);
     if(!batches.has(kind))batches.set(kind,[]);batches.get(kind).push(geo);
@@ -63,7 +63,13 @@ export function createRoomArchitecture(room,curvize,{woodTexture=null,stairs=nul
     const turnX=side*(W+reach-1.5),turnLen=Math.min(8,L+z-2);
     box('floor',3,0.12,turnLen,turnX,y-0.06,z-2-turnLen/2);
     for(const dx of [-1.5,1.5])box('wall',0.12,H,turnLen,turnX+dx,y+H/2,z-2-turnLen/2);
-    box('wall',3,H,0.12,turnX,y+H/2,z-2-turnLen);
+    // The passage ends in a dark doorway: the way out of this run of rooms.
+    const endZ=z-2-turnLen;
+    for(const dx of [-1.05,1.05])box('wall',0.9,H,0.12,turnX+dx,y+H/2,endZ);
+    box('wall',1.2,H-2.15,0.12,turnX,y+(H+2.15)/2,endZ);
+    for(const dx of [-0.6,0.6])box('trim',0.06,2.15,0.16,turnX+dx,y+1.075,endZ);
+    box('trim',1.26,0.06,0.16,turnX,y+2.15,endZ);
+    box('exit',1.2,2.15,0.04,turnX,y+1.075,endZ-0.1);
     box('wall',reach,0.12,4,cx,y+H,z);
     box('wall',3,0.12,turnLen,turnX,y+H,z-2-turnLen/2);
     box('wall',0.12,H-2.2,4,side*W,y+(H+2.2)/2,z);

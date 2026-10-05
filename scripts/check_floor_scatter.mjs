@@ -1,7 +1,8 @@
 // Usage: node scripts/check_floor_scatter.mjs
 // Checks floor-scatter planning: bounds, aisle, blocked areas, determinism, and level mix.
 import assert from 'node:assert/strict';
-import {SCATTER_LEVELS,scatterLevel,planScatter,scatterBlocks} from '../floor-scatter.js';
+import {SCATTER_LEVELS,scatterLevel,planScatter,planSideScatter,scatterBlocks} from '../floor-scatter.js';
+import {branchOpenings,sideSpacePlan} from '../side-spaces.js';
 import {roomLighting} from '../room-lighting.js';
 
 let cases=0,placed=0;
@@ -20,6 +21,22 @@ for(const type of ['sala','kitchen','bedroom','bathroom','bare','hall','auditori
   for(const b of scatterBlocks(items))assert.ok(b.minX>0.6||b.maxX< -0.6,'walker blocks stay off the aisle');
   cases++;placed+=items.length;
 }
+// Side rooms: inside the room rectangle, off its fixtures, and off the strip from the doorway.
+let sideCases=0,sidePlaced=0;
+for(const sideRoom of ['bedroom','storage','washroom','bare'])for(const kind of ['room','hallway'])for(const width of [4,6,8])for(const index of [0,1,7,12])for(const level of SCATTER_LEVELS){
+  const room={index,width,length:12,startZ:0,height:2.58,rise:0,shape:'rectangle',sideSpaces:kind,sideRoom};
+  const portal=branchOpenings(room)[0],plan=sideSpacePlan(room,portal),rect=plan.roomRect;
+  const entry={minX:rect.minX,maxX:rect.maxX,minZ:portal.z-plan.opening/2-0.1,maxZ:portal.z+plan.opening/2+0.1};
+  const blocked=[entry,...plan.blocks],items=planSideScatter(rect,{seed:index,level,blocked,furnishing:plan.furnishing});
+  assert.deepEqual(items,planSideScatter(rect,{seed:index,level,blocked,furnishing:plan.furnishing}));
+  if(level==='heavy')assert.ok(items.length>=3,`heavy ${sideRoom} side room holds ${items.length}`);
+  for(const o of items){
+    assert.ok(o.x-o.radius>=rect.minX+0.13-1e-9&&o.x+o.radius<=rect.maxX-0.13+1e-9&&o.z-o.radius>=rect.minZ+0.13-1e-9&&o.z+o.radius<=rect.maxZ-0.13+1e-9,'inside the side room');
+    for(const b of blocked)assert.ok(!(o.x+o.radius>b.minX&&o.x-o.radius<b.maxX&&o.z+o.radius>b.minZ&&o.z-o.radius<b.maxZ),'off fixtures and the entry strip');
+  }
+  sideCases++;sidePlaced+=items.length;
+}
+console.log(`PASS ${sideCases} side-room plans, ${sidePlaced} objects`);
 const sala=level=>planScatter({type:'sala',width:4,length:8},{seed:4,level}).length;
 assert.ok(sala('light')>=4&&sala('light')<sala('medium')&&sala('medium')<sala('heavy'),`levels increase: ${sala('light')}, ${sala('medium')}, ${sala('heavy')}`);
 

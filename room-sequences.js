@@ -35,6 +35,21 @@ export function cameraRoute(room,openings=[]){
   return {legs,length:distance};
 }
 
+// The far end of a side passage, where its return leg meets the exit doorway.
+export function passageExit(room,portal){
+  const reach=room.shape==='cross'?8:10;
+  return {x:portal.side*(room.width/2+reach-1.5),z:portal.z-2-Math.min(8,room.length+portal.z-2)};
+}
+// A one-way route: into the side passage and up to its exit, with no return leg.
+export function exitRoute(room,portal){
+  const end=passageExit(room,portal),points=[{x:0,z:0},{x:0,z:portal.z},{x:end.x,z:portal.z},{x:end.x,z:end.z+0.45}];
+  let distance=0;
+  const legs=points.slice(1).map((to,i)=>{
+    const start=points[i],length=Math.hypot(to.x-start.x,to.z-start.z),leg={start,end:to,length,distance};distance+=length;return leg;
+  });
+  return {legs,length:distance,exit:true};
+}
+
 export function routePoint(route,distance){
   const leg=route.legs.find(l=>distance<l.distance+l.length)??route.legs.at(-1);
   const u=Math.max(0,Math.min(1,(distance-leg.distance)/leg.length));
@@ -97,6 +112,8 @@ function createDemoRooms(seed){
     spec(14,20,'hall','sparse','bare',{height:6}),
     spec(10,24,'hall','sparse','concrete',{height:8,shape:'cross'}),
     spec(8,24,'sala','perimeter','bare',{height:5,rise:-0.8}),
+    spec(6,16,'hall','sparse','bare',{height:3.6,shape:'branches'}),
+    spec(8,20,'sala','perimeter','bare',{height:3.6,shape:'cross'}),
   ];
   const vast=[
     spec(6,14,'sala','sparse','bare',{height:36,spaceVariation:'verticalVoid'}),

@@ -861,3 +861,21 @@ Not done. No preview PNG was saved. Draw calls, frame time, and the cull/rebuild
 The node checks in `scripts/` fail under plain `node` 20.10 here, since there is no `package.json`; `node --experimental-default-type=module scripts/<check>.mjs` runs them.
 
 Next remains independent side-room lighting, matching the root roadmap. Antigravity's uncommitted notes entry and the supplied raw-image changes were left unstaged. Nothing was pushed or published.
+
+## 2026-10-05 — Claude Code — passage exits, regenerating rooms, side-room scatter, unpaused start
+
+Xyh asked for scatter in side rooms, turns or branching paths that automatic movement picks at random, deleted rooms that come back different, and movement that starts on Enter.
+
+Side rooms now receive floor scatter. Movement starts when Enter is selected; the `prefers-reduced-motion` starting pause was removed at Xyh's request, and Pause still works.
+
+Branching is a cut, not a second axis. The existing `branches` and `cross` side passages end in a dark doorway. Automatic movement entering such a room picks the main doorway or a passage with equal probability. At the doorway the screen fades to near-black for under a second, all six rooms are discarded, and the walk resumes in a domestic room 20 to 620 indices further along with rerolled contents. Walking into the doorway by hand does the same. Fork rooms are 5% of the demo sequence; the first is room 7.
+
+A discarded room is rebuilt with the same shell and different furniture, paint, lighting, scatter, and side rooms. Shells are kept because every room's position is a running sum of the lengths before it. Details are in HANDOVER.md.
+
+Checks. `check_forks.mjs` walked the exit route of 149 fork rooms in 3,000 through the walkable regions and tested the salt rules. `check_floor_scatter.mjs` passed 384 side-room plans. The side-space, navigation, demo-sequence, and room-sequence checks still pass. In the browser on the root server: viewed heavy scatter in the side bedroom of room 8; viewed the passage and dark doorway in room 7; ran the automatic exit from room 7 with `fork=always`, which landed in room 46 with six salted rooms, clear aisles, the veil back at opacity 0, and no console errors; walked back from room 1 to room -2 and forward again with simulated S and W keys, after which rooms 2 and 3 kept their type and size and changed paint and scatter counts; selected Enter on the title screen and read forward movement and a Pause label three seconds later. The browser pane throttled animation frames, so those runs drove the frame loop from a message channel.
+
+Not done. The cut itself was not watched in motion, only its before and after states, so its timing and feel are unjudged. The manual trigger at the exit doorway was not exercised by hand; `check_forks.mjs` confirms a walker can stand in the trigger zone. The random 1/(n+1) choice was only run forced. Frame time during the rebuild under the veil was not measured. `development.html` has none of this. Domestic side hallways and side rooms are still dead ends; only the two passage shapes are exits.
+
+Dropped: real turns, where rooms continue at right angles in one continuous space. Lighting bands, the twist shader, collision, and every placement rule assume the route runs along one axis, so that is a rewrite of the room builder rather than an addition. The cut gives the branch without it.
+
+Root ROADMAP.md's Mechanism line was updated and left uncommitted, because that file carries other agents' uncommitted edits. Next remains independent side-room lighting. Antigravity's uncommitted notes entry and the supplied raw-image changes were left unstaged. Nothing was pushed or published.

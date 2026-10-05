@@ -46,21 +46,37 @@ export function planScatter(room,{seed=0,level='medium',blocked=[]}={}){
   const large=['hall','auditorium'].includes(room.type),factor=room.type==='bathroom'?0.5:large?0.4:1;
   const target=Math.min(CAP,Math.round(RATE[level]*2*L*factor));
   const mix=MIX[room.type==='kitchen'||room.kitchenCorner?'kitchen':room.type==='bathroom'?'bathroom':room.type==='bare'||large?'bare':'domestic'];
+  const inside=(x,z,radius)=>Math.abs(x)-radius>=AISLE&&Math.abs(x)+radius<=half-0.13&&z+radius<=-0.22&&z-radius>=-L+0.22;
+  return fill({r,target,mix,level,blocked,inside,anchor(){
+    const side=r()<0.5?-1:1,where=r();
+    if(where<0.14)return [side*(half-0.25-r()*0.5),r()<0.5?-0.35-r()*0.6:-L+0.35+r()*0.6];       // corner
+    if(where<0.82||room.width<6)return [side*(half-0.2-r()*r()*1.1),-0.3-r()*(L-0.6)];           // along a wall
+    return [side*(AISLE+0.2+r()*(half-AISLE-0.4)),-0.3-r()*(L-0.6)];                             // open floor
+  }});
+}
+
+// A side room: rect is its floor in the owning room's frame; objects keep to its edges.
+export function planSideScatter(rect,{seed=0,level='medium',blocked=[],furnishing='bare'}={}){
+  const r=stream(Math.imul(seed+3571,2654435761)>>>0),w=rect.maxX-rect.minX,d=rect.maxZ-rect.minZ;
+  const mix=MIX[furnishing==='bedroom'?'domestic':furnishing==='washroom'?'bathroom':'bare'];
+  const inside=(x,z,radius)=>x-radius>=rect.minX+0.13&&x+radius<=rect.maxX-0.13&&z-radius>=rect.minZ+0.13&&z+radius<=rect.maxZ-0.13;
+  return fill({r,target:Math.round(RATE[level]*(w+d)*0.9),mix,level,blocked,inside,anchor(){
+    const inset=0.2+r()*r()*0.6,along=r();
+    return [[rect.minX+inset,rect.minZ+along*d],[rect.maxX-inset,rect.minZ+along*d],[rect.minX+along*w,rect.minZ+inset],[rect.minX+along*w,rect.maxZ-inset]][Math.floor(r()*4)];
+  }});
+}
+
+function fill({r,target,mix,level,blocked,inside,anchor}){
   const total=mix.reduce((sum,[,w])=>sum+w,0);
   const pick=()=>{let n=r()*total;for(const [kind,w] of mix){n-=w;if(n<0)return kind;}return mix[0][0];};
   const items=[];
   function fits(x,z,radius,flat){
-    if(Math.abs(x)-radius<AISLE||Math.abs(x)+radius>half-0.13)return false;
-    if(z+radius>-0.22||z-radius< -L+0.22)return false;
+    if(!inside(x,z,radius))return false;
     if(blocked.some(b=>x+radius>b.minX&&x-radius<b.maxX&&z+radius>b.minZ&&z-radius<b.maxZ))return false;
     return items.every(o=>(flat||o.flat)||Math.hypot(o.x-x,o.z-z)>=(o.radius+radius)*0.8);
   }
   for(let attempt=0;items.length<target&&attempt<target*8;attempt++){
-    const side=r()<0.5?-1:1,where=r();
-    let ax,az;
-    if(where<0.14){ax=side*(half-0.25-r()*0.5);az=r()<0.5?-0.35-r()*0.6:-L+0.35+r()*0.6;}       // corner
-    else if(where<0.82||room.width<6){ax=side*(half-0.2-r()*r()*1.1);az=-0.3-r()*(L-0.6);}      // along a wall
-    else{ax=side*(AISLE+0.2+r()*(half-AISLE-0.4));az=-0.3-r()*(L-0.6);}                         // open floor
+    const [ax,az]=anchor();
     const group=1+Math.floor(r()*r()*(level==='heavy'?8:5));
     for(let n=0;n<group&&items.length<target;n++){
       const kind=pick(),spec=KINDS[kind],size=0.8+r()*0.5,radius=spec.radius*size;

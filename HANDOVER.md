@@ -4,6 +4,16 @@
 
 2026-10-03 — Codex
 
+## Passage exits, regenerating rooms, and side-room scatter — 2026-10-05
+
+The route is still one straight logical line; nothing here adds a second axis. A branch is a cut. The `branches` and `cross` side passages now end in a dark doorway (`exit` material in `room-architecture.js`). Reaching it — by the automatic `exitRoute` or by hand, tested in `atPassageExit` — calls `beginCut`: `#veil` fades to near-black over 0.35 s, `takeBranch` discards all six rooms, calls `sequence.reroll()`, and places the walker 0.4 m inside a domestic room 20 to 620 indices ahead, then the veil clears. Room building happens under the veil. Steady-state cost is unchanged: still six rooms, no extra geometry apart from the doorway.
+
+`chooseRoute` runs when automatic movement enters a room: with n passages, each passage and the main doorway have probability 1/(n+1), from `Math.random`. `?fork=always|never` overrides it, and `fork=always` also applies to the starting room so `routeOffset` can reach the exit. Two fork shapes were added to the demo's `unusual` list, so 5% of rooms are forks (4 of 10 exception shapes).
+
+`createWalkSequence` now carries content salts. `hold(index)` fixes a room's salt when it is built, `release(index)` drops it and advances the era when the room is discarded, and `reroll()` releases everything. A nonzero salt offsets `generationIndex` and `branchSeed`, which feed furniture, paint, lighting, scatter, and side rooms. The shell — width, length, height, type, shape, floor, `startZ` — depends on the index alone, so positions never shift. Any room built after the first discard is salted, so a long walk is reproducible only for the same path. `dropSegment` in `index.html` is the single place rooms are disposed.
+
+Side rooms get scatter from `planSideScatter`, fitted to the room rectangle, off fixture blocks and off the strip from the doorway across the room; the objects join the owning room's single scatter mesh. Movement no longer starts paused under `prefers-reduced-motion`; Xyh asked for it to start on Enter. `scripts/check_forks.mjs` covers exit routes and salts.
+
 ## Floor scatter and lighting weights — 2026-10-05
 
 `floor-scatter.js` plans small floor objects per room and builds them as one merged, vertex-coloured mesh: one draw call per room, sharing `scatterMaterial` from `index.html`. Thirteen shapes (bottles, cans, jugs, cartons, carton stacks, crumpled paper, tied bags, sacks, tubs, flat sheets, slippers) are assembled from seven unit geometries. Colour comes from per-kind palettes, mixed 22% toward a floor grey. `RATE` sets objects per metre of side wall for each level; `MIX` sets the kinds per room type. Halls and auditoriums get 40% of the domestic rate, bathrooms 50%, and no room exceeds 170 objects.

@@ -31,6 +31,7 @@
   #controls { position:fixed; right:10px; bottom:10px; display:flex; gap:6px; }
   button { font:12px monospace; color:#e4eee7; background:#253b30; border:1px solid #799783; padding:7px 10px; cursor:pointer; }
   button:focus-visible { outline:2px solid #fff; outline-offset:3px; }
+  #veil { position:fixed; inset:0; z-index:10; background:#080b0a; opacity:0; pointer-events:none; transition:opacity .35s linear; }
   #status { position:fixed; left:50%; top:50%; transform:translate(-50%,-50%); color:#e4eee7; background:#253b30; padding:14px; font:14px monospace; }
   [hidden] { display:none !important; }
 </style>
@@ -48,6 +49,7 @@
     <p id="title-status" role="status">Loading rooms…</p>
   </div>
 </section>
+<div id="veil" aria-hidden="true"></div>
 <div id="status" role="status" hidden></div>
 <div id="controls" aria-label="Playback controls">
   <button id="pause" type="button" aria-pressed="false">Pause</button>
@@ -88,19 +90,19 @@ import { createRoomSet, createRoomFixture } from './room-sets.js?v=sets-8';
 import { createUratexSofa } from './uratex-sofa.js';
 import { createWireRun } from './wire-runs.js';
 import { createWallUtilities } from './wall-utilities.js?v=walls-7';
-import {createWalkSequence,retainedRooms,walkRegions,canOccupy,moveWalker,pathToRoute} from './navigation.js?v=side-rooms-5';
+import {createWalkSequence,retainedRooms,walkRegions,canOccupy,moveWalker,pathToRoute} from './navigation.js?v=salts-1';
 import {addDomesticDetails} from './domestic-details.js?v=details-10';
 let wallUtilities;
 import { roomLighting } from './room-lighting.js?v=lighting-3';
-import { scatterLevel, planScatter, scatterBlocks, createScatterMesh } from './floor-scatter.js?v=scatter-3';
+import { scatterLevel, planScatter, planSideScatter, scatterBlocks, createScatterMesh } from './floor-scatter.js?v=scatter-4';
 import { spatialFrame, spatialPoint, SPATIAL_GLSL, SPATIAL_PROFILES } from './spatial-route.js';
-import { floorHeight, cameraRoute, routePoint } from './room-sequences.js?v=room-lengths-3';
+import { floorHeight, cameraRoute, routePoint, passageExit, exitRoute } from './room-sequences.js?v=forks-1';
 import {sideSpacePlan} from './side-spaces.js?v=washrooms-1';
 import {addWoodDetails} from './wood-details.js?v=wood-2';
 import {addSideWashrooms} from './side-washrooms.js?v=washrooms-2';
 import {addSideStorage} from './side-storage.js?v=storage-2';
 import {addSideBedrooms} from './side-bedrooms.js?v=bedrooms-6';
-import { branchOpenings, raiseFloor, createRoomArchitecture } from './room-architecture.js?v=architecture-8';
+import { branchOpenings, raiseFloor, createRoomArchitecture } from './room-architecture.js?v=architecture-9';
 
 // ---- palette (DepEd MPSS, stylized: green walls) ----
 const COL = {
@@ -434,6 +436,7 @@ function architectureCollision(group,box){
 }
 
 function buildSegment(index){
+  sequence.hold(index);
   const descriptor=sequence.room(index),i=descriptor.generationIndex??index,SEG_LEN=descriptor.length,SEG_TILES=SEG_LEN/TSCALE;
   const grp = new THREE.Group(); grp.position.z = descriptor.startZ; scene.add(grp); segments.set(index,grp);
   const width=descriptor.width,half=width/2;Object.assign(grp.userData,descriptor);
@@ -514,7 +517,7 @@ function buildSegment(index){
   for(const piece of partitionPieces(Math.max(width,roomWidth(index+1))))
     addWall(partition,WALLP[piece.name],piece.x,-SEG_LEN,0);
   const boundaryHeight=Math.max(descriptor.height,sequence.room(index+1).height);
-  if(boundaryHeight>H){const upper=new THREE.Mesh(new THREE.BoxGeometry(Math.max(width,roomWidth(i+1)),boundaryHeight-H,0.12),mat.ceiling);upper.position.set(0,(boundaryHeight+H)/2,-SEG_LEN);upper.userData.own=true;partition.add(upper);}
+  if(boundaryHeight>H){const upper=new THREE.Mesh(new THREE.BoxGeometry(Math.max(width,roomWidth(index+1)),boundaryHeight-H,0.12),mat.ceiling);upper.position.set(0,(boundaryHeight+H)/2,-SEG_LEN);upper.userData.own=true;partition.add(upper);}
   const thresholdStyle=DOOR_STYLES[i%DOOR_STYLES.length];
   for(const side of [-1,1]){
     const door=DOORS[thresholdStyle].clone();door.position.set(side*0.96,0,-SEG_LEN+0.14);
@@ -632,34 +635,42 @@ function buildSegment(index){
     const b=new THREE.Box3().setFromObject(o);return {minX:b.min.x-0.03,maxX:b.max.x+0.03,minZ:b.min.z-grp.position.z-0.03,maxZ:b.max.z-grp.position.z+0.03};
   });
   const scatterItems=planScatter(descriptor,{seed:i,level:scatterLevel(i,descriptor.type,params.get('clutter')),blocked:[...taken,...architecture.userData.reservations]});
+  for(const space of architecture.userData.sideSpaces){
+    const plan=sideSpacePlan(descriptor,space),rect=plan.roomRect;
+    // The strip from the doorway across the room stays clear.
+    const entry={minX:rect.minX,maxX:rect.maxX,minZ:space.z-plan.opening/2-0.1,maxZ:space.z+plan.opening/2+0.1};
+    scatterItems.push(...planSideScatter(rect,{seed:i,level:scatterLevel(i+7001,plan.furnishing==='bare'?'bare':'sala',params.get('clutter')),furnishing:plan.furnishing,blocked:[entry,...plan.blocks.map(b=>({minX:b.minX-0.05,maxX:b.maxX+0.05,minZ:b.minZ-0.05,maxZ:b.maxZ+0.05}))]}));
+  }
   const scatter=createScatterMesh(THREE,scatterItems,{material:scatterMaterial,floorAt:z=>floorHeight(descriptor,z)});
   if(scatter)grp.add(scatter);
   grp.userData.scatter=scatterItems.length;
   for(const b of scatterBlocks(scatterItems)){const y=floorHeight(descriptor,(b.minZ+b.maxZ)/2);grp.userData.walkBlocks.push({minX:b.minX,maxX:b.maxX,minZ:b.minZ+descriptor.startZ,maxZ:b.maxZ+descriptor.startZ,minY:y,maxY:y+b.height});}
 }
 
+// Discarding a room also changes its salt: if it is built again, its contents differ.
+function dropSegment(i){
+  const grp=segments.get(i);
+  grp.userData.wallPaintMaterials.forEach(m=>m.dispose());
+  scene.remove(grp);grp.userData.floorGroup.userData.dispose();grp.userData.architecture.userData.dispose();grp.userData.domesticDetails.userData.dispose();grp.userData.sideBedrooms.userData.dispose();grp.userData.sideStorage.userData.dispose();grp.userData.sideWashrooms.userData.dispose();grp.userData.woodDetails.userData.dispose();
+  grp.traverse(o=>{ if (o.isMesh && o.userData.own && o.geometry) o.geometry.dispose();
+  if(o.userData.ownMaterial)o.material.dispose();
+ });
+  segments.delete(i);sequence.release(i);
+}
 let inspectedRoom=null;
 function ensureSegments(){
   const camSeg = travelRoom;
   const retained=retainedRooms(camSeg);
   for (const i of retained) if (!segments.has(i)) buildSegment(i);
-  for (const [i,grp] of segments){
-    if (!retained.includes(i)){
-      grp.userData.wallPaintMaterials.forEach(m=>m.dispose());
-      scene.remove(grp);grp.userData.floorGroup.userData.dispose();grp.userData.architecture.userData.dispose();grp.userData.domesticDetails.userData.dispose();grp.userData.sideBedrooms.userData.dispose();grp.userData.sideStorage.userData.dispose();grp.userData.sideWashrooms.userData.dispose();grp.userData.woodDetails.userData.dispose();
-      grp.traverse(o=>{ if (o.isMesh && o.userData.own && o.geometry) o.geometry.dispose();
-      if(o.userData.ownMaterial)o.material.dispose();
- });
-      segments.delete(i);
-    }
-  }
+  for (const i of [...segments.keys()]) if (!retained.includes(i)) dropSegment(i);
   if(params.has('inspect')){const stats=document.getElementById('render-stats')??document.body.appendChild(Object.assign(document.createElement('pre'),{id:'render-stats',hidden:true}));stats.textContent=JSON.stringify({rooms:segments.size,drawCalls:renderer.info.render.calls,triangles:renderer.info.render.triangles,geometries:renderer.info.memory.geometries,textures:renderer.info.memory.textures});}
   if(params.has('inspect')&&camSeg!==inspectedRoom){inspectedRoom=camSeg;inspectRooms();}
 }
 
 // ---- autonomous camera: crawl forward forever, warp perception ----
+const legacyForks=room=>branchOpenings(room).filter(p=>p.kind==='legacy');
 let travelRoom=sequence.atDistance(-cam.position.z).index;
-let travelRoute=cameraRoute(sequence.room(travelRoom));
+let travelRoute=params.get('fork')==='always'&&legacyForks(sequence.room(travelRoom)).length?exitRoute(sequence.room(travelRoom),legacyForks(sequence.room(travelRoom))[0]):cameraRoute(sequence.room(travelRoom));
 const initialLocalZ=cam.position.z-sequence.room(travelRoom).startZ;
 // A preview offset after the portal starts on the returning main leg.
 const initialLeg=travelRoute.legs.filter(l=>l.start.x===0&&l.end.x===0&&initialLocalZ<=l.start.z&&initialLocalZ>=l.end.z).at(-1);
@@ -686,6 +697,30 @@ function canWalk(x,z){
   }
   return canOccupy(x,z,{regions,blocks});
 }
+// At a room with side passages, automatic movement picks the main doorway or a passage at random.
+function chooseRoute(room){
+  const forks=legacyForks(room),mode=params.get('fork');
+  if(forks.length&&mode!=='never'&&(mode==='always'||Math.random()<forks.length/(forks.length+1)))return exitRoute(room,forks[Math.floor(Math.random()*forks.length)]);
+  return cameraRoute(room);
+}
+// A passage exit is a cut: every room is discarded and the walk resumes in a distant, rerolled one.
+const veil=document.getElementById('veil');
+let cut=null;
+function beginCut(){if(cut)return;cut={time:0,swapped:false};veil.style.opacity=1;}
+function takeBranch(){
+  for(const i of [...segments.keys()])dropSegment(i);
+  sequence.reroll();
+  let target=Math.max(0,travelRoom)+20+Math.floor(Math.random()*600);
+  for(let n=0;n<40;n++,target++){const r=sequence.room(target);if(r.category==='domestic'&&r.shape==='rectangle'&&!r.rise)break;}
+  const room=sequence.room(target);
+  travelRoom=target;travelRoute=cameraRoute(room);travelDistance=0.4;travelYaw=0;rejoin=null;
+  walker.x=0;walker.z=room.startZ-0.4;walker.yaw=0;walker.pitch=0;cam.position.x=0;cam.position.z=walker.z;
+  ensureSegments();
+}
+function atPassageExit(){
+  const room=sequence.room(travelRoom);
+  return Math.abs(walker.x)>room.width/2&&legacyForks(room).some(p=>{const e=passageExit(room,p);return Math.abs(walker.x-e.x)<1.45&&walker.z-room.startZ<e.z+0.8;});
+}
 function takeControl(){manual=true;rejoin=null;paused=false;updatePause();}
 function automate(){
   keys.clear();if(document.pointerLockElement)document.exitPointerLock();
@@ -701,6 +736,7 @@ function advanceCamera(delta){
     moveWalker(walker,{forward:Number(keys.has('KeyW'))-Number(keys.has('KeyS')),strafe:Number(keys.has('KeyD'))-Number(keys.has('KeyA')),delta,canMove:canWalk});
     travelRoom=sequence.atDistance(-walker.z).index;travelRoute=cameraRoute(sequence.room(travelRoom));
     cam.position.x=walker.x;cam.position.z=walker.z;
+    if(atPassageExit())beginCut();
   }else if(rejoin){
     const target=rejoin.path[0]??walker,dx=target.x-walker.x,dz=target.z-walker.z,distance=Math.hypot(dx,dz);
     const step=Math.min(distance,2.2*delta);
@@ -711,7 +747,10 @@ function advanceCamera(delta){
     cam.position.x=walker.x;cam.position.z=walker.z;
   }else{
   if(!params.has('still'))travelDistance+=1.8*delta;
-  while(travelDistance>=travelRoute.length){travelDistance-=travelRoute.length;travelRoom++;travelRoute=cameraRoute(sequence.room(travelRoom));}
+  while(travelDistance>=travelRoute.length){
+    if(travelRoute.exit){travelDistance=travelRoute.length-0.001;beginCut();break;}
+    travelDistance-=travelRoute.length;travelRoom++;travelRoute=chooseRoute(sequence.room(travelRoom));
+  }
   const room=sequence.room(travelRoom),p=routePoint(travelRoute,travelDistance);
   cam.position.z=room.startZ+p.z;
   cam.position.x=p.x;
@@ -725,8 +764,7 @@ function advanceCamera(delta){
 let t = 0;
 let entered=params.get('skipTitle')==='1';
 if(entered){document.body.classList.remove('at-title');document.getElementById('title-screen').hidden=true;}
-let paused=matchMedia('(prefers-reduced-motion: reduce)').matches;
-if(paused)document.getElementById('title-playback').textContent='Movement starts paused. Press Space to resume.';
+let paused=false;
 const pauseButton=document.getElementById('pause');
 function updatePause(){pauseButton.textContent=paused?'Resume':'Pause';pauseButton.setAttribute('aria-pressed',String(paused));document.getElementById('walk').textContent=manual?'Resume automatic':'Take control';document.getElementById('movement-help').textContent=manual?'Manual · WASD: walk · Click or drag scene: look · Space: automatic':'Automatic · WASD or click scene: take control · Space: resume';}
 document.getElementById('enter').addEventListener('click',()=>{entered=true;document.body.classList.remove('at-title');document.getElementById('title-screen').hidden=true;renderer.domElement.tabIndex=0;renderer.domElement.focus();movementClock.getDelta();});
@@ -765,6 +803,7 @@ function tick(){
   if(!entered&&titleRendered){movementClock.getDelta();requestAnimationFrame(tick);return;}
   const elapsed=movementClock.getDelta(),delta=!entered||paused||document.hidden?0:Math.min(elapsed,0.05);
   t += delta;
+  if(cut){cut.time+=Math.min(elapsed,0.1);if(!cut.swapped&&cut.time>0.4){takeBranch();cut.swapped=true;veil.style.opacity=0;}else if(cut.time>0.85)cut=null;}
   ensureSegments();
   const travel=advanceCamera(delta),current=travel.room;
   ensureSegments();
@@ -888,7 +927,7 @@ function inspectRooms(){
       item.lightColor=g.userData.lightFixture.userData.lightColor;
       item.lightFixture=g.userData.lightFixture.userData.fixtureType;
       item.lighting=g.userData.lighting.name;
-      item.scatter=g.userData.scatter;
+      item.scatter=g.userData.scatter;item.generation=g.userData.generationIndex??item.i;
     }
     let output=document.getElementById('room-inspection');
     if(!output){output=document.createElement('pre');output.id='room-inspection';output.hidden=true;document.body.append(output);}

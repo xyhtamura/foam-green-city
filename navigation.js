@@ -5,9 +5,17 @@ import {createRoomSequence,cameraRoute,routePoint} from './room-sequences.js';
 export function createWalkSequence(options){
   const forward=createRoomSequence(options);
   const backward=createRoomSequence({...options,seed:(options.seed??5)+7919});
+  // A room's shell depends on its index alone. Its contents also depend on a salt, fixed
+  // while the room is built and changed once it is discarded, so a revisit differs.
+  const held=new Map();let era=0;
   return {
+    hold(index){if(!held.has(index))held.set(index,era);},
+    release(index){held.delete(index);era++;},
+    reroll(){held.clear();era++;},
     room(index){
-      const decorate=r=>({...r,sideSpaces:options.sideSpaces,sideRoom:options.sideRoom,branchSeed:options.seed??5});
+      const salt=held.get(index)??era;
+      const decorate=r=>({...r,sideSpaces:options.sideSpaces,sideRoom:options.sideRoom,branchSeed:(options.seed??5)+salt*31,
+        ...(salt?{generationIndex:(r.generationIndex??r.index)+salt*1000003}:{})});
       if(index>=0)return decorate(forward.room(index));
       const source=backward.room(-index-1);
       return decorate({...source,index,generationIndex:10000-index,startZ:-source.startZ+source.length});
