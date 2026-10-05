@@ -927,3 +927,25 @@ Not done. Dishes on tables are confirmed by the placement count only; on the cro
 Dropped: draping towels over chair backs. The towel needs a ridge to hang from, and chair-back heights are not exposed the way seats are; the basket rim was the available ridge.
 
 Next remains independent side-room lighting. Root ROADMAP.md needed no change. Antigravity's uncommitted notes entry and the supplied raw-image changes were left unstaged. Nothing was pushed or published.
+
+## 2026-10-05 — Claude Code — route inversions, and the palette against the references
+
+Xyh asked whether the path can sometimes twist fully upside down, and whether the main colours fall within the reference colours, in particular whether enough Palmyra is used.
+
+Inversions. The default route now turns over by half a turn every 103 or 261 m, across 32 m; mechanism in HANDOVER.md. `check_spatial_route.mjs` passes with the new assertions. Viewed on the twisting route at 86 m and 91 m, just before the first inversion: the doorway ahead and the room beyond it are rolled over while the camera stays on the floor, which also shows the shader and the camera agree. Viewed at 200 m, where the second inversion falls inside the 34 × 46 m hall of room 19: the hall wraps into a funnel and is not readable as a room. The roll is a function of distance only, so it cannot avoid wide rooms. Left as is for Xyh to judge.
+
+Palette. Sampled `references/06-deped-mpss-palette-swatches.png` directly; the hex values in `references/README.md` are right to within the 4-level sampling step. Hue, lightness, saturation (HSL):
+
+| Colour | References | In the work |
+| --- | --- | --- |
+| Foam Green | swatch `#64F8A4` 146°, 0.68, 0.91; elevation render `#80C080` 120°, 0.63, 0.34; poster roof `#408070` 165°, 0.38, 0.33 | walls `#BFDCC9` 141°, 0.81, 0.29 |
+| Palmyra Green | swatch `#94C424` 78°, 0.45, 0.69; render doors `#607040`–`#709040` 80–84°, 0.35–0.41; poster `#407020`–`#609030` 90–96°, 0.28–0.38 | trim `#4E7C63` 147°, 0.40, 0.23 |
+| Beiges and white | `#ECD080`, `#FCECBC`, `#F8F0D0`, white | wall paints use the swatch values; ceiling `#F1F1EC` |
+
+Foam Green is inside the references' hue range and is paler and less saturated than all of them. The trim called Palmyra is outside it: every reference is a yellow-green between 78° and 96°, and the trim is a blue-green at 147°, nearly the same hue as the walls. Lightness is in range.
+
+Amount. Read back the rendered frame in six rooms (1, 3, 6, 9, 21, 44; straight route, daylight) and counted pixels by hue and lightness: dark green trim covered 2.9, 5.4, 5.1, 3.4, 4.2, and 10.2% of the frame; wall green covered 22 to 36% in the five green-walled rooms. Room 44's figure includes green monobloc furniture, which the count cannot separate from trim. So trim is about 3 to 5% of a view, roughly one seventh of the wall area. The schedule assigns Palmyra to doors, jambs, railings and grills, and baseboards. The work has frames, door leaves, and architecture trim; it has no baseboards, and no railings on stairs or platforms.
+
+Added `?trim=<hex>` for comparing trim greens; viewed `?trim=6b8a3a` in room 3. No colour was changed. Not done: baseboards, railings, and any change to the trim hue, which are Xyh's to decide.
+
+Root ROADMAP.md needed no change. Next remains independent side-room lighting. Antigravity's uncommitted notes entry and the supplied raw-image changes were left unstaged. Nothing was pushed or published.

@@ -2,6 +2,15 @@
 export const RADIUS=40;
 export const TWIST_LENGTH=72;
 export const SPATIAL_PROFILES=['twist','reverse','unwind','sway','mixed'];
+// The mixed route also turns fully over now and then: one half-turn in each 190 m stretch,
+// spread over 32 m, at a position that differs from stretch to stretch. The GLSL below repeats
+// this arithmetic exactly; it uses only small whole numbers so both sides agree.
+export const INVERSION={period:190,length:32};
+export function inversionRoll(d){
+  const k=Math.floor(d/INVERSION.period),t=d-k*INVERSION.period,span=INVERSION.period-INVERSION.length;
+  const start=(k*71+97)-span*Math.floor((k*71+97)/span),u=Math.max(0,Math.min(1,(t-start)/INVERSION.length));
+  return Math.PI*(k+u*u*(3-2*u));
+}
 const normalize=v=>{const n=Math.hypot(...v);return v.map(x=>x/n);};
 const cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]];
 export function spatialFrame(distance,profile='twist'){
@@ -10,7 +19,7 @@ export function spatialFrame(distance,profile='twist'){
   if(profile==='reverse')b=-b;
   if(profile==='unwind')b=1.8*Math.sin(d/44);
   if(profile==='mixed'){
-    b=d*Math.PI/96+0.55*Math.sin(d/36);
+    b=d*Math.PI/96+0.55*Math.sin(d/36)+inversionRoll(d);
     center[1]=5*(1-Math.cos(d/32));forward[1]=5/32*Math.sin(d/32);
   }
   if(profile==='sway'){
@@ -31,13 +40,17 @@ vec3 spatialCenter(float d){
   if(SPATIAL_MODE==3)return vec3(14.0*(1.0-cos(d/36.0)),3.0*sin(d/48.0),-d);
   return vec3(40.0*(1.0-cos(a)),SPATIAL_MODE==4?5.0*(1.0-cos(d/32.0)):0.0,-40.0*sin(a));
 }
+float inversionRoll(float d){
+  float k=floor(d/190.0),t=d-k*190.0,start=mod(k*71.0+97.0,158.0);
+  return 3.14159265359*(k+smoothstep(start,start+32.0,t));
+}
 mat3 spatialBasis(float d){
   float a=d/40.0,b=d*3.14159265359/72.0;
   vec3 forward=vec3(sin(a),0.0,-cos(a));
   if(SPATIAL_MODE==1)b=-b;
   if(SPATIAL_MODE==2)b=1.8*sin(d/44.0);
   if(SPATIAL_MODE==3){forward=vec3(14.0/36.0*sin(d/36.0),3.0/48.0*cos(d/48.0),-1.0);b=1.5*sin(d/52.0);}
-  if(SPATIAL_MODE==4){forward.y=5.0/32.0*sin(d/32.0);b=d*3.14159265359/96.0+0.55*sin(d/36.0);}
+  if(SPATIAL_MODE==4){forward.y=5.0/32.0*sin(d/32.0);b=d*3.14159265359/96.0+0.55*sin(d/36.0)+inversionRoll(d);}
   vec3 right=normalize(cross(forward,vec3(0.0,1.0,0.0))),back=normalize(-forward),up=cross(back,right);
   return mat3(right*cos(b)+up*sin(b),up*cos(b)-right*sin(b),back);
 }

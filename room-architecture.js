@@ -20,10 +20,10 @@ export function raiseFloor(floor,room){
   });
 }
 
-export function createRoomArchitecture(room,curvize,{woodTexture=null,stairs=null,wallColor=0xbfdcc9}={}){
+export function createRoomArchitecture(room,curvize,{woodTexture=null,stairs=null,wallColor=0xbfdcc9,trimColor=0x4e7c63}={}){
   const group=new THREE.Group(),batches=new Map(),W=room.width/2,L=room.length,H=room.height,reservations=[];
   const reserve=(x,z,w,d)=>reservations.push({minX:x-w/2-0.12,maxX:x+w/2+0.12,minZ:z-d/2-0.12,maxZ:z+d/2+0.12});
-  const materials={wood:curvize(new THREE.MeshLambertMaterial({map:woodTexture,color:0xbda887})),wall:curvize(new THREE.MeshLambertMaterial({color:wallColor})),floor:curvize(new THREE.MeshLambertMaterial({color:0x9c9c95})),trim:curvize(new THREE.MeshLambertMaterial({color:0x4e7c63})),exit:curvize(new THREE.MeshBasicMaterial({color:0x080b0a}))};
+  const materials={wood:curvize(new THREE.MeshLambertMaterial({map:woodTexture,color:0xbda887})),wall:curvize(new THREE.MeshLambertMaterial({color:wallColor})),floor:curvize(new THREE.MeshLambertMaterial({color:0x9c9c95})),trim:curvize(new THREE.MeshLambertMaterial({color:trimColor})),exit:curvize(new THREE.MeshBasicMaterial({color:0x080b0a}))};
   function box(kind,w,h,d,x,y,z,rx=0){
     const geo=new THREE.BoxGeometry(w,h,d,Math.max(1,Math.ceil(w/2)),1,Math.max(1,Math.ceil(d/2)));geo.rotateX(rx);geo.translate(x,y,z);
     if(!batches.has(kind))batches.set(kind,[]);batches.get(kind).push(geo);

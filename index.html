@@ -84,7 +84,7 @@ import { ROOM_WIDTHS, partitionPieces } from './room-widths.js';
 
 import { LAYOUT_IDS, generateFurnitureLayout, checkFurnitureLayout } from './furniture-layouts.js?v=integrated-1';
 import { FLOOR_IDS, createFloorVariant } from './floor-variants.js?v=integrated-1';
-import { DOOR_STYLES, createDoorLeaves } from './doors.js?v=doors-2';
+import { DOOR_STYLES, createDoorLeaves } from './doors.js?v=doors-3';
 import { MODEL_ASSETS, loadModelAssets } from './model-assets.js';
 import { createRoomSet, createRoomFixture } from './room-sets.js?v=sets-8';
 import { createUratexSofa } from './uratex-sofa.js';
@@ -96,14 +96,14 @@ let wallUtilities;
 import { roomLighting } from './room-lighting.js?v=lighting-3';
 import { scatterLevel, planScatter, planSideScatter, scatterBlocks, createScatterMesh } from './floor-scatter.js?v=scatter-4';
 import { addHouseholdItems } from './household-items.js?v=household-1';
-import { spatialFrame, spatialPoint, SPATIAL_GLSL, SPATIAL_PROFILES } from './spatial-route.js';
+import { spatialFrame, spatialPoint, SPATIAL_GLSL, SPATIAL_PROFILES } from './spatial-route.js?v=inversion-1';
 import { floorHeight, cameraRoute, routePoint } from './room-sequences.js?v=parametric-1';
 import {sideSpacePlan} from './side-spaces.js?v=washrooms-1';
 import {addWoodDetails} from './wood-details.js?v=wood-3';
 import {addSideWashrooms} from './side-washrooms.js?v=washrooms-2';
 import {addSideStorage} from './side-storage.js?v=storage-2';
 import {addSideBedrooms} from './side-bedrooms.js?v=bedrooms-6';
-import { branchOpenings, raiseFloor, createRoomArchitecture } from './room-architecture.js?v=architecture-12';
+import { branchOpenings, raiseFloor, createRoomArchitecture } from './room-architecture.js?v=architecture-13';
 
 // ---- palette (DepEd MPSS, stylized: green walls) ----
 const COL = {
@@ -113,6 +113,9 @@ const COL = {
   floor:   0x9C9C95,  // non-skid gray
   ceiling: 0xF1F1EC,  // white
 };
+// ?trim=<six hex digits> previews another trim green on frames, doors, and architecture.
+const trimOverride=new URLSearchParams(location.search).get('trim');
+if(/^[0-9a-f]{6}$/i.test(trimOverride??''))COL.trim=parseInt(trimOverride,16);
 
 // ---- renderer: half-res for crunchy lo-fi upscale ----
 // let three own its canvas (a pre-existing canvas can already hold a
@@ -247,7 +250,7 @@ linoleumTex.magFilter = THREE.NearestFilter;
 linoleumTex.minFilter = THREE.NearestFilter;
 linoleumTex.colorSpace = THREE.SRGBColorSpace;
 
-const DOORS=createDoorLeaves(curvize);
+const DOORS=createDoorLeaves(curvize,COL.trim);
 const mat = {
   ceiling:       curvize(new THREE.MeshLambertMaterial({ color: COL.ceiling })),
 };
@@ -454,7 +457,7 @@ function buildSegment(index){
   const floorChoice=FLOOR_IDS.includes(params.get('floor'))?params.get('floor'):descriptor.floor;
   const floor=createFloorVariant({THREE,width,length:SEG_LEN,seed:i+17,variant:descriptor.rise?'bare':floorChoice,curvize,sharedLinoleumTexture:linoleumTex});
   raiseFloor(floor,descriptor);
-  const architecture=createRoomArchitecture(descriptor,curvize,{woodTexture,stairs:params.get('stairs'),wallColor:WALL_PAINTS[grp.userData.wallPaint]});grp.add(architecture);grp.userData.architecture=architecture;
+  const architecture=createRoomArchitecture(descriptor,curvize,{woodTexture,stairs:params.get('stairs'),wallColor:WALL_PAINTS[grp.userData.wallPaint],trimColor:COL.trim});grp.add(architecture);grp.userData.architecture=architecture;
   grp.userData.sideBedrooms=addSideBedrooms({THREE,group:grp,room:descriptor,assets:FURNI,curvize,photos:WALL_HANGINGS,spriteMat});
   grp.userData.sideStorage=addSideStorage({THREE,group:grp,room:descriptor,assets:FURNI,curvize});
   grp.userData.sideWashrooms=addSideWashrooms({THREE,group:grp,room:descriptor,assets:FURNI,curvize});

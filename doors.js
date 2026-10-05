@@ -3,10 +3,10 @@ import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 
 export const DOOR_STYLES=['wood','green','screen'];
 // Door leaves are 88 cm wide. The origin is the hinge at floor level.
-export function createDoorLeaves(curvize){
+export function createDoorLeaves(curvize,trimColor=0x4e7c63){
   return Object.fromEntries(DOOR_STYLES.map(style=>{
     const group=new THREE.Group();group.name=`door-${style}`;
-    const finish=curvize(new THREE.MeshLambertMaterial({color:style==='wood'?0x8d6546:0x4e7c63}));
+    const finish=curvize(new THREE.MeshLambertMaterial({color:style==='wood'?0x8d6546:trimColor}));
     const inset=curvize(new THREE.MeshLambertMaterial({color:style==='wood'?0x72503b:0x3e6350}));
     const metal=curvize(new THREE.MeshLambertMaterial({color:0xb7aaa0}));
     const box=(name,x,y,z,w,h,d,mat=finish)=>{const mesh=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat);mesh.name=name;mesh.position.set(x,y,z);group.add(mesh);};

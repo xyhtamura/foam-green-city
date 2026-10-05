@@ -14,6 +14,12 @@ The route is still one straight logical line; nothing here adds a second axis. A
 
 Side rooms get scatter from `planSideScatter`, fitted to the room rectangle, off fixture blocks and off the strip from the doorway across the room; the objects join the owning room's single scatter mesh. Movement no longer starts paused under `prefers-reduced-motion`; Xyh asked for it to start on Enter. `scripts/check_forks.mjs` covers exit routes and salts.
 
+## Route inversions and trim preview — 2026-10-05
+
+The `mixed` route profile adds `inversionRoll(d)`: one half-turn of roll in each 190 m stretch, eased over 32 m, starting at `(71k+97) mod 158` metres into stretch `k`, so inversions fall 103 or 261 m apart and the first begins at 97 m. The camera still follows the local frame, so what is seen is the rooms ahead rolling over, at up to 0.2 rad per metre. `SPATIAL_GLSL` repeats the arithmetic; the two must be changed together, since the camera is placed by the JavaScript and the geometry by the shader. `check_spatial_route.mjs` allows 0.25 rad per metre and checks the inversion roll for continuity, one half-turn per stretch, and no overlap.
+
+`?trim=<hex>` overrides `COL.trim` for window frames, door leaves, and architecture trim. The checkerboard floor and the TV stripe keep `#4E7C63`.
+
 ## Tableware, plastics, and linens — 2026-10-05
 
 `tableware.js`, `plastics.js`, and `linens.js` are unchanged copies of Codex's kits from the sibling folder `F:\xyh\fgc-cx`, which has no history of its own; re-copy them from there if they change. `household-items.js` is the only consumer. It keeps one set of kits for the whole session at ten radial segments, uses them to assemble objects, and never renders the kit meshes: each room's objects are placed, baked into one non-indexed vertex-coloured mesh in the room's frame, and removed. The room therefore pays one draw call and the generic `userData.own` disposal, and the kits' Phong materials and `patchMaterial` hook are unused. `householdMaterial` in `index.html` is the shared double-sided Lambert material.
