@@ -94,6 +94,14 @@ export function createRoomArchitecture(room,curvize,{woodTexture=null,stairs=nul
       for(const dx of [-.81,.81])box('wood',.055,.24,length,x+dx,y+top/2,base-(n-1)*run/2,angle);
     }
     const end=base-n*run;
+    // Handrails: both sides of an open wooden stair, the room side of a solid one, and along the landing.
+    for(const dx of wooden?[-.78,.78]:[-side*.78]){
+      const dz=(n-1)*run,length=Math.hypot(top-.18,dz);
+      box('trim',.05,.05,length+.1,x+dx,y+(top+.18)/2+.9,base-dz/2,Math.atan2(top-.18,dz));
+      for(let i=0;i<n;i+=3)box('trim',.04,.9,.04,x+dx,y+(i+1)*.18+.45,base-i*run);
+      box('trim',.05,.05,1.5,x+dx,y+top+.9,end-.57);
+      for(const z of [end+.1,end-1.2])box('trim',.04,.9,.04,x+dx,y+top+.45,z);
+    }
     box(wooden?'wood':'floor',1.6,wooden?.055:.16,1.5,x,y+top-(wooden?.0275:.08),end-.57);
     box('wall',1.9,Math.max(0.5,H-y-top),0.15,x,(H+y+top)/2,end-1.32);
     if(!wooden)box('trim',0.09,top,n*run+.28,x+side*0.85,y+top/2,base-n*run/2+.01);
@@ -107,6 +115,10 @@ export function createRoomArchitecture(room,curvize,{woodTexture=null,stairs=nul
     const w=W-stage.inset,cx=side*(W+stage.inset)/2,cz=-L+1+stage.depth/2;
     box('floor',w,stage.height,stage.depth,cx,stage.height/2,cz);solid(cx,cz,w,stage.depth);
     box('trim',w,0.12,0.18,cx,stage.height+0.06,cz+stage.depth/2);
+    // A rail along the edge facing the aisle, where the drop is.
+    const edge=side*(stage.inset+0.06),top=stage.height+0.12;
+    box('trim',0.05,0.05,stage.depth,edge,top+0.85,cz);
+    for(let z=cz-stage.depth/2+0.1;z<=cz+stage.depth/2;z+=Math.max(0.9,stage.depth/Math.ceil(stage.depth)))box('trim',0.04,0.85,0.04,edge,top+0.425,z);
   }
   // Columns stand in rows from each side wall inward, and give way to anything already placed.
   const cols=room.columns??(['auditorium','colonnade'].includes(room.shape)?{inset:3,across:6,spacing:6,rows:1}:null);

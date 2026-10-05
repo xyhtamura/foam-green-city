@@ -949,3 +949,17 @@ Amount. Read back the rendered frame in six rooms (1, 3, 6, 9, 21, 44; straight 
 Added `?trim=<hex>` for comparing trim greens; viewed `?trim=6b8a3a` in room 3. No colour was changed. Not done: baseboards, railings, and any change to the trim hue, which are Xyh's to decide.
 
 Root ROADMAP.md needed no change. Next remains independent side-room lighting. Antigravity's uncommitted notes entry and the supplied raw-image changes were left unstaged. Nothing was pushed or published.
+
+## 2026-10-05 — Claude Code — olive trim as a range, baseboards, and railings
+
+Xyh chose the olive trim, asked for baseboards and railings, and said a range of greens is better than one exact value.
+
+Trim is now drawn per room from seven greens, most of them olives and yellow-greens inside the reference hue range, with the earlier blue-green and a teal kept as minorities. Foam-green walls are drawn from five foam greens. Baseboards run along the painted walls of every room. Stairs and platforms have railings. Weights and mechanism are in HANDOVER.md.
+
+Checks, in the browser on the root server, straight route, daylight. Rooms 0 to 5 reported four different wall paints and three different trims, 14 to 40 m of baseboard each, clear aisles, clear doorways, and open branch entrances, with no console errors. Viewed baseboards and olive window frames in room 3, handrails and posts on the stair of room 139, and the aisle-edge rails on the platform of room 18. Re-ran the frame count from the previous entry with the hue window widened to include olive: trim covered 5.6, 4.1, and 4.5% of the frame in rooms 3, 1, and 21, against 5.4, 2.9, and 4.2% before. The side-space, fork, navigation, sequence, and route checks pass.
+
+So baseboards add little area, between 0.2 and 1.2 points of the frame. The larger change is that trim now differs in hue from the walls instead of reading as a darker wall.
+
+Not done. Nothing was viewed on the twisting route. Baseboards in a raised or sunken room, and on a non-green wall, were not viewed. A solid stair's single rail was not viewed. Side rooms and passages have no baseboards. The checkerboard floor and TV stripe still use the old green. Railings do not stop the walker; the stair and platform reservations already do. If more Palmyra is wanted, the candidates with real area are door leaves on more walls, window grilles, and painted lower wall bands.
+
+Root ROADMAP.md needed no change. Next remains independent side-room lighting. Antigravity's uncommitted notes entry and the supplied raw-image changes were left unstaged. Nothing was pushed or published.

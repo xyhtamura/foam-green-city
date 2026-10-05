@@ -84,7 +84,7 @@ import { ROOM_WIDTHS, partitionPieces } from './room-widths.js';
 
 import { LAYOUT_IDS, generateFurnitureLayout, checkFurnitureLayout } from './furniture-layouts.js?v=integrated-1';
 import { FLOOR_IDS, createFloorVariant } from './floor-variants.js?v=integrated-1';
-import { DOOR_STYLES, createDoorLeaves } from './doors.js?v=doors-3';
+import { DOOR_STYLES, createDoorLeaves } from './doors.js?v=doors-4';
 import { MODEL_ASSETS, loadModelAssets } from './model-assets.js';
 import { createRoomSet, createRoomFixture } from './room-sets.js?v=sets-8';
 import { createUratexSofa } from './uratex-sofa.js';
@@ -95,6 +95,7 @@ import {addDomesticDetails} from './domestic-details.js?v=details-11';
 let wallUtilities;
 import { roomLighting } from './room-lighting.js?v=lighting-3';
 import { scatterLevel, planScatter, planSideScatter, scatterBlocks, createScatterMesh } from './floor-scatter.js?v=scatter-4';
+import { createBaseboards } from './baseboards.js?v=baseboards-1';
 import { addHouseholdItems } from './household-items.js?v=household-1';
 import { spatialFrame, spatialPoint, SPATIAL_GLSL, SPATIAL_PROFILES } from './spatial-route.js?v=inversion-1';
 import { floorHeight, cameraRoute, routePoint } from './room-sequences.js?v=parametric-1';
@@ -103,19 +104,19 @@ import {addWoodDetails} from './wood-details.js?v=wood-3';
 import {addSideWashrooms} from './side-washrooms.js?v=washrooms-2';
 import {addSideStorage} from './side-storage.js?v=storage-2';
 import {addSideBedrooms} from './side-bedrooms.js?v=bedrooms-6';
-import { branchOpenings, raiseFloor, createRoomArchitecture } from './room-architecture.js?v=architecture-13';
+import { branchOpenings, raiseFloor, createRoomArchitecture } from './room-architecture.js?v=architecture-14';
 
 // ---- palette (DepEd MPSS, stylized: green walls) ----
 const COL = {
   wall:    0xBFDCC9,  // Foam Green
-  trim:    0x4E7C63,  // Palmyra Green
+  trim:    0x6B8A3A,  // Palmyra Green, an olive inside the reference range
   beige:   0xE7E0CC,  // Beige lightest
   floor:   0x9C9C95,  // non-skid gray
   ceiling: 0xF1F1EC,  // white
 };
-// ?trim=<six hex digits> previews another trim green on frames, doors, and architecture.
+// ?trim=<six hex digits> forces one trim green on frames, doors, baseboards, and architecture.
 const trimOverride=new URLSearchParams(location.search).get('trim');
-if(/^[0-9a-f]{6}$/i.test(trimOverride??''))COL.trim=parseInt(trimOverride,16);
+const forcedTrim=/^[0-9a-f]{6}$/i.test(trimOverride??'')?parseInt(trimOverride,16):null;
 
 // ---- renderer: half-res for crunchy lo-fi upscale ----
 // let three own its canvas (a pre-existing canvas can already hold a
@@ -297,15 +298,21 @@ function prepFurni(proto){                   // curvize + crunch (clones share t
 
 // ---- placement helpers (add into a segment group, local coords) ----
 function addWall(group, proto, x, z, ry){
-  const c = proto.clone();
-  const paint=group.userData.wallPaint;
-  if(paint&&paint!=='foamGreen')c.traverse(o=>{if(o.isMesh){const tint=m=>{
-    if(m.color?.getHex()!==COL.wall)return m;
-    const cache=group.userData.wallPaintMaterials;
-    if(!cache.has(m))cache.set(m,curvize(Object.assign(m.clone(),{color:new THREE.Color(WALL_PAINTS[paint])})));
+  const c = repaint(proto.clone(),group);
+  c.position.set(x,0,z); c.rotation.y = ry; group.add(c);
+}
+// Shared prototypes carry the default wall and trim colours; a room swaps in its own.
+function repaint(object,group){
+  const wall=WALL_PAINTS[group.userData.wallPaint]??COL.wall,trim=group.userData.trimColor??COL.trim;
+  if(wall===COL.wall&&trim===COL.trim)return object;
+  const cache=group.userData.wallPaintMaterials;
+  object.traverse(o=>{if(o.isMesh){const tint=m=>{
+    const hex=m.color?.getHex(),target=hex===COL.wall?wall:hex===COL.trim?trim:hex;
+    if(target===hex)return m;
+    if(!cache.has(m))cache.set(m,curvize(Object.assign(m.clone(),{color:new THREE.Color(target)})));
     return cache.get(m);
   };o.material=Array.isArray(o.material)?o.material.map(tint):tint(o.material);}});
-  c.position.set(x,0,z); c.rotation.y = ry; group.add(c);
+  return object;
 }
 function placeModel(group, name, { x=0, z=0, ry=0, targetH=null, scale=null, mode='floor', spin=false }){
   const obj = FURNI[name].clone();
@@ -433,7 +440,9 @@ const ROOMS = [
 function mulberry32(a){ return ()=>{ a|=0; a=a+0x6D2B79F5|0;
   let t = Math.imul(a^a>>>15, 1|a); t = t + Math.imul(t^t>>>7, 61|t) ^ t;
   return ((t^t>>>14)>>>0)/4294967296; }; }
-const WALL_PAINTS={foamGreen:0xbfdcc9,crispEcru:0xfcedbe,brightWonder:0xf9f1d2,yellowRain:0xedd381,white:0xf1f1ec};
+// A range rather than one specified value: batches of the same paint differ, and so do these.
+const WALL_PAINTS={foamGreen:0xbfdcc9,foamMint:0xb2dcc1,foamSage:0xc4d9be,foamAqua:0xb8dbd0,foamDeep:0xa8cfb6,crispEcru:0xfcedbe,brightWonder:0xf9f1d2,yellowRain:0xedd381,white:0xf1f1ec};
+const TRIM_GREENS=[[0x6b8a3a,30],[0x7d9a45,18],[0x5a7a34,16],[0x6e8f55,12],[0x86a04e,10],[0x4e7c63,8],[0x3f7466,6]];
 const segments = new Map();
 function architectureCollision(group,box){
   const minZ=box.min.z-group.position.z,maxZ=box.max.z-group.position.z;
@@ -445,8 +454,10 @@ function buildSegment(index){
   const descriptor=sequence.room(index),i=descriptor.generationIndex??index,SEG_LEN=descriptor.length,SEG_TILES=SEG_LEN/TSCALE;
   const grp = new THREE.Group(); grp.position.z = descriptor.startZ; scene.add(grp); segments.set(index,grp);
   const width=descriptor.width,half=width/2;Object.assign(grp.userData,descriptor);
-  const paintRoll=mulberry32((i*2246822519+97531)>>>0)();
-  grp.userData.wallPaint=Object.hasOwn(WALL_PAINTS,params.get('paint'))?params.get('paint'):paintRoll<.70?'foamGreen':paintRoll<.80?'crispEcru':paintRoll<.90?'brightWonder':paintRoll<.96?'yellowRain':'white';
+  const paintRandom=mulberry32((i*2246822519+97531)>>>0),paintRoll=paintRandom();
+  let trimRoll=paintRandom()*100;
+  grp.userData.trimColor=forcedTrim??TRIM_GREENS.find(([,weight])=>(trimRoll-=weight)<0)?.[0]??COL.trim;
+  grp.userData.wallPaint=Object.hasOwn(WALL_PAINTS,params.get('paint'))?params.get('paint'):paintRoll<.30?'foamGreen':paintRoll<.40?'foamMint':paintRoll<.50?'foamSage':paintRoll<.60?'foamAqua':paintRoll<.70?'foamDeep':paintRoll<.80?'crispEcru':paintRoll<.90?'brightWonder':paintRoll<.96?'yellowRain':'white';
   grp.userData.wallPaintMaterials=new Map();
   const r = mulberry32((i*2654435761 + 12345)>>>0);   // deterministic per segment
   const seededRoom = ROOMS.find(room=>room.name===descriptor.type)??{name:descriptor.type,pool:ROOMS.find(room=>room.name==='bare').pool};
@@ -457,7 +468,7 @@ function buildSegment(index){
   const floorChoice=FLOOR_IDS.includes(params.get('floor'))?params.get('floor'):descriptor.floor;
   const floor=createFloorVariant({THREE,width,length:SEG_LEN,seed:i+17,variant:descriptor.rise?'bare':floorChoice,curvize,sharedLinoleumTexture:linoleumTex});
   raiseFloor(floor,descriptor);
-  const architecture=createRoomArchitecture(descriptor,curvize,{woodTexture,stairs:params.get('stairs'),wallColor:WALL_PAINTS[grp.userData.wallPaint],trimColor:COL.trim});grp.add(architecture);grp.userData.architecture=architecture;
+  const architecture=createRoomArchitecture(descriptor,curvize,{woodTexture,stairs:params.get('stairs'),wallColor:WALL_PAINTS[grp.userData.wallPaint],trimColor:grp.userData.trimColor});grp.add(architecture);grp.userData.architecture=architecture;
   grp.userData.sideBedrooms=addSideBedrooms({THREE,group:grp,room:descriptor,assets:FURNI,curvize,photos:WALL_HANGINGS,spriteMat});
   grp.userData.sideStorage=addSideStorage({THREE,group:grp,room:descriptor,assets:FURNI,curvize});
   grp.userData.sideWashrooms=addSideWashrooms({THREE,group:grp,room:descriptor,assets:FURNI,curvize});
@@ -465,7 +476,7 @@ function buildSegment(index){
   const c = new THREE.Mesh(new THREE.PlaneGeometry(width,SEG_LEN,width/2,SEG_TILES*3), mat.ceiling);
   c.rotation.x=Math.PI/2; c.position.set(0,descriptor.height,-SEG_LEN/2); c.userData.own=true; grp.add(c);
   // side walls, seeded windows
-  const solidWalls=[];
+  const solidWalls=[],skirting=[];
   const unfinishedWalls=params.get('walls')==='blocks'||(params.get('walls')!=='paint'&&r()<0.22);
   const windowTile=()=>{
     const forcedWindow=['narrow','wide','high','open','grille'].indexOf(params.get('window'));
@@ -488,15 +499,25 @@ function buildSegment(index){
         face.rotation.y=side>0?-Math.PI/2:Math.PI/2;
         face.position.set(side*(half-0.105),H/2+Math.min(floorHeight(descriptor,lz),floorHeight(descriptor,lz-2)),lz-1);
         face.userData.own=true;face.name='hollow-block-wall';grp.add(face);
-      }
+      }else skirting.push({side,z0:lz,z1:lz-2});   // bare block walls get no baseboard
       if(tile===WALLP.wall&&j>0&&r()<0.16){
-        const style=DOOR_STYLES[Math.floor(r()*DOOR_STYLES.length)],door=DOORS[style].clone();
+        const style=DOOR_STYLES[Math.floor(r()*DOOR_STYLES.length)],door=repaint(DOORS[style].clone(),grp);
         door.rotation.y=side>0?-Math.PI/2:Math.PI/2;
         const z=lz-0.56-side*0.44;door.position.set(side*(half-0.13),floorHeight(descriptor,z),z);door.userData.door=style;grp.add(door);
       }
       if(tile===WALLP.wall&&!grp.children.at(-1).userData.door)solidWalls.push({side,z:lz-1});
     }
   }
+  // Side-room doorways keep a baseboard on the wall either side of the opening.
+  for(const p of branchOpenings(descriptor).filter(p=>p.kind!=='legacy')){
+    const opening=sideSpacePlan(descriptor,p).opening;
+    skirting.push({side:p.side,z0:-p.j*2,z1:p.z+opening/2},{side:p.side,z0:p.z-opening/2,z1:-p.j*2-4});
+  }
+  const baseboardMaterial=curvize(new THREE.MeshLambertMaterial({color:grp.userData.trimColor}));
+  grp.userData.wallPaintMaterials.set('baseboards',baseboardMaterial);
+  const baseboards=createBaseboards({THREE,room:descriptor,runs:skirting,material:baseboardMaterial,floorAt:z=>floorHeight(descriptor,z)});
+  if(baseboards)grp.add(baseboards);
+  grp.userData.baseboardLength=baseboards?.userData.length??0;
   // Supplied photos stay rectangular and flush with a solid section of wall.
   if(solidWalls.length&&(i%3!==2||params.get('wires')==='1')){
     const spots=solidWalls.filter(p=>Math.abs(p.z+SEG_LEN/2)>1.2).sort((a,b)=>Math.abs(a.z+3)-Math.abs(b.z+3));
@@ -518,14 +539,14 @@ function buildSegment(index){
   // far partition with a central doorway (camera passes into next segment)
   // Cover the wider room on either side of a boundary, including its shoulders.
   const partition=new THREE.Group();partition.name='room-partition';grp.add(partition);
-  partition.userData.wallPaint=grp.userData.wallPaint;partition.userData.wallPaintMaterials=grp.userData.wallPaintMaterials;
+  partition.userData.wallPaint=grp.userData.wallPaint;partition.userData.trimColor=grp.userData.trimColor;partition.userData.wallPaintMaterials=grp.userData.wallPaintMaterials;
   for(const piece of partitionPieces(Math.max(width,roomWidth(index+1))))
     addWall(partition,WALLP[piece.name],piece.x,-SEG_LEN,0);
   const boundaryHeight=Math.max(descriptor.height,sequence.room(index+1).height);
   if(boundaryHeight>H){const upper=new THREE.Mesh(new THREE.BoxGeometry(Math.max(width,roomWidth(index+1)),boundaryHeight-H,0.12),mat.ceiling);upper.position.set(0,(boundaryHeight+H)/2,-SEG_LEN);upper.userData.own=true;partition.add(upper);}
   const thresholdStyle=DOOR_STYLES[i%DOOR_STYLES.length];
   for(const side of [-1,1]){
-    const door=DOORS[thresholdStyle].clone();door.position.set(side*0.96,0,-SEG_LEN+0.14);
+    const door=repaint(DOORS[thresholdStyle].clone(),grp);door.position.set(side*0.96,0,-SEG_LEN+0.14);
     door.rotation.y=-Math.PI/2;door.userData.door=thresholdStyle;grp.add(door);
   }
   // ceiling fan sometimes
@@ -926,7 +947,7 @@ function inspectRooms(){
       item.roomSets=sets.map(o=>o.userData.roomSet);
       item.roomSetsClear=sets.every(o=>{const b=new THREE.Box3().setFromObject(o);return b.min.x>=-g.userData.width/2+0.05&&b.max.x<=g.userData.width/2-0.05&&(b.max.x<=-0.6||b.min.x>=0.6)&&b.min.z>=g.position.z-g.userData.length+0.2&&b.max.z<=g.position.z-0.2&&g.children.filter(p=>p.userData.diningChair||p.userData.diningTable).every(p=>!b.intersectsBox(new THREE.Box3().setFromObject(p)));});
       item.fixtures=sets.flatMap(o=>o.children.map(p=>p.userData.fixture));
-      item.wallPaint=g.userData.wallPaint;
+      item.wallPaint=g.userData.wallPaint;item.trim=g.userData.trimColor.toString(16);item.baseboards=Math.round(g.userData.baseboardLength);
       item.sofas=[];g.traverse(o=>{if(o.name==='uratexSofa')item.sofas.push({fabric:o.userData.fabricStyle,pillows:o.userData.pillowConfig});});
       item.rawObjects=[];g.traverse(o=>{if(o.userData.rawObject)item.rawObjects.push(o.userData.rawObject);});
       item.photoFiles=g.children.filter(o=>o.userData.wallPhoto).map(o=>o.userData.photoFile);
