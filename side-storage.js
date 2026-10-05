@@ -30,10 +30,10 @@ export function addSideStorage({THREE,group,room,assets,curvize}){
         carton(object,.04,.328,-.025,.46,.25,.38,plan.variant+1);
         carton(object,-.04,.586,.01,.33,.19,.29,plan.variant+2);
       }else{
-        const model=assets[f.model].clone();model.traverse(o=>{o.userData.own=false;o.userData.ownMaterial=false;});
+        const model=(assets[f.model]??assets.plasticDrawers).clone();model.traverse(o=>{o.userData.own=false;o.userData.ownMaterial=false;});
         if(f.role==='drawers')model.rotation.y=f.x>0?-Math.PI/2:Math.PI/2;
         let bounds=new THREE.Box3().setFromObject(model),size=bounds.getSize(new THREE.Vector3());
-        model.scale.multiplyScalar(Math.min(f.w/size.x,f.d/size.z,f.h/size.y));
+        model.scale.multiplyScalar(Math.min(f.role==='drawers'?1:Infinity,f.w/size.x,f.d/size.z,f.h/size.y));   // drawers keep their own size when they fit
         bounds=new THREE.Box3().setFromObject(model);
         model.position.set(-(bounds.min.x+bounds.max.x)/2,-bounds.min.y,-(bounds.min.z+bounds.max.z)/2);object.add(model);
         if(f.role==='drawers')carton(object,0,bounds.max.y-bounds.min.y+.002,0,.27,.14,.26,plan.variant+2);

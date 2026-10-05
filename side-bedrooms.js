@@ -13,12 +13,12 @@ export function addSideBedrooms({THREE,group,room,assets,curvize,photos,spriteMa
   const familyPhotos=photos.filter(a=>/family|portrait/i.test(a.file));
   function block(mat,x,y,z,w,h,d){const mesh=new THREE.Mesh(box,mat);mesh.position.set(x,y,z);mesh.scale.set(w,h,d);owner.add(mesh);return mesh;}
   function fit(f){
-    const object=assets[f.model].clone();object.traverse(o=>{o.userData.own=false;o.userData.ownMaterial=false;});
+    const object=(assets[f.model]??assets.plasticDrawers).clone();object.traverse(o=>{o.userData.own=false;o.userData.ownMaterial=false;});
     let bounds=new THREE.Box3().setFromObject(object),size=bounds.getSize(new THREE.Vector3());
     if(f.role==='bed'&&size.z>size.x)object.rotation.y=Math.PI/2;
     if(f.role==='drawers')object.rotation.y=f.x>0?-Math.PI/2:Math.PI/2;
     bounds=new THREE.Box3().setFromObject(object);size=bounds.getSize(new THREE.Vector3());
-    object.scale.multiplyScalar(Math.min(f.w/size.x,f.d/size.z,f.h/size.y));
+    object.scale.multiplyScalar(Math.min(f.role==='drawers'?1:Infinity,f.w/size.x,f.d/size.z,f.h/size.y));
     bounds=new THREE.Box3().setFromObject(object);
     object.position.set(f.x-(bounds.min.x+bounds.max.x)/2,0.002-bounds.min.y,f.z-(bounds.min.z+bounds.max.z)/2);
     owner.add(object);object.name='side-bedroom-'+f.role;return object;

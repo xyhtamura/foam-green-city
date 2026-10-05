@@ -14,6 +14,12 @@ The route is still one straight logical line; nothing here adds a second axis. A
 
 Side rooms get scatter from `planSideScatter`, fitted to the room rectangle, off fixture blocks and off the strip from the doorway across the room; the objects join the owning room's single scatter mesh. Movement no longer starts paused under `prefers-reduced-motion`; Xyh asked for it to start on Enter. `scripts/check_forks.mjs` covers exit routes and salts.
 
+## Zones, smaller rooms, and drawer variants — 2026-10-05
+
+`roomZone(index,seed)` in `room-generator.js` reads a third value-noise field with a six-room period: above 0.83 the room is in a kitchen zone, below 0.17 a bathroom zone. In a zone every room takes that type, except shells large enough to be a hall or auditorium. A bathroom is always 4 m wide, so the width is set before features are drawn. Ordinary widths are now weighted 4 m 58%, 6 m 33%, 8 m 8%, and lengths 6 m 45%, 8 m 36%, 10 m 9%, 12 m 9%. Shorter rooms mean fewer passage rooms, which need 12 m: 2.0% of rooms, down from 3.2%. The generator's hash was replaced with a full-avalanche mix, so every generated shell differs from the previous commit's.
+
+`createDrawerVariants` in `utility-props.js` builds 32 plastic drawer units from seeds: two to six drawers, 0.34 to 0.60 m wide, nine frame colours, twenty drawer colours, and five colour schemes (one colour, two alternating, a set of three, same as the frame, or all different). Each is one vertex-coloured mesh; the old unit was about 25 meshes. They are stored as `plasticDrawers_0` to `_31` beside the original. Main rooms pick by room index without drawing from the furniture stream; side rooms pick in `sideSpacePlan`, and no longer scale a drawer unit up to fill its fixture box. `DRAWER_VARIANTS` lives in `side-spaces.js` because that module has no dependencies.
+
 ## Green ranges, baseboards, and railings — 2026-10-05
 
 Colours are ranges now. `TRIM_GREENS` in `index.html` holds seven weighted trim greens: five olives and yellow-greens inside the reference hue range (default `#6B8A3A`, 30%), plus the earlier blue-green `#4E7C63` (8%) and a teal near the poster's roof colour (6%). Each room draws one from the paint stream's second value. The 70% of rooms with foam-green walls are split across five foam greens (`foamGreen` 30%, `foamMint`, `foamSage`, `foamAqua`, `foamDeep` 10% each); beige and white weights are unchanged. `?paint=` accepts the new names and `?trim=<hex>` forces one trim.

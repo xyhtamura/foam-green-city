@@ -3,8 +3,12 @@
 // features, and an unusual room is whatever those draws happen to coincide in.
 import {ORDINARY_LAYOUT_IDS,ODD_LAYOUT_IDS} from './furniture-layouts.js';
 
-function hash(n){let h=Math.imul(n+1,0x45d9f3b)>>>0;h=Math.imul(h^(h>>>16),0x45d9f3b)>>>0;return (h^(h>>>16))>>>0;}
-const unit=(n,salt)=>hash(Math.imul(n,2654435761)+salt*40503)/4294967296;
+// A full avalanche mix of index and salt, so neighbouring indices and nearby salts are unrelated.
+function unit(n,salt){
+  let h=(Math.imul(n|0,0x9E3779B1)^Math.imul(salt|0,0x85EBCA6B))>>>0;
+  h^=h>>>16;h=Math.imul(h,0x85EBCA6B);h^=h>>>13;h=Math.imul(h,0xC2B2AE35);h^=h>>>16;
+  return (h>>>0)/4294967296;
+}
 // Smooth value noise over the room index, so neighbouring rooms share a mood.
 function field(x,salt){
   const i=Math.floor(x),t=x-i,u=t*t*(3-2*t);
@@ -23,6 +27,13 @@ export function roomPressure(index,seed=5){
   return {strange,scale};
 }
 
+// Some stretches of the route are all kitchen or all bathroom. A third slow field picks them.
+export function roomZone(index,seed=5){
+  if(index<5)return null;
+  const n=field(index/6,seed*7+19);
+  return n>0.83?'kitchen':n<0.17?'bathroom':null;
+}
+
 // Layouts whose pieces depend on each other cannot be thinned, so they stay in rooms they fill sensibly.
 const DENSE=['tableRows','pairedDining','chairsOnTables','facingWall','pushedAside'];
 const ORDINARY={
@@ -38,11 +49,15 @@ export function generateRoom(index,seed=5){
   const r=n=>unit(index,seed*7+100+n),{strange:s,scale}=roomPressure(index,seed);
   // Dimensions: a domestic base, plus a tail that only opens under pressure.
   const reach=s*(0.35+0.65*scale);
-  let width=pick([4,4,4,4,6,6,6,6,8,8],r(1))+even(reach*Math.pow(r(2),2.2)*72);
-  let length=6+2*Math.floor(r(3)*4)+even(s*Math.pow(r(4),1.6)*(18+34*scale));
+  // Ordinary rooms are small: mostly 4 or 6 m wide and 6 or 8 m long.
+  const zone=roomZone(index,seed);
+  let width=pick([4,4,4,4,4,4,4,6,6,6,6,8],r(1))+even(reach*Math.pow(r(2),2.2)*72);
+  let length=pick([6,6,6,6,6,8,8,8,8,10,12],r(3))+even(s*Math.pow(r(4),1.6)*(18+34*scale));
   let height=2.58+Math.round(s*Math.pow(r(5),2.6)*(8+26*scale)*5)/5;
   const tidy=n=>Math.round(n*100)/100;
   width=clamp(width,4,80);length=clamp(length,6,64);
+  // A bathroom keeps to the narrowest width, in a bathroom zone as anywhere else.
+  if(zone==='bathroom'&&width<10&&length<20&&height<5)width=4;
   // Floor level: a rise or a pit, limited by how long the room has to ramp.
   let rise=0;
   if(length>=12&&r(6)<s*0.4){
@@ -77,7 +92,7 @@ export function generateRoom(index,seed=5){
     ?{depth:2+Math.round(r(28)*Math.min(6,length/4-2)),height:tidy(0.3+r(29)*0.9),inset:tidy(1.2+r(50)*r(50)*Math.min(3,width/2-4)),sides:r(51)<0.7?[-1,1]:[r(52)<0.5?-1:1]}:null;
   // Use: large shells stop being domestic rooms.
   const large=width>=10||length>=20||height>=5;
-  let type=platform?'auditorium':large?'hall':pick(width===4?['sala','sala','kitchen','bedroom','bedroom','bathroom','bathroom','bare']:['sala','sala','sala','kitchen','kitchen','bedroom','bedroom','bare'],r(20));
+  let type=platform?'auditorium':large?'hall':zone??pick(width===4?['sala','sala','kitchen','bedroom','bedroom','bathroom','bathroom','bare']:['sala','sala','sala','kitchen','kitchen','bedroom','bedroom','bare'],r(20));
   const kitchenCorner=type==='sala'&&width>=6&&!s&&r(21)<0.25;
   const roomy=width*length<=120;
   let layout=pick(ORDINARY[type],r(22));
@@ -87,6 +102,6 @@ export function generateRoom(index,seed=5){
   // The category is read off the result, not off the pressure that produced it.
   const plain=shape==='rectangle'&&!stairs&&!columns&&!platform&&!rise&&height===2.58&&width<=8&&length<=12;
   const category=plain?'domestic':width>=24||height>=12||length>=40?'rare':'strange';
-  return {width,length,height,rise,shape,type,layout,floor:'bare',category,strangeness:Math.round(s*100)/100,
+  return {width,length,height,rise,shape,type,layout,floor:'bare',category,strangeness:Math.round(s*100)/100,...(zone?{zone}:{}),
     ...(passages.length?{passages}:{}),...(stairs?{stairs}:{}),...(columns?{columns}:{}),...(platform?{platform}:{}),...(kitchenCorner?{kitchenCorner}:{})};
 }

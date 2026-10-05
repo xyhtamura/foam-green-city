@@ -1,4 +1,5 @@
 // Seeded local rectangles shared by rendering and manual navigation.
+export const DRAWER_VARIANTS=32;
 function hash(n){let h=Math.imul(n+1,0x45d9f3b)>>>0;h=Math.imul(h^(h>>>16),0x45d9f3b)>>>0;return (h^(h>>>16))>>>0;}
 // A plain shell has no passages, stairs, columns, or platform.
 export const plainRoom=room=>room.shape==='rectangle'&&!room.stairs&&!room.columns&&!room.platform;
@@ -57,13 +58,14 @@ export function sideSpacePlan(room,portal){
   const fx=side*(W+corridor+depth-0.3);
   const furnishing=['bedroom','storage','washroom','bare'].includes(room.sideRoom)?room.sideRoom:['bedroom','bedroom','storage','storage','washroom'][hash((room.index??0)+(room.branchSeed??5)*307+(portal.n??0)*17)%5];
   const bedroom=furnishing==='bedroom',storage=furnishing==='storage',washroom=furnishing==='washroom';
+  const drawers='plasticDrawers_'+hash((room.generationIndex??room.index??0)*3+(portal.n??0)+911)%DRAWER_VARIANTS;
   if(bedroom){
     fixtures.push({role:'bed',x:side*(W+corridor+depth/2+0.18),z:z-span/2+0.64,w:2.05,d:0.95,h:1.25,model:(portal.variant??0)===0?'phDaybed':'bedSingle'});
-    fixtures.push({role:'drawers',x:side*(W+corridor+depth-.36),z:z+span/2-0.45,w:0.5,d:0.46,h:0.82,model:'plasticDrawers'});
+    fixtures.push({role:'drawers',x:side*(W+corridor+depth-.36),z:z+span/2-0.45,w:0.5,d:0.46,h:0.82,model:drawers});
   }else if(storage){
     fixtures.push({role:'storageShelf',x:side*(W+corridor+depth-.75),z:z-span/2+.4,w:1.1,d:.48,h:1.7});
     fixtures.push({role:'storageStack',x:side*(W+corridor+.65),z:z-span/2+.42,w:.65,d:.52,h:.85});
-    fixtures.push({role:'drawers',x:side*(W+corridor+depth-.36),z:z+span/2-.45,w:.5,d:.46,h:.82,model:'plasticDrawers'});
+    fixtures.push({role:'drawers',x:side*(W+corridor+depth-.36),z:z+span/2-.45,w:.5,d:.46,h:.82,model:drawers});
     fixtures.push({role:'bucket',x:side*(W+corridor+depth-1.25),z:z+span/2-.4,w:.4,d:.4,h:.4,model:(portal.variant??0)%2?'bucketPink':'bucket'});
   }else if(washroom){
     fixtures.push({role:'toilet',x:side*(W+corridor+depth-.52),z:z+span/2-.5,w:.8,d:.65,h:.76,model:'toilet'});

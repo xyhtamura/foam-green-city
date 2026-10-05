@@ -963,3 +963,17 @@ So baseboards add little area, between 0.2 and 1.2 points of the frame. The larg
 Not done. Nothing was viewed on the twisting route. Baseboards in a raised or sunken room, and on a non-green wall, were not viewed. A solid stair's single rail was not viewed. Side rooms and passages have no baseboards. The checkerboard floor and TV stripe still use the old green. Railings do not stop the walker; the stair and platform reservations already do. If more Palmyra is wanted, the candidates with real area are door leaves on more walls, window grilles, and painted lower wall bands.
 
 Root ROADMAP.md needed no change. Next remains independent side-room lighting. Antigravity's uncommitted notes entry and the supplied raw-image changes were left unstaged. Nothing was pushed or published.
+
+## 2026-10-05 — Claude Code — kitchen and bathroom zones, smaller rooms, drawer variants
+
+Xyh asked for some areas to be all kitchens and some all bathrooms, said ordinary rooms still feel too long or big, and said the plastic drawer unit repeats with the same four colours and should vary in colour and size.
+
+Zones: stretches of the route are now all kitchen or all bathroom, about 11% of rooms each, four rooms long at the median and up to about thirty. Ordinary rooms are smaller: 75% are 4 or 6 m wide and 6 or 8 m long, up from about 45%. The drawer unit has 32 generated variants. Details are in HANDOVER.md.
+
+Checks. `check_demo_sequence.mjs` passed 40,000 rooms with new assertions: every room in a zone has the zone's type unless its shell is a hall, each zone covers 500 to 1,500 rooms in 10,000 with a run of at least five, and small rooms are over 60% of domestic rooms. Fork, side-space, navigation, and room-sequence checks pass; the fork check's lower bound moved from 3% to 1.5%. In the browser on the root server, straight route: rooms 53 to 57 were all kitchens with kitchen fixtures, and rooms 45 to 49 all bathrooms 4 m wide; clear aisles, no utility overlaps, side-room furniture inside its bounds, no console errors. With `utilities=all`, six consecutive rooms held six different drawer units, three to six drawers, 0.35 to 0.58 m wide, 0.65 to 1.09 m high.
+
+Not done. Only one drawer unit was seen, at the edge of a frame (grey frame, red and blue fronts); the colour schemes are otherwise unviewed. A long zone was not walked. Nothing was viewed on the twisting route. The minimum room length is still 6 m; going shorter would mean changing furniture placement, side rooms, and the route checks, which all assume it. Furniture pools do not change inside a zone beyond what the room type already selects. Other repeated props (buckets in two colours, the gas cylinder, the brooms) are still single models.
+
+An error of mine, corrected: the first zone measurement showed runs of over thirty rooms and I attributed that to a weak hash. Replacing the hash did not shorten them; runs that long are the expected maximum for this field over 10,000 rooms, and the median is four. The better hash stays, and the comment that blamed the old one was removed.
+
+Root ROADMAP.md's Mechanism line was updated and left uncommitted. Next remains independent side-room lighting. Antigravity's uncommitted notes entry and the supplied raw-image changes were left unstaged. Nothing was pushed or published.

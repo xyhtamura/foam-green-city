@@ -1,5 +1,50 @@
 import * as THREE from 'three';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
+import {DRAWER_VARIANTS} from './side-spaces.js?v=washrooms-1';
+
+// Plastic drawer units: count, proportions, frame, and drawer colours are drawn per variant.
+// Each is one vertex-coloured mesh, so a unit costs one draw call.
+const FRAMES=[0xe3dbc4,0xeeeae0,0xd9d4cc,0xb9b4aa,0x8f7a62,0x5d5a58,0xcfd9d2,0xe6d3d6,0xd8dfe9];
+const FRONTS=[0xcf8fa5,0x548cbe,0x80a78c,0xd8bb6a,0xb5524a,0xd98a4e,0x8d73b0,0x4f9d9a,0x9aa77f,0x6f8fd0,0xe2c8cf,0xc9d6e3,0xdcd9c8,0xa5a5a0,0x7a5b46,0x3f4a52,0xa9cf8e,0xe9d77c,0xf0ece2,0x94b8c9];
+function drawerVariant(seed,material){
+  let state=(Math.imul(seed+1,2654435761)>>>0)||1;
+  const r=()=>{state=(Math.imul(state,1664525)+1013904223)>>>0;return state/4294967296;},pick=list=>list[Math.floor(r()*list.length)];
+  const count=2+Math.floor(r()*5),width=0.34+r()*0.26,depth=0.34+r()*0.1,each=0.13+r()*0.09,wall=0.026,feet=r()<0.35?0.06:0.035;
+  const height=feet+count*each+0.05,frame=pick(FRAMES),pull=r()<0.5?0x38474c:frame;
+  // One colour, two alternating, a set, or a different colour for every drawer.
+  const scheme=r(),a=pick(FRONTS),b=pick(FRONTS),set=[pick(FRONTS),pick(FRONTS),pick(FRONTS)];
+  const front=i=>scheme<0.3?a:scheme<0.5?(i%2?a:b):scheme<0.72?set[i%3]:scheme<0.82?frame:FRONTS[Math.floor(r()*FRONTS.length)];
+  const positions=[],colours=[],c=new THREE.Color();
+  function block(colour,x,y,z,w,h,d){
+    const g=new THREE.BoxGeometry(w,h,d).toNonIndexed(),p=g.attributes.position;c.setHex(colour);
+    for(let i=0;i<p.count;i++){positions.push(p.getX(i)+x,p.getY(i)+y,p.getZ(i)+z);colours.push(c.r,c.g,c.b);}
+    g.dispose();
+  }
+  const body=height-feet;
+  block(frame,0,feet+body/2,-depth/2+0.018,width,body,0.035);
+  for(const side of [-1,1])block(frame,side*(width/2-wall/2),feet+body/2,0,wall,body,depth);
+  block(frame,0,height-0.02,0,width+0.04,0.04,depth+0.04);
+  for(let i=0;i<count;i++){
+    const y=feet+each*(i+0.5),inner=width-2*wall;
+    block(0x38474c,0,y,0,inner,each*0.96,depth-0.03);
+    block(front(i),0,y,depth/2-0.005,inner-0.02,each*0.84,0.025);
+    block(pull,0,y+each*0.1,depth/2+0.009,inner*0.28,each*0.15,0.005);
+    if(pull!==frame)block(frame,0,y+each*0.17,depth/2+0.017,inner*0.32,0.012,0.018);
+  }
+  for(const x of [-1,1])for(const z of [-1,1])block(feet>0.05?0x38474c:frame,x*(width/2-0.04),feet/2,z*(depth/2-0.05),0.04,feet,0.04);
+  const geometry=new THREE.BufferGeometry();
+  geometry.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));
+  geometry.setAttribute('color',new THREE.Float32BufferAttribute(colours,3));
+  geometry.computeVertexNormals();
+  const group=new THREE.Group();group.name='plasticDrawers';group.add(new THREE.Mesh(geometry,material));
+  group.userData.drawers={count,width:+width.toFixed(2),height:+height.toFixed(2)};
+  return group;
+}
+export function createDrawerVariants(){
+  const material=new THREE.MeshLambertMaterial({vertexColors:true}),variants={};
+  for(let i=0;i<DRAWER_VARIANTS;i++)variants['plasticDrawers_'+i]=drawerVariant(i,material);
+  return variants;
+}
 
 // Authored in metres. Geometry and materials survive streamed clone disposal.
 export function createUtilityProps(){
@@ -75,5 +120,5 @@ export function createUtilityProps(){
   }
   rods(tingting,'palm-midribs',twig,sticks);
   for(const y of [0.765,0.78,0.795]){const band=mesh(tingting,'twine-binding',new THREE.TorusGeometry(0.029,0.005,5,12),cream,0,y);band.rotation.x=Math.PI/2;}
-  return {bucket:bucket('bucket',blue),bucketPink:bucket('bucketPink',pink),gasul,plasticDrawers:drawers,walisTambo:tambo,walisTingting:tingting};
+  return {...createDrawerVariants(),bucket:bucket('bucket',blue),bucketPink:bucket('bucketPink',pink),gasul,plasticDrawers:drawers,walisTambo:tambo,walisTingting:tingting};
 }

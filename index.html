@@ -76,7 +76,7 @@ import * as THREE from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { createJalousieWall } from './jalousie.js?v=curtains-5';
-import { createDomesticProps, animateDomesticProps, createFurnitureVariants, FURNITURE_FINISHES } from './domestic-props.js?v=domestic-8';
+import { createDomesticProps, animateDomesticProps, createFurnitureVariants, FURNITURE_FINISHES } from './domestic-props.js?v=domestic-9';
 import { WALL_HANGINGS } from './wall-assets.js?v=photos-2';
 import { RAW_OBJECTS, createRawObject } from './raw-object-assets.js?v=raw-2';
 import { loadCurtainPatterns } from './photo-assets.js';
@@ -90,7 +90,7 @@ import { createRoomSet, createRoomFixture } from './room-sets.js?v=sets-8';
 import { createUratexSofa } from './uratex-sofa.js';
 import { createWireRun } from './wire-runs.js';
 import { createWallUtilities } from './wall-utilities.js?v=walls-8';
-import {createWalkSequence,retainedRooms,walkRegions,canOccupy,moveWalker,pathToRoute,roomExits} from './navigation.js?v=parametric-1';
+import {createWalkSequence,retainedRooms,walkRegions,canOccupy,moveWalker,pathToRoute,roomExits} from './navigation.js?v=zones-1';
 import {addDomesticDetails} from './domestic-details.js?v=details-11';
 let wallUtilities;
 import { roomLighting } from './room-lighting.js?v=lighting-3';
@@ -99,11 +99,11 @@ import { createBaseboards } from './baseboards.js?v=baseboards-1';
 import { addHouseholdItems } from './household-items.js?v=household-1';
 import { spatialFrame, spatialPoint, SPATIAL_GLSL, SPATIAL_PROFILES } from './spatial-route.js?v=inversion-1';
 import { floorHeight, cameraRoute, routePoint } from './room-sequences.js?v=parametric-1';
-import {sideSpacePlan} from './side-spaces.js?v=washrooms-1';
+import {sideSpacePlan,DRAWER_VARIANTS} from './side-spaces.js?v=washrooms-1';
 import {addWoodDetails} from './wood-details.js?v=wood-3';
 import {addSideWashrooms} from './side-washrooms.js?v=washrooms-2';
-import {addSideStorage} from './side-storage.js?v=storage-2';
-import {addSideBedrooms} from './side-bedrooms.js?v=bedrooms-6';
+import {addSideStorage} from './side-storage.js?v=storage-3';
+import {addSideBedrooms} from './side-bedrooms.js?v=bedrooms-7';
 import { branchOpenings, raiseFloor, createRoomArchitecture } from './room-architecture.js?v=architecture-14';
 
 // ---- palette (DepEd MPSS, stylized: green walls) ----
@@ -367,7 +367,9 @@ const FURNITURE_VARIANTS={};
 const chooseFinish=r=>Math.floor(r()*FURNITURE_FINISHES.length);
 // Place utility objects only when their actual rotated bounds fit a free wall slot.
 function utilityProp(group,name,r){
-  const obj=FURNI[name].clone();
+  // A drawer unit is one of the generated variants, chosen by room without touching the furniture stream.
+  const variant=name==='plasticDrawers'?'plasticDrawers_'+(Math.imul((group.userData.generationIndex??group.userData.index)+17,2654435761)>>>0)%DRAWER_VARIANTS:name;
+  const obj=FURNI[variant].clone();
   obj.rotation.y=(r()-0.5)*0.5;
   if(name.startsWith('walis'))obj.rotation.z=(r()<0.5?-1:1)*0.10;
   const local=new THREE.Box3().setFromObject(obj);
@@ -960,7 +962,7 @@ function inspectRooms(){
       item.lightColor=g.userData.lightFixture.userData.lightColor;
       item.lightFixture=g.userData.lightFixture.userData.fixtureType;
       item.lighting=g.userData.lighting.name;
-      item.scatter=g.userData.scatter;item.household=g.userData.household;item.strangeness=g.userData.strangeness??null;item.features=[g.userData.stairs&&'stairs'+g.userData.stairs.steps,g.userData.columns&&'columns'+g.userData.columns.rows,g.userData.platform&&'platform'].filter(Boolean);item.solids=g.userData.architecture.userData.solids.length;item.generation=g.userData.generationIndex??item.i;
+      item.scatter=g.userData.scatter;item.zone=g.userData.zone??null;item.drawers=[];g.traverse(o=>{if(o.userData.drawers)item.drawers.push(o.userData.drawers);});item.household=g.userData.household;item.strangeness=g.userData.strangeness??null;item.features=[g.userData.stairs&&'stairs'+g.userData.stairs.steps,g.userData.columns&&'columns'+g.userData.columns.rows,g.userData.platform&&'platform'].filter(Boolean);item.solids=g.userData.architecture.userData.solids.length;item.generation=g.userData.generationIndex??item.i;
     }
     let output=document.getElementById('room-inspection');
     if(!output){output=document.createElement('pre');output.id='room-inspection';output.hidden=true;document.body.append(output);}

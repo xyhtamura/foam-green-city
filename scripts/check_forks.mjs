@@ -26,7 +26,7 @@ for(let i=0;i<3000;i++){
     assert.ok(canOccupy(end.x,room.startZ+end.z+0.5,{regions}));
   }
 }
-assert.ok(forks/rooms>0.03&&forks/rooms<0.12,`fork share ${(forks/rooms*100).toFixed(1)}%`);
+assert.ok(forks/rooms>0.015&&forks/rooms<0.12,`fork share ${(forks/rooms*100).toFixed(1)}%`);
 
 // Side rooms and hallways: some are dead ends, some have an exit in the far wall.
 let sideRooms=0,sideExits=0;const byKind={};

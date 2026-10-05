@@ -2,7 +2,7 @@
 // Checks the generated demo run: determinism, joins, the limits later stages rely on, and the mix that emerges.
 import assert from 'node:assert/strict';
 import {createRoomSequence,floorHeight} from '../room-sequences.js';
-import {generateRoom,roomPressure} from '../room-generator.js';
+import {generateRoom,roomPressure,roomZone} from '../room-generator.js';
 import {LAYOUT_IDS,ODD_LAYOUT_IDS,generateFurnitureLayout,checkFurnitureLayout} from '../furniture-layouts.js';
 import {branchOpenings} from '../side-spaces.js';
 
@@ -10,7 +10,7 @@ const TYPES=['sala','kitchen','bedroom','bathroom','bare','hall','auditorium'];
 for(const seed of [5,17,42,1024]){
   const stream=createRoomSequence({sequence:'demo',seed,generate:generateRoom}),copy=createRoomSequence({sequence:'demo',seed,generate:generateRoom});
   const counts={domestic:0,strange:0,rare:0},seen={stairs:0,columns:0,platform:0,passages:0,rise:0,tall:0,wide:0,long:0,coincide:0,oddDomestic:0},layouts=new Set(),examples=[];
-  let distance=0,furnished=0;const reaches=new Set(),positions=new Set(),depths=new Set();
+  const runs=[];let distance=0,furnished=0,run=0,longest={kitchen:0,bathroom:0};const zoned={kitchen:0,bathroom:0},sizes={};const reaches=new Set(),positions=new Set(),depths=new Set();
   for(let i=0;i<10000;i++){
     const room=stream.room(i);assert.deepEqual(room,copy.room(i));assert.equal(-room.startZ,distance);
     counts[room.category]++;distance+=room.length;layouts.add(room.layout);
@@ -39,6 +39,12 @@ for(const seed of [5,17,42,1024]){
     if(room.columns)assert.ok(room.width>=10&&room.columns.rows>=1);
     if(room.platform){const p=room.platform;assert.ok(room.width>=10&&room.length>=16&&!room.rise&&room.type==='auditorium');assert.ok(p.depth>=2&&p.depth<=room.length/4&&p.height>=0.3&&p.height<=1.2&&room.width/2-p.inset>=2.5&&p.sides.length>=1);depths.add(p.depth);}
     if(room.type==='bathroom')assert.equal(room.width,4);
+    // Zones: every room in one is that type unless its shell is too large to be a domestic room.
+    const zone=roomZone(i,seed),previous=i?roomZone(i-1,seed):null;
+    if(previous&&zone!==previous)runs.push(run);
+    run=zone&&zone===previous?run+1:1;
+    if(zone){zoned[zone]++;longest[zone]=Math.max(longest[zone],run);assert.ok(room.type===zone||['hall','auditorium'].includes(room.type),`room ${i} in a ${zone} zone is a ${room.type}`);}
+    if(room.category==='domestic'){const key=room.width+'x'+room.length;sizes[key]=(sizes[key]??0)+1;}
     if(room.category==='domestic')assert.ok(room.width<=8&&room.length<=12&&room.height===2.58&&!room.rise&&room.shape==='rectangle'&&!room.stairs&&!room.columns);
     if(i<4)assert.equal(room.category,'domestic','the opening stays domestic');
     // Furniture: valid at this size, and never a paired layout too large to draw whole.
@@ -60,6 +66,10 @@ for(const seed of [5,17,42,1024]){
   assert.ok(counts.rare>50&&counts.rare<350,`rare ${counts.rare}`);
   for(const [name,n] of Object.entries(seen))assert.ok(n>(name==='platform'?4:10),`${name} occurs (${n})`);
   assert.equal(layouts.size,LAYOUT_IDS.length,'every layout occurs');
+  for(const zone of ['kitchen','bathroom']){assert.ok(zoned[zone]>500&&zoned[zone]<1500,`${zone} zones cover ${zoned[zone]} rooms`);assert.ok(longest[zone]>=5,`longest ${zone} run ${longest[zone]}`);}
+  const small=(sizes['4x6']??0)+(sizes['4x8']??0)+(sizes['6x6']??0)+(sizes['6x8']??0);
+  assert.ok(small/counts.domestic>0.6,`small rooms are ${(small/counts.domestic*100).toFixed(0)}% of domestic rooms`);
+  console.log('  zones',JSON.stringify(zoned),'longest runs',JSON.stringify(longest),'median run',runs.sort((a,b)=>a-b)[runs.length>>1],'small share',(small/counts.domestic*100).toFixed(0)+'%');
   assert.ok(reaches.size>=8&&positions.size>=6&&depths.size>=3,`passages and platforms vary: ${reaches.size} reaches, ${positions.size} positions, ${depths.size} platform depths`);
   console.log(JSON.stringify({seed,counts,seen,furnished}));console.log('  '+examples.join(' | '));
 }
