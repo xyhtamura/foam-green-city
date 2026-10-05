@@ -3,12 +3,13 @@ import {createTablewareKit,TABLEWARE_COLOURS} from './tableware.js';
 import {createPlasticKit,PLASTIC_COLOURS} from './plastics.js';
 import {createLinenKit,LINEN_COLOURS} from './linens.js';
 import {placeOnSupport} from './object-supports.js?v=supports-4';
+import {createBasketball,BALL_COLOURS} from './basketball.js';
 
 // The kits only lend their geometry and colours to the bake, so one set serves every room.
 let kits=null;
 const AISLE=0.72;
 
-export function addHouseholdItems({THREE,group,room,seed,material,blocked=[],floorAt=()=>0,amount=1}){
+export function addHouseholdItems({THREE,group,room,seed,material,blocked=[],floorAt=()=>0,amount=1,forceBall=false}){
   kits??={table:createTablewareKit({radialSegments:10}),plastic:createPlasticKit({radialSegments:10}),linen:createLinenKit()};
   let state=(Math.imul(seed+6113,2246822519)>>>0)||1;
   const r=()=>{state=(Math.imul(state,1664525)+1013904223)>>>0;return state/4294967296;};
@@ -87,6 +88,9 @@ export function addHouseholdItems({THREE,group,room,seed,material,blocked=[],flo
       bedding.position.copy(rug.position);bedding.rotation.y=rug.rotation.y;group.add(bedding);placed.push(bedding);
     }
   }
+  // A basketball left where it stopped: against a wall, or out on open floor.
+  const wantBall=forceBall||(['sala','bedroom','bare','hall','auditorium'].includes(room.type)&&r()<0.12*amount);
+  if(wantBall&&stand(createBasketball(THREE,{colour:pick(Object.keys(BALL_COLOURS)),scale:r()<0.15?0.75:1,seed:Math.floor(r()*1e6)}),{open:r()<0.5})){const ball=placed.at(-1);report.ball={x:+ball.position.x.toFixed(2),z:+ball.position.z.toFixed(2)};}
   if(!placed.length)return {mesh:null,footprints,walkBlocks,report};
 
   // Bake: positions into the room's frame, each mesh's material colour into its vertices.

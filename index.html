@@ -96,7 +96,7 @@ let wallUtilities;
 import { roomLighting } from './room-lighting.js?v=lighting-3';
 import { scatterLevel, planScatter, planSideScatter, scatterBlocks, createScatterMesh } from './floor-scatter.js?v=scatter-4';
 import { createBaseboards } from './baseboards.js?v=baseboards-1';
-import { addHouseholdItems } from './household-items.js?v=household-1';
+import { addHouseholdItems } from './household-items.js?v=household-3';
 import { spatialFrame, spatialPoint, SPATIAL_GLSL, SPATIAL_PROFILES } from './spatial-route.js?v=inversion-1';
 import { floorHeight, cameraRoute, routePoint } from './room-sequences.js?v=parametric-1';
 import {sideSpacePlan,DRAWER_VARIANTS} from './side-spaces.js?v=washrooms-1';
@@ -678,7 +678,7 @@ function buildSegment(index){
   });
   const clutterLevel=scatterLevel(i,descriptor.type,params.get('clutter'));
   // Dishes, bags, vessels, and linens go in first; loose scatter then fills in around them.
-  const items=addHouseholdItems({THREE,group:grp,room:descriptor,seed:i,material:householdMaterial,blocked:[...taken,...architecture.userData.reservations],floorAt:z=>floorHeight(descriptor,z),amount:{none:0,light:0.6,medium:1,heavy:1.4}[clutterLevel]});
+  const items=addHouseholdItems({THREE,group:grp,room:descriptor,seed:i,material:householdMaterial,blocked:[...taken,...architecture.userData.reservations],floorAt:z=>floorHeight(descriptor,z),amount:{none:0,light:0.6,medium:1,heavy:1.4}[clutterLevel],forceBall:params.get('prop')==='basketball'});
   if(items.mesh)grp.add(items.mesh);
   grp.userData.household=items.report;
   for(const b of items.walkBlocks){const y=floorHeight(descriptor,(b.minZ+b.maxZ)/2);grp.userData.walkBlocks.push({minX:b.minX,maxX:b.maxX,minZ:b.minZ+descriptor.startZ,maxZ:b.maxZ+descriptor.startZ,minY:y,maxY:y+b.height});}

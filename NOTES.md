@@ -1003,3 +1003,13 @@ Checks, in the browser on the root server, straight route: viewed a green leaf i
 Not done. The hinges were not seen close up, and a screen door's handle was not viewed. If the gap Xyh saw was something other than the handle, it is still there. Nothing was viewed on the twisting route.
 
 Root ROADMAP.md needed no change. Next remains independent side-room lighting. Antigravity's uncommitted notes entry and the supplied raw-image changes were left unstaged. Nothing was pushed or published.
+
+## 2026-10-05 — Claude Code — basketball
+
+Xyh asked for a basketball mesh. Added `basketball.js` and placed it through the household pass; details in HANDOVER.md.
+
+Checks, in the browser on the root server, straight route, with `prop=basketball`: six rooms each reported one ball with clear aisles and no console errors, and the ball in room 21 was viewed twice, once at the frame edge and once through the doorway from room 20, as a brown ball with dark seams resting on the floor.
+
+Not done. Only the darkest of the four colours was seen. The 12% default rate was not observed in a default run. The ball does not roll or respond to the walker. No hoop or court markings were added. Nothing was viewed on the twisting route.
+
+Root ROADMAP.md needed no change. Next remains independent side-room lighting. Antigravity's uncommitted notes entry and the supplied raw-image changes were left unstaged. Nothing was pushed or published.
