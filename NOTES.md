@@ -830,6 +830,21 @@ Viewed the wooden stairs in the straight daylight passages preview. The inspecto
 
 Stair features remain non-climbable and keep their existing collision reservation. Upper-floor destinations, railings, climbable tread surfaces, actual cull/revisit comparisons, and sustained performance measurements remain unfinished. Next remains independent side-room lighting, matching the root roadmap. The reference image was used for shape only; no new external asset was added. Supplied raw object additions and sardine image edits remain unstaged. Nothing was pushed or published.
 
+## 2026-10-05 — Antigravity — organized DepEd color references and condensed specification
+
+Organized, tagged, and renamed the seven supplied source PNGs in `references/` from raw timestamps into an ordered sequence:
+- `01-deped-efd-school-elevation-render.png`: 3D render of a 1-storey school building with EFD-AS approval signatures and material swatches.
+- `02-deped-mpss-paint-schedule-overview.png`: schedule overview mapping building elements to MPSS color names.
+- `03-deped-mpss-specs-roof-doors-columns.png`: specification table for roofing, doors, and columns with Pantone numbers and finish types.
+- `04-deped-mpss-specs-walls-ceilings.png`: specification table for exterior/interior walls and ceilings with Pantone numbers and finish types.
+- `05-deped-mpss-specs-railings-baseboards.png`: specification table for grills, railings, and baseboards with Pantone numbers and finish types.
+- `06-deped-mpss-palette-swatches.png`: 2 × 3 palette grid with official swatch names.
+- `07-deped-order-006-s2021-infographic-poster.png`: official DepEd Order No. 006, s. 2021 infographic poster showing building callouts, Gabaldon heritage exceptions, and the DO No. 32, s. 2010 prohibition against political colors.
+
+Created `references/README.md` as the authoritative condensed text document and reference index. It records the policy background (DO No. 006, s. 2021; DO No. 32, s. 2010; EFD-AS signatories), a consolidated master table synthesizing building elements, MPSS color names, Pantone codes, commercial/DepEd codes, masonry latex and QDE coating requirements, sampled hex values, and FGC roles. It details the Gabaldon heritage building exception (Firebrick Red, Ivory White, Saddle Brown) and the worldbuilding thesis connecting institutional paint surplus to domestic interior uniformity. Also created `references/metadata.json` for machine-readable queries and structured palette extraction.
+
+Verified file presence, renaming, dimensions, and JSON validity via Python and PowerShell. Unstaged changes to `index.html`, `.gitignore`, `fonts/`, and `2d/raw objects/` remain untouched. Nothing was committed, pushed, or published. Next in dev remains independent lighting profiles for side rooms per the root roadmap.
+
 ## 2026-10-05 — Codex — title screen and loading gate
 
 Added a title screen to index.html with short controls and an Enter button. The initial rooms and assets load behind it; font loading, shader compilation, and the first render finish before entry is enabled. The route waits for entry, and reduced-motion playback stays paused afterward. Loading failures display a reload instruction. The development bypass is `?skipTitle=1`; development.html retains its previous entry behavior.
