@@ -4,6 +4,12 @@
 
 2026-10-03 — Codex
 
+## Palette grounding and wall colours — 2026-10-05
+
+The title states the DepEd green/beige/white scheme and links to references/index.html, which transcribes the supplied presentation and links the official 2021 annex. Alternate commercial names are attributed to the presentation. Its date is not established, and the 2021 annex differs in some element assignments. The surplus-paint narrative remains a speculative premise in CONCEPT.md and the source page.
+
+Wall paint uses a separate deterministic random stream, leaving furniture decisions unchanged: 70% foam green, 10% Crisp Ecru, 10% Bright Wonder, 6% Yellow Rain, and 4% off-white by selection weight. `paint=foamGreen|crispEcru|brightWonder|yellowRain|white` forces a preview. Side-room architecture follows the owning room. Window surrounds and partitions recolour matching wall materials; trim and unfinished block overlays retain their finishes. Cell-owned material copies are disposed on culling. Next remains independent side-room lighting.
+
 ## Title and loading gate — 2026-10-05
 
 The public index opens with a title screen using bundled Permanent Marker. Enter stays disabled until the initial six cells, their assets, the font, shader compilation, and first render are ready. Movement waits for entry; reduced-motion playback remains paused afterward. WASD and Space do not control the scene while the title is open. Loading failures show a reload instruction. `?skipTitle=1` bypasses the title for development previews. `development.html` retains its earlier entry behavior.

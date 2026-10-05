@@ -1,6 +1,6 @@
 # Foam Green City
 
-Concept and description reference. Updated 2026-10-04.
+Concept and description reference. Updated 2026-10-05.
 
 *Foam Green City* (FGC) is a browser-based 3D artwork: an autonomous, procedurally arranged walkthrough of an apparently endless Filipino domestic interior. A slow camera passes through foam-green rooms containing familiar furniture, household objects, and small photographs. The route curves, rises, and twists, carrying the camera and the rooms through changing orientations.
 
@@ -24,7 +24,7 @@ Most spaces should retain domestic proportions. The v0.5 direction places an unu
 
 ## The title and color
 
-Foam green is the repeating color that connects the rooms. The early project notes associate the palette with Philippine public-school paint schemes and propose a narrative in which surplus institutional paint spreads into homes, fences, and small stores. This is a recorded conceptual premise, not a verified account of paint procurement or neighborhood history. Descriptions should preserve that distinction.
+Foam green is the repeating color that connects the rooms. The [palette reference](references/index.html) transcribes the supplied DepEd presentation: Foam Green/Aqua Paradise for roofing, Palmyra Green/Temptation/Matcha for doors and jambs, Yellow Rain for columns and beams, Crisp Ecru for exterior walls, Bright Wonder for interior walls, and white for ceilings. The official 2021 annex uses the broader green, beige, and white designations, with some element assignments differing from the presentation. The early project notes associate the palette with Philippine public-school paint schemes and propose a narrative in which surplus institutional paint spreads into homes, fences, and small stores. This is a recorded conceptual premise, not a verified account of paint procurement or neighborhood history. Descriptions should preserve that distinction.
 
 The artwork uses green walls as a deliberate stylization. It is not presented as a faithful reconstruction of a particular school, house, barangay, or official building specification.
 

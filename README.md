@@ -14,6 +14,8 @@ Open [the local demo](http://127.0.0.1:8141/). Wait for loading, then select **E
 
 ## Procedural arrangement
 
+The title links to the [DepEd palette reference](references/index.html). Most rooms retain foam-green walls; occasional rooms use beige shades, yellow-beige, or off-white from the supplied schedule. `?paint=foamGreen|crispEcru|brightWonder|yellowRain|white` forces the wall finish. These are stylized screen colours, not calibrated paint samples.
+
 Selected rafters and chopping boards use the supplied wood texture. Domestic rooms can also contain wood wall sections, short dividers, and loose boards. Preview with `?wood=all`, or force additional `walls`, `divider`, or `planks`; `wood=off` disables the added wood details while existing wooden objects retain their texture.
 
 Most dead-end stairs use thin wooden treads with open risers and two sloping side supports. Occasional solid stairs remain. Use `stairs=wood` or `stairs=solid` to force the style in rooms containing stairs. These features are not climbable.

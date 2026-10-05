@@ -21,6 +21,9 @@
 !/scripts/*.py
 !/scripts/*.mjs
 !/scripts/*.html
+!/references/
+/references/*
+!/references/index.html
 !/fonts/
 !/models/
 /models/*
