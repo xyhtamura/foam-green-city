@@ -91,7 +91,8 @@ import { createWallUtilities } from './wall-utilities.js?v=walls-7';
 import {createWalkSequence,retainedRooms,walkRegions,canOccupy,moveWalker,pathToRoute} from './navigation.js?v=side-rooms-5';
 import {addDomesticDetails} from './domestic-details.js?v=details-10';
 let wallUtilities;
-import { roomLighting } from './room-lighting.js?v=lighting-2';
+import { roomLighting } from './room-lighting.js?v=lighting-3';
+import { scatterLevel, planScatter, scatterBlocks, createScatterMesh } from './floor-scatter.js?v=scatter-3';
 import { spatialFrame, spatialPoint, SPATIAL_GLSL, SPATIAL_PROFILES } from './spatial-route.js';
 import { floorHeight, cameraRoute, routePoint } from './room-sequences.js?v=room-lengths-3';
 import {sideSpacePlan} from './side-spaces.js?v=washrooms-1';
@@ -247,6 +248,8 @@ const DOORS=createDoorLeaves(curvize);
 const mat = {
   ceiling:       curvize(new THREE.MeshLambertMaterial({ color: COL.ceiling })),
 };
+
+const scatterMaterial=curvize(new THREE.MeshLambertMaterial({vertexColors:true}));
 
 // ---- loaders + caches (load each asset once, clone per placement) ----
 const gltfLoader = new GLTFLoader();
@@ -624,6 +627,15 @@ function buildSegment(index){
   if(['deadStairs','auditorium','colonnade'].includes(descriptor.shape))for(const b of architecture.userData.reservations)
     grp.userData.walkBlocks.push({...b,minZ:b.minZ+descriptor.startZ,maxZ:b.maxZ+descriptor.startZ,minY:-10,maxY:100});
   grp.userData.woodDetails=addWoodDetails({THREE,group:grp,room:descriptor,spots:solidWalls,texture:woodTexture,curvize,force:params.get('wood')});
+  // Floor scatter is fitted last, around everything already standing in the room.
+  const taken=grp.children.filter(o=>o.userData.floorProp||o.userData.billboard||o.userData.diningTable||o.userData.diningChair||o.userData.utilityProp||o.userData.door||o.userData.roomSet).concat(grp.userData.woodDetails.children.filter(o=>o.name!=='wood-wall')).map(o=>{
+    const b=new THREE.Box3().setFromObject(o);return {minX:b.min.x-0.03,maxX:b.max.x+0.03,minZ:b.min.z-grp.position.z-0.03,maxZ:b.max.z-grp.position.z+0.03};
+  });
+  const scatterItems=planScatter(descriptor,{seed:i,level:scatterLevel(i,descriptor.type,params.get('clutter')),blocked:[...taken,...architecture.userData.reservations]});
+  const scatter=createScatterMesh(THREE,scatterItems,{material:scatterMaterial,floorAt:z=>floorHeight(descriptor,z)});
+  if(scatter)grp.add(scatter);
+  grp.userData.scatter=scatterItems.length;
+  for(const b of scatterBlocks(scatterItems)){const y=floorHeight(descriptor,(b.minZ+b.maxZ)/2);grp.userData.walkBlocks.push({minX:b.minX,maxX:b.maxX,minZ:b.minZ+descriptor.startZ,maxZ:b.maxZ+descriptor.startZ,minY:y,maxY:y+b.height});}
 }
 
 let inspectedRoom=null;
@@ -876,6 +888,7 @@ function inspectRooms(){
       item.lightColor=g.userData.lightFixture.userData.lightColor;
       item.lightFixture=g.userData.lightFixture.userData.fixtureType;
       item.lighting=g.userData.lighting.name;
+      item.scatter=g.userData.scatter;
     }
     let output=document.getElementById('room-inspection');
     if(!output){output=document.createElement('pre');output.id='room-inspection';output.hidden=true;document.body.append(output);}

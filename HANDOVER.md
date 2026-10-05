@@ -4,6 +4,14 @@
 
 2026-10-03 — Codex
 
+## Floor scatter and lighting weights — 2026-10-05
+
+`floor-scatter.js` plans small floor objects per room and builds them as one merged, vertex-coloured mesh: one draw call per room, sharing `scatterMaterial` from `index.html`. Thirteen shapes (bottles, cans, jugs, cartons, carton stacks, crumpled paper, tied bags, sacks, tubs, flat sheets, slippers) are assembled from seven unit geometries. Colour comes from per-kind palettes, mixed 22% toward a floor grey. `RATE` sets objects per metre of side wall for each level; `MIX` sets the kinds per room type. Halls and auditoriums get 40% of the domestic rate, bathrooms 50%, and no room exceeds 170 objects.
+
+`scatterLevel` picks none, light, medium, or heavy from its own hash: 10% of rooms get none, 35% for `bare` rooms. `?clutter=<level>` forces it. Scatter is fitted after wood details, around the bounds of furniture, props, doors, room sets, loose boards, and architecture reservations, and stays 0.72 m clear of the centre line. It uses its own random stream, so existing furniture and paint decisions are unchanged. Carton stacks and sacks add walker blocks; the other kinds can be walked through. Side rooms and `development.html` do not use it.
+
+`room-lighting.js` now weights daylight 36, overcast 22, shaded 14, dawn 10, dusk 4, darkDay 4, night 6, deepNight 2, red 1, violet 1. The first five rooms are daylight, overcast, daylight, shaded, dawn. Profile values are unchanged. `scripts/check_floor_scatter.mjs` checks both; run node checks with `node --experimental-default-type=module`, because the folder has no `package.json`.
+
 ## Palette grounding and wall colours — 2026-10-05
 
 The title states the DepEd green/beige/white scheme and links to references/index.html, which transcribes the supplied presentation and links the official 2021 annex. Alternate commercial names are attributed to the presentation. Its date is not established, and the 2021 annex differs in some element assignments. The surplus-paint narrative remains a speculative premise in CONCEPT.md and the source page.

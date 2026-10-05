@@ -11,10 +11,10 @@ export const LIGHTING={
   violet:{base:0.23,window:0,lamp:4,fog:0.22,tint:0x9472ff,lightColor:0x7652ff},
 };
 export function roomLighting(index,override){
-  const names=['daylight','overcast','shaded','darkDay','night'];
+  const names=['daylight','overcast','daylight','shaded','dawn'];
   const seed=Math.imul(index+31,0x45d9f3b)>>>0;
   const roll=((seed^(seed>>>16))>>>0)%100;
-  const selected=roll<24?'daylight':roll<40?'overcast':roll<55?'shaded':roll<65?'darkDay':roll<78?'night':roll<84?'deepNight':roll<91?'dawn':roll<96?'dusk':roll<98?'red':'violet';
+  const selected=roll<36?'daylight':roll<58?'overcast':roll<72?'shaded':roll<82?'dawn':roll<86?'dusk':roll<90?'darkDay':roll<96?'night':roll<98?'deepNight':roll<99?'red':'violet';
   const chosen=LIGHTING[override]?override:index>=0&&index<5?names[index]:selected;
   return {name:chosen,...LIGHTING[chosen],side:index%2?1:-1};
 }
