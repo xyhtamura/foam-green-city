@@ -1487,3 +1487,17 @@ Checks. All twelve node checks pass with the court in the generator, among them 
 Changed after the first view: lines went from 8 to 10 cm, since at a distance they broke into dashes on a small canvas.
 
 Not done. Not viewed in motion or with the pane visible. Only the green and red scheme was seen. The walls above 2.58 m are the ceiling's grey, as in every tall room. Courts for seeds other than 5 and 42 were not listed. The time to build the court room was not separated from its neighbours' in that walk; the worst build in it was 411 ms, at load. Nothing was pushed.
+
+## 2026-10-06 — Claude Code — washing spread through ordinary rooms; a brief for puzzle mats
+
+Xyh asked for a note in `F:/xyh/fgc-cx` on building puzzle mats, and for the washing to be scattered: a single thing hung in one room, one string in another, a set of clothes, clothes on the wall, so that it is met everywhere and not only in the washing rooms.
+
+The note is `F:/xyh/fgc-cx/PUZZLE-MATS-BRIEF.md`: one mesh for a patch, colour by tile in the vertices, one small seam texture drawn on a canvas, the options and types wanted, and what the main project needs back, including that a kit should not keep the geometry it hands out. Nothing was built from it.
+
+Washing: rates and rules are in HANDOVER.md. `sampayan.js` gained `row`, clothes on hangers side by side facing out from a wall. Washing rooms were made rarer.
+
+Checks. At natural rates on the twisting route, 116 rooms from room 20, before and after: rooms with any clothes hanging went from 44 to 71; by kind after, bedrooms 16 of 21, bare rooms 7 of 9, bathrooms 11 of 17, salas 8 of 13, kitchens 20 of 35, halls 9 of 20. Wall clothes in 36 rooms, 10 of them on the far wall; lines in 43; window hangers in 12; washing rooms 3; 714 garments in all. Household placement took 6.2 ms at the median and 15.4 ms at the ninetieth percentile, a build 19.8 ms, a frame with no build 4.3 ms; no console error. Viewed room 21 on the straight route: one white shirt on a hanger on the far wall, right of the doorway. All twelve node checks, `stamp_versions --check`, and `check_published_assets` pass.
+
+First attempt and what changed. Wall clothes appeared in 3 of 116 rooms: they asked for a metre of clear wall, and their chance was scaled down by the room's clutter level. They now take any gap wide enough, fall back to the far wall, and ignore clutter.
+
+Not done. A set of several on a side wall, a short line, and a second line were counted and not viewed. A garment on a wall can overlap a low piece of furniture standing in front of it; not looked for. Wall cloth from `fabric-items.js` stays off the far wall when clothes are there, and is not otherwise checked against them. Nothing was pushed.

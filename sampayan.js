@@ -85,6 +85,19 @@ export function createSampayan(THREE){
     group.userData.bounds=bounds(group);group.userData.garments=group.children.length-2;
     return group;
   }
+  // Clothes on hangers side by side, each on its own nail, facing local +z: for hanging flat on a wall.
+  // The hooks' tops are at y=0. One garment is a row of one.
+  function row({count=1,seed=1,spacing=0.36,colours=CLOTHES_COLOURS,hangerColours=HANGER_COLOURS}){
+    let state=(seed>>>0)||1;const random=()=>{state=(Math.imul(state,1664525)+1013904223)>>>0;return state/4294967296;};
+    const pick=list=>list[Math.floor(random()*list.length)],group=new THREE.Group();group.name='sampayan-row';
+    for(let i=0;i<count;i++){
+      const type=pick(DRAW),scale=type==='towel'?0.9+random()*0.4:random()<0.2?0.55+random()*0.15:0.78+random()*0.14;
+      const item=onHanger(type,pick(colours),pick(hangerColours),scale);
+      item.position.set((i-(count-1)/2)*spacing+(random()-0.5)*0.05,(random()-0.5)*0.06,i*0.002);item.rotation.z=(random()-0.5)*0.14;group.add(item);
+    }
+    group.userData.bounds=bounds(group);group.userData.garments=count;
+    return group;
+  }
   // A rail on two uprights with clothes on hangers, standing on the floor at y=0.
   function rack({length=1.1,height=1.5,depth=0.42,count=6,seed=1,colour=0x8c9691,colours=CLOTHES_COLOURS,hangerColours=HANGER_COLOURS}){
     const group=new THREE.Group();group.name='sampayan-rack';
@@ -97,5 +110,5 @@ export function createSampayan(THREE){
     group.userData.bounds=bounds(group);
     return group;
   }
-  return {line,rack};
+  return {line,row,rack};
 }

@@ -69,10 +69,13 @@ The single-burner stove is a tabletop cutout in kitchens, 0.33 m wide. The two-b
 
 `household-items.js` places them as its fifth set, baked with the rest:
 
-- A room given over to washing: lines the whole length of the room every half metre or so, none within 0.6 m of the centre line, up to 150 garments, sometimes all one colour with white. 12% of bare rooms, 6% of halls, 3% of bedrooms, 2% of salas; not in a room with columns, stairs, a platform, passages, or a rising floor. `?prop=sampayan` forces it.
-- One line along a wall for 2 to 5.5 m, on hangers: 22% of bedrooms, 20% of bathrooms and bare rooms, 12% of salas, 10% of kitchens.
-- One line across the room, pegged, bare for 0.6 m either side of the centre: 15% of bathrooms, 12% of bare rooms, 8% of kitchens and bedrooms.
-- Two to five hangers hooked along the top of a glazed window: 12% of such windows.
+Washing is meant to be met in most rooms in a small way, and now and then in a large one. Its rates do not follow a room's clutter level, unlike the rest of this set.
+
+- Clothes on the wall itself, each on a hanger on a nail (`sampayan.row`): one thing six times in ten, otherwise a set of two to four. Tried up to three times a room, at the full rate, then 45% and 20% of it: 50% of bedrooms, 40% of bare rooms, 35% of bathrooms and salas, 22% of kitchens, 14% of halls. A nail takes any gap on a solid stretch of side wall wide enough for what hangs there; with none, the far wall beside the doorway, once.
+- A line along a wall, on hangers: 32% of bedrooms, 30% of bathrooms and bare rooms, 20% of salas, 18% of kitchens, 10% of halls, and a second on the other wall at three-tenths of that. Six in ten are short, 1.2 to 2.6 m with one to four things; the rest run 2.6 to 5.6 m and are full.
+- A line across the room, pegged, bare for 0.6 m either side of the centre: 18% of bathrooms, 15% of bare rooms, 10% of kitchens and bedrooms, 5% of salas.
+- Two to five hangers hooked along the top of a glazed window: 20% of such windows.
+- A room given over to washing: lines the whole length of the room every half metre or so, none within 0.6 m of the centre line, up to 150 garments, sometimes all one colour with white. 8% of bare rooms, 4% of halls, 3% of bedrooms, 2% of salas; not in a room with columns, stairs, a platform, passages, or a rising floor, and never a court. `?prop=sampayan` forces it.
 - A rail of hangers on the floor: 10% of bedrooms, 6% of bare rooms, 3% of salas. A folding drying stand with pegged washing, from the kit: 8% of bare rooms, 6% of bathrooms and bedrooms, 4% of salas.
 - From the kit also: a wall clock stopped at a random time in 14% of rooms other than bathrooms; a helmet on a table or shelf in 3 to 6% of salas, bedrooms, bare rooms, and kitchens; one or two paper plates on a table in 30% of halls, 20% of auditoriums, 8% of kitchens.
 

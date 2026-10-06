@@ -1,20 +1,20 @@
 // Places the mesh kits' objects in a room, then bakes them into one vertex-coloured mesh.
-import {createTablewareKit,TABLEWARE_COLOURS} from './tableware.js?v=7ce56b07f1';
-import {createPlasticKit,PLASTIC_COLOURS} from './plastics.js?v=7ce56b07f1';
-import {createLinenKit,LINEN_COLOURS} from './linens.js?v=7ce56b07f1';
-import {placeOnSupport} from './object-supports.js?v=7ce56b07f1';
-import {createHouseholdToolKit} from './household-tools.js?v=7ce56b07f1';
-import {createPlasticStorageKit} from './plastic-storage.js?v=7ce56b07f1';
-import {createCardboardKit} from './cardboard.js?v=7ce56b07f1';
-import {createSchoolChairKit} from './school-chair.js?v=7ce56b07f1';
-import {createBasketball,BALL_COLOURS} from './basketball.js?v=7ce56b07f1';
-import {createFootwearKit,FOOTWEAR_TYPES} from './footwear.js?v=7ce56b07f1';
-import {createBathroomKit} from './bathroom-tools.js?v=7ce56b07f1';
-import {createSampayan,CLOTHES_COLOURS} from './sampayan.js?v=7ce56b07f1';
-import {createHouseholdDetailsKit} from './household-details.js?v=7ce56b07f1';
-import {createDecorKit} from './decor.js?v=7ce56b07f1';
-import {createMirrorsValancesKit,VALANCE_TYPES} from './mirrors-valances.js?v=7ce56b07f1';
-import {createPackagingKit} from './packaging.js?v=7ce56b07f1';
+import {createTablewareKit,TABLEWARE_COLOURS} from './tableware.js?v=be7d86413e';
+import {createPlasticKit,PLASTIC_COLOURS} from './plastics.js?v=be7d86413e';
+import {createLinenKit,LINEN_COLOURS} from './linens.js?v=be7d86413e';
+import {placeOnSupport} from './object-supports.js?v=be7d86413e';
+import {createHouseholdToolKit} from './household-tools.js?v=be7d86413e';
+import {createPlasticStorageKit} from './plastic-storage.js?v=be7d86413e';
+import {createCardboardKit} from './cardboard.js?v=be7d86413e';
+import {createSchoolChairKit} from './school-chair.js?v=be7d86413e';
+import {createBasketball,BALL_COLOURS} from './basketball.js?v=be7d86413e';
+import {createFootwearKit,FOOTWEAR_TYPES} from './footwear.js?v=be7d86413e';
+import {createBathroomKit} from './bathroom-tools.js?v=be7d86413e';
+import {createSampayan,CLOTHES_COLOURS} from './sampayan.js?v=be7d86413e';
+import {createHouseholdDetailsKit} from './household-details.js?v=be7d86413e';
+import {createDecorKit} from './decor.js?v=be7d86413e';
+import {createMirrorsValancesKit,VALANCE_TYPES} from './mirrors-valances.js?v=be7d86413e';
+import {createPackagingKit} from './packaging.js?v=be7d86413e';
 
 // The kits only lend their geometry and colours to the bake. Tableware and cardboard build from
 // a fixed set of shapes, so one of each serves every room. The others make new geometry for each
@@ -303,6 +303,8 @@ export function addHouseholdItems({THREE,group,room,seed,material,blocked=[],flo
   const sampayan=createSampayan(THREE),detailKit=createHouseholdDetailsKit();
   const lineSeed=()=>Math.floor(r()*1e9)+1,lineHeight=()=>Math.min(room.height-0.18,1.88+r()*0.24);
   const garments=n=>{report.garments=(report.garments??0)+n;};
+  // Washing is not clutter: how much of it a room has does not follow the room's clutter level.
+  const likely=p=>force==='kits'||r()<p;
   // A line run down the room, parallel to the side walls, clothes on hangers facing whoever walks it.
   const lineAlong=(x,z0,z1,options={})=>{
     const length=z0-z1,line=sampayan.line({length,sag:Math.min(0.35,length*(0.02+r()*0.02)),hangers:true,seed:lineSeed(),count:Math.max(1,Math.min(40,Math.round(length*(1.6+r()*2.2)))),...options});
@@ -310,7 +312,7 @@ export function addHouseholdItems({THREE,group,room,seed,material,blocked=[],flo
   };
   const strungOpen=!room.columns&&!room.stairs&&!room.platform&&!room.rise&&!(room.passages?.length);
   // A room given over to washing: lines the length of it, every half metre or so, none over the walker's way.
-  const washRoom=room.court?0:{bare:0.12,hall:0.06,bedroom:0.03,sala:0.02}[room.type];
+  const washRoom=room.court?0:{bare:0.08,hall:0.04,bedroom:0.03,sala:0.02}[room.type];
   if(strungOpen&&(force==='sampayan'||(force!=='kits'&&washRoom&&r()<washRoom*amount))){
     const z0=-0.2,z1=-room.length+0.2,same=r()<0.4,oneColour=same?[pick(CLOTHES_COLOURS),0xf1efe6]:CLOTHES_COLOURS;
     let budget=150;
@@ -320,13 +322,19 @@ export function addHouseholdItems({THREE,group,room,seed,material,blocked=[],flo
     }
     report.sampayanRoom=1;
   }else{
-    // One line along a wall, for part of the room's length.
-    if(chance({bedroom:0.22,bathroom:0.2,bare:0.2,sala:0.12,kitchen:0.1}[room.type]??-1)&&!room.rise){
-      const span=Math.min(room.length-0.6,2+r()*3.5),z0=-(0.3+r()*(room.length-0.6-span));
-      lineAlong(wallSide()*(half-0.3-r()*0.14),z0,z0-span,{count:between(3,Math.max(4,Math.round(span*2.6)))});
+    // A line along a wall for part of the room's length: more often short, with a few things on it,
+    // than long and full. Now and then a second on the other wall.
+    const alongWall={bedroom:0.32,bathroom:0.3,bare:0.3,sala:0.2,kitchen:0.18,hall:0.1}[room.type]??-1;
+    if(!room.rise){
+      const first=wallSide();
+      for(const [side,rate] of [[first,alongWall],[-first,alongWall*0.3]]){
+        if(!likely(rate))continue;
+        const short=r()<0.6,span=Math.min(room.length-0.6,short?1.2+r()*1.4:2.6+r()*3),z0=-(0.3+r()*(room.length-0.6-span));
+        lineAlong(side*(half-0.3-r()*0.14),z0,z0-span,{count:short?between(1,4):between(3,Math.max(4,Math.round(span*2.6)))});
+      }
     }
     // One line across the room with the washing pegged on, bare where the walker passes under it.
-    if(strungOpen&&chance({bathroom:0.15,bare:0.12,kitchen:0.08,bedroom:0.08}[room.type]??-1)){
+    if(strungOpen&&likely({bathroom:0.18,bare:0.15,kitchen:0.1,bedroom:0.1,sala:0.05}[room.type]??-1)){
       const length=room.width-0.24,z=-(1+r()*(room.length-2)),line=sampayan.line({length,sag:Math.min(0.3,length*0.035),hangers:false,seed:lineSeed(),count:between(4,Math.min(24,Math.round(length*2.2))),gap:[-0.6,0.6]});
       line.position.set(0,floorAt(z)+Math.min(room.height-0.12,2.08+r()*0.12),z);group.add(line);placed.push(line);garments(line.userData.garments);count('lines');
     }
@@ -334,11 +342,34 @@ export function addHouseholdItems({THREE,group,room,seed,material,blocked=[],flo
   // Hangers hooked along the top of a window.
   for(const spot of windowSpots){
     const plain=spot.variant==='open'||spot.variant.startsWith('plain'),shape=spot.variant.startsWith('plain')?spot.variant.slice(5).toLowerCase():spot.variant;
-    if(plain||!chance(0.12))continue;
+    if(plain||!likely(0.2))continue;
     const left=shape==='narrow'?0.6:shape==='wide'?0.12:0.28,top=shape==='high'?2.28:2.16,length=2-2*left-0.1;
     const row=sampayan.line({length,sag:0,hangers:true,seed:lineSeed(),count:between(2,5),cluster:0.4});
     for(const string of row.children.slice(0,2))row.remove(string);   // they hang from the frame itself
     row.rotation.y=Math.PI/2;row.position.set(spot.side*(half-(spot.curtained?0.3:0.2)),floorAt(spot.z)+top-0.03,spot.z);group.add(row);placed.push(row);garments(row.userData.garments);count('windowHangers');
+  }
+  // Clothes on the wall itself, each on a hanger on a nail: most often one thing, sometimes a set of
+  // two to four. Tried up to three times in a room, each time less likely, so that most rooms that
+  // people sleep or wash in have something hanging somewhere.
+  const onWall={bedroom:0.5,bathroom:0.35,bare:0.4,sala:0.35,kitchen:0.22,hall:0.14}[room.type]??-1;
+  // A nail wants little room: any gap on a solid stretch of wall wide enough for what is to hang there,
+  // beside a photo or between a shelf and a switch.
+  const nailSpot=(halfWidth,low,high)=>{
+    const tries=[];for(const spot of wallSpots)for(const dz of [-0.7,-0.35,0,0.35,0.7])tries.push([spot.side,spot.z+dz,r()]);
+    tries.sort((p,q)=>p[2]-q[2]);
+    for(const [side,z] of tries)if(wallClear(side,z,halfWidth+0.04,low,high))return {side,z};
+    return null;
+  };
+  let onFarWall=false;
+  for(const share of [1,0.45,0.2]){
+    if(!likely(onWall*share))continue;
+    const n=r()<0.6?1:between(2,4),top=1.72+r()*0.24,width=(n-1)*0.36+0.44,clothes=sampayan.row({count:n,seed:lineSeed()}),spot=nailSpot(width/2,top-0.75,top);
+    if(spot){if(hang(clothes,spot.side,spot.z,top,0.113)){garments(n);count('wallClothes');}continue;}
+    // No room on a side wall: the far wall beside the doorway, on the side the door leaf does not stand against.
+    const leaf=group.userData.thresholdDoor??0,side=leaf?-leaf:wallSide(),inner=1.05,outer=half-0.15;
+    if(onFarWall||room.rise||outer-inner<width)continue;
+    const z=-room.length+0.024;clothes.position.set(side*(inner+width/2+r()*(outer-inner-width)),floorAt(z)+top,z);
+    group.add(clothes);placed.push(clothes);garments(n);count('wallClothes');onFarWall=true;report.farWall=1;
   }
   // On the floor: a rail of hangers, or a folding stand with washing pegged to it.
   if(chance({bedroom:0.1,bare:0.06,sala:0.03}[room.type]??-1)){

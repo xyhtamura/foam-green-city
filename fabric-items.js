@@ -2,9 +2,9 @@
 // mattresses, a rolled banig, cloth hung on a wall, tablecloths, potholders, and sofa covers. The patterns are the page-sized copies listed in
 // fabric-assets.js. Each pattern has one material for the whole session; each object has its own
 // small geometry, disposed with its room.
-import {FABRICS} from './fabric-assets.js?v=7ce56b07f1';
-import {placeOnSupport} from './object-supports.js?v=7ce56b07f1';
-import {wallThingsOf} from './household-items.js?v=7ce56b07f1';
+import {FABRICS} from './fabric-assets.js?v=be7d86413e';
+import {placeOnSupport} from './object-supports.js?v=be7d86413e';
+import {wallThingsOf} from './household-items.js?v=be7d86413e';
 
 const AISLE=0.72,LIFT=0.008,STEP=0.4;
 const materials=new Map();
@@ -55,7 +55,7 @@ function builder(THREE,repeat){
 }
 const cells=length=>Math.max(1,Math.ceil(length/STEP));
 
-export function addFabricItems({THREE,group,room,seed,loader,patch,blocked=[],fixed=[],hung=[],wallSpots=[],floorAt=()=>0,force=null}){
+export function addFabricItems({THREE,group,room,seed,loader,patch,blocked=[],fixed=[],hung=[],wallSpots=[],farWallTaken=false,floorAt=()=>0,force=null}){
   let state=(Math.imul(seed+90173,2246822519)>>>0)||1;
   const r=()=>{state=(Math.imul(state,1664525)+1013904223)>>>0;return state/4294967296;};
   const pick=list=>list[Math.floor(r()*list.length)],chance=p=>force==='fabric'||r()<p;
@@ -149,7 +149,7 @@ export function addFabricItems({THREE,group,room,seed,loader,patch,blocked=[],fi
       }
       if(done)break;
     }
-    if(!done&&level){
+    if(!done&&level&&!farWallTaken){
       const leaf=group.userData.thresholdDoor??0,side=leaf?-leaf:(r()<0.5?-1:1),inner=1.05,outer=half-0.15,w=Math.min(1.6,outer-inner,wide);
       if(w>=0.55){
         const x=side*(inner+w/2+r()*(outer-inner-w)),z=-room.length+0.032,mesh=cloth(w,tall);
