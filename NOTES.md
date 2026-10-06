@@ -1281,3 +1281,27 @@ Wall face. Measured first, in the loaded scene, how far each thing against a sid
 Kits. Measured by counting the geometries each kit disposes after one round of the objects `household-items.js` asks for and after five rounds. Held per extra round: plastics 10, linens 23, household tools 6, plastic storage 4, school chair 1, tableware 0, cardboard 0. The five that grew are now built per room. After the change the six rooms' baked triangle counts were identical to before it (9,918, 13,514, 3,248, 9,336, 8,772, 13,448), so placement is unchanged.
 
 Not done. Heap size over a long walk was not measured; the claim rests on the counts above and on nothing else holding the per-room kits. The cost of building five kits per room was not timed. The wall change was not viewed in motion, on the twisting route, with `?walls=blocks`, or in rooms with passages, stairs, or platforms; `room-architecture.js` and `side-spaces.js` still build from the room's edge. Door leaves were left 3.5 cm into the wall. The paper holder is still not placed, though the face it needs is now fixed. Nothing was pushed.
+
+## 2026-10-06 — Antigravity — procedural banig sleeping mat texture generator
+
+Xyh asked for pattern generators for banig, spanning neon synthetic plastic mats, pastel and sun-faded domestic sleeping mats, and traditional natural reed weaves, referencing supplied photos `media_1791275198244.png` (pastel folded mat with rick-rack borders) and `media_1791275240484.png` (stacked neon plastic polypropylene beach/sleeping mats).
+
+Added `scripts/generate_banig_textures.py` generating seamless, procedurally synthesized sleeping mat textures with flat-ribbon straw interlacing, edge furrow creasing, synthetic plastic specular highlights vs. matte organic reed striations:
+- `banig/neon_plastic/` (5 patterns): synthetic polypropylene ribbon weave with electric weft ground crossing bold saturated warp stripes (`neon_cyan_lagoon` matching reference 2 front cyan mat; `neon_fiesta_purple` matching middle purple/orange mat; `neon_emerald_chartreuse` matching top green mat; `neon_royal_hot_pink`; `neon_sunburst_tangerine`).
+- `banig/pastel_faded/` (5 patterns): sun-faded retro domestic sleeping mats with stepped zig-zag / rick-rack border stripes flanking broad pastel bands (`pastel_rose_periwinkle` matching reference 1 with cream straw ground, dusty rose, and periwinkle; `pastel_foamgreen_peach`; `sunfaded_retro_mint`; `faded_lavender_sage`; `coastal_bleached_blue`).
+- `banig/traditional_natural/` (4 patterns): organic unbleached dried reed / tikog / pandan straw with vegetable-dyed madder red, indigo, and forest green stripes, longitudinal leaf striations, and organic tone variance (`samar_madder_ochre`, `sulu_mangosteen_emerald`, `antique_unbleached_rush`, `ilocos_inabel_earth`).
+- `banig/geometric_tikog/` (4 patterns): authentic Basey Samar diamond twill ('mata-mata' / 'saruk') concentric lozenge weaves with 2/2 diagonal twill reed interlacing.
+- Interactive catalog: generated `banig/index.html` with responsive category filtering and 1× / 2× / 4× repeat toggles for reviewing seamless 2D tiling in the browser.
+
+Checks:
+- Generated 18 banig textures across 4 categories at 512×512 resolution.
+- 2×2 tile verification confirmed mathematical seamlessness across all 18 textures: strip counts (128 columns and rows) divide evenly; alternating basket and twill parity continues smoothly across boundaries; periodic triangle waves for zig-zag borders wrap with zero seam jump.
+- Verified visual fidelity by decoding and directly viewing output PNGs (`banig_neon_neon_cyan_lagoon.png`, `banig_neon_neon_fiesta_purple.png`, `banig_pastel_pastel_rose_periwinkle.png`, `banig_traditional_samar_madder_ochre.png`, `banig_geometric_tikog_samar_madder_ochre.png`) against the reference images.
+- `python scripts/check_published_assets.py` passes (161 tracked assets).
+- `node --experimental-default-type=module scripts/check_room_sequences.mjs` passes (13,000 rooms).
+
+Undone:
+- Banig meshes or rolled sleeping mat props are not yet placed in streamed bedroom or sala room pools (ready for integration into floor/bed models).
+- Higher resolutions (e.g., 1024×1024) can be rendered via `--size 1024`.
+Nothing was pushed.
+
