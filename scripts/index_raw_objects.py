@@ -28,12 +28,13 @@ REAL_SIZE = {
     'surf_jug': ('h', 0.33), 'surf_pouch': ('h', 0.20), 'zonrox_colorsafe': ('h', 0.27), 'zonrox_original': ('h', 0.27),
 }
 
-# Cutouts whose colour may vary: (from, to) hue rotation in degrees, and optionally how far a
-# dark image is lifted toward a colour, since rotating the hue of black changes nothing.
+# Cutouts whose colour may vary: (from, to) hue rotation in degrees; optional (from, to) factors
+# on saturation and brightness; and optionally how far a dark image is lifted toward a colour,
+# since rotating the hue of black changes nothing.
 # Branded packaging and photographs are left out and keep their own colours.
 HUES = {
-    'tshirt_red': dict(hue=[0, 330]), 'jeans_blue': dict(hue=[-25, 25]),
-    'athletic_shorts_black': dict(hue=[0, 330], lift=0.22),
+    'tshirt_red': dict(hue=[0, 330], sat=[0.2, 1.15], light=[0.5, 1.2]), 'jeans_blue': dict(hue=[-25, 25], sat=[0.5, 1.1], light=[0.65, 1.2]),
+    'athletic_shorts_black': dict(hue=[0, 330], lift=0.22, light=[0.8, 1.6]),
     'batya_green': dict(hue=[0, 330]), 'sunny_pitcher_pink': dict(hue=[0, 330]),
     'sunny_pitcher_turquoise': dict(hue=[0, 330]), 'tumbler_plastic_blue': dict(hue=[0, 330]),
     'backpack_olive': dict(hue=[-70, 70]),

@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import {fittingSizes} from './pipe-runs.js?v=9ddc9c7ed2';
+import {fittingSizes} from './pipe-runs.js?v=734bddea5a';
 
 // Modular PVC pipe parts, drawn as geometry. No textures and no downloaded
 // assets. Each part is authored once at a diameter of 1 and scaled per piece,

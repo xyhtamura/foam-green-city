@@ -15,7 +15,11 @@ export const RAW_OBJECTS=[
       0,
       330
     ],
-    "lift": 0.22
+    "lift": 0.22,
+    "light": [
+      0.8,
+      1.6
+    ]
   },
   {
     "id": "rawBackpackOlive",
@@ -172,6 +176,14 @@ export const RAW_OBJECTS=[
     "hue": [
       -25,
       25
+    ],
+    "sat": [
+      0.5,
+      1.1
+    ],
+    "light": [
+      0.65,
+      1.2
     ]
   },
   {
@@ -479,6 +491,14 @@ export const RAW_OBJECTS=[
     "hue": [
       0,
       330
+    ],
+    "sat": [
+      0.2,
+      1.15
+    ],
+    "light": [
+      0.5,
+      1.2
     ]
   },
   {
@@ -551,12 +571,14 @@ export function oddSize(asset,roll){
   return factor===1?asset:{...asset,width:asset.width*factor,odd:factor};
 }
 
-// A cutout that lists a hue range is drawn in one of twelve steps across it, three times in
-// four; otherwise it keeps its own colour. The result names a material variant for spriteMat.
+// A cutout that lists a hue range is drawn in one of twelve hues across it, three times in
+// four, and in one of three levels each of saturation and brightness where it lists those.
+// Otherwise it keeps its own colour. The result names a material variant for spriteMat.
 export function cutoutTone(asset,roll){
   if(!asset.hue||roll<0.25)return null;
-  const step=Math.floor((roll-0.25)/0.75*12),angle=asset.hue[0]+(asset.hue[1]-asset.hue[0])*step/11;
-  return Math.abs(angle)<1?null:{angle:Math.round(angle),lift:asset.lift??0};
+  const u=(roll-0.25)/0.75,level=(range,k)=>range?+(range[0]+(range[1]-range[0])*Math.floor(u*k%1*3)/2).toFixed(2):1;
+  const angle=Math.round(asset.hue[0]+(asset.hue[1]-asset.hue[0])*Math.floor(u*12)/11);
+  return {angle,lift:asset.lift??0,sat:level(asset.sat,37),light:level(asset.light,151)};
 }
 
 export function createRawObject({THREE,asset,material}={}){

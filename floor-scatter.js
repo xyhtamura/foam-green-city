@@ -22,12 +22,11 @@ const KINDS={
   sack:{radius:0.28,tall:true,colors:CLOTH},
   tub:{radius:0.22,tall:false,colors:PLASTIC},
   sheet:{radius:0.22,tall:false,flat:true,colors:[...PAPER,...CARD]},
-  slippers:{radius:0.16,tall:false,colors:PLASTIC},
 };
 const MIX={
-  domestic:[['bottle',14],['bottleDown',7],['can',8],['canDown',6],['jug',5],['carton',12],['cartonStack',5],['crumple',14],['bag',10],['sack',5],['tub',5],['sheet',9],['slippers',5]],
-  kitchen:[['bottle',20],['bottleDown',7],['can',12],['canDown',6],['jug',9],['carton',10],['cartonStack',4],['crumple',9],['bag',10],['sack',7],['tub',7],['sheet',4],['slippers',2]],
-  bathroom:[['bottle',30],['bottleDown',8],['jug',10],['tub',14],['crumple',8],['bag',6],['slippers',10],['can',4]],
+  domestic:[['bottle',14],['bottleDown',7],['can',8],['canDown',6],['jug',5],['carton',12],['cartonStack',5],['crumple',14],['bag',10],['sack',5],['tub',5],['sheet',9]],
+  kitchen:[['bottle',20],['bottleDown',7],['can',12],['canDown',6],['jug',9],['carton',10],['cartonStack',4],['crumple',9],['bag',10],['sack',7],['tub',7],['sheet',4]],
+  bathroom:[['bottle',30],['bottleDown',8],['jug',10],['tub',14],['crumple',8],['bag',6],['can',4]],
   bare:[['carton',18],['cartonStack',10],['sheet',16],['crumple',16],['bag',10],['sack',9],['bottle',7],['bottleDown',6],['canDown',6],['jug',2]],
 };
 function hash(n){let h=Math.imul(n+1,0x45d9f3b)>>>0;h=Math.imul(h^(h>>>16),0x45d9f3b)>>>0;return (h^(h>>>16))>>>0;}
@@ -164,11 +163,6 @@ export function createScatterMesh(THREE,items,{material,floorAt=()=>0}={}){
     }else if(o.kind==='sheet'){
       const w=(0.24+a*0.2)*s,dp=(0.18+b*0.2)*s;
       for(let n=0;n<1+Math.floor(d*3);n++)add('box',o.color,k*(1-n*0.06),[w,0.006,dp],[n*0.012,n*0.006,0],[0,n*0.2*(a-0.5),0]);
-    }else if(o.kind==='slippers'){
-      for(const dx of [-0.07,0.07]){
-        add('box',o.color,k,[0.085*s,0.018,0.23*s],[dx*s,0,dx*a*0.4],[0,(b-0.5)*0.8*Math.sign(dx),0]);
-        add('box',o.accent,k,[0.09*s,0.022,0.03*s],[dx*s,0.018,dx*a*0.4-0.05*s],[0,(b-0.5)*0.8*Math.sign(dx),0]);
-      }
     }
   }
   const geometry=new THREE.BufferGeometry();

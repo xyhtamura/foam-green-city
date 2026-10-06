@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import {createUtilityProps} from './utility-props.js?v=9ddc9c7ed2';
+import {createUtilityProps} from './utility-props.js?v=734bddea5a';
 
 export const FURNITURE_FINISHES = [
   {name:'Cream plastic',color:0xe8e4d6},{name:'Beige plastic',color:0xc9b994},

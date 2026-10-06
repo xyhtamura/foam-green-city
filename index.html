@@ -84,36 +84,36 @@ window.addEventListener('unhandledrejection',reportLoadFailure);
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { createJalousieWall } from './jalousie.js?v=9ddc9c7ed2';
-import { createDomesticProps, animateDomesticProps, createFurnitureVariants, FURNITURE_FINISHES } from './domestic-props.js?v=9ddc9c7ed2';
-import { WALL_HANGINGS } from './wall-assets.js?v=9ddc9c7ed2';
-import { RAW_OBJECTS, createRawObject, oddSize, cutoutTone } from './raw-object-assets.js?v=9ddc9c7ed2';
-import { loadCurtainPatterns } from './photo-assets.js?v=9ddc9c7ed2';
-import { ROOM_WIDTHS, partitionPieces } from './room-widths.js?v=9ddc9c7ed2';
+import { createJalousieWall } from './jalousie.js?v=734bddea5a';
+import { createDomesticProps, animateDomesticProps, createFurnitureVariants, FURNITURE_FINISHES } from './domestic-props.js?v=734bddea5a';
+import { WALL_HANGINGS } from './wall-assets.js?v=734bddea5a';
+import { RAW_OBJECTS, createRawObject, oddSize, cutoutTone } from './raw-object-assets.js?v=734bddea5a';
+import { loadCurtainPatterns } from './photo-assets.js?v=734bddea5a';
+import { ROOM_WIDTHS, partitionPieces } from './room-widths.js?v=734bddea5a';
 
-import { LAYOUT_IDS, generateFurnitureLayout, checkFurnitureLayout, TABLE_TOP } from './furniture-layouts.js?v=9ddc9c7ed2';
-import { FLOOR_IDS, createFloorVariant } from './floor-variants.js?v=9ddc9c7ed2';
-import { DOOR_STYLES, createDoorLeaves } from './doors.js?v=9ddc9c7ed2';
-import { MODEL_ASSETS, loadModelAssets } from './model-assets.js?v=9ddc9c7ed2';
-import { createRoomSet, createRoomFixture } from './room-sets.js?v=9ddc9c7ed2';
-import { createUratexSofa } from './uratex-sofa.js?v=9ddc9c7ed2';
-import { createWireRun } from './wire-runs.js?v=9ddc9c7ed2';
-import { createWallUtilities } from './wall-utilities.js?v=9ddc9c7ed2';
-import {createWalkSequence,retainedRooms,walkRegions,canOccupy,moveWalker,pathToRoute,roomExits} from './navigation.js?v=9ddc9c7ed2';
-import {addDomesticDetails} from './domestic-details.js?v=9ddc9c7ed2';
+import { LAYOUT_IDS, generateFurnitureLayout, checkFurnitureLayout, TABLE_TOP } from './furniture-layouts.js?v=734bddea5a';
+import { FLOOR_IDS, createFloorVariant } from './floor-variants.js?v=734bddea5a';
+import { DOOR_STYLES, createDoorLeaves } from './doors.js?v=734bddea5a';
+import { MODEL_ASSETS, loadModelAssets } from './model-assets.js?v=734bddea5a';
+import { createRoomSet, createRoomFixture } from './room-sets.js?v=734bddea5a';
+import { createUratexSofa } from './uratex-sofa.js?v=734bddea5a';
+import { createWireRun } from './wire-runs.js?v=734bddea5a';
+import { createWallUtilities } from './wall-utilities.js?v=734bddea5a';
+import {createWalkSequence,retainedRooms,walkRegions,canOccupy,moveWalker,pathToRoute,roomExits} from './navigation.js?v=734bddea5a';
+import {addDomesticDetails} from './domestic-details.js?v=734bddea5a';
 let wallUtilities;
-import { roomLighting } from './room-lighting.js?v=9ddc9c7ed2';
-import { scatterLevel, planScatter, planSideScatter, scatterBlocks, createScatterMesh } from './floor-scatter.js?v=9ddc9c7ed2';
-import { createBaseboards } from './baseboards.js?v=9ddc9c7ed2';
-import { addHouseholdItems } from './household-items.js?v=9ddc9c7ed2';
-import { spatialFrame, spatialPoint, SPATIAL_GLSL, SPATIAL_PROFILES } from './spatial-route.js?v=9ddc9c7ed2';
-import { floorHeight, cameraRoute, routePoint } from './room-sequences.js?v=9ddc9c7ed2';
-import {sideSpacePlan,DRAWER_VARIANTS} from './side-spaces.js?v=9ddc9c7ed2';
-import {addWoodDetails} from './wood-details.js?v=9ddc9c7ed2';
-import {addSideWashrooms} from './side-washrooms.js?v=9ddc9c7ed2';
-import {addSideStorage} from './side-storage.js?v=9ddc9c7ed2';
-import {addSideBedrooms} from './side-bedrooms.js?v=9ddc9c7ed2';
-import { branchOpenings, raiseFloor, createRoomArchitecture } from './room-architecture.js?v=9ddc9c7ed2';
+import { roomLighting } from './room-lighting.js?v=734bddea5a';
+import { scatterLevel, planScatter, planSideScatter, scatterBlocks, createScatterMesh } from './floor-scatter.js?v=734bddea5a';
+import { createBaseboards } from './baseboards.js?v=734bddea5a';
+import { addHouseholdItems } from './household-items.js?v=734bddea5a';
+import { spatialFrame, spatialPoint, SPATIAL_GLSL, SPATIAL_PROFILES } from './spatial-route.js?v=734bddea5a';
+import { floorHeight, cameraRoute, routePoint } from './room-sequences.js?v=734bddea5a';
+import {sideSpacePlan,DRAWER_VARIANTS} from './side-spaces.js?v=734bddea5a';
+import {addWoodDetails} from './wood-details.js?v=734bddea5a';
+import {addSideWashrooms} from './side-washrooms.js?v=734bddea5a';
+import {addSideStorage} from './side-storage.js?v=734bddea5a';
+import {addSideBedrooms} from './side-bedrooms.js?v=734bddea5a';
+import { branchOpenings, raiseFloor, createRoomArchitecture } from './room-architecture.js?v=734bddea5a';
 
 // ---- palette (DepEd MPSS, stylized: green walls) ----
 const COL = {
@@ -191,14 +191,22 @@ function curvize(material){
       }
       #include <opaque_fragment>`);
     const up=material.userData.upNormal,tone=material.userData.tone;
-    // A toned cutout has its hue turned about the grey axis, which keeps folds and shading;
-    // a dark image is also lifted toward the colour that turn would give pure red.
+    // A toned material has its hue turned about the grey axis, which keeps folds and shading,
+    // then its saturation and brightness scaled; a dark image is also lifted toward a colour.
+    // The values are uniforms, so every toned material of one kind shares a compiled program.
     if(tone){
-      const a=tone.angle*Math.PI/180,f=n=>n.toFixed(5),c=new THREE.Color().setHSL((tone.angle%360+360)%360/360,0.55,0.4);
-      shader.fragmentShader=shader.fragmentShader.replace('#include <map_fragment>',`#include <map_fragment>
+      const a=tone.angle*Math.PI/180;
+      shader.uniforms.uTurn={value:new THREE.Vector3(Math.cos(a),Math.sin(a),1-Math.cos(a))};
+      shader.uniforms.uGrade={value:new THREE.Vector3(tone.lift??0,tone.sat??1,tone.light??1)};
+      shader.uniforms.uLiftTo={value:new THREE.Color().setHSL((tone.angle%360+360)%360/360,0.55,0.4)};
+      shader.fragmentShader=`uniform vec3 uTurn;
+uniform vec3 uGrade;
+uniform vec3 uLiftTo;
+`+shader.fragmentShader.replace('#include <map_fragment>',`#include <map_fragment>
       { vec3 k=vec3(0.57735),t=diffuseColor.rgb;
-        t=t*${f(Math.cos(a))}+cross(k,t)*${f(Math.sin(a))}+k*dot(k,t)*${f(1-Math.cos(a))};
-        diffuseColor.rgb=mix(max(t,0.0),vec3(${f(c.r)},${f(c.g)},${f(c.b)}),${f(tone.lift)}); }`);
+        t=max(t*uTurn.x+cross(k,t)*uTurn.y+k*dot(k,t)*uTurn.z,0.0);
+        t=mix(vec3(dot(t,vec3(0.2126,0.7152,0.0722))),t,uGrade.y)*uGrade.z;
+        diffuseColor.rgb=mix(max(t,0.0),uLiftTo,uGrade.x); }`);
     }
     // Undo the back-face flip, so both sides of a cutout are lit alike.
     if(up)shader.fragmentShader=shader.fragmentShader.replace('#include <normal_fragment_begin>',`#include <normal_fragment_begin>
@@ -298,7 +306,7 @@ const ASP = { sofa: 162/273, curtain: 808/810, plant: 370/335,
               wallCalendar: 1.309608540925267, taboTimba: 754/689,   // wallCalendar is the monthly calendar, about 0.4 m by 0.52 m
               waterDispenser: 944/348 };
 function spriteMat(file,tone=null){
-  const key=tone?`${file}#${tone.angle}/${tone.lift}`:file;
+  const key=tone?`${file}#${tone.angle}/${tone.lift}/${tone.sat}/${tone.light}`:file;
   if (SPRMAT[key]) return SPRMAT[key];
   // Tone variants of one image share its texture.
   let tx = SPRTEX[file];
@@ -312,7 +320,7 @@ function spriteMat(file,tone=null){
   const material=new THREE.MeshLambertMaterial({ map: tx, alphaTest: 0.5, side: THREE.DoubleSide, fog: true });
   material.userData.upNormal=true;material.userData.tone=tone;
   // The patch below differs for these materials, so they must not share a compiled program with the rest.
-  material.customProgramCacheKey=()=>'up-normal'+(tone?`:${tone.angle}/${tone.lift}`:'');
+  material.customProgramCacheKey=()=>'up-normal'+(tone?':tone':'');
   return SPRMAT[key] = curvize(material);
 }
 function prepWall(proto){                   // scale, foam-green tint, crunch
@@ -503,7 +511,7 @@ function varyColours(grp,i){
         // ?cloth=<degrees> forces one turn on every cloth, for inspection.
         const angle=params.has('cloth')?30*Math.round((Number(params.get('cloth'))||0)/30):drawn;
         if(!angle){unchanged.add(m);return m;}   // not cached: the cache is disposed with the room, and this material is shared
-        const toned=m.clone();toned.userData.tone={angle,lift:0};toned.customProgramCacheKey=()=>'tone:'+angle;
+        const toned=m.clone();toned.userData.tone={angle,lift:0,sat:0.8+next()*0.3,light:0.85+next()*0.25};toned.customProgramCacheKey=()=>'tone';
         cache.set(key,curvize(toned));
       }else cache.set(key,curvize(Object.assign(m.clone(),{color:variedColour(m,kind,next)})));
     }
@@ -752,7 +760,7 @@ function buildSegment(index){
   });
   const clutterLevel=scatterLevel(i,descriptor.type,params.get('clutter'));
   // Dishes, bags, vessels, and linens go in first; loose scatter then fills in around them.
-  const items=addHouseholdItems({THREE,group:grp,room:descriptor,seed:i,material:householdMaterial,blocked:[...taken,...architecture.userData.reservations],floorAt:z=>floorHeight(descriptor,z),amount:{none:0,light:0.6,medium:1,heavy:1.4}[clutterLevel],forceBall:params.get('prop')==='basketball'});
+  const items=addHouseholdItems({THREE,group:grp,room:descriptor,seed:i,material:householdMaterial,blocked:[...taken,...architecture.userData.reservations],floorAt:z=>floorHeight(descriptor,z),amount:{none:0,light:0.6,medium:1,heavy:1.4}[clutterLevel],forceBall:params.get('prop')==='basketball',force:params.get('prop'),paint:WALL_PAINTS[grp.userData.wallPaint]});
   if(items.mesh)grp.add(items.mesh);
   grp.userData.household=items.report;
   for(const b of items.walkBlocks){const y=floorHeight(descriptor,(b.minZ+b.maxZ)/2);grp.userData.walkBlocks.push({minX:b.minX,maxX:b.maxX,minZ:b.minZ+descriptor.startZ,maxZ:b.maxZ+descriptor.startZ,minY:y,maxY:y+b.height});}
