@@ -1,16 +1,18 @@
 // Places the mesh kits' objects in a room, then bakes them into one vertex-coloured mesh.
-import {createTablewareKit,TABLEWARE_COLOURS} from './tableware.js?v=67bc69e65d';
-import {createPlasticKit,PLASTIC_COLOURS} from './plastics.js?v=67bc69e65d';
-import {createLinenKit,LINEN_COLOURS} from './linens.js?v=67bc69e65d';
-import {placeOnSupport} from './object-supports.js?v=67bc69e65d';
-import {createHouseholdToolKit} from './household-tools.js?v=67bc69e65d';
-import {createPlasticStorageKit} from './plastic-storage.js?v=67bc69e65d';
-import {createCardboardKit} from './cardboard.js?v=67bc69e65d';
-import {createSchoolChairKit} from './school-chair.js?v=67bc69e65d';
-import {createBasketball,BALL_COLOURS} from './basketball.js?v=67bc69e65d';
-import {createFootwearKit,FOOTWEAR_TYPES} from './footwear.js?v=67bc69e65d';
-import {createBathroomKit} from './bathroom-tools.js?v=67bc69e65d';
-import {createPackagingKit} from './packaging.js?v=67bc69e65d';
+import {createTablewareKit,TABLEWARE_COLOURS} from './tableware.js?v=44e2704819';
+import {createPlasticKit,PLASTIC_COLOURS} from './plastics.js?v=44e2704819';
+import {createLinenKit,LINEN_COLOURS} from './linens.js?v=44e2704819';
+import {placeOnSupport} from './object-supports.js?v=44e2704819';
+import {createHouseholdToolKit} from './household-tools.js?v=44e2704819';
+import {createPlasticStorageKit} from './plastic-storage.js?v=44e2704819';
+import {createCardboardKit} from './cardboard.js?v=44e2704819';
+import {createSchoolChairKit} from './school-chair.js?v=44e2704819';
+import {createBasketball,BALL_COLOURS} from './basketball.js?v=44e2704819';
+import {createFootwearKit,FOOTWEAR_TYPES} from './footwear.js?v=44e2704819';
+import {createBathroomKit} from './bathroom-tools.js?v=44e2704819';
+import {createDecorKit} from './decor.js?v=44e2704819';
+import {createMirrorsValancesKit,VALANCE_TYPES} from './mirrors-valances.js?v=44e2704819';
+import {createPackagingKit} from './packaging.js?v=44e2704819';
 
 // The kits only lend their geometry and colours to the bake. Tableware and cardboard build from
 // a fixed set of shapes, so one of each serves every room. The others make new geometry for each
@@ -18,7 +20,7 @@ import {createPackagingKit} from './packaging.js?v=67bc69e65d';
 let shared=null;
 const AISLE=0.72;
 
-export function addHouseholdItems({THREE,group,room,seed,material,blocked=[],floorAt=()=>0,amount=1,forceBall=false,paint=0xbfdcc9,force=null,wallSpots=[]}){
+export function addHouseholdItems({THREE,group,room,seed,material,blocked=[],floorAt=()=>0,amount=1,forceBall=false,paint=0xbfdcc9,force=null,wallSpots=[],windowSpots=[]}){
   const began=performance.now();
   shared??={table:createTablewareKit({radialSegments:10}),card:createCardboardKit()};
   const kits={...shared,plastic:createPlasticKit({radialSegments:10}),linen:createLinenKit(),tool:createHouseholdToolKit(),storage:createPlasticStorageKit(),chair:createSchoolChairKit()};
@@ -153,6 +155,7 @@ export function addHouseholdItems({THREE,group,room,seed,material,blocked=[],flo
   }
   // ---- The third set of kits: footwear, bathroom things, packaging. Drawn after everything above. ----
   const shoeKit=createFootwearKit(),bathKit=createBathroomKit(),packKit=createPackagingKit();
+  const glassKit=createMirrorsValancesKit(),decorKit=createDecorKit();
   const overlaps=rect=>taken.some(o=>rect.maxX>o.minX&&rect.minX<o.maxX&&rect.maxZ>o.minZ&&rect.minZ<o.maxZ);
   const count=key=>{report[key]=(report[key]??0)+1;return true;};
   // Just inside the entry doorway, beside the aisle.
@@ -192,8 +195,9 @@ export function addHouseholdItems({THREE,group,room,seed,material,blocked=[],flo
   };
   if(room.type!=='bathroom'){
     // On tables and shelves: a tissue roll, a box, a pouch, a packet, a sachet, a cup of toothbrushes.
-    const extras={roll,cup:()=>bath('toothbrushCup',{scale:1}),box:()=>pack('productBox'),pouch:()=>pack('pouch'),packet:()=>pack('packet'),sachet:()=>pack('sachet',{pose:'flat'})};
-    const onTop={kitchen:['pouch','packet','box','sachet','sachet','roll'],sala:['packet','roll','box','sachet'],bedroom:['box','roll','cup','sachet'],other:['packet','box']}[kind];
+    const handMirror=()=>{const m=glassKit.mirror(r()<0.5?'handRound':'handOval',{width:0.11+r()*0.03,height:0.15+r()*0.04,handleLength:0.1,colour:pick(plasticColours)});m.rotation.x=-Math.PI/2;return m;};
+    const extras={roll,hand:()=>set('hand-mirror',[handMirror(),0,0.008,0]),cup:()=>bath('toothbrushCup',{scale:1}),box:()=>pack('productBox'),pouch:()=>pack('pouch'),packet:()=>pack('packet'),sachet:()=>pack('sachet',{pose:'flat'})};
+    const onTop={kitchen:['pouch','packet','box','sachet','sachet','roll'],sala:['packet','roll','box','sachet'],bedroom:['box','roll','cup','sachet','hand'],other:['packet','box']}[kind];
     const put=(parent,name)=>{const object=set(name,[extras[name]()]);if(placeOnSupport({THREE,parent,object,support:parent.userData.supportSurface,random:r})){placed.push(object);return count('packaging');}report.rejected++;return false;};
     for(const table of group.children.filter(o=>o.userData.diningTable&&o.userData.supportSurface))
       for(let n=chance(0.35)?between(1,2):0;n>0;n--)put(table,pick(onTop));
@@ -202,6 +206,81 @@ export function addHouseholdItems({THREE,group,room,seed,material,blocked=[],flo
     // Dropped on the floor, anywhere, and walked over; a paper bag stood by a wall.
     for(let n=Math.round(amount*between(0,2));n>0;n--)if(stand(pack(r()<0.6?'sachet':'packet',{pose:'flat',crumple:0.4+r()*0.6,fullness:r()*0.4}),{flat:true,open:true,litter:true}))count('packaging');
     if(['sala','kitchen','bedroom'].includes(room.type)&&chance(0.15)&&stand(pack('shoppingBag',{colour:pick([0xb18b58,0xc9a777,0xe8e4d8,0x8c5a3a]),crumple:r()*0.4})))count('packaging');
+  }
+  // ---- The fourth set of kits: mirrors, valances, and cloth decor. Drawn after everything above. ----
+  const cloths=[0xc49b9c,0xb28082,0x8fa9b5,0xd8c9a0,0x9db08e,0xc8a36a,0xe4dccb,0xa98fb5,0x7f9c94,0xd0876f];
+  // What already hangs on or stands against a side wall, found once and only if something is to be hung.
+  let wallThings=null;
+  const wallClear=(side,z,halfWidth,low,high)=>{
+    if(!wallThings){
+      wallThings=[];group.updateMatrixWorld(true);
+      const box=new THREE.Box3(),visit=o=>{
+        if(o.name==='room-partition'||o.name==='baseboards'||o.name==='jalousie-wall'||o.name==='wall-protrusions'||o===group.userData.architecture||o===group.userData.floorGroup)return;
+        box.setFromObject(o);if(box.isEmpty())return;
+        const reach=Math.max(Math.abs(box.min.x),Math.abs(box.max.x)),deep=box.max.x-box.min.x,tall=box.max.y-box.min.y;
+        if(reach<half-0.45)return;
+        // A group holding many things is read thing by thing, or it would close the whole wall.
+        if(o.children.length&&(deep>1.5||box.max.z-box.min.z>2.2)){o.children.forEach(visit);return;}
+        if(deep>1.5||(tall>2.2&&deep<0.4))return;   // the ceiling, or a wall module
+        wallThings.push({side:Math.sign(box.min.x+box.max.x),minZ:box.min.z-group.position.z,maxZ:box.max.z-group.position.z,low:box.min.y,high:box.max.y});
+      };
+      group.children.forEach(visit);
+    }
+    const y=floorAt(z);
+    return !wallThings.some(t=>t.side===side&&z+halfWidth>t.minZ&&z-halfWidth<t.maxZ&&y+high>t.low&&y+low<t.high);
+  };
+  const freeSpots=[...wallSpots];
+  const takeSpot=(halfWidth,low,high)=>{
+    while(freeSpots.length){const spot=freeSpots.splice(Math.floor(r()*freeSpots.length),1)[0];if(wallClear(spot.side,spot.z,halfWidth+0.4,low,high))return spot;}
+    return null;
+  };
+  // Hung flat on a side wall, facing the room; `back` is how far the object reaches behind its origin.
+  const hang=(object,side,z,y,inset)=>{object.rotation.y=-side*Math.PI/2;object.position.set(side*(half-inset),floorAt(z)+y,z);group.add(object);placed.push(object);return true;};
+  // A bare mirror: most often in a bathroom, sometimes in a bedroom or sala. The bake has no reflection, so it is a pale plate.
+  if(['bathroom','bedroom','sala'].includes(room.type)&&chance(room.type==='bathroom'?0.45:0.18)){
+    const width=0.28+r()*0.17,height=0.4+r()*0.3,spot=takeSpot(width/2,1.45-height/2,1.45+height/2);
+    if(spot&&hang(glassKit.mirror(r()<0.5?'bareOval':'bareRectangle',{width,height}),spot.side,spot.z+(r()-0.5)*0.8,1.45,0.115))count('mirrors');
+  }
+  // A length of cloth hung on a wall.
+  if(['sala','bedroom'].includes(room.type)&&chance(0.08)){
+    const width=0.3+r()*0.25,drop=0.4+r()*0.35,spot=takeSpot(width/2,1.95-drop,1.95);
+    if(spot&&hang(decorKit.create('wallHanging',{width,drop,sag:0.01,colour:pick(cloths),accent:pick(cloths),seed:Math.floor(r()*1e6)}),spot.side,spot.z+(r()-0.5)*0.8,1.95,0.125))count('hangings');
+  }
+  // Valances over glazed windows, one cloth to a room: over a third of curtained windows and a tenth of the rest.
+  if(['sala','bedroom','kitchen'].includes(room.type)&&windowSpots.length){
+    const colour=pick(cloths),accent=pick(cloths),type=pick(VALANCE_TYPES),folds=between(8,14);
+    for(const spot of windowSpots){
+      const plain=spot.variant==='open'||spot.variant.startsWith('plain'),shape=spot.variant.startsWith('plain')?spot.variant.slice(5).toLowerCase():spot.variant;
+      if(plain||!chance(spot.curtained?0.35:0.1))continue;
+      const left=shape==='narrow'?0.6:shape==='wide'?0.12:0.28,top=shape==='high'?2.28:2.16,length=Math.min(1.96,2-2*left+0.3);
+      if(top+0.12>room.height)continue;
+      if(hang(glassKit.valance(type,{length,drop:0.2+r()*0.1,jabotDrop:0.5+r()*0.2,swags:length>1.3?2:1,folds,colour,accent}),spot.side,spot.z,top+0.07,spot.curtained?0.29:0.17))count('valances');
+    }
+  }
+  // Banderitas strung from wall to wall, in a hall most of all.
+  const strung={hall:0.25,auditorium:0.25,sala:0.05,bare:0.04}[room.type];
+  if(strung&&chance(strung)){
+    const length=room.width-0.24,y=Math.min(room.height-0.22,3.1),palette=[pick(cloths),pick(cloths),pick(cloths),pick(cloths)];
+    for(let n=between(1,3);n>0;n--){
+      // Not through a column or a stair: those are among the architecture's reserved floor.
+      const solid=group.userData.architecture?.userData.reservations??[];
+      let z=null;for(let attempt=0;attempt<8&&z===null;attempt++){const at=-(1+r()*(room.length-2));if(!solid.some(b=>at>b.minZ-0.15&&at<b.maxZ+0.15))z=at;}
+      if(z===null)continue;
+      const line=decorKit.create('bunting',{length,drop:0.2+r()*0.08,sag:Math.min(0.5,length*(0.03+r()*0.04)),flags:Math.max(2,Math.min(64,Math.round(length/0.32))),palette,accent:0xe4dccb,seed:Math.floor(r()*1e6)});
+      line.position.set(0,floorAt(z)+y,z);group.add(line);placed.push(line);count('bunting');
+    }
+  }
+  // Pleated skirting round every table in a hall laid out for an occasion.
+  if(['hall','auditorium'].includes(room.type)&&chance(0.25)){
+    const colour=pick(cloths);
+    for(const table of group.children.filter(o=>o.userData.diningTable&&o.userData.supportSurface)){
+      const s=table.userData.supportSurface,x0=s.minX-0.025,x1=s.maxX+0.025,z0=s.minZ-0.025,z1=s.maxZ+0.025,drop=s.height-0.06,skirt=new THREE.Group();
+      for(const [length,x,z,turn] of [[x1-x0,(x0+x1)/2,z1,0],[x1-x0,(x0+x1)/2,z0,Math.PI],[z1-z0,x1,(z0+z1)/2,Math.PI/2],[z1-z0,x0,(z0+z1)/2,-Math.PI/2]]){
+        const side=decorKit.create('skirting',{length,drop,colour,flags:Math.max(2,Math.min(64,Math.round(length*6)))});
+        side.position.set(x,s.height-0.012,z);side.rotation.y=turn;skirt.add(side);
+      }
+      table.add(skirt);placed.push(skirt);count('skirting');
+    }
   }
   if(!placed.length)return {mesh:null,footprints,walkBlocks,report};
 

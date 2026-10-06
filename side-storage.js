@@ -1,5 +1,5 @@
-import {branchOpenings,sideSpacePlan} from './side-spaces.js?v=67bc69e65d';
-import {localBounds} from './object-supports.js?v=67bc69e65d';
+import {branchOpenings,sideSpacePlan} from './side-spaces.js?v=44e2704819';
+import {localBounds} from './object-supports.js?v=44e2704819';
 
 export function addSideStorage({THREE,group,room,assets,curvize}){
   const owner=new THREE.Group();owner.name='side-storage';group.add(owner);

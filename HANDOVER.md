@@ -47,6 +47,19 @@ A Kenney wall module is 0.1 m thick with its near face on its origin plane. The 
 
 `?inspect=1` now also sets `window.fgc` to `{THREE,scene,cam,renderer,segments,WALLP}` for console measurement. With the browser pane hidden, `requestAnimationFrame` is paused, so a test can pose `cam`, call `renderer.render`, and `readPixels` in the same task.
 
+## Mirrors, valances, and cloth decor — 2026-10-06
+
+`mirrors-valances.js` and `decor.js` are unchanged copies from `F:/xyh/fgc-cx`, the fourth set placed by `household-items.js`, after the third and baked into the same per-room mesh. Of the kits in that folder, cardboard, bathroom tools, packaging, and footwear were already in; these two were the new ones.
+
+- Bare mirror, oval or rectangular, 0.28 to 0.45 m wide: on a solid stretch of side wall at 1.45 m, in 45% of bathrooms and 18% of bedrooms and salas. The bake carries colour only, so the face is a pale plate with no reflection.
+- Hand mirror: lying face up among the things on a bedroom table or shelf.
+- Valance: over glazed windows in salas, bedrooms, and kitchens, a third of curtained windows and a tenth of the rest, one cloth and one style to a room. Plain openings get none. `index.html` passes `windowSpots`, each window module's side, position, variant, and whether it has curtains; the opening's width and top are worked out from the variant as `jalousie.js` does, so the two must change together.
+- Bunting: one to three lines from wall to wall, 0.22 m under the ceiling and no higher than 3.1 m, in a quarter of halls and auditoriums, 5% of salas, and 4% of bare rooms, clear of columns and stairs.
+- Table skirting: pleated cloth round every table in a quarter of halls and auditoriums.
+- Wall cloth: a hanging length on a solid stretch of wall in 8% of salas and bedrooms.
+
+A mirror or wall cloth takes any solid wall module without a protrusion, then checks what already hangs or stands there: `wallClear` measures the room's wall-side objects once, and only if something is to be hung. `?prop=kits` forces all of it. The kit's runner, banner, and fringe are not used; tables already have a runner.
+
 ## Still meshes merged by material — 2026-10-06
 
 `merge-static.js` runs at the end of `buildSegment`. Every mesh in the room that will not move again is copied, in the room's frame, into one mesh per material, named `merged-static`. The originals stay in the room's tree, because the placement code, the inspector, and `dropSegment` all read it, and are put on layer 1 (`SOURCE_LAYER`), which the camera does not draw. A raycaster reaches them only with `ray.layers.enable(SOURCE_LAYER)`; the merged meshes ignore rays.

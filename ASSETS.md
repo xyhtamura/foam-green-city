@@ -266,3 +266,7 @@ PermanentMarker-Regular.ttf and its Apache 2.0 licence are stored in fonts/. Bot
 Thirty-one further PNGs in `2d/raw objects/` are in use, 76 in all; `raw-object-assets.js` lists each file. They are supplied by Xyh and covered by the confirmation above that supplied images are owned or cleared for redistribution, under the project's CC BY 4.0 artwork terms. Most branded packaging among them had its lettering scrambled before use; the food keeper, dish rack, and Orocan icebox, pail, and wardrobe show a maker's label as photographed.
 
 `footwear.js`, `bathroom-tools.js`, and `packaging.js` are procedural meshes authored for this project by Codex in `F:/xyh/fgc-cx` and copied here unchanged. They use no models, images, or fonts. Code is MIT and the geometry is CC BY 4.0 under the project's artwork terms.
+
+## Mirrors, valances, and decor kits — 2026-10-06
+
+`mirrors-valances.js` and `decor.js` are procedural meshes authored for this project by Codex in `F:/xyh/fgc-cx` and copied here unchanged. They use no models, images, or fonts. Code is MIT and the geometry is CC BY 4.0 under the project's artwork terms.
