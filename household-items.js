@@ -1,16 +1,16 @@
 // Places the mesh kits' objects in a room, then bakes them into one vertex-coloured mesh.
-import {createTablewareKit,TABLEWARE_COLOURS} from './tableware.js?v=fb5187d433';
-import {createPlasticKit,PLASTIC_COLOURS} from './plastics.js?v=fb5187d433';
-import {createLinenKit,LINEN_COLOURS} from './linens.js?v=fb5187d433';
-import {placeOnSupport} from './object-supports.js?v=fb5187d433';
-import {createHouseholdToolKit} from './household-tools.js?v=fb5187d433';
-import {createPlasticStorageKit} from './plastic-storage.js?v=fb5187d433';
-import {createCardboardKit} from './cardboard.js?v=fb5187d433';
-import {createSchoolChairKit} from './school-chair.js?v=fb5187d433';
-import {createBasketball,BALL_COLOURS} from './basketball.js?v=fb5187d433';
-import {createFootwearKit,FOOTWEAR_TYPES} from './footwear.js?v=fb5187d433';
-import {createBathroomKit} from './bathroom-tools.js?v=fb5187d433';
-import {createPackagingKit} from './packaging.js?v=fb5187d433';
+import {createTablewareKit,TABLEWARE_COLOURS} from './tableware.js?v=67bc69e65d';
+import {createPlasticKit,PLASTIC_COLOURS} from './plastics.js?v=67bc69e65d';
+import {createLinenKit,LINEN_COLOURS} from './linens.js?v=67bc69e65d';
+import {placeOnSupport} from './object-supports.js?v=67bc69e65d';
+import {createHouseholdToolKit} from './household-tools.js?v=67bc69e65d';
+import {createPlasticStorageKit} from './plastic-storage.js?v=67bc69e65d';
+import {createCardboardKit} from './cardboard.js?v=67bc69e65d';
+import {createSchoolChairKit} from './school-chair.js?v=67bc69e65d';
+import {createBasketball,BALL_COLOURS} from './basketball.js?v=67bc69e65d';
+import {createFootwearKit,FOOTWEAR_TYPES} from './footwear.js?v=67bc69e65d';
+import {createBathroomKit} from './bathroom-tools.js?v=67bc69e65d';
+import {createPackagingKit} from './packaging.js?v=67bc69e65d';
 
 // The kits only lend their geometry and colours to the bake. Tableware and cardboard build from
 // a fixed set of shapes, so one of each serves every room. The others make new geometry for each

@@ -84,38 +84,38 @@ window.addEventListener('unhandledrejection',reportLoadFailure);
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { createJalousieWall } from './jalousie.js?v=fb5187d433';
-import { createDomesticProps, animateDomesticProps, createFurnitureVariants, FURNITURE_FINISHES } from './domestic-props.js?v=fb5187d433';
-import { WALL_HANGINGS } from './wall-assets.js?v=fb5187d433';
-import { RAW_OBJECTS, createRawObject, oddSize, cutoutTone } from './raw-object-assets.js?v=fb5187d433';
-import { loadCurtainPatterns } from './photo-assets.js?v=fb5187d433';
-import { ROOM_WIDTHS, partitionPieces } from './room-widths.js?v=fb5187d433';
+import { createJalousieWall } from './jalousie.js?v=67bc69e65d';
+import { createDomesticProps, animateDomesticProps, createFurnitureVariants, FURNITURE_FINISHES } from './domestic-props.js?v=67bc69e65d';
+import { WALL_HANGINGS } from './wall-assets.js?v=67bc69e65d';
+import { RAW_OBJECTS, createRawObject, oddSize, cutoutTone } from './raw-object-assets.js?v=67bc69e65d';
+import { loadCurtainPatterns } from './photo-assets.js?v=67bc69e65d';
+import { ROOM_WIDTHS, partitionPieces } from './room-widths.js?v=67bc69e65d';
 
-import { LAYOUT_IDS, generateFurnitureLayout, checkFurnitureLayout, TABLE_TOP } from './furniture-layouts.js?v=fb5187d433';
-import { FLOOR_IDS, createFloorVariant } from './floor-variants.js?v=fb5187d433';
-import { DOOR_STYLES, createDoorLeaves } from './doors.js?v=fb5187d433';
-import { MODEL_ASSETS, loadModelAssets } from './model-assets.js?v=fb5187d433';
-import { createRoomSet, createRoomFixture } from './room-sets.js?v=fb5187d433';
-import { createUratexSofa } from './uratex-sofa.js?v=fb5187d433';
-import { createWireRun } from './wire-runs.js?v=fb5187d433';
-import { createWallUtilities } from './wall-utilities.js?v=fb5187d433';
-import {createWalkSequence,retainedRooms,walkRegions,canOccupy,moveWalker,pathToRoute,roomExits} from './navigation.js?v=fb5187d433';
-import {addDomesticDetails} from './domestic-details.js?v=fb5187d433';
+import { LAYOUT_IDS, generateFurnitureLayout, checkFurnitureLayout, TABLE_TOP } from './furniture-layouts.js?v=67bc69e65d';
+import { FLOOR_IDS, createFloorVariant } from './floor-variants.js?v=67bc69e65d';
+import { DOOR_STYLES, createDoorLeaves } from './doors.js?v=67bc69e65d';
+import { MODEL_ASSETS, loadModelAssets } from './model-assets.js?v=67bc69e65d';
+import { createRoomSet, createRoomFixture } from './room-sets.js?v=67bc69e65d';
+import { createUratexSofa } from './uratex-sofa.js?v=67bc69e65d';
+import { createWireRun } from './wire-runs.js?v=67bc69e65d';
+import { createWallUtilities } from './wall-utilities.js?v=67bc69e65d';
+import {createWalkSequence,retainedRooms,walkRegions,canOccupy,moveWalker,pathToRoute,roomExits} from './navigation.js?v=67bc69e65d';
+import {addDomesticDetails} from './domestic-details.js?v=67bc69e65d';
 let wallUtilities;
-import { roomLighting } from './room-lighting.js?v=fb5187d433';
-import { scatterLevel, planScatter, planSideScatter, scatterBlocks, createScatterMesh } from './floor-scatter.js?v=fb5187d433';
-import { addWallProtrusions } from './wall-protrusions.js?v=fb5187d433';
-import { createBaseboards } from './baseboards.js?v=fb5187d433';
-import { addHouseholdItems } from './household-items.js?v=fb5187d433';
-import { mergeStaticMeshes, SOURCE_LAYER } from './merge-static.js?v=fb5187d433';
-import { spatialFrame, spatialPoint, SPATIAL_GLSL, SPATIAL_PROFILES } from './spatial-route.js?v=fb5187d433';
-import { floorHeight, cameraRoute, routePoint } from './room-sequences.js?v=fb5187d433';
-import {sideSpacePlan,DRAWER_VARIANTS} from './side-spaces.js?v=fb5187d433';
-import {addWoodDetails} from './wood-details.js?v=fb5187d433';
-import {addSideWashrooms} from './side-washrooms.js?v=fb5187d433';
-import {addSideStorage} from './side-storage.js?v=fb5187d433';
-import {addSideBedrooms} from './side-bedrooms.js?v=fb5187d433';
-import { branchOpenings, raiseFloor, createRoomArchitecture } from './room-architecture.js?v=fb5187d433';
+import { roomLighting } from './room-lighting.js?v=67bc69e65d';
+import { scatterLevel, planScatter, planSideScatter, scatterBlocks, createScatterMesh } from './floor-scatter.js?v=67bc69e65d';
+import { addWallProtrusions } from './wall-protrusions.js?v=67bc69e65d';
+import { createBaseboards } from './baseboards.js?v=67bc69e65d';
+import { addHouseholdItems } from './household-items.js?v=67bc69e65d';
+import { mergeStaticMeshes, SOURCE_LAYER } from './merge-static.js?v=67bc69e65d';
+import { spatialFrame, spatialPoint, SPATIAL_GLSL, SPATIAL_PROFILES } from './spatial-route.js?v=67bc69e65d';
+import { floorHeight, cameraRoute, routePoint } from './room-sequences.js?v=67bc69e65d';
+import {sideSpacePlan,DRAWER_VARIANTS} from './side-spaces.js?v=67bc69e65d';
+import {addWoodDetails} from './wood-details.js?v=67bc69e65d';
+import {addSideWashrooms} from './side-washrooms.js?v=67bc69e65d';
+import {addSideStorage} from './side-storage.js?v=67bc69e65d';
+import {addSideBedrooms} from './side-bedrooms.js?v=67bc69e65d';
+import { branchOpenings, raiseFloor, createRoomArchitecture } from './room-architecture.js?v=67bc69e65d';
 
 // ---- palette (DepEd MPSS, stylized: green walls) ----
 const COL = {
@@ -176,8 +176,9 @@ const twisted=spatialParams.get('space')==='twist'||(spatialParams.get('space')!
 function curvize(material){
   material.onBeforeCompile = (shader)=>{
     shader.uniforms.uLightingBands={value:lightingBands};shader.uniforms.uLightingModes={value:lightingModes};shader.uniforms.uLightingTints={value:lightingTints};
-    shader.vertexShader='varying vec2 vRoomCoord;\n'+shader.vertexShader;
-    shader.vertexShader=shader.vertexShader.replace('#include <project_vertex>','vRoomCoord=(modelMatrix*vec4(transformed,1.0)).xz;\n#include <project_vertex>');
+    // An instanced mesh places each copy by its own matrix, inside the model matrix.
+    shader.vertexShader='varying vec2 vRoomCoord;\n#ifdef USE_INSTANCING\n#define FGC_PLACED(p) (instanceMatrix*vec4(p,1.0))\n#define FGC_TURNED(n) (mat3(instanceMatrix)*(n))\n#else\n#define FGC_PLACED(p) vec4(p,1.0)\n#define FGC_TURNED(n) (n)\n#endif\n'+shader.vertexShader;
+    shader.vertexShader=shader.vertexShader.replace('#include <project_vertex>','vRoomCoord=(modelMatrix*FGC_PLACED(transformed)).xz;\n#include <project_vertex>');
     shader.fragmentShader='varying vec2 vRoomCoord;\nuniform vec4 uLightingBands[6];\nuniform vec4 uLightingModes[6];\nuniform vec3 uLightingTints[6];\n'+shader.fragmentShader;
     shader.fragmentShader=shader.fragmentShader.replace('#include <opaque_fragment>',`
       for(int band=0;band<6;band++){
@@ -216,11 +217,11 @@ uniform vec3 uLiftTo;
     if(twisted){
       shader.vertexShader=`#define SPATIAL_MODE ${SPATIAL_PROFILES.indexOf(routeProfile)}\n`+SPATIAL_GLSL+'\n'+shader.vertexShader;
       shader.vertexShader=shader.vertexShader.replace('#include <project_vertex>',`#include <project_vertex>
-        vec3 routeWorld=(modelMatrix*vec4(transformed,1.0)).xyz;
+        vec3 routeWorld=(modelMatrix*FGC_PLACED(transformed)).xyz;
         mvPosition=viewMatrix*vec4(spatialPoint(routeWorld),1.0);
         gl_Position=projectionMatrix*mvPosition;`);
       shader.vertexShader=shader.vertexShader.replace('#include <defaultnormal_vertex>',`#include <defaultnormal_vertex>
-        transformedNormal=mat3(viewMatrix)*spatialBasis(-(modelMatrix*vec4(position,1.0)).z)*${up?'vec3(0.0,1.0,0.0)':'mat3(modelMatrix)*objectNormal'};`);
+        transformedNormal=mat3(viewMatrix)*spatialBasis(-(modelMatrix*FGC_PLACED(position)).z)*${up?'vec3(0.0,1.0,0.0)':'mat3(modelMatrix)*FGC_TURNED(objectNormal)'};`);
       return;
     }
     if(up)shader.vertexShader=shader.vertexShader.replace('#include <defaultnormal_vertex>',`#include <defaultnormal_vertex>
@@ -866,6 +867,7 @@ function dropSegment(i){
   grp.userData.wallPaintMaterials.forEach(m=>m.dispose());
   scene.remove(grp);grp.userData.floorGroup.userData.dispose();grp.userData.architecture.userData.dispose();grp.userData.domesticDetails.userData.dispose();grp.userData.sideBedrooms.userData.dispose();grp.userData.sideStorage.userData.dispose();grp.userData.sideWashrooms.userData.dispose();grp.userData.woodDetails.userData.dispose();
   grp.traverse(o=>{ if (o.isMesh && o.userData.own && o.geometry) o.geometry.dispose();
+  if(o.isInstancedMesh)o.dispose();   // frees its matrices; the geometry is a shared prototype's
   if(o.userData.ownMaterial)o.material.dispose();
  });
   segments.delete(i);sequence.release(i);

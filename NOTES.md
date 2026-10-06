@@ -1346,3 +1346,13 @@ Effect, twisting route with the visibility rule on. Draw calls: 712 to 325 avera
 So the gain in frame time on this machine is about 15%, small beside the visibility rule, which had already removed the rooms that were not seen. Draw calls are more than halved, which should count for more on a slower processor; that was not measured.
 
 Not done. Not viewed with the pane visible or in motion. A fan was not watched turning after the merge; its rotor and head are excluded by name, read from `animateDomesticProps`. The 512 meshes left over the vertex limit in 80 rooms are still one call each; instancing would take them, and needs the route's shader to read the instance matrix, which is why it was not done here. Nothing was pushed.
+
+## 2026-10-06 — Claude Code — rows of one heavy model drawn as instances
+
+Xyh approved instancing for the meshes the merge left over its vertex limit. Details are in HANDOVER.md under the merge.
+
+Checks, by the same two-render comparison as the merge. Twisting route, rooms 20 to 96, 314 frames at 960 x 540: 10.6 pixels differing on average, 471 at most; in the 91 frames with an instanced mesh in a drawn room, 5.6 on average and 111 at most. Straight route, room 89, a hall with chairs round its walls, five camera positions at 1280 x 720: 1, 2, 1, 1, and 1 pixel. Viewed that hall: the rows of chairs stand where they stood. In the walk 606 meshes were drawn as instances and 2 stayed single. No shader error or console message; the program count stayed at 16. The inspector's doorway and shoulder raycasts pass in rooms 86 to 91. All twelve node checks, `stamp_versions --check`, and `check_published_assets` pass.
+
+Effect in room 89, same session, merged and instanced against originals: draw calls 118 against 372, 242 against 709, and 194 against 540 at three of the positions; frame time 3.3 against 7.3 ms, 4.8 against 7.6, and 4.3 against 8.6. Over the walk the average was 301 calls against 707.
+
+Not done. Not viewed in motion or with the pane visible. The first room to instance a given kind of material compiles one more shader program; none was needed in this walk beyond the 16 already present, and the cost of one was not timed. A mirrored heavy object was not found in the walk, so that branch ran only for the 2 that stayed single, whose cause I did not check. Nothing was pushed.

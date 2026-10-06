@@ -1,7 +1,7 @@
 // Room shells drawn from distributions. Nothing here names a particular strange room:
 // two slow fields along the route widen the tails of each dimension and switch on
 // features, and an unusual room is whatever those draws happen to coincide in.
-import {ORDINARY_LAYOUT_IDS,ODD_LAYOUT_IDS} from './furniture-layouts.js?v=fb5187d433';
+import {ORDINARY_LAYOUT_IDS,ODD_LAYOUT_IDS} from './furniture-layouts.js?v=67bc69e65d';
 
 // A full avalanche mix of index and salt, so neighbouring indices and nearby salts are unrelated.
 function unit(n,salt){

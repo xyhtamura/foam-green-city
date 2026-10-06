@@ -6,9 +6,10 @@
 // the room's tree, where the placement code and the inspector read them, and move to a layer
 // the camera does not draw.
 export const SOURCE_LAYER=1;
-// A material's meshes are left as they are when together they pass this many vertices. Merging
+// A material's meshes are not copied when together they pass this many vertices. Merging
 // copies every vertex, so rows of one heavy model, such as 160 chairs, would cost megabytes
-// and a long frame for each room; those keep sharing the prototype's geometry instead.
+// and a long frame for each room. Those are drawn as instances instead: one call for every
+// mesh that shares both material and geometry, with the prototype's geometry still shared.
 const VERTEX_LIMIT=40000;
 
 // Left out: anything that turns or faces the camera after the build, blended materials, whose
@@ -37,12 +38,30 @@ export function mergeStaticMeshes(THREE,group){
     buckets.get(material).push(o);
   });
   const matrix=new THREE.Matrix4(),normalMatrix=new THREE.Matrix3(),v=new THREE.Vector3();
-  const began=performance.now(),report={meshes:considered,merged:0,into:0,heavy:0,vertices:0,bytes:0};
+  const began=performance.now(),report={meshes:considered,merged:0,instanced:0,into:0,heavy:0,vertices:0,bytes:0};
   for(const [material,sources] of buckets){
     if(sources.length<2)continue;
     let vertexCount=0,indexCount=0;
     for(const o of sources){const g=o.geometry;vertexCount+=g.attributes.position.count;indexCount+=g.index?g.index.count:g.attributes.position.count;}
-    if(vertexCount>VERTEX_LIMIT){report.heavy+=sources.length;continue;}
+    if(vertexCount>VERTEX_LIMIT){
+      const byGeometry=new Map();
+      for(const o of sources){
+        // Instances share one winding, so a mirrored object stays a mesh of its own.
+        if(matrix.multiplyMatrices(toRoom,o.matrixWorld).determinant()<0){report.heavy++;continue;}
+        if(!byGeometry.has(o.geometry))byGeometry.set(o.geometry,[]);
+        byGeometry.get(o.geometry).push(o);
+      }
+      for(const [geometry,same] of byGeometry){
+        if(same.length<2){report.heavy+=same.length;continue;}
+        const mesh=new THREE.InstancedMesh(geometry,material,same.length);
+        same.forEach((o,i)=>{mesh.setMatrixAt(i,matrix.multiplyMatrices(toRoom,o.matrixWorld));o.layers.set(SOURCE_LAYER);});
+        mesh.instanceMatrix.needsUpdate=true;mesh.computeBoundingSphere();
+        mesh.name='instanced-static';mesh.userData.merged=same.length;mesh.raycast=()=>{};
+        group.add(mesh);
+        report.instanced+=same.length;report.into++;report.bytes+=same.length*64;
+      }
+      continue;
+    }
     const withUv=!!material.map&&sources.some(o=>o.geometry.attributes.uv),withColour=!!material.vertexColors;
     const positions=new Float32Array(vertexCount*3),normals=new Float32Array(vertexCount*3);
     const uvs=withUv?new Float32Array(vertexCount*2):null,colours=withColour?new Float32Array(vertexCount*3).fill(1):null;
