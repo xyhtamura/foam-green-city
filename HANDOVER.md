@@ -47,6 +47,14 @@ A Kenney wall module is 0.1 m thick with its near face on its origin plane. The 
 
 `?inspect=1` now also sets `window.fgc` to `{THREE,scene,cam,renderer,segments,WALLP}` for console measurement. With the browser pane hidden, `requestAnimationFrame` is paused, so a test can pose `cam`, call `renderer.render`, and `readPixels` in the same task.
 
+## Papers at bond size, hangers on walls, gas stoves — 2026-10-06
+
+`index_raw_objects.py` sizes 83 cutouts. Papers are measured against long bond, 216 by 330 mm: a pad sheet 203 mm wide, a graph sheet and the yellow half sheet 216 mm, an index card 203 mm. The two older pad images, which had been 150 mm, are 300 mm for the pad with a sheet beside it and 240 mm for the cover; both are photographed at an angle, so those are their diagonal extents. The graph sheet and index card join the paper group in `domestic-details.js`.
+
+`clothes_hanger_blue` is 0.42 m wide and takes a hue turn right round the circle with three levels each of saturation and brightness. It lies flat on tables in bedrooms, salas, and bare rooms, and `addWallHangers` in `index.html` puts one to three on nails in a row on a solid stretch of side wall, each in its own colour: 20% of bedrooms, 16% of bare rooms, 14% of bathrooms, 10% of salas, 6% of kitchens. `?prop=hangers` forces it.
+
+The single-burner stove is a tabletop cutout in kitchens, 0.33 m wide. The two-burner one, 0.68 m, is wider than a tabletop cutout may be and stands on the floor in kitchens and bare rooms.
+
 ## Washing lines, hangers, and colours for doors and windows — 2026-10-06
 
 `sampayan.js` is this project's own, not a copy from `fgc-cx`. The kit there, `household-details.js`, draws each hanger as a tube of about 1,150 triangles by its code, which suits one rack and not a room of lines. Here a hanger is two flat ribbons, 16 triangles, and a garment a flat outline: shirt, sando, shorts, trousers, duster, towel, blouse, in `CLOTHES_COLOURS`, on hangers in `HANGER_COLOURS`. `createSampayan(THREE)` gives `line({length,sag,count,hangers,seed,cluster,gap,colours})`, a string along local x with clothes on it, and `rack(...)`, a rail on two uprights. Clothes on hangers hang across the line and face along it; pegged clothes hang along it. So a line run down the room shows its hangers face on to the walker, and a line across the room is pegged. `gap` leaves a stretch bare.

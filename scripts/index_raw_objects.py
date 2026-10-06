@@ -12,7 +12,9 @@ import struct
 # Flat garments and papers are measured across; upright objects by height.
 REAL_SIZE = {
     'athletic_shorts_black': ('w', 0.42), 'jeans_blue': ('w', 0.48), 'tshirt_red': ('w', 0.55),
-    'envelope_kraft': ('w', 0.24), 'intermediate_pad': ('w', 0.15), 'intermediate_pad_cover': ('w', 0.15), 'yellowpad': ('w', 0.216),
+    # Papers are sized against long bond, 216 by 330 mm: a pad is 203 by 254 mm, a legal sheet 216 mm wide.
+    # The two pad images are at an angle, so their widths are the pad's diagonal extent.
+    'envelope_kraft': ('w', 0.24), 'intermediate_pad': ('w', 0.30), 'intermediate_pad_cover': ('w', 0.24), 'yellowpad': ('w', 0.216),
     'backpack_olive': ('h', 0.45), 'teddy_bear_blue': ('h', 0.40), 'teddy_bear_brown': ('h', 0.40),
     'batya_green': ('w', 0.50), 'orocan_drawer_chest': ('h', 1.05), 'orocan_icebox_15l': ('h', 0.33),
     'hydrangea_blue_potted': ('h', 0.50), 'hydrangea_pink_pair': ('h', 0.34), 'sunflower_arrangement': ('h', 0.46),
@@ -37,6 +39,9 @@ REAL_SIZE = {
     'malunggay_leaves': ('w', 0.26), 'malunggay_pods': ('w', 0.45),
     'cucina_uno_food_keeper': ('w', 0.33), 'dish_rack_cylinder': ('h', 0.44),
     'orocan_icebox_30l': ('h', 0.38), 'orocan_timba_24l': ('h', 0.34), 'orocan_wardrobe_cabinet': ('h', 1.40),
+    # Added 2026-10-06, second batch.
+    'intermediate_pad_sheet': ('w', 0.203), 'graph_paper_sheet': ('w', 0.216), 'half-pad': ('w', 0.216), 'index_card_white': ('w', 0.203),
+    'clothes_hanger_blue': ('w', 0.42), 'gas_stove_single_burner': ('w', 0.33), 'gas_stove_double_burner': ('w', 0.68),
 }
 
 # Where a cutout goes, for names the prefix rules in main() do not cover: (mode, rooms).
@@ -52,6 +57,11 @@ PLACE = {
     'oishi_patata_snack': ('table', ['sala', 'kitchen', 'bedroom']), 'sweet_corn_snack': ('table', ['sala', 'kitchen', 'bedroom']),
     'skyflakes_single_packet': ('table', ['sala', 'kitchen', 'bedroom']),
     'orocan_timba_24l': ('floor', ['bathroom', 'kitchen', 'bare']), 'orocan_wardrobe_cabinet': ('floor', ['bedroom', 'sala', 'bare']),
+    'intermediate_pad_sheet': ('flat', ['sala', 'bedroom']), 'graph_paper_sheet': ('flat', ['sala', 'bedroom']),
+    'half-pad': ('flat', ['sala', 'bedroom', 'kitchen']), 'index_card_white': ('flat', ['sala', 'bedroom', 'kitchen']),
+    'clothes_hanger_blue': ('flat', ['bedroom', 'sala', 'bare']),
+    # The two-burner stove is wider than a tabletop cutout may be, so it stands on the floor.
+    'gas_stove_single_burner': ('table', ['kitchen']), 'gas_stove_double_burner': ('floor', ['kitchen', 'bare']),
 }
 
 # Cutouts whose colour may vary: (from, to) hue rotation in degrees; optional (from, to) factors
@@ -65,6 +75,7 @@ HUES = {
     'sunny_pitcher_turquoise': dict(hue=[0, 330]), 'tumbler_plastic_blue': dict(hue=[0, 330]),
     'backpack_olive': dict(hue=[-70, 70]), 'backpack_teal': dict(hue=[0, 330]),
     'bayong_plastic_purple': dict(hue=[0, 330]),
+    'clothes_hanger_blue': dict(hue=[0, 330], sat=[0.35, 1.1], light=[0.7, 1.25]),
 }
 # Cutouts that are never drawn at a deliberately wrong size.
 FIXED_SIZE = {'ligo_sardines_green', 'ligo_sardines_red'}

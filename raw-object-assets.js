@@ -204,6 +204,30 @@ export const RAW_OBJECTS=[
     ]
   },
   {
+    "id": "rawClothesHangerBlue",
+    "file": "2d/raw objects/clothes_hanger_blue.png",
+    "aspect": 0.6579634464751958,
+    "width": 0.42,
+    "mode": "flat",
+    "rooms": [
+      "bedroom",
+      "sala",
+      "bare"
+    ],
+    "hue": [
+      0,
+      330
+    ],
+    "sat": [
+      0.35,
+      1.1
+    ],
+    "light": [
+      0.7,
+      1.25
+    ]
+  },
+  {
     "id": "rawPotGlass",
     "file": "2d/raw objects/cooking_pot_black_handles.png",
     "aspect": 0.6135593220338983,
@@ -291,6 +315,38 @@ export const RAW_OBJECTS=[
     ]
   },
   {
+    "id": "rawGasStoveDoubleBurner",
+    "file": "2d/raw objects/gas_stove_double_burner.png",
+    "aspect": 0.4322469982847341,
+    "width": 0.68,
+    "mode": "floor",
+    "rooms": [
+      "kitchen",
+      "bare"
+    ]
+  },
+  {
+    "id": "rawGasStoveSingleBurner",
+    "file": "2d/raw objects/gas_stove_single_burner.png",
+    "aspect": 0.8506944444444444,
+    "width": 0.33,
+    "mode": "table",
+    "rooms": [
+      "kitchen"
+    ]
+  },
+  {
+    "id": "rawGraphPaperSheet",
+    "file": "2d/raw objects/graph_paper_sheet.png",
+    "aspect": 1.4935897435897436,
+    "width": 0.216,
+    "mode": "flat",
+    "rooms": [
+      "sala",
+      "bedroom"
+    ]
+  },
+  {
     "id": "rawGreencrossRubbingAlcohol",
     "file": "2d/raw objects/greencross_rubbing_alcohol.png",
     "aspect": 2.5680473372781063,
@@ -299,6 +355,18 @@ export const RAW_OBJECTS=[
     "rooms": [
       "bedroom",
       "sala",
+      "kitchen"
+    ]
+  },
+  {
+    "id": "rawHalf-Pad",
+    "file": "2d/raw objects/half-pad.png",
+    "aspect": 0.7673469387755102,
+    "width": 0.216,
+    "mode": "flat",
+    "rooms": [
+      "sala",
+      "bedroom",
       "kitchen"
     ]
   },
@@ -325,10 +393,22 @@ export const RAW_OBJECTS=[
     ]
   },
   {
+    "id": "rawIndexCardWhite",
+    "file": "2d/raw objects/index_card_white.png",
+    "aspect": 0.6150943396226415,
+    "width": 0.203,
+    "mode": "flat",
+    "rooms": [
+      "sala",
+      "bedroom",
+      "kitchen"
+    ]
+  },
+  {
     "id": "rawIntermediatePad",
     "file": "2d/raw objects/intermediate_pad.png",
     "aspect": 0.8784313725490196,
-    "width": 0.15,
+    "width": 0.3,
     "mode": "flat",
     "rooms": [
       "sala",
@@ -339,7 +419,18 @@ export const RAW_OBJECTS=[
     "id": "rawPadCover",
     "file": "2d/raw objects/intermediate_pad_cover.png",
     "aspect": 1.1399229781771503,
-    "width": 0.15,
+    "width": 0.24,
+    "mode": "flat",
+    "rooms": [
+      "sala",
+      "bedroom"
+    ]
+  },
+  {
+    "id": "rawIntermediatePadSheet",
+    "file": "2d/raw objects/intermediate_pad_sheet.png",
+    "aspect": 1.2531017369727047,
+    "width": 0.203,
     "mode": "flat",
     "rooms": [
       "sala",

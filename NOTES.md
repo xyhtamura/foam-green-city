@@ -1467,3 +1467,13 @@ Original date-named files deleted. Directory audit (`audit_raw_objects.py`) pass
 Not done / next:
 - New cutouts are ready on disk; indexing into `raw-object-assets.js` via `index_raw_objects.py` and placement rules in room streaming pools can be run whenever Claude Code or the scene pipeline is ready to pick them up.
 Nothing was pushed.
+
+## 2026-10-06 — Claude Code — seven more cutouts: papers, a hanger, two stoves
+
+Xyh asked for the new images in `2d/raw objects/` to be sized and placed, said many are pad papers that should be at least comparable to long bond paper, and that the blue hanger can be shifted in hue, saturation, and lightness. Sizes and placement are in HANDOVER.md.
+
+Another agent committed six of the seven as dce8a09 during the previous sitting. `index_card_yellow.png` from that commit had since been deleted and `half-pad.png` put in its place, uncommitted; I took that as a rename and committed it as one.
+
+Checks. `check_raw_objects` passes on 83 cutouts; all twelve node checks, `stamp_versions --check`, and `check_published_assets` (285 assets) pass. In the browser on the root server, straight route, daylight. With `?prop=hangers`: four of six rooms got one to three wall hangers; viewed three in a row in room 20, in blue, grey-green, and green. With `?room=kitchen&raw=rawIntermediatePadSheet`: the sheet measured 0.20 by 0.25 m on a table in room 23 and reads at the scale of the plate beside it. With `?prop=rawGasStoveDoubleBurner`: the stove stands on the floor in room 20 beside a gas cylinder, 0.67 m wide. No console error.
+
+Not done. The graph sheet, half pad, index card, single-burner stove, and the hanger lying flat were not viewed. The older pad images' new sizes were not viewed. The hanger image is photographed at a slant and hangs on the wall at that slant. Nothing was pushed.
