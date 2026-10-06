@@ -1,6 +1,6 @@
-import {branchOpenings,sideSpacePlan} from './side-spaces.js?v=5c7f556072';
-import {localBounds} from './object-supports.js?v=5c7f556072';
-import {RAW_OBJECTS,createRawObject} from './raw-object-assets.js?v=5c7f556072';
+import {branchOpenings,sideSpacePlan} from './side-spaces.js?v=d05073a010';
+import {localBounds} from './object-supports.js?v=d05073a010';
+import {RAW_OBJECTS,createRawObject} from './raw-object-assets.js?v=d05073a010';
 
 // Prototype meshes stay shared; bedding and photo planes belong to this room.
 export function addSideBedrooms({THREE,group,room,assets,curvize,photos,spriteMat}){

@@ -36,7 +36,7 @@ Before committing a change to any root-level `.js` file: `python scripts/stamp_v
 
 Open, in the order they were raised:
 
-1. **Wall flicker at a narrowing join: fixed 2026-10-06.** See the section below. Still open beside it: baseboards on the far end wall stand 0.1 m clear of the partition, and solid side-wall modules have their face at half the room width while window modules, baseboards, block-wall faces, and fittings sit 0.08 to 0.11 m inside it.
+1. **Wall flicker at a narrowing join: fixed 2026-10-06.** See the section below. Baseboards were fitted to each wall's face the same day. Still open: on solid side-wall modules, whose face is at half the room width, wall photos (0.12 m in), outlets (0.108 m), door leaves (0.13 m), and the hollow-block face (0.105 m) stand clear of the wall. They are placed in front of the block face, so moving one means moving all of them.
 2. **Things not yet seen by anyone:** an electric foam-green room; a hue-shifted T-shirt; tsinelas up close; a real image in the floor tile bank; protrusions in motion.
 3. **Still fixed where the rest is procedural:** side rooms and passages have no baseboards, protrusions, kit objects, or wall fittings; the minimum room length is 6 m.
 4. **Carried from before:** independent lighting profiles for side rooms.
@@ -46,6 +46,10 @@ Open, in the order they were raised:
 A Kenney wall module is 0.1 m thick with its near face on its origin plane. The partition at the end of room i was placed with that face on the boundary plane, and room i+1's side walls start on the same plane. Where room i+1 is narrower, the end caps of its first two side-wall modules lay in the partition's face, 0.1 m wide and full height at x = ± half the narrower width, and the two surfaces fought for depth. The solid partition pieces now stand `PARTITION_PROUD` (1 cm) toward room i, which covers the caps; the doorway piece is unmoved. The face is also now outside the lighting bands' 2 mm overlap, so it belongs to room i's band alone, and the bands are filled in route order rather than build order.
 
 `?inspect=1` now also sets `window.fgc` to `{THREE,scene,cam,renderer,segments,WALLP}` for console measurement. With the browser pane hidden, `requestAnimationFrame` is paused, so a test can pose `cam`, call `renderer.render`, and `readPixels` in the same task.
+
+## Baseboards against the wall face — 2026-10-06
+
+`baseboards.js` had one offset, 0.112 m, for every wall. Walls have three face positions: the near end wall is the previous partition's back, 0.1 m inside the room less `PARTITION_PROUD`; the far partition's face is on the boundary plus `PARTITION_PROUD`; imported side modules (`wall`, `normalWindow`, `slidingWindow`) have their face on the room's edge; authored window modules have theirs 0.08 m inside it. A run now carries `flush` for an imported module, from `wallOnEdge(tile)` in `index.html`, which reads the prototype's bounds; `createBaseboards` takes `farProud`. End strips run to the room's edge.
 
 ## Wall colours, trim rules, and protrusions — 2026-10-06
 

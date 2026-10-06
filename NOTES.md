@@ -1223,3 +1223,11 @@ Not done. Not watched in motion in a visible window; the pane was hidden through
 Found and not fixed. Raycasts in room 21: the far end-wall baseboard's face is 0.119 m in front of the partition, so it stands about 0.1 m clear of the wall. `baseboards.js` uses one offset, 0.112 m, for all four walls, which is right for the near end wall (the previous partition's back face is 0.1 m inside this room) and wrong for the far one. On side walls, solid Kenney modules have their face at half the room width, while window modules sit 0.08 m inside it and baseboards, block-wall faces, and wall fittings are placed 0.105 to 0.112 m inside it, so against a solid module they stand clear of the wall. Only the baseboard gap was measured; the fittings' gap is read from the code.
 
 Nothing was pushed.
+
+## 2026-10-06 — Claude Code — baseboards fitted to each wall's face
+
+Xyh asked for the baseboard gap found in the previous entry to be fixed. Details are in HANDOVER.md.
+
+Checks, by raycast in the loaded scene at 0.05 m above the floor, seed 5 rooms 18 to 23 with `?sideSpaces=room`, straight route: the distance from the back of the baseboard to the wall behind it was 1 mm at 180 of 188 side-wall samples and at all 22 end-wall samples, and 21 mm at 8 samples on one authored window variant whose face is 0.06 m in. Before the change it was 0.1 m on every solid module and far end wall. Viewed room 21's far wall: the strip meets the partition. `check_side_spaces`, `check_room_sequences`, `check_navigation`, and `check_published_assets` pass; no console error.
+
+Not done. Raised and sunken rooms, passages, and the twisting route were not sampled. Side rooms and passages still have no baseboards. Wall photos, outlets, door leaves, and the hollow-block face still stand 0.105 to 0.13 m clear of solid side-wall modules; they share the block face's plane, so they need one decision between moving the solid modules in by 0.1 m and moving each of them out. Wire runs are at 0.04 m and were fitted to the real face. Nothing was pushed.
