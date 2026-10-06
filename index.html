@@ -867,7 +867,33 @@ function dropSegment(i){
  });
   segments.delete(i);sequence.release(i);
 }
-let inspectedRoom=null,builtThisFrame=false,frameNumber=0,unshown=null;
+let inspectedRoom=null,builtThisFrame=false,frameNumber=0,unshown=null,roomsDrawn=0;
+// A room is not drawn when all of it is behind the camera or all of it is past the fog, where it
+// would come out in the background colour. Depth is measured along the camera's view, as the fog
+// measures it, at points round a box that holds the room and anything opening off its sides.
+const _roomPoint=new THREE.Vector3();
+function roomInView(g){
+  const d=g.userData,half=d.width/2+(branchOpenings(d).length?16:0.4),rise=d.rise??0;
+  const low=Math.min(0,rise)-0.5,high=d.height+Math.max(0,rise)+0.5,z0=g.position.z+0.5,span=d.length+1,steps=Math.ceil(span/2);
+  let near=Infinity,far=-Infinity;
+  for(let k=0;k<=steps;k++)for(const x of [-half,half])for(const y of [low,high]){
+    const z=z0-span*k/steps;
+    if(twisted)_roomPoint.fromArray(spatialPoint(x,y,z,routeProfile));else _roomPoint.set(x,y,z);
+    const depth=-_roomPoint.applyMatrix4(cam.matrixWorldInverse).z;
+    near=Math.min(near,depth);far=Math.max(far,depth);
+  }
+  return far>-0.5&&near<scene.fog.far+1.5;
+}
+// Run once the camera is placed for the frame. A room held back by ensureSegments stays hidden; a room
+// not yet drawn is drawn once wherever it is, so its upload falls in the frame set aside for it.
+function hideUnseenRooms(){
+  cam.updateMatrixWorld();cam.matrixWorldInverse.copy(cam.matrixWorld).invert();
+  roomsDrawn=0;
+  for(const [i,g] of segments){
+    const seen=!g.userData.held&&(i===travelRoom||!g.userData.drawn||params.get('cull')==='off'||roomInView(g));
+    g.visible=seen;if(seen){g.userData.drawn=true;roomsDrawn++;}
+  }
+}
 // Time spent building rooms since the walk began, for ?inspect=1 and the console.
 const buildStats={last:0,worst:0,rooms:0};
 function ensureSegments(){
@@ -877,18 +903,18 @@ function ensureSegments(){
   // to the graphics card. The walker's room and its two neighbours are built and shown at once; so is
   // everything before the walk starts and under the veil of a cut. Any other room waits its turn,
   // nearest first: built hidden in one frame, shown in a later one, and no two rooms share either.
-  if(unshown&&frameNumber>unshown.frame){const g=segments.get(unshown.index);if(g)g.visible=true;unshown=null;builtThisFrame=true;}
+  if(unshown&&frameNumber>unshown.frame){const g=segments.get(unshown.index);if(g)g.userData.held=false;unshown=null;builtThisFrame=true;}
   for(const i of retained.filter(i=>!segments.has(i)).sort((a,b)=>Math.abs(a-camSeg)-Math.abs(b-camSeg))){
     const urgent=Math.abs(i-camSeg)<=1||!walkReady||cut;
     if(!urgent&&(builtThisFrame||unshown))continue;
     const began=performance.now();buildSegment(i);
     buildStats.last=+(performance.now()-began).toFixed(1);buildStats.worst=Math.max(buildStats.worst,buildStats.last);buildStats.rooms++;
-    if(!urgent){builtThisFrame=true;segments.get(i).visible=false;unshown={index:i,frame:frameNumber};}
+    if(!urgent){builtThisFrame=true;segments.get(i).userData.held=true;unshown={index:i,frame:frameNumber};}
   }
   const waiting=segments.get(unshown?.index);
-  if(waiting&&Math.abs(unshown.index-camSeg)<=1){waiting.visible=true;unshown=null;}
+  if(waiting&&Math.abs(unshown.index-camSeg)<=1){waiting.userData.held=false;unshown=null;}
   for (const i of [...segments.keys()]) if (!retained.includes(i)) dropSegment(i);
-  if(params.has('inspect')){const stats=document.getElementById('render-stats')??document.body.appendChild(Object.assign(document.createElement('pre'),{id:'render-stats',hidden:true}));stats.textContent=JSON.stringify({rooms:segments.size,drawCalls:renderer.info.render.calls,triangles:renderer.info.render.triangles,geometries:renderer.info.memory.geometries,textures:renderer.info.memory.textures,programs:renderer.info.programs?.length,build:buildStats});}
+  if(params.has('inspect')){const stats=document.getElementById('render-stats')??document.body.appendChild(Object.assign(document.createElement('pre'),{id:'render-stats',hidden:true}));stats.textContent=JSON.stringify({rooms:segments.size,drawn:roomsDrawn,drawCalls:renderer.info.render.calls,triangles:renderer.info.render.triangles,geometries:renderer.info.memory.geometries,textures:renderer.info.memory.textures,programs:renderer.info.programs?.length,build:buildStats});}
   if(params.has('inspect')&&camSeg!==inspectedRoom){inspectedRoom=camSeg;inspectRooms();}
 }
 
@@ -1054,7 +1080,7 @@ function tick(){
     // Inspection handle for the console. bench(from,count) builds rooms that are not in the walk, one at a
     // time, and reports for each the time to build it, the time of the first frame that draws it, which
     // carries its uploads and any shader compiles, and what it adds to the renderer's memory counts.
-    window.fgc??={THREE,scene,cam,renderer,segments,WALLP,buildStats,step:tick,bench(from,count=20){
+    window.fgc??={THREE,scene,cam,renderer,segments,WALLP,buildStats,step:tick,cull:hideUnseenRooms,bench(from,count=20){
       const gl=renderer.getContext(),rows=[],frame=()=>{const t=performance.now();renderer.render(scene,cam);gl.finish();return performance.now()-t;};
       frame();
       for(let i=from;i<from+count;i++){
@@ -1116,6 +1142,7 @@ function tick(){
       }
       for(const grp of segments.values())grp.traverse(o=>{if(o.isMesh)o.frustumCulled=false;});
     }
+    hideUnseenRooms();
     renderer.render(scene, cam);titleRendered=true;
   requestAnimationFrame(tick);
 }

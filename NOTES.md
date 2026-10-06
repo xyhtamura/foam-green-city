@@ -1322,3 +1322,15 @@ Not done. No frame was timed with the pane visible and `requestAnimationFrame` r
 Decided against, for now. Slicing `buildSegment` itself across frames: the build is 15 to 40 ms of a build frame, and the function is 270 lines of shared locals that other agents edit daily. Holding the walker or darkening the next room, which Xyh offered: no room needed more than one long frame, so there was nothing to wait for. Both stay available if rooms get heavier.
 
 Next lever, not started. Draw calls: six rooms are 1,500 to 1,700, one per mesh, and culling is off on the twisting route, so the two rooms behind the walker and any room beyond the fog are drawn in full every frame. Hiding rooms that cannot be seen is the cheap step; merging a room's static meshes is the larger one and trades memory and build time for it. Nothing was pushed.
+
+## 2026-10-06 — Claude Code — rooms that cannot be seen are not drawn
+
+Xyh approved the cheap step named at the end of the previous entry. The rule is described in HANDOVER.md.
+
+Checks, stepping the walk from the console at 960 x 540 and comparing two renders of the same frame, one with the rule and one with every room shown, pixel by pixel with a tolerance of 2 in 255. Twisting route, rooms 20 to 105, every sixth frame: 410 frames, none differing. Twisting route, rooms 105 to 157, camera turned to six directions including straight back and pitched up and down: 552 views, none differing. Straight route, rooms 20 to 64, the same six directions: 366 views, none. `?sequence=passages&space=twist` and `?sequence=levels&space=twist`, six directions: 192 and 198 views, none. No console error. All twelve node checks, `stamp_versions --check`, and `check_published_assets` pass.
+
+Effect on the twisting route, walking forward: three or four of six rooms drawn; draw calls 1,258 to 715 and triangles 205,000 to 109,000 on average over the 410 frames. Frames with no build, 1280 x 720, three runs taken together: 17.9 ms without the rule, 10.4 ms with it, 13.2 ms without. On the straight route Three.js already culls by frustum and the gain is small, 259 to 235 calls.
+
+Not done. Not viewed with the pane visible. Rooms of 40 m width or more, where the fog reaches 100 m, were not in the tested ranges unless the walk happened on one; none was looked for. A cut through a passage exit was not exercised, since the runs used `?fork=never`.
+
+Still the larger lever: one draw call per mesh. A drawn room is 200 to 300 calls. Nothing was pushed.

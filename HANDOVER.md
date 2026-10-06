@@ -47,6 +47,14 @@ A Kenney wall module is 0.1 m thick with its near face on its origin plane. The 
 
 `?inspect=1` now also sets `window.fgc` to `{THREE,scene,cam,renderer,segments,WALLP}` for console measurement. With the browser pane hidden, `requestAnimationFrame` is paused, so a test can pose `cam`, call `renderer.render`, and `readPixels` in the same task.
 
+## Rooms that cannot be seen are not drawn — 2026-10-06
+
+`hideUnseenRooms` in `index.html` runs each frame once the camera is placed, and sets each room's `visible`. A room is skipped when all of it is behind the camera or all of it is past the fog's far distance, where every pixel of it would come out in the background colour. Depth is measured along the camera's view, which is how the fog measures it, at points round a box holding the room; the box reaches 16 m past the side walls for a room with a passage or side room. The points go through `spatialPoint` on the twisting route, so the test follows the bend. The walker's room is always drawn. The test uses the camera's own matrix, so it holds for a player who turns round.
+
+Two flags on a room's `userData` feed it: `held`, set by `ensureSegments` while a newly built room waits for its frame, and `drawn`, so a room is drawn once wherever it is and its upload falls in the frame set aside for it. Nothing else should write a room group's `visible`. `?cull=off` draws every room, for comparison; `#render-stats` reports `drawn`; `window.fgc.cull()` runs the pass on the current camera.
+
+The rule depends on the fog colour and the background being the same colour, and on every material taking fog. A material with `fog:false`, or a background that differs from the fog, would make a hidden room's absence visible.
+
 ## Build cost, and how to measure it — 2026-10-06
 
 Xyh's standing instruction: memory, CPU, and GPU use matter, and the walk does not have to be seamless. Holding the walker in a finished room, or bringing the next room in dark and then loading it, are both acceptable if a room ever needs more time than a frame.
