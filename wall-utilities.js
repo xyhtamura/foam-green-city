@@ -1,7 +1,7 @@
-import {createLedTv} from './led-tv.js?v=01e87122a3';
-import {createPipeKit} from './pipe-parts.js?v=01e87122a3';
-import {generatePipeRun, checkPipeRun, PIPE_STYLE_IDS} from './pipe-runs.js?v=01e87122a3';
-import {tableSupport,reserveSupport} from './object-supports.js?v=01e87122a3';
+import {createLedTv} from './led-tv.js?v=fb5187d433';
+import {createPipeKit} from './pipe-parts.js?v=fb5187d433';
+import {generatePipeRun, checkPipeRun, PIPE_STYLE_IDS} from './pipe-runs.js?v=fb5187d433';
+import {tableSupport,reserveSupport} from './object-supports.js?v=fb5187d433';
 
 // Cached prototypes and unit fittings survive room culls. Clones own no GPU resources.
 export function createWallUtilities({THREE,curvize}){

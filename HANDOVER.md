@@ -47,6 +47,16 @@ A Kenney wall module is 0.1 m thick with its near face on its origin plane. The 
 
 `?inspect=1` now also sets `window.fgc` to `{THREE,scene,cam,renderer,segments,WALLP}` for console measurement. With the browser pane hidden, `requestAnimationFrame` is paused, so a test can pose `cam`, call `renderer.render`, and `readPixels` in the same task.
 
+## Still meshes merged by material — 2026-10-06
+
+`merge-static.js` runs at the end of `buildSegment`. Every mesh in the room that will not move again is copied, in the room's frame, into one mesh per material, named `merged-static`. The originals stay in the room's tree, because the placement code, the inspector, and `dropSegment` all read it, and are put on layer 1 (`SOURCE_LAYER`), which the camera does not draw. A raycaster reaches them only with `ray.layers.enable(SOURCE_LAYER)`; the merged meshes ignore rays.
+
+Left unmerged: a cutout that faces the camera (`userData.billboard`), a spinning object (`userData.spin`), a fan's `fan-rotor` and `fan-head`, blended materials, a mesh with a material list, and any material whose meshes together pass 40,000 vertices (`VERTEX_LIMIT`). The last keeps rows of one heavy model on the shared prototype geometry: a hall of chairs merged to 553,000 vertices and 15 MB before the limit. A material with one mesh is left alone.
+
+Rules this sets for later work. An object that will move after the build must carry one of those marks, or it is frozen where it stood. Anything added to a room after `buildSegment` returns is drawn but not merged. Changing a source mesh's material, position, or `visible` after the build changes nothing on screen. `?merge=off` skips the step; `grp.userData.merge` holds the report (`meshes, merged, into, heavy, vertices, bytes, ms`), which `bench()` returns with each row.
+
+Shading differs slightly on the twisting route for objects scaled unevenly: the merge transforms normals by the proper normal matrix, where the route's shader multiplies by the model matrix. On the straight route the two agree.
+
 ## Rooms that cannot be seen are not drawn — 2026-10-06
 
 `hideUnseenRooms` in `index.html` runs each frame once the camera is placed, and sets each room's `visible`. A room is skipped when all of it is behind the camera or all of it is past the fog's far distance, where every pixel of it would come out in the background colour. Depth is measured along the camera's view, which is how the fog measures it, at points round a box holding the room; the box reaches 16 m past the side walls for a room with a passage or side room. The points go through `spatialPoint` on the twisting route, so the test follows the bend. The walker's room is always drawn. The test uses the camera's own matrix, so it holds for a player who turns round.

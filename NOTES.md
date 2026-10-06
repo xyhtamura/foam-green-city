@@ -1334,3 +1334,15 @@ Effect on the twisting route, walking forward: three or four of six rooms drawn;
 Not done. Not viewed with the pane visible. Rooms of 40 m width or more, where the fog reaches 100 m, were not in the tested ranges unless the walk happened on one; none was looked for. A cut through a passage exit was not exercised, since the runs used `?fork=never`.
 
 Still the larger lever: one draw call per mesh. A drawn room is 200 to 300 calls. Nothing was pushed.
+
+## 2026-10-06 — Claude Code — still meshes merged by material
+
+Xyh approved merging and noted there are few moving meshes. The mechanism and the rules it sets are in HANDOVER.md.
+
+Checks, stepping the walk from the console. Each compared frame was drawn twice, once with merged meshes and once with them hidden and the originals shown, and compared pixel by pixel at 960 x 540 with a tolerance of 6 in 255. Twisting route, rooms 20 to 95, 294 frames: 9.4 pixels differing on average of 518,400, 456 at most. One such frame was looked at: the pixels are small objects on a tabletop, shaded 7 to 12 levels differently, which is the normal-matrix difference described in the handover. Straight route, room 21, six camera directions: 0, 0, 0, 0, 0, and 1 pixel. The inspector's doorway and shoulder raycasts pass in six rooms with the originals on their layer. All twelve node checks, `stamp_versions --check`, and `check_published_assets` pass; no console error.
+
+Effect, twisting route with the visibility rule on. Draw calls: 712 to 325 averaged over those frames. Frames with no build at 1280 x 720, four runs alternating off, on, off, on: 8.2, 7.2, 8.9, 7.1 ms. Cost: the merge takes 1.9 ms per room at the median, 8.9 ms at the ninetieth percentile, 25.8 ms at most, after its inner loop was rewritten over raw arrays; the first version added about 10 ms. Merged geometry is 454 KB per room on average, sent to the graphics card once and then dropped from memory. The renderer's geometry count peaked at 582 with merging and 611 without; the JS heap was 84 to 101 MB either way.
+
+So the gain in frame time on this machine is about 15%, small beside the visibility rule, which had already removed the rooms that were not seen. Draw calls are more than halved, which should count for more on a slower processor; that was not measured.
+
+Not done. Not viewed with the pane visible or in motion. A fan was not watched turning after the merge; its rotor and head are excluded by name, read from `animateDomesticProps`. The 512 meshes left over the vertex limit in 80 rooms are still one call each; instancing would take them, and needs the route's shader to read the instance matrix, which is why it was not done here. Nothing was pushed.
