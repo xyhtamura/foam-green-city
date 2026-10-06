@@ -1231,3 +1231,32 @@ Xyh asked for the baseboard gap found in the previous entry to be fixed. Details
 Checks, by raycast in the loaded scene at 0.05 m above the floor, seed 5 rooms 18 to 23 with `?sideSpaces=room`, straight route: the distance from the back of the baseboard to the wall behind it was 1 mm at 180 of 188 side-wall samples and at all 22 end-wall samples, and 21 mm at 8 samples on one authored window variant whose face is 0.06 m in. Before the change it was 0.1 m on every solid module and far end wall. Viewed room 21's far wall: the strip meets the partition. `check_side_spaces`, `check_room_sequences`, `check_navigation`, and `check_published_assets` pass; no console error.
 
 Not done. Raised and sunken rooms, passages, and the twisting route were not sampled. Side rooms and passages still have no baseboards. Wall photos, outlets, door leaves, and the hollow-block face still stand 0.105 to 0.13 m clear of solid side-wall modules; they share the block face's plane, so they need one decision between moving the solid modules in by 0.1 m and moving each of them out. Wire runs are at 0.04 m and were fitted to the real face. Nothing was pushed.
+
+## 2026-10-06 — Antigravity — procedural fabric texture generator & tela pattern bank
+
+Xyh asked for a script generating textures for fabric patterns, modeled off the supplied kurtina vertical stripe patterns (`2026-10-03 17-28-41.png`, `17-28-35.png`, `17-28-25.png`), cabana awning stripes with triplet pinstripes (`2026-10-06 14-00-18.png`), woven gingham check (`2026-10-03 17-08-19.png`), polka dots, and other domestic patterns, outputting to sorted subfolders under `F:\xyh\foam-green-city\tela`.
+
+Added `scripts/generate_fabric_textures.py` generating seamless, procedurally synthesized fabric textures with plain-weave micro-relief, yarn slub variations, and authentic Philippine domestic colorways:
+- `tela/kurtina_slub_stripes/` (6 patterns): painted vertical multi-stripes with dry-brush drag striations, soft fiber feathering, and accent pinstripes (`manila_bay_blue_gold`, `palmyra_olive_yellow`, `sampaguita_rose_gold`, `sunflower_amber_brown`, `deped_foam_harvest`, `calamansi_citrus`).
+- `tela/cabana_pinstripes/` (7 patterns): alternating wide colored and white awning bands with centered triplet pinstripes in the white band (`deped_kelly_green`, `foam_green_classic`, `pacific_royal_blue`, `fiesta_crimson_red`, `sunflower_yellow`, `manila_maroon`, `terracotta_orange`).
+- `tela/gingham/` (9 patterns): plain-woven check with optical yarn crossover zones (white ground, 50% half-tints, 100% full saturated dyed intersections) and subtle yarn slubs across 32px and 48px check sizes (`sunshine_yellow`, `carinderia_red`, `deped_foam_green`, `palmyra_dark_green`, `breeze_sky_blue`, `school_navy`, `vintage_rose`, `warm_terracotta`, `monochrome_black`).
+- `tela/polka_dots/` (7 patterns): staggered hexagonal and aligned dot arrangements across pindot, classic, and coin sizes with anti-aliased ink bleed into cloth fibers.
+- `tela/plaid_madras/` (5 patterns): traditional woven blanket (*kumot* / *inabel* / *patadyong*) and tablecloth plaids with multi-bar warp and weft intersections, including `inabel_fiesta_check` modeled directly on `tela/2026-10-06 15-52-00.png`.
+- `tela/ditsy_floral/` (4 patterns): seamless 5-petal sampaguita and retro daisy prints with leaf sprigs over solid or tinted woven grounds.
+- `tela/ticking_stripes/` (4 patterns): classic domestic mattress and curtain ticking stripes (paired fine vertical lines on unbleached linen).
+- `tela/retro_waves/` (3 patterns): sinusoidal rick-rack / wave bands seamlessly tileable in 2D.
+- Interactive catalog: generated `tela/index.html` with responsive category filtering and 1× / 2× / 4× repeat toggles for reviewing seamless tiling in the browser.
+
+Checks:
+- Generated 45 textures across 8 categories at 512×512 resolution.
+- 2×2 tile verification confirmed mathematical seamlessness across all categories: gingham enforces even check counts so checks alternate perpetually across tile boundaries without doubling width; cabana stripes and ticking lines use exact integer repeat counts; slub striations and fabric weave use periodic sine/cosine banks.
+- Verified visual fidelity by decoding and directly viewing output PNGs (`kurtina_slub_manila_bay_blue_gold.png`, `palmyra_olive_yellow.png`, `cabana_pinstripe_deped_kelly_green.png`, `gingham_sunshine_yellow_32px.png`, `polka_white_on_foam_green_classic_staggered.png`, `plaid_inabel_fiesta_check.png`, `floral_sampaguita_on_foam_green.png`) alongside the reference images.
+- Existing user files in `tela/fruits/`, `tela/sparrow333/`, and loose reference images were left untouched.
+- `python scripts/check_published_assets.py` passes (130 tracked assets).
+- `node --experimental-default-type=module scripts/check_room_sequences.mjs` passes (13,000 rooms).
+
+Undone:
+- The generated textures are not yet hooked into `wall-assets.js` / `photo-assets.js` curtain loader or tablecloth meshes in the live walkthrough (left for the next pass or user selection).
+- Higher resolutions (e.g., 1024×1024) can be rendered on demand via `--size 1024`.
+Nothing was pushed.
+
