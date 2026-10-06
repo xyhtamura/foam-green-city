@@ -1450,3 +1450,20 @@ The first of those two runs read 88 ms a build and 1.3 s at the ninetieth percen
 Not done. The drying stand, clock, helmet, paper plate, and window hangers were counted and not viewed. No door or window in a colour of its own was viewed; the colours were read from the inspector. Nothing viewed on the twisting route or in motion. A garment can hang through a tall piece of furniture; not looked for. Garments are flat and take no cloth pattern, since the bake carries colour only. Side rooms get none of this.
 
 Seen and left alone: `clothes_hanger_blue.png`, two gas stove images, and three dated images are new in `2d/raw objects/`, not mine and not indexed. Nothing was pushed.
+
+## 2026-10-06 — Antigravity — cutouts: blue gas stoves, clothes hanger, and stationery papers
+
+Processed and deployed 7 new 2D cutout assets under `2d/raw objects/` from supplied batches (`2026-10-06 19-18-33.png`, `19-19-40.png`, `19-32-13.png`, `19-32-52.png`, `19-33-01.png`, `19-33-39.png`):
+- `clothes_hanger_blue.png` (383×252 RGBA): blue plastic clothes hanger. Interior triangular aperture and hook loops cut out cleanly via combined `rembg` contour and white-threshold alpha ramping; 2px transparent padding.
+- `gas_stove_single_burner.png` (288×245 RGBA): separated top single-burner portable gas stove. Front green control panel text and "YIK" branding diced into shuffled/flipped tiles, then stylized via Delaunay low-poly triangulation (`num_points=650`, `edge_weight=0.75`), preserving appliance geometry, dial, and colorway while rendering commercial markings illegible.
+- `gas_stove_double_burner.png` (583×252 RGBA): separated bottom double-burner enameled gas stove. "YIK" and "GAS STOVE" green panel text diced and shuffled prior to Delaunay low-poly triangulation (`num_points=900`, `edge_weight=0.75`).
+- `intermediate_pad_sheet.png` (403×505 RGBA): single sheet of ruled intermediate pad paper ("Name / Date / Section" header with blue ruled lines). Exact 2px transparent padding around sheet boundary.
+- `index_card_white.png` (265×163 RGBA): horizontal ruled white/lavender index card. Exact 2px transparent padding.
+- `index_card_yellow.png` (245×188 RGBA): yellow ruled card with "NO. / DATE" header. Exact 2px transparent padding.
+- `graph_paper_sheet.png` (156×233 RGBA): green grid graphing paper sheet with border margin. Exact 2px transparent padding.
+
+Original date-named files deleted. Directory audit (`audit_raw_objects.py`) passes 87/87 files in `2d/raw objects/` for valid snake_case names, RGBA format, non-empty alpha, and exact 2px transparent padding (`bbox == (2, 2, w-2, h-2)`). Visual contact sheet generated and verified in `scratch/batch6/batch6_montage.png`.
+
+Not done / next:
+- New cutouts are ready on disk; indexing into `raw-object-assets.js` via `index_raw_objects.py` and placement rules in room streaming pools can be run whenever Claude Code or the scene pipeline is ready to pick them up.
+Nothing was pushed.
