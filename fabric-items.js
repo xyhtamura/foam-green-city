@@ -2,11 +2,14 @@
 // mattresses, a rolled banig, cloth hung on a wall, tablecloths, potholders, and sofa covers. The patterns are the page-sized copies listed in
 // fabric-assets.js. Each pattern has one material for the whole session; each object has its own
 // small geometry, disposed with its room.
-import {FABRICS} from './fabric-assets.js?v=e52762f9db';
-import {placeOnSupport} from './object-supports.js?v=e52762f9db';
-import {wallThingsOf} from './household-items.js?v=e52762f9db';
+import {FABRICS} from './fabric-assets.js?v=29908bed5a';
+import {createPuzzleMatKit} from './puzzle-mats.js?v=29908bed5a';
+import {placeOnSupport} from './object-supports.js?v=29908bed5a';
+import {wallThingsOf} from './household-items.js?v=29908bed5a';
 
 const AISLE=0.72,LIFT=0.008,STEP=0.4;
+// One puzzle-mat kit for the session: it holds one seam texture and one material, and no geometry.
+let puzzleKit=null;
 const materials=new Map();
 function fabricMaterial(THREE,entry,loader,patch){
   if(!materials.has(entry.id)){
@@ -168,6 +171,32 @@ export function addFabricItems({THREE,group,room,seed,loader,patch,blocked=[],fi
         const entry=pick(tela);
         // The pattern is drawn half again as large as on a hanging cloth.
         add(sheetOnFloor({...entry,repeat:entry.repeat*1.5},w,l,'fabric-carpet'),x,floorAt(z)+LIFT*0.5,z);count('carpets');break;
+      }
+    }
+    // Puzzle mats: foam tiles laid as a patch under whatever stands in the room, a few missing, with
+    // a stray tile or two beside it and sometimes a stack by the wall. Small tiles at home; in a hall,
+    // now and then, a field of large ones.
+    const tiles={bedroom:0.12,sala:0.1,bare:0.06,hall:0.04}[room.type];
+    if(tiles&&chance(tiles)){
+      puzzleKit??=createPuzzleMatKit({patchMaterial:patch});
+      const large=room.type==='hall'&&r()<0.6,tile=large?0.6:0.3,scheme=pick(['random','random','checker','checker','single','rows']);
+      const palette=large?pick([[0x3a3f44,0x6e7378],[0x2e5fa3,0xc23b32],[0x3a3f44]]):pick([[0xda6c66,0xe3c75e,0x75a477,0x639abe],[0xf2a0b5,0xa9d5e8,0xf5e08a,0xb9e0b0],[0x2e5fa3,0xe0b23a],[0xc23b32,0x2f7d5a,0xe0b23a,0x2e5fa3,0xd96a2b],[0x8c9691,0xd8d2c2]]);
+      const columns=Math.max(2,Math.min(Math.floor((room.width-1)/tile),large?3+Math.floor(r()*6):3+Math.floor(r()*5))),rows=Math.max(2,Math.min(Math.floor((room.length-1.4)/tile),large?4+Math.floor(r()*8):4+Math.floor(r()*6)));
+      const w=columns*tile,l=rows*tile,own=mesh=>{mesh.userData.own=true;mesh.name='fabric-'+mesh.name;return mesh;};
+      for(let attempt=0;attempt<8;attempt++){
+        const x=(r()-0.5)*(room.width-0.5-w),z=-(0.7+l/2+r()*(room.length-1.4-l)),rect={minX:x-w/2,maxX:x+w/2,minZ:z-l/2,maxZ:z+l/2};
+        if(fixed.some(o=>rect.maxX>o.minX&&rect.minX<o.maxX&&rect.maxZ>o.minZ&&rect.minZ<o.maxZ))continue;
+        const seedOf=()=>Math.floor(r()*1e6)+1,y=floorAt(z)+LIFT*0.75;
+        add(own(puzzleKit.create('patch',{columns,rows,tile,palette,scheme,missing:r()<0.3?0:0.04+r()*0.2,seed:seedOf()})),x,y,z);count('puzzleMats');
+        for(let n=Math.floor(r()*3);n>0;n--){
+          const stray=own(puzzleKit.create('stray',{tile,palette,scheme:'random',seed:seedOf()}));stray.rotation.y=r()*6.28;
+          add(stray,x+(r()-0.5)*(w+1.2),y+0.013,z+(r()-0.5)*(l+1.2));
+        }
+        if(r()<0.3){
+          const spot=patchOfFloor(tile/2+0.05,tile/2+0.05,{byWall:true,inset:0.14});
+          if(spot){add(own(puzzleKit.create('stack',{tile,palette,scheme:'random',count:3+Math.floor(r()*6),seed:seedOf()})),spot.x,floorAt(spot.z)+0.003,spot.z);taken.push(spot.rect);}
+        }
+        break;
       }
     }
     // A small cloth mat: by a bed, at a sink, inside a bathroom door.

@@ -84,41 +84,41 @@ window.addEventListener('unhandledrejection',reportLoadFailure);
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { createJalousieWall } from './jalousie.js?v=e52762f9db';
-import { createDomesticProps, animateDomesticProps, createFurnitureVariants, FURNITURE_FINISHES } from './domestic-props.js?v=e52762f9db';
-import { WALL_HANGINGS } from './wall-assets.js?v=e52762f9db';
-import { RAW_OBJECTS, createRawObject, oddSize, cutoutTone } from './raw-object-assets.js?v=e52762f9db';
-import { loadCurtainPatterns } from './photo-assets.js?v=e52762f9db';
-import { ROOM_WIDTHS, partitionPieces } from './room-widths.js?v=e52762f9db';
+import { createJalousieWall } from './jalousie.js?v=29908bed5a';
+import { createDomesticProps, animateDomesticProps, createFurnitureVariants, FURNITURE_FINISHES } from './domestic-props.js?v=29908bed5a';
+import { WALL_HANGINGS } from './wall-assets.js?v=29908bed5a';
+import { RAW_OBJECTS, createRawObject, oddSize, cutoutTone } from './raw-object-assets.js?v=29908bed5a';
+import { loadCurtainPatterns } from './photo-assets.js?v=29908bed5a';
+import { ROOM_WIDTHS, partitionPieces } from './room-widths.js?v=29908bed5a';
 
-import { LAYOUT_IDS, generateFurnitureLayout, checkFurnitureLayout, TABLE_TOP } from './furniture-layouts.js?v=e52762f9db';
-import { FLOOR_IDS, createFloorVariant } from './floor-variants.js?v=e52762f9db';
-import { DOOR_STYLES, createDoorLeaves } from './doors.js?v=e52762f9db';
-import { MODEL_ASSETS, loadModelAssets } from './model-assets.js?v=e52762f9db';
-import { createRoomSet, createRoomFixture } from './room-sets.js?v=e52762f9db';
-import { createUratexSofa } from './uratex-sofa.js?v=e52762f9db';
-import { createWireRun } from './wire-runs.js?v=e52762f9db';
-import { createWallUtilities } from './wall-utilities.js?v=e52762f9db';
-import {createWalkSequence,retainedRooms,walkRegions,canOccupy,moveWalker,pathToRoute,roomExits} from './navigation.js?v=e52762f9db';
-import {addDomesticDetails} from './domestic-details.js?v=e52762f9db';
+import { LAYOUT_IDS, generateFurnitureLayout, checkFurnitureLayout, TABLE_TOP } from './furniture-layouts.js?v=29908bed5a';
+import { FLOOR_IDS, createFloorVariant } from './floor-variants.js?v=29908bed5a';
+import { DOOR_STYLES, createDoorLeaves } from './doors.js?v=29908bed5a';
+import { MODEL_ASSETS, loadModelAssets } from './model-assets.js?v=29908bed5a';
+import { createRoomSet, createRoomFixture } from './room-sets.js?v=29908bed5a';
+import { createUratexSofa } from './uratex-sofa.js?v=29908bed5a';
+import { createWireRun } from './wire-runs.js?v=29908bed5a';
+import { createWallUtilities } from './wall-utilities.js?v=29908bed5a';
+import {createWalkSequence,retainedRooms,walkRegions,canOccupy,moveWalker,pathToRoute,roomExits} from './navigation.js?v=29908bed5a';
+import {addDomesticDetails} from './domestic-details.js?v=29908bed5a';
 let wallUtilities;
-import { roomLighting } from './room-lighting.js?v=e52762f9db';
-import { scatterLevel, planScatter, planSideScatter, scatterBlocks, createScatterMesh } from './floor-scatter.js?v=e52762f9db';
-import { addWallProtrusions } from './wall-protrusions.js?v=e52762f9db';
-import { createBaseboards } from './baseboards.js?v=e52762f9db';
-import { addHouseholdItems } from './household-items.js?v=e52762f9db';
-import { mergeStaticMeshes, SOURCE_LAYER } from './merge-static.js?v=e52762f9db';
-import { addFabricItems } from './fabric-items.js?v=e52762f9db';
-import { createBasketballCourt } from './basketball-court.js?v=e52762f9db';
-import { createYeroPath } from './yero-path.js?v=e52762f9db';
-import { spatialFrame, spatialPoint, SPATIAL_GLSL, SPATIAL_PROFILES } from './spatial-route.js?v=e52762f9db';
-import { floorHeight, cameraRoute, routePoint } from './room-sequences.js?v=e52762f9db';
-import {sideSpacePlan,DRAWER_VARIANTS} from './side-spaces.js?v=e52762f9db';
-import {addWoodDetails} from './wood-details.js?v=e52762f9db';
-import {addSideWashrooms} from './side-washrooms.js?v=e52762f9db';
-import {addSideStorage} from './side-storage.js?v=e52762f9db';
-import {addSideBedrooms} from './side-bedrooms.js?v=e52762f9db';
-import { branchOpenings, raiseFloor, createRoomArchitecture } from './room-architecture.js?v=e52762f9db';
+import { roomLighting } from './room-lighting.js?v=29908bed5a';
+import { scatterLevel, planScatter, planSideScatter, scatterBlocks, createScatterMesh } from './floor-scatter.js?v=29908bed5a';
+import { addWallProtrusions } from './wall-protrusions.js?v=29908bed5a';
+import { createBaseboards } from './baseboards.js?v=29908bed5a';
+import { addHouseholdItems } from './household-items.js?v=29908bed5a';
+import { mergeStaticMeshes, SOURCE_LAYER } from './merge-static.js?v=29908bed5a';
+import { addFabricItems } from './fabric-items.js?v=29908bed5a';
+import { createBasketballCourt } from './basketball-court.js?v=29908bed5a';
+import { createYeroPath } from './yero-path.js?v=29908bed5a';
+import { spatialFrame, spatialPoint, SPATIAL_GLSL, SPATIAL_PROFILES } from './spatial-route.js?v=29908bed5a';
+import { floorHeight, cameraRoute, routePoint } from './room-sequences.js?v=29908bed5a';
+import {sideSpacePlan,DRAWER_VARIANTS} from './side-spaces.js?v=29908bed5a';
+import {addWoodDetails} from './wood-details.js?v=29908bed5a';
+import {addSideWashrooms} from './side-washrooms.js?v=29908bed5a';
+import {addSideStorage} from './side-storage.js?v=29908bed5a';
+import {addSideBedrooms} from './side-bedrooms.js?v=29908bed5a';
+import { branchOpenings, raiseFloor, createRoomArchitecture } from './room-architecture.js?v=29908bed5a';
 
 // ---- palette (DepEd MPSS, stylized: green walls) ----
 const COL = {
@@ -364,6 +364,38 @@ function addUpperWall(partition,grp,width,top,z){
   if(!cache.has('upper'))cache.set('upper',curvize(new THREE.MeshLambertMaterial({color:grp.userData.wallColor??COL.wall})));
   const front=PARTITION_PROUD,back=-WALL_INSET,upper=new THREE.Mesh(new THREE.BoxGeometry(width,top-H,front-back,Math.max(1,Math.ceil(width/2)),Math.max(1,Math.ceil((top-H)/2)),1),cache.get('upper'));
   upper.position.set(0,(top+H)/2,z+(front+back)/2);upper.userData.own=true;upper.name='upper-wall';partition.add(upper);
+}
+// The wall a room is entered through belongs to the room before it and is that room's colour. This
+// paints the face of it that is inside this room: a skin 3 mm in front of the wall, and in front of the
+// doorway's frame where that stands out, with the doorway left open. It is there whether or not the
+// room before has been built, so it also closes the room at that end.
+const DOORWAY={half:0.43,top:1.965,frame:0.142,wall:0.103};
+function addEntryFace(grp,descriptor){
+  const cache=grp.userData.wallPaintMaterials,half=descriptor.width/2,top=descriptor.height;
+  if(!cache.has('upper'))cache.set('upper',curvize(new THREE.MeshLambertMaterial({color:grp.userData.wallColor??COL.wall})));
+  const positions=[];
+  // A rectangle at depth z facing into the room, cut into pieces of 1 m or less.
+  const panel=(x0,x1,y0,y1,z)=>{
+    if(x1-x0<0.01||y1-y0<0.01)return;
+    const nx=Math.ceil((x1-x0)/1),ny=Math.ceil((y1-y0)/1);
+    for(let i=0;i<nx;i++)for(let j=0;j<ny;j++){
+      const xa=x0+(x1-x0)*i/nx,xb=x0+(x1-x0)*(i+1)/nx,ya=y0+(y1-y0)*j/ny,yb=y0+(y1-y0)*(j+1)/ny;
+      positions.push(xa,ya,z,xa,yb,z,xb,yb,z,xa,ya,z,xb,yb,z,xb,ya,z);
+    }
+  };
+  for(const side of [-1,1]){
+    const [inner,outer]=side>0?[1,half]:[-half,-1];panel(inner,outer,0,top,-DOORWAY.wall);
+    const [a,b]=side>0?[DOORWAY.half,1]:[-1,-DOORWAY.half];panel(a,b,0,top,-DOORWAY.frame);
+    // The step between the two depths, at the edge of the doorway module.
+    for(let j=0,n=Math.ceil(top);j<n;j++){
+      const ya=top*j/n,yb=top*(j+1)/n,x=side,z0=-DOORWAY.wall,z1=-DOORWAY.frame;
+      if(side>0)positions.push(x,ya,z1,x,yb,z1,x,yb,z0,x,ya,z1,x,yb,z0,x,ya,z0);else positions.push(x,ya,z0,x,yb,z0,x,yb,z1,x,ya,z0,x,yb,z1,x,ya,z1);
+    }
+  }
+  panel(-DOORWAY.half,DOORWAY.half,DOORWAY.top,top,-DOORWAY.frame);
+  const geometry=new THREE.BufferGeometry();
+  geometry.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));geometry.computeVertexNormals();
+  const face=new THREE.Mesh(geometry,cache.get('upper'));face.name='entry-face';face.userData.own=true;grp.add(face);
 }
 function addWall(group, proto, x, z, ry, trim){
   const c = repaint(proto.clone(),group,trim);
@@ -761,6 +793,7 @@ function buildSegment(index){
     grp.children.at(-1).userData.wallPhoto=true;
     grp.children.at(-1).userData.photoFile=photo.file;
   }
+  addEntryFace(grp,descriptor);
   // far partition with a central doorway (camera passes into next segment)
   // Cover the wider room on either side of a boundary, including its shoulders.
   const partition=new THREE.Group();partition.name='room-partition';grp.add(partition);

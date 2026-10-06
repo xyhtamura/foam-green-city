@@ -1,20 +1,22 @@
 // Places the mesh kits' objects in a room, then bakes them into one vertex-coloured mesh.
-import {createTablewareKit,TABLEWARE_COLOURS} from './tableware.js?v=e52762f9db';
-import {createPlasticKit,PLASTIC_COLOURS} from './plastics.js?v=e52762f9db';
-import {createLinenKit,LINEN_COLOURS} from './linens.js?v=e52762f9db';
-import {placeOnSupport} from './object-supports.js?v=e52762f9db';
-import {createHouseholdToolKit} from './household-tools.js?v=e52762f9db';
-import {createPlasticStorageKit} from './plastic-storage.js?v=e52762f9db';
-import {createCardboardKit} from './cardboard.js?v=e52762f9db';
-import {createSchoolChairKit} from './school-chair.js?v=e52762f9db';
-import {createBasketball,BALL_COLOURS} from './basketball.js?v=e52762f9db';
-import {createFootwearKit,FOOTWEAR_TYPES} from './footwear.js?v=e52762f9db';
-import {createBathroomKit} from './bathroom-tools.js?v=e52762f9db';
-import {createSampayan,CLOTHES_COLOURS} from './sampayan.js?v=e52762f9db';
-import {createHouseholdDetailsKit} from './household-details.js?v=e52762f9db';
-import {createDecorKit} from './decor.js?v=e52762f9db';
-import {createMirrorsValancesKit,VALANCE_TYPES} from './mirrors-valances.js?v=e52762f9db';
-import {createPackagingKit} from './packaging.js?v=e52762f9db';
+import {createTablewareKit,TABLEWARE_COLOURS} from './tableware.js?v=29908bed5a';
+import {createPlasticKit,PLASTIC_COLOURS} from './plastics.js?v=29908bed5a';
+import {createLinenKit,LINEN_COLOURS} from './linens.js?v=29908bed5a';
+import {placeOnSupport} from './object-supports.js?v=29908bed5a';
+import {createHouseholdToolKit} from './household-tools.js?v=29908bed5a';
+import {createPlasticStorageKit} from './plastic-storage.js?v=29908bed5a';
+import {createCardboardKit} from './cardboard.js?v=29908bed5a';
+import {createSchoolChairKit} from './school-chair.js?v=29908bed5a';
+import {createBasketball,BALL_COLOURS} from './basketball.js?v=29908bed5a';
+import {createFootwearKit,FOOTWEAR_TYPES} from './footwear.js?v=29908bed5a';
+import {createBathroomKit} from './bathroom-tools.js?v=29908bed5a';
+import {createSampayan,CLOTHES_COLOURS} from './sampayan.js?v=29908bed5a';
+import {createHouseholdDetailsKit} from './household-details.js?v=29908bed5a';
+import {createRiceStorageKit} from './rice-storage.js?v=29908bed5a';
+import {createSmallElectronicsKit} from './small-electronics.js?v=29908bed5a';
+import {createDecorKit} from './decor.js?v=29908bed5a';
+import {createMirrorsValancesKit,VALANCE_TYPES} from './mirrors-valances.js?v=29908bed5a';
+import {createPackagingKit} from './packaging.js?v=29908bed5a';
 
 // The kits only lend their geometry and colours to the bake. Tableware and cardboard build from
 // a fixed set of shapes, so one of each serves every room. The others make new geometry for each
@@ -394,6 +396,43 @@ export function addHouseholdItems({THREE,group,room,seed,material,blocked=[],flo
     const setDown=(object,name)=>{if(!tops.length)return false;const parent=pick(tops),holder=set(name,[object]);if(placeOnSupport({THREE,parent,object:holder,support:parent.userData.supportSurface,random:r})){placed.push(holder);return true;}report.rejected++;return false;};
     if(chance({sala:0.06,bedroom:0.05,bare:0.05,kitchen:0.03}[room.type]??-1)&&setDown(detailKit.create('helmet',{colour:pick(plasticColours),helmetStyle:r()<0.6?'openFace':'fullFace'}),'helmet'))count('helmets');
     if(chance({hall:0.3,auditorium:0.2,kitchen:0.08,sala:0.04}[room.type]??-1))for(let n=between(1,2);n>0;n--)if(setDown(detailKit.create('paperPlate'),'paper-plate'))count('paperPlates');
+  }
+  // ---- The sixth set: rice storage and small electronics. Drawn after everything above. ----
+  // Both kits make their geometry for each object and keep none of it, and are built for this room.
+  const riceKit=createRiceStorageKit(),gadgetKit=createSmallElectronicsKit();
+  // The bake reads ordinary meshes. An open rice container's loose grains are drawn as instances, which
+  // it cannot read, so they are left out and the level surface of the rice stands for them.
+  const settled=object=>{
+    const grains=[];object.traverse(o=>{if(o.isInstancedMesh)grains.push(o);});for(const o of grains)o.parent.remove(o);
+    const b=object.userData.bounds;object.userData.supportBounds={minX:b.minX,maxX:b.maxX,minZ:b.minZ,maxZ:b.maxZ,height:b.maxY};return object;
+  };
+  const sackColours=[0xb6b591,0xd8d2bd,0xc9b98a,0xe6e2d2,0xa8b0a0],binColours=[0xe6e2d2,0x8fb0c8,0xd98fb0,0x9db08e,0xe2c96a,0xc9d6e2],lidColours=[0x637e76,0x3f7fb0,0xb5524a,0x2f6b4f,0x8a6a47,0xe2ddd0];
+  const rice=(type,options={})=>settled(riceKit.create(type,{colour:pick(type==='sack'?sackColours:binColours),accent:pick(lidColours),open:r()<0.4,fill:0.25+r()*0.7,seed:Math.floor(r()*1e6),scoop:r()<0.6,...options}));
+  // Rice: a sack, a lidded bin, or a tub, on a kitchen floor by the wall; a sack sometimes elsewhere.
+  if(room.type==='kitchen'||room.kitchenCorner){
+    if(chance(0.26)&&stand(turned(rice('sack'),r()*6.28)))count('rice');
+    if(chance(0.2)){const side=wallSide();if(stand(turned(rice('riceBin'),facing(side)+Math.PI),{side}))count('rice');}
+    if(chance(0.16)&&stand(turned(rice('storageTub'),r()*6.28)))count('rice');
+  }else if(['bare','sala','hall'].includes(room.type)&&chance(0.05)){
+    for(let n=between(1,3);n>0;n--)if(stand(turned(rice('sack',{open:false}),r()*6.28)))count('rice');
+  }
+  // Electronics. The kit's radio is not used.
+  const gadget=(type,options={})=>settled(gadgetKit.create(type,{colour:pick([0xd0cdbd,0xe6e2d6,0x2f3a44,0x8c9691,0xc9c2a8]),accent:pick([0x444b47,0x23272a,0x5a5f5c]),seed:Math.floor(r()*1e6),...options}));
+  // On the floor by a wall: a power strip with its cable trailing, or an extension cord coiled up.
+  if(chance({sala:0.18,bedroom:0.14,kitchen:0.08,bare:0.06,hall:0.05}[room.type]??-1)&&stand(turned(gadget('powerStrip',{sockets:between(3,6),cableLength:0.4+r()*0.5}),r()*6.28)))count('electronics');
+  if(chance({bare:0.06,sala:0.05,bedroom:0.04,hall:0.04}[room.type]??-1)&&stand(turned(gadget('extensionCord',{cableLength:0.5+r()*0.4}),r()*6.28)))count('electronics');
+  // On a table or a shelf: a remote, a phone, a charger with its lead, a loose cable.
+  if(room.type!=='bathroom'){
+    const tops=[];group.traverse(o=>{if(o.userData.supportSurface&&!o.userData.diningChair)tops.push(o);});
+    const leave=(object,name)=>{
+      if(!tops.length)return false;
+      const parent=pick(tops),holder=set(name,[object]);
+      if(placeOnSupport({THREE,parent,object:holder,support:parent.userData.supportSurface,random:r})){placed.push(holder);return count('electronics');}
+      report.rejected++;return false;
+    };
+    const small={sala:[['remote',0.3],['phone',0.1],['charger',0.08],['looseCable',0.04]],bedroom:[['phone',0.16],['charger',0.16],['remote',0.08],['looseCable',0.05]],
+      kitchen:[['phone',0.06],['charger',0.05]],bare:[['charger',0.04]],hall:[['remote',0.05]]}[room.type]??[];
+    for(const [type,rate] of small)if(chance(rate))leave(gadget(type,type==='charger'?{cableLength:0.25+r()*0.2,cable:r()<0.8}:type==='looseCable'?{cableLength:0.3+r()*0.2}:{screenOn:r()<0.15}),type);
   }
   if(!placed.length)return {mesh:null,footprints,walkBlocks,report,hung};
 

@@ -47,6 +47,18 @@ A Kenney wall module is 0.1 m thick with its near face on its origin plane. The 
 
 `?inspect=1` now also sets `window.fgc` to `{THREE,scene,cam,renderer,segments,WALLP}` for console measurement. With the browser pane hidden, `requestAnimationFrame` is paused, so a test can pose `cam`, call `renderer.render`, and `readPixels` in the same task.
 
+## Each face of a doorway wall in its own room's colour — 2026-10-06
+
+A doorway wall belongs to the room before it and is built in that room's colour, so a room's entry wall used to be its neighbour's colour. `addEntryFace` in `index.html` now paints the face inside the room: a skin 3 mm in front of the wall, and in front of the doorway's frame where the frame stands out from it, with the doorway left open. The sizes are in `DOORWAY`: the opening is 0.43 m either side of the middle and 1.965 m high, measured by raycast on the doorway module, so they must change if that model does. The skin is there whether or not the room before has been built, so it also closes a room at that end. The yero path has none.
+
+## Puzzle mats, rice storage, small electronics — 2026-10-06
+
+Three more kits, unchanged copies from `F:/xyh/fgc-cx`.
+
+`puzzle-mats.js` was built to the brief left there: one mesh for a patch, tile colour in the vertices, one seam texture. `fabric-items.js` keeps one kit for the session, which holds one material and one texture and no geometry, and lays a patch like a carpet, under whatever stands in the room: 12% of bedrooms, 10% of salas, 6% of bare rooms, 4% of halls. Tiles are 30 cm, three to seven across and four to nine along, in one of five palettes and four schemes, with up to a fifth missing; a hall's patch is of 60 cm tiles six times in ten. Up to two stray tiles lie near it, and three times in ten a stack stands by a wall. Not on a court, and not on a rising floor.
+
+`rice-storage.js` and `small-electronics.js` are the sixth set in `household-items.js`, built for each room and baked with the rest. Rice: a sack on 26% of kitchen floors, a lidded bin on 20%, a tub on 16%, four in ten of them open; one to three closed sacks in 5% of bare rooms, salas, and halls. An open container's loose grains are instances, which the bake cannot read, so they are removed and the level surface of the rice stands for them. Electronics: a power strip on the floor by a wall (18% of salas, 14% of bedrooms, 8% of kitchens), a coiled extension cord (4 to 6% of bare rooms, salas, bedrooms, halls), and on tables and shelves a remote (30% of salas), a phone and a charger (16% each of bedrooms), a loose cable. **The kit's radio is not used, at Xyh's word.**
+
 ## The yero path, the one room that is not a room — 2026-10-06
 
 From Xyh's memory of a path through a long puddle crossed on roofing sheets laid down as they came. About one room in 240 has no floor, walls, ceiling, or furniture: a walkway of corrugated sheets hanging in mint-green air, 24 to 36 m long, the only outdoor place in the walk. `isYero(index,seed)` in `room-generator.js` decides it, never in the first twelve rooms and never where a court falls. For the default seed: rooms 91, 185, 565, 738. `?start=91` opens on it.

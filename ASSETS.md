@@ -280,3 +280,7 @@ Two of them are published only as redrawn copies: `tela/kids/2026-10-06 16-58-08
 ## Washing lines and the household-details kit — 2026-10-06
 
 `sampayan.js` is procedural geometry written for this project by Claude Code. `household-details.js` is a procedural kit authored for this project by Codex in `F:/xyh/fgc-cx` and copied here unchanged; its screen texture is drawn on a canvas by the module and is not used by the page. Neither uses models, images, or fonts. Code is MIT and the geometry is CC BY 4.0 under the project's artwork terms.
+
+## Puzzle mats, rice storage, and small electronics kits — 2026-10-06
+
+`puzzle-mats.js`, `rice-storage.js`, and `small-electronics.js` are procedural kits authored for this project by Codex in `F:/xyh/fgc-cx` and copied here unchanged. The puzzle mat's seam texture is drawn on a canvas by its module. None uses models, images, or fonts; the sacks carry plain blocks of colour in place of any print. Code is MIT and the geometry is CC BY 4.0 under the project's artwork terms.
