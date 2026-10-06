@@ -1156,3 +1156,15 @@ Checks. In the browser on the root server: a fast run on the twisting route reco
 Not done. Only terracotta was viewed among the surveyed colours; the dark ones (navy, medium green) may make a room read as a night room. Foam-green trim on a foam-green wall was not viewed and will be nearly invisible by design. Protrusions were not viewed on the twisting route, and none was walked into. They cast no shadow, which is why they are faint; a slightly darker or lighter face would make them read, at the cost of looking less like part of the wall. Side rooms and passages have none. `references/index.html` still uses `#203C30` for its text.
 
 Another commit landed in this folder during the sitting, a566d03, "cut out new domestic objects and scramble brand text", touching 2D images. I did not make it and did not touch those files. Nothing was pushed.
+
+## 2026-10-06 — Claude Code — outlets and light switches
+
+Xyh asked for more outlets and for the light switches among the 2D objects to be used, and asked where the floor tile bank is.
+
+Outlets and switches are on the walls now; rules in HANDOVER.md. The two outlet images had been held back since 2026-10-04 for want of wall mounting, so before this no room had any.
+
+Floor tiles: there is no bank of tile images. Floors are drawn in code by `floor-variants.js`, seven treatments (`bare`, `concrete`, `creamCeramic`, `redLinoleum`, `greenCheckerboard`, `mismatchedTiles`, `abruptPatches`), with one image, `models/textures/floor_linoleum_red.png`. Antigravity's source module, its brief, and a preview page with screenshots of each treatment are in the sibling folder `fgc-ag`.
+
+Checks. Publication check passes with 130 assets, the two switch images now tracked. In the browser on the root server, straight route: six rooms reported zero to two outlets and a switch in three, with no console errors; viewed room 22, where a switch plate sits left of the far doorway at about shoulder height and the door leaf opens on the right.
+
+Not done. No outlet was viewed, at either height. An outlet can land behind a shelf's clutter or a floor-standing prop, since it does not reserve its place. Switches are only at the far doorway, not on side walls or beside side-room doors. Two of the images carry brand or retailer marks, recorded in ASSETS.md; Xyh may want those scrubbed the way the other cutouts were. Nothing was viewed on the twisting route. Nothing was pushed.

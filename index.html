@@ -507,6 +507,31 @@ function trimFor(paint,next){
   return kind==='dark'?DARK_GREEN:kind==='palmyra'?weighted(PALMYRA_TRIMS,next()):kind==='blueGreen'?(next()<0.6?0x4e7c63:0x3f7466):
     kind==='foam'?FOAM:kind==='cream'?(next()<0.6?CREAM:0xf1f1ec):weighted(ACCENT_TRIMS,next());
 }
+// Outlets and light switches from the supplied cutouts: [file, image height over width, image width in metres].
+// The first switch image has clear margins, so its plate is narrower than the image.
+const OUTLETS=[['2d/raw objects/wall_outlet_duplex_white.png',169/321,0.12],['2d/raw objects/receptacle_box_surface.png',347/219,0.07]];
+const SWITCHES=[['2d/raw objects/lightswitch.webp',1,0.118],['2d/raw objects/lightswitch2.png',754/447,0.07]];
+function addWallFittings(grp,descriptor,i,spots){
+  const next=mulberry32((i*48271+3301)>>>0),half=descriptor.width/2,L=descriptor.length;
+  const plate=(file,aspect,width,x,y,z,ry)=>{
+    const mesh=new THREE.Mesh(plane(width,width*aspect),spriteMat(file));
+    mesh.userData.own=true;mesh.userData.wallFitting=file.split('/').pop();
+    mesh.position.set(x,y+floorHeight(descriptor,z),z);mesh.rotation.y=ry;grp.add(mesh);
+  };
+  // Outlets on solid side walls: near the floor, or at counter height.
+  const outlets=[];
+  for(let n=1+Math.floor(next()*3),pool=[...spots];n>0&&pool.length;n--){
+    const spot=pool.splice(Math.floor(next()*pool.length),1)[0],[file,aspect,width]=OUTLETS[next()<0.65?0:1];
+    plate(file,aspect,width,spot.side*(half-0.108),next()<0.6?0.3:1.1,spot.z+(next()-0.5)*1.4,spot.side>0?-Math.PI/2:Math.PI/2);outlets.push(spot.side);
+  }
+  // A light switch beside the far doorway, on the side the door leaf does not cover.
+  let switches=0;
+  if(next()<0.85){
+    const side=grp.userData.thresholdDoor?-grp.userData.thresholdDoor:next()<0.5?-1:1,[file,aspect,width]=SWITCHES[next()<0.5?0:1];
+    plate(file,aspect,width,side*(0.64+next()*0.12),1.3-width*aspect/2,-L+0.048,0);switches++;
+  }
+  grp.userData.wallFittings={outlets:outlets.length,switches};
+}
 // Shared materials whose colour is redrawn for each room: plastic and painted things.
 // Wood keeps to browns. Anything not registered here keeps its colour everywhere.
 const VARIED=new Map();
@@ -758,6 +783,7 @@ function buildSegment(index){
     }
     break;
   }
+  addWallFittings(grp,descriptor,i,solidWalls);
   furnishUtilities(grp,room.name,r);
   wallUtilities.add({group:grp,descriptor,index:i,spots:solidWalls,params});
   grp.userData.domesticDetails=addDomesticDetails({THREE,group:grp,room:descriptor,seed:i,curvize,spots:solidWalls,photos:WALL_HANGINGS,spriteMat,ceiling:c,forceRoof:params.get('roof')==='yero',forceArrangement:params.get('arrangement'),forceSeat:params.get('seats'),woodTexture});
@@ -1078,7 +1104,7 @@ function inspectRooms(){
       item.roomSets=sets.map(o=>o.userData.roomSet);
       item.roomSetsClear=sets.every(o=>{const b=new THREE.Box3().setFromObject(o);return b.min.x>=-g.userData.width/2+0.05&&b.max.x<=g.userData.width/2-0.05&&(b.max.x<=-0.6||b.min.x>=0.6)&&b.min.z>=g.position.z-g.userData.length+0.2&&b.max.z<=g.position.z-0.2&&g.children.filter(p=>p.userData.diningChair||p.userData.diningTable).every(p=>!b.intersectsBox(new THREE.Box3().setFromObject(p)));});
       item.fixtures=sets.flatMap(o=>o.children.map(p=>p.userData.fixture));
-      item.wallPaint=g.userData.wallPaint;item.protrusions=g.userData.protrusions;item.trim=g.userData.trimColor.toString(16);item.baseboards=Math.round(g.userData.baseboardLength);
+      item.wallPaint=g.userData.wallPaint;item.wallFittings=g.userData.wallFittings;item.protrusions=g.userData.protrusions;item.trim=g.userData.trimColor.toString(16);item.baseboards=Math.round(g.userData.baseboardLength);
       item.sofas=[];g.traverse(o=>{if(o.name==='uratexSofa')item.sofas.push({fabric:o.userData.fabricStyle,pillows:o.userData.pillowConfig});});
       item.rawObjects=[];g.traverse(o=>{if(o.userData.rawObject)item.rawObjects.push(o.userData.rawObject);});
       item.photoFiles=g.children.filter(o=>o.userData.wallPhoto).map(o=>o.userData.photoFile);

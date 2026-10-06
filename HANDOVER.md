@@ -14,6 +14,10 @@ The route is still one straight logical line; nothing here adds a second axis. A
 
 Side rooms get scatter from `planSideScatter`, fitted to the room rectangle, off fixture blocks and off the strip from the doorway across the room; the objects join the owning room's single scatter mesh. Movement no longer starts paused under `prefers-reduced-motion`; Xyh asked for it to start on Enter. `scripts/check_forks.mjs` covers exit routes and salts.
 
+## Outlets and light switches — 2026-10-06
+
+`addWallFittings` in `index.html` mounts the supplied cutouts flat on walls, from a stream of its own. One to three outlets go on solid side-wall modules, 0.3 m up (six in ten) or at 1.1 m; the white duplex plate is drawn 0.12 m wide and the black surface box 0.07 m wide. In 85% of rooms a light switch sits beside the far doorway at 1.3 m, on the side the door leaf does not cover; the single and triple switch plates are 0.07 m wide. These four images are listed in `OUTLETS` and `SWITCHES`, not in the cutout table, which only holds free-standing objects.
+
 ## Wall colours, trim rules, and protrusions — 2026-10-06
 
 Walls: `PAINT_WEIGHTS` in `index.html` sums to 100 — five foam greens 62, three beiges and white 22, Palmyra as a wall colour 8 (`palmyra`, `palmyraLight`), and ten paints Xyh surveyed on buildings in Metro Manila 8 between them, the pale ones (peach, pastel pink, powder blue, yellow) at 1.1 each down to medium green at 0.4. `?paint=<name>` accepts every key of `WALL_PAINTS`.
