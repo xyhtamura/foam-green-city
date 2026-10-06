@@ -1501,3 +1501,13 @@ Checks. At natural rates on the twisting route, 116 rooms from room 20, before a
 First attempt and what changed. Wall clothes appeared in 3 of 116 rooms: they asked for a metre of clear wall, and their chance was scaled down by the room's clutter level. They now take any gap wide enough, fall back to the far wall, and ignore clutter.
 
 Not done. A set of several on a side wall, a short line, and a second line were counted and not viewed. A garment on a wall can overlap a low piece of furniture standing in front of it; not looked for. Wall cloth from `fabric-items.js` stays off the far wall when clothes are there, and is not otherwise checked against them. Nothing was pushed.
+
+## 2026-10-06 — Claude Code — the yero path
+
+Xyh described a very rare room from memory, with a photograph: a path of corrugated roofing over a long puddle, here hung in the mint-green void with no walls or ceiling, the only outdoor room, the sheets in several colours. Built; details in HANDOVER.md.
+
+Checks. All twelve node checks pass. `check_room_sequences` had asserted that every room's route is one straight leg as long as the room; it now asserts, for a yero room, that the route runs from the middle of one doorway to the middle of the next, keeps within 1.6 m of the middle, and never turns back. In the browser on the root server with `?start=91`, straight route: viewed from the doorway, the sheets wandering off in green, grey, ochre, red, and blue to a pale box with a doorway; viewed from above, the lapped and skewed lay and the room ahead standing in the air; viewed near the far end, the last sheets running up to the doorway of the kitchen beyond. On the twisting route from room 90 at `?speed=6`: 783 frames in the room; a ray straight down from the walker met a sheet in 774 of them; the walker's x ran from -1.39 to 1.06 m; frames took 3.3 ms at the median; the visibility rule matched drawing everything in 66 of 66 compared frames; no console error. Viewed one twisting-route frame from the entry: the path rolls and curves away through the air to the next room.
+
+Changed after the first view: sheets were a metre or more apart and left gaps seen from above; they are now 0.55 to 1.1 m apart.
+
+Not done. Not viewed in motion or with the pane visible. The nine frames with nothing under the walker were not located. Walking backward into the room, a cut landing in it, and manual control inside it were not exercised. The inspector's entry for the room carries fields from the ordinary path with empty values; harmless as far as seen. Courts and yero rooms for seeds other than 5 were not listed beyond seed 42. Nothing was pushed.

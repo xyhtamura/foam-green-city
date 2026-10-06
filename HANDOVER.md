@@ -47,6 +47,16 @@ A Kenney wall module is 0.1 m thick with its near face on its origin plane. The 
 
 `?inspect=1` now also sets `window.fgc` to `{THREE,scene,cam,renderer,segments,WALLP}` for console measurement. With the browser pane hidden, `requestAnimationFrame` is paused, so a test can pose `cam`, call `renderer.render`, and `readPixels` in the same task.
 
+## The yero path, the one room that is not a room — 2026-10-06
+
+From Xyh's memory of a path through a long puddle crossed on roofing sheets laid down as they came. About one room in 240 has no floor, walls, ceiling, or furniture: a walkway of corrugated sheets hanging in mint-green air, 24 to 36 m long, the only outdoor place in the walk. `isYero(index,seed)` in `room-generator.js` decides it, never in the first twelve rooms and never where a court falls. For the default seed: rooms 91, 185, 565, 738. `?start=91` opens on it.
+
+The route through it wanders. `yeroWaypoints(room)` in `room-sequences.js` swings the route up to about 1.5 m either side of the middle and brings it back at each doorway, and `cameraRoute` returns that for a yero room. `yero-path.js` lays the sheets along the same route, so the walker stays over metal: a sheet every 0.8 m or so, 0.72 to 0.92 m wide and 1.3 to 2.6 m long, lapped, skewed up to 20 degrees either way, one in five thrown crosswise, each a few centimetres higher or lower than the last, a plank under about a quarter of them. A sheet is a zigzag in section, 76 mm ridge to ridge and 18 mm deep. Colours by weight: bare galvanised greys 44%, mint 12%, medium and dark green 15%, rust red and brown 15%, blue, off-white, ochre, olive the rest; six in ten are rusted at the cut ends. One mesh in plain colour, 33 sheets and 5,510 triangles in the room measured.
+
+`buildYeroRoom` in `index.html` builds it apart from `buildSegment`. It makes the next room's front wall and doorway, as wide as that room, which is why the next room is seen ahead as a box standing in the air, and the room behind likewise. Every field the rest of the page reads from a room is filled in there with an empty stand-in; **a new field that `tick`, `dropSegment`, or the inspector reads from every room has to be added there too.** Lighting is daylight whatever the room would have drawn, the air is `COL.wall`, and the fog reaches 44 m.
+
+Known and left: a player who takes control can step off the sheets and walk on the air, anywhere within 3 m of the middle. `?offset=` is ignored when starting in this room.
+
 ## The basketball court room — 2026-10-06
 
 About one room in ninety is a covered court. `isCourt(index,seed)` in `room-generator.js` decides it from a hash of its own, never in the first eight rooms, and `generateRoom` then returns a fixed shell: 18 by 28 m, 7.6 m high, a hall with chairs round the walls (`perimeter`), no stairs, columns, platform, passages, or change of level, and `court:true`. For the default seed the courts are rooms 45, 140, 169, 210, 252; for seed 42, rooms 57, 95, 119. The hash's salt was chosen so the default walk meets one early: the first salt tried put it at room 241. `?start=45` opens on it.

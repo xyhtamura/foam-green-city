@@ -1,5 +1,5 @@
-import {branchOpenings,sideSpacePlan} from './side-spaces.js?v=be7d86413e';
-import {localBounds} from './object-supports.js?v=be7d86413e';
+import {branchOpenings,sideSpacePlan} from './side-spaces.js?v=2f62cbb3fb';
+import {localBounds} from './object-supports.js?v=2f62cbb3fb';
 
 export function addSideWashrooms({THREE,group,room,assets,curvize}){
   const owner=new THREE.Group();owner.name='side-washrooms';group.add(owner);
