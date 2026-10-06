@@ -1,9 +1,10 @@
-// Things made of patterned cloth or woven mat: banig and sheets on the floor, mattresses, a rolled
-// banig, cloth hung on a wall, and tablecloths. The patterns are the page-sized copies listed in
+// Things made of patterned cloth or woven mat: banig, sheets, carpets, and small mats on the floor,
+// mattresses, a rolled banig, cloth hung on a wall, tablecloths, potholders, and sofa covers. The patterns are the page-sized copies listed in
 // fabric-assets.js. Each pattern has one material for the whole session; each object has its own
 // small geometry, disposed with its room.
-import {FABRICS} from './fabric-assets.js?v=1dff8746b9';
-import {wallThingsOf} from './household-items.js?v=1dff8746b9';
+import {FABRICS} from './fabric-assets.js?v=93270adc28';
+import {placeOnSupport} from './object-supports.js?v=93270adc28';
+import {wallThingsOf} from './household-items.js?v=93270adc28';
 
 const AISLE=0.72,LIFT=0.008,STEP=0.4;
 const materials=new Map();
@@ -15,6 +16,19 @@ function fabricMaterial(THREE,entry,loader,patch){
     materials.set(entry.id,patch(new THREE.MeshLambertMaterial({map:texture,side:THREE.DoubleSide})));
   }
   return materials.get(entry.id);
+}
+
+// A sofa's own geometry expects its cloth to repeat about one and a half times across a face, which
+// is set on the texture, so upholstery loads a pattern a second time with that repeat.
+const covers=new Map();
+function upholstery(THREE,entry,loader,patch){
+  if(!covers.has(entry.id)){
+    const texture=loader.load(entry.file);
+    texture.wrapS=texture.wrapT=THREE.RepeatWrapping;texture.colorSpace=THREE.SRGBColorSpace;texture.repeat.set(1.5,1.5);
+    texture.magFilter=THREE.NearestFilter;texture.minFilter=THREE.LinearMipmapLinearFilter;
+    covers.set(entry.id,patch(new THREE.MeshLambertMaterial({map:texture})));
+  }
+  return covers.get(entry.id);
 }
 
 // Collects surfaces into one geometry. A surface is a grid of points with texture coordinates in
@@ -41,7 +55,7 @@ function builder(THREE,repeat){
 }
 const cells=length=>Math.max(1,Math.ceil(length/STEP));
 
-export function addFabricItems({THREE,group,room,seed,loader,patch,blocked=[],hung=[],wallSpots=[],floorAt=()=>0,force=null}){
+export function addFabricItems({THREE,group,room,seed,loader,patch,blocked=[],fixed=[],hung=[],wallSpots=[],floorAt=()=>0,force=null}){
   let state=(Math.imul(seed+90173,2246822519)>>>0)||1;
   const r=()=>{state=(Math.imul(state,1664525)+1013904223)>>>0;return state/4294967296;};
   const pick=list=>list[Math.floor(r()*list.length)],chance=p=>force==='fabric'||r()<p;
@@ -143,6 +157,70 @@ export function addFabricItems({THREE,group,room,seed,loader,patch,blocked=[],hu
       }
     }
   }
+  if(level){
+    // A carpet: a large cloth laid under whatever stands in the room. Only the building itself is in its way.
+    const carpets={sala:0.18,bedroom:0.12,hall:0.05}[room.type];
+    if(carpets&&chance(carpets)){
+      const w=Math.min(1.4+r()*0.9,room.width-0.9),l=Math.min(2+r()*1.1,room.length-1.2);
+      for(let attempt=0;attempt<8;attempt++){
+        const x=(r()-0.5)*(room.width-0.5-w),z=-(0.6+l/2+r()*(room.length-1.2-l)),rect={minX:x-w/2,maxX:x+w/2,minZ:z-l/2,maxZ:z+l/2};
+        if(fixed.some(o=>rect.maxX>o.minX&&rect.minX<o.maxX&&rect.maxZ>o.minZ&&rect.minZ<o.maxZ))continue;
+        const entry=pick(tela);
+        // The pattern is drawn half again as large as on a hanging cloth.
+        add(sheetOnFloor({...entry,repeat:entry.repeat*1.5},w,l,'fabric-carpet'),x,floorAt(z)+LIFT*0.5,z);count('carpets');break;
+      }
+    }
+    // A small cloth mat: by a bed, at a sink, inside a bathroom door.
+    const smalls={kitchen:0.2,bathroom:0.25,bedroom:0.15,sala:0.12}[room.type];
+    if(smalls&&chance(smalls)){
+      const w=0.42+r()*0.2,l=0.6+r()*0.3,turned=r()<0.5,spot=patchOfFloor((turned?l:w)/2,(turned?w:l)/2);
+      if(spot){const mat=sheetOnFloor(pick(tela),w,l,'fabric-mat');mat.rotation.y=turned?Math.PI/2:0;add(mat,spot.x,floorAt(spot.z)+LIFT*1.5,spot.z);taken.push(spot.rect);count('mats');}
+    }
+  }
+  // Potholders: square quilted pads, lying on a kitchen table or hung in a row on the wall.
+  if(room.type==='kitchen'||room.kitchenCorner){
+    const pad=(entry,size)=>{
+      const b=builder(THREE,0.22),t=0.008;
+      b.surface(2,2,(u,v)=>[(u-0.5)*size,t,(v-0.5)*size],(u,v)=>[u*size,v*size]);
+      b.surface(2,2,(u,v)=>[(u-0.5)*size,0,(0.5-v)*size],(u,v)=>[u*size,v*size]);
+      for(const s of [-1,1]){
+        b.surface(1,1,(u,v)=>[s*size/2,v*t,s*(u-0.5)*size],(u,v)=>[u*size,v*t]);
+        b.surface(1,1,(u,v)=>[-s*(u-0.5)*size,v*t,s*size/2],(u,v)=>[u*size,v*t]);
+      }
+      return b.mesh(fabricMaterial(THREE,entry,loader,patch),'fabric-potholder');
+    };
+    if(chance(0.35))for(const table of group.children.filter(o=>o.userData.diningTable&&o.userData.supportSurface).slice(0,1)){
+      for(let n=1+Math.floor(r()*2);n>0;n--){
+        const holder=new THREE.Group();holder.name='potholder';holder.add(pad(pick(tela),0.16+r()*0.05));
+        if(placeOnSupport({THREE,parent:table,object:holder,support:table.userData.supportSurface,random:r}))count('potholders');
+      }
+    }
+    if(chance(0.25)&&wallSpots.length){
+      const things=[...wallThingsOf(THREE,group,half).filter(t=>t.depth>0.115),...hung],spots=[...wallSpots].sort(()=>r()-0.5),n=2+Math.floor(r()*2),y=1.35+r()*0.2;
+      for(const spot of spots){
+        const z=spot.z,base=floorAt(z);
+        if(things.some(t=>t.side===spot.side&&z+0.45>t.minZ&&z-0.45<t.maxZ&&base+y+0.05>t.low&&base+y-0.3<t.high))continue;
+        for(let k=0;k<n;k++){
+          // Each hangs by one corner, so it shows as a diamond.
+          const size=0.16+r()*0.04,p=pad(pick(tela),size),hook=new THREE.Group();
+          p.rotation.x=Math.PI/2;hook.rotation.z=Math.PI/4;hook.position.y=-size*0.7071;hook.add(p);
+          const holder=new THREE.Group();holder.name='potholder';holder.add(hook);
+          holder.rotation.y=-spot.side*Math.PI/2;add(holder,spot.side*(half-0.112),base+y,z+(k-(n-1)/2)*0.26);count('potholders');
+        }
+        break;
+      }
+    }
+  }
+  // A sofa covered in one of the cloths: its seat, back, and any cushions that matched them.
+  group.traverse(sofa=>{
+    if(sofa.name!=='uratexSofa'||!chance(0.5))return;
+    const uses=new Map();
+    sofa.traverse(o=>{if(o.isMesh&&o.material.map)uses.set(o.material,(uses.get(o.material)??0)+1);});
+    const main=[...uses].sort((a,b)=>b[1]-a[1])[0]?.[0];if(!main)return;
+    const cover=upholstery(THREE,pick(tela),loader,patch);
+    sofa.traverse(o=>{if(o.isMesh&&o.material===main)o.material=cover;});
+    count('sofas');
+  });
   // A tablecloth on every table of a kitchen or sala, the one cloth through the room.
   if({kitchen:0.14,sala:0.14,hall:0.08}[room.type]&&chance({kitchen:0.14,sala:0.14,hall:0.08}[room.type])){
     const entry=pick(tela),drop=0.12+r()*0.12;
