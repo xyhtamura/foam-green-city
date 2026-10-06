@@ -1,6 +1,6 @@
-import {floorHeight} from './room-sequences.js?v=6e9e3136f1';
-import {localBounds} from './object-supports.js?v=6e9e3136f1';
-import {branchOpenings} from './side-spaces.js?v=6e9e3136f1';
+import {floorHeight} from './room-sequences.js?v=0f963ae461';
+import {localBounds} from './object-supports.js?v=0f963ae461';
+import {branchOpenings} from './side-spaces.js?v=0f963ae461';
 
 export function addWoodDetails({THREE,group,room,spots,texture,curvize,force=null}){
   const owner=new THREE.Group();owner.name='wood-details';group.add(owner);

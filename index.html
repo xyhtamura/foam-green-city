@@ -84,36 +84,36 @@ window.addEventListener('unhandledrejection',reportLoadFailure);
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { createJalousieWall } from './jalousie.js?v=6e9e3136f1';
-import { createDomesticProps, animateDomesticProps, createFurnitureVariants, FURNITURE_FINISHES } from './domestic-props.js?v=6e9e3136f1';
-import { WALL_HANGINGS } from './wall-assets.js?v=6e9e3136f1';
-import { RAW_OBJECTS, createRawObject, oddSize, cutoutTone } from './raw-object-assets.js?v=6e9e3136f1';
-import { loadCurtainPatterns } from './photo-assets.js?v=6e9e3136f1';
-import { ROOM_WIDTHS, partitionPieces } from './room-widths.js?v=6e9e3136f1';
+import { createJalousieWall } from './jalousie.js?v=0f963ae461';
+import { createDomesticProps, animateDomesticProps, createFurnitureVariants, FURNITURE_FINISHES } from './domestic-props.js?v=0f963ae461';
+import { WALL_HANGINGS } from './wall-assets.js?v=0f963ae461';
+import { RAW_OBJECTS, createRawObject, oddSize, cutoutTone } from './raw-object-assets.js?v=0f963ae461';
+import { loadCurtainPatterns } from './photo-assets.js?v=0f963ae461';
+import { ROOM_WIDTHS, partitionPieces } from './room-widths.js?v=0f963ae461';
 
-import { LAYOUT_IDS, generateFurnitureLayout, checkFurnitureLayout } from './furniture-layouts.js?v=6e9e3136f1';
-import { FLOOR_IDS, createFloorVariant } from './floor-variants.js?v=6e9e3136f1';
-import { DOOR_STYLES, createDoorLeaves } from './doors.js?v=6e9e3136f1';
-import { MODEL_ASSETS, loadModelAssets } from './model-assets.js?v=6e9e3136f1';
-import { createRoomSet, createRoomFixture } from './room-sets.js?v=6e9e3136f1';
-import { createUratexSofa } from './uratex-sofa.js?v=6e9e3136f1';
-import { createWireRun } from './wire-runs.js?v=6e9e3136f1';
-import { createWallUtilities } from './wall-utilities.js?v=6e9e3136f1';
-import {createWalkSequence,retainedRooms,walkRegions,canOccupy,moveWalker,pathToRoute,roomExits} from './navigation.js?v=6e9e3136f1';
-import {addDomesticDetails} from './domestic-details.js?v=6e9e3136f1';
+import { LAYOUT_IDS, generateFurnitureLayout, checkFurnitureLayout, TABLE_TOP } from './furniture-layouts.js?v=0f963ae461';
+import { FLOOR_IDS, createFloorVariant } from './floor-variants.js?v=0f963ae461';
+import { DOOR_STYLES, createDoorLeaves } from './doors.js?v=0f963ae461';
+import { MODEL_ASSETS, loadModelAssets } from './model-assets.js?v=0f963ae461';
+import { createRoomSet, createRoomFixture } from './room-sets.js?v=0f963ae461';
+import { createUratexSofa } from './uratex-sofa.js?v=0f963ae461';
+import { createWireRun } from './wire-runs.js?v=0f963ae461';
+import { createWallUtilities } from './wall-utilities.js?v=0f963ae461';
+import {createWalkSequence,retainedRooms,walkRegions,canOccupy,moveWalker,pathToRoute,roomExits} from './navigation.js?v=0f963ae461';
+import {addDomesticDetails} from './domestic-details.js?v=0f963ae461';
 let wallUtilities;
-import { roomLighting } from './room-lighting.js?v=6e9e3136f1';
-import { scatterLevel, planScatter, planSideScatter, scatterBlocks, createScatterMesh } from './floor-scatter.js?v=6e9e3136f1';
-import { createBaseboards } from './baseboards.js?v=6e9e3136f1';
-import { addHouseholdItems } from './household-items.js?v=6e9e3136f1';
-import { spatialFrame, spatialPoint, SPATIAL_GLSL, SPATIAL_PROFILES } from './spatial-route.js?v=6e9e3136f1';
-import { floorHeight, cameraRoute, routePoint } from './room-sequences.js?v=6e9e3136f1';
-import {sideSpacePlan,DRAWER_VARIANTS} from './side-spaces.js?v=6e9e3136f1';
-import {addWoodDetails} from './wood-details.js?v=6e9e3136f1';
-import {addSideWashrooms} from './side-washrooms.js?v=6e9e3136f1';
-import {addSideStorage} from './side-storage.js?v=6e9e3136f1';
-import {addSideBedrooms} from './side-bedrooms.js?v=6e9e3136f1';
-import { branchOpenings, raiseFloor, createRoomArchitecture } from './room-architecture.js?v=6e9e3136f1';
+import { roomLighting } from './room-lighting.js?v=0f963ae461';
+import { scatterLevel, planScatter, planSideScatter, scatterBlocks, createScatterMesh } from './floor-scatter.js?v=0f963ae461';
+import { createBaseboards } from './baseboards.js?v=0f963ae461';
+import { addHouseholdItems } from './household-items.js?v=0f963ae461';
+import { spatialFrame, spatialPoint, SPATIAL_GLSL, SPATIAL_PROFILES } from './spatial-route.js?v=0f963ae461';
+import { floorHeight, cameraRoute, routePoint } from './room-sequences.js?v=0f963ae461';
+import {sideSpacePlan,DRAWER_VARIANTS} from './side-spaces.js?v=0f963ae461';
+import {addWoodDetails} from './wood-details.js?v=0f963ae461';
+import {addSideWashrooms} from './side-washrooms.js?v=0f963ae461';
+import {addSideStorage} from './side-storage.js?v=0f963ae461';
+import {addSideBedrooms} from './side-bedrooms.js?v=0f963ae461';
+import { branchOpenings, raiseFloor, createRoomArchitecture } from './room-architecture.js?v=0f963ae461';
 
 // ---- palette (DepEd MPSS, stylized: green walls) ----
 const COL = {
@@ -654,9 +654,12 @@ function buildSegment(index){
   for(const p of placements){
     const model=FURNITURE_VARIANTS[p.kind][p.finishIndex].clone();
     model.position.set(p.x,p.y+floorHeight(descriptor,p.z),p.z);model.rotation.set(0,p.rotationY,p.inverted?Math.PI:0);
+    // A resized table scales its own meshes, not the group, so whatever stands on it keeps its shape.
+    const size=p.scale??{x:1,y:1,z:1},top=(TABLE_TOP[p.kind]??0)*size.y;
+    if(p.scale)for(const part of model.children)part.scale.set(size.x,size.y,size.z);
     model.userData[p.role==='table'?'diningTable':'diningChair']=true;model.userData.placement=p;
     if(p.role==='table'&&!p.inverted&&p.stack===null){
-      if(!['tableRows','gathered'].includes(layout)&&r()<0.45){const runner=FURNI.scallopedRunner.clone();runner.position.y=0.761;model.add(runner);}
+      if(!['tableRows','gathered'].includes(layout)&&r()<0.45){const runner=FURNI.scallopedRunner.clone();runner.position.y=top+0.002;runner.scale.set(size.x,1,size.z);model.add(runner);}
       const tabletop=room.name==='kitchen'?['riceCooker','foodCover','kitchenBlender','phPot','phSpoon','phApple','phBananas','phGinger','phSweetPotato']:['laptop','books','lampRoundTable','phApple','phNotepads'];
       const rawPool=RAW_OBJECTS.filter(p=>p.mode!=='floor'&&p.tabletop!==false&&p.rooms.includes(room.name));
       const forcedRaw=RAW_OBJECTS.find(p=>p.id===params.get('raw')&&p.mode!=='floor');
@@ -664,14 +667,14 @@ function buildSegment(index){
         if(forcedRaw||(rawPool.length&&r()<0.5)){
           const asset=oddSize(forcedRaw??rawPool[Math.floor(r()*rawPool.length)],grp.userData.oddRoll());
           const prop=createRawObject({THREE,asset,material:spriteMat(asset.file,cutoutTone(asset,grp.userData.oddRoll()))});
-          prop.position.y+=0.766;model.add(prop);
+          prop.position.y+=top+0.007;model.add(prop);
         }else{
         const importedTabletop=['phPot','phSpoon','phApple','phBananas','phGinger','phSweetPotato'];
         const choices=room.name==='kitchen'&&r()<0.65?importedTabletop:tabletop;
         const name=choices[Math.floor(r()*choices.length)],prop=FURNI[name].clone();
         const box=new THREE.Box3().setFromObject(prop),size=box.getSize(new THREE.Vector3());
         prop.scale.setScalar(Math.min(MODEL_ASSETS[name]?1:Infinity,0.46/Math.max(size.x,size.z),0.45/size.y));
-        const fitted=new THREE.Box3().setFromObject(prop);prop.position.set(-(fitted.min.x+fitted.max.x)/2,0.766-fitted.min.y,-(fitted.min.z+fitted.max.z)/2);model.add(prop);
+        const fitted=new THREE.Box3().setFromObject(prop);prop.position.set(-(fitted.min.x+fitted.max.x)/2,top+0.007-fitted.min.y,-(fitted.min.z+fitted.max.z)/2);model.add(prop);
         }
       }
     }
@@ -1037,7 +1040,7 @@ function inspectRooms(){
       item.lightColor=g.userData.lightFixture.userData.lightColor;
       item.lightFixture=g.userData.lightFixture.userData.fixtureType;
       item.lighting=g.userData.lighting.name;
-      item.scatter=g.userData.scatter;item.doormat=g.userData.doormat??null;item.thresholdDoor=g.userData.thresholdDoor;item.leaf=g.children.filter(o=>o.userData.door&&Math.abs(o.position.x)<1).map(o=>{const b=new THREE.Box3().setFromObject(o);return {hingeX:+o.position.x.toFixed(2),minX:+b.min.x.toFixed(2),maxX:+b.max.x.toFixed(2),depth:+(b.max.z-b.min.z).toFixed(2)};});item.oddSizes=[];g.traverse(o=>{if(o.userData.oddSize)item.oddSizes.push(o.userData.rawObject+'x'+o.userData.oddSize.toFixed(1));});item.cutoutHeights=[];g.traverse(o=>{if(o.userData.rawObject&&o.geometry?.parameters)item.cutoutHeights.push(o.userData.rawObject.replace('raw','')+':'+Math.max(o.geometry.parameters.width,o.geometry.parameters.height).toFixed(2));});item.zone=g.userData.zone??null;item.drawers=[];g.traverse(o=>{if(o.userData.drawers)item.drawers.push(o.userData.drawers);});item.household=g.userData.household;item.strangeness=g.userData.strangeness??null;item.features=[g.userData.stairs&&'stairs'+g.userData.stairs.steps,g.userData.columns&&'columns'+g.userData.columns.rows,g.userData.platform&&'platform'].filter(Boolean);item.solids=g.userData.architecture.userData.solids.length;item.generation=g.userData.generationIndex??item.i;
+      item.scatter=g.userData.scatter;item.tableSizes=g.children.filter(o=>o.userData.diningTable&&o.userData.placement.scale).map(o=>{const k=o.userData.placement.scale;return [k.x,k.y,k.z].join('/');});item.doormat=g.userData.doormat??null;item.thresholdDoor=g.userData.thresholdDoor;item.leaf=g.children.filter(o=>o.userData.door&&Math.abs(o.position.x)<1).map(o=>{const b=new THREE.Box3().setFromObject(o);return {hingeX:+o.position.x.toFixed(2),minX:+b.min.x.toFixed(2),maxX:+b.max.x.toFixed(2),depth:+(b.max.z-b.min.z).toFixed(2)};});item.oddSizes=[];g.traverse(o=>{if(o.userData.oddSize)item.oddSizes.push(o.userData.rawObject+'x'+o.userData.oddSize.toFixed(1));});item.cutoutHeights=[];g.traverse(o=>{if(o.userData.rawObject&&o.geometry?.parameters)item.cutoutHeights.push(o.userData.rawObject.replace('raw','')+':'+Math.max(o.geometry.parameters.width,o.geometry.parameters.height).toFixed(2));});item.zone=g.userData.zone??null;item.drawers=[];g.traverse(o=>{if(o.userData.drawers)item.drawers.push(o.userData.drawers);});item.household=g.userData.household;item.strangeness=g.userData.strangeness??null;item.features=[g.userData.stairs&&'stairs'+g.userData.stairs.steps,g.userData.columns&&'columns'+g.userData.columns.rows,g.userData.platform&&'platform'].filter(Boolean);item.solids=g.userData.architecture.userData.solids.length;item.generation=g.userData.generationIndex??item.i;
     }
     let output=document.getElementById('room-inspection');
     if(!output){output=document.createElement('pre');output.id='room-inspection';output.hidden=true;document.body.append(output);}

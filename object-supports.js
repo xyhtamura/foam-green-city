@@ -1,11 +1,12 @@
-import {FOOTPRINT_HALF,TABLE_TOP} from './furniture-layouts.js?v=6e9e3136f1';
+import {FOOTPRINT_HALF,TABLE_TOP} from './furniture-layouts.js?v=0f963ae461';
 
 // Support coordinates are local to the furniture, before room deformation.
 export function tableSupport(placement){
   if(placement?.role!=='table'||placement.inverted||placement.stack!==null)return null;
-  const half=FOOTPRINT_HALF[placement.kind],height=TABLE_TOP[placement.kind];
-  if(!half||height===undefined)return null;
-  return {minX:-half.x+0.025,maxX:half.x-0.025,minZ:-half.z+0.025,maxZ:half.z-0.025,height,reservations:[]};
+  const half=FOOTPRINT_HALF[placement.kind],top=TABLE_TOP[placement.kind],k=placement.scale??{x:1,y:1,z:1};
+  if(!half||top===undefined)return null;
+  // A resized table offers a resized top at its own height.
+  return {minX:-half.x*k.x+0.025,maxX:half.x*k.x-0.025,minZ:-half.z*k.z+0.025,maxZ:half.z*k.z-0.025,height:top*k.y,reservations:[]};
 }
 
 // The inset avoids the rounded edge, rear backrest, and arm supports.

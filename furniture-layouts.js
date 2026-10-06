@@ -73,14 +73,15 @@ function mixSeed(seed,layoutIndex,width,length){
   return h>>>0;
 }
 
+const UNIT={x:1,y:1,z:1};
 const pick=(r,list)=>list[Math.floor(r()*list.length)];
 const round=v=>Math.round(v*1000)/1000;
 
 // The floor rectangle a piece covers, as an axis-aligned box, with its height
 // range. For an inverted piece, y is its highest point.
 export function furnitureFootprint(p){
-  const h=FOOTPRINT_HALF[p.kind],c=Math.abs(Math.cos(p.rotationY)),s=Math.abs(Math.sin(p.rotationY));
-  const hx=c*h.x+s*h.z,hz=s*h.x+c*h.z,y=p.y??0,height=PIECE_HEIGHT[p.kind];
+  const k=p.scale??UNIT,h=FOOTPRINT_HALF[p.kind],c=Math.abs(Math.cos(p.rotationY)),s=Math.abs(Math.sin(p.rotationY));
+  const hx=c*h.x*k.x+s*h.z*k.z,hz=s*h.x*k.x+c*h.z*k.z,y=p.y??0,height=PIECE_HEIGHT[p.kind]*k.y;
   return{minX:p.x-hx,maxX:p.x+hx,minZ:p.z-hz,maxZ:p.z+hz,minY:p.inverted?y-height:y,maxY:p.inverted?y:y+height};
 }
 
@@ -444,9 +445,38 @@ function ring(c){
   if(wantStack&&clear([...list,{kind:'monoblocChair',x:round(side*cx),z:round(zc),rotationY:turn}]))chairStack(c,side*cx,zc,turn,height,finish,group);
 }
 
+// A table standing by itself takes its own size: lower, shorter, narrower, or longer. A longer
+// or wider one is kept only if it still clears the room and everything around it, so a table
+// grows into free floor and never into a chair. Tables pushed together, stacked, or upside
+// down keep the standard size.
+// Sizes come from a stream of their own, so the arrangement itself is unchanged.
+function varyTables(placed,width,length,seed){
+  const r=mulberry32(mixSeed(seed,977,width,length)),boxes=placed.map(furnitureFootprint);
+  placed.forEach((p,i)=>{
+    if(p.role!=='table'||p.stack!==null||p.inverted)return;
+    const u=[r(),r(),r(),r(),r()],b=boxes[i];
+    const near=(o,gap)=>Math.max(b.minX-o.maxX,o.minX-b.maxX)<gap&&Math.max(b.minZ-o.maxZ,o.minZ-b.maxZ)<gap;
+    if(placed.some((q,j)=>j!==i&&q.role==='table'&&near(boxes[j],0.1)))return;
+    const attended=placed.some((q,j)=>q.role==='seat'&&near(boxes[j],0.25));
+    const fits=scale=>{
+      const f=furnitureFootprint({...p,scale});
+      return !boxProblems(f,width,length).length&&boxes.every((o,j)=>j===i||!(f.minX<o.maxX+0.02&&f.maxX>o.minX-0.02&&f.minZ<o.maxZ+0.02&&f.maxZ>o.minZ-0.02));
+    };
+    // With chairs at it a table may be a little low, never coffee-table low.
+    const y=attended?(u[0]<0.3?0.86+u[1]*0.1:1):u[0]<0.5?0.55+u[1]*0.3:u[0]<0.6?1.03+u[1]*0.05:1;
+    let z=u[2]<0.3?(attended?0.86:0.65)+u[3]*(attended?0.12:0.3):u[2]<0.65?1.15+u[3]*0.55:1;
+    let x=attended?1:0.85+u[4]*0.3;
+    while((z>1||x>1)&&!fits({x,y,z})){z=z>1?Math.max(1,z-0.15):z;x=x>1?Math.max(1,x-0.1):x;}
+    const scale={x:round(x),y:round(y),z:round(z)};
+    if((scale.x!==1||scale.y!==1||scale.z!==1)&&fits(scale)){p.scale=scale;boxes[i]=furnitureFootprint(p);}
+  });
+  return placed;
+}
+
 const LAYOUTS={chairRows,tableRows,perimeter,gathered,sparse,pairedDining,chairStacks,tableStacks,chairsOnTables,pushedAside,facingWall,ring};
 
-// Returns an array of {kind,x,y,z,rotationY,inverted,finishIndex,group,role,stack}.
+// Returns an array of {kind,x,y,z,rotationY,inverted,finishIndex,group,role,stack}, and for a
+// resized table {scale:{x,y,z}}: factors on its width, height, and length before rotation.
 // `group` is shared by pieces placed as one unit; `role` is 'table' or 'seat'.
 // `y` is the height to give the model's origin, 0 for a piece on the floor.
 // An `inverted` piece is upside down: turn it half a revolution about Z.
@@ -464,12 +494,12 @@ export function generateFurnitureLayout({width,length=12,seed=0,layout,finishCou
       out.push({kind,x:round(x),y:round(y),z:round(z),rotationY:Math.abs(rotationY)<1e-12?0:rotationY,inverted,finishIndex,group,role,stack});
     }};
   LAYOUTS[layout](c);
-  if(!filter)return out;
+  if(!filter)return varyTables(out,width,length,seed);
   const kept=[],boxes=[];
   for(const p of out){
     const b=furnitureFootprint(p);
     if(boxProblems(b,width,length).length||boxes.some((o,i)=>!sameStack(p,kept[i])&&boxesOverlap(b,o)))continue;
     kept.push(p);boxes.push(b);
   }
-  return kept;
+  return varyTables(kept,width,length,seed);
 }

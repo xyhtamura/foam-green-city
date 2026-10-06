@@ -1104,3 +1104,11 @@ Checks. Cutout, scatter, and sequence checks pass; publication checks pass. In t
 Not done. No hue-shifted garment was identified by eye; the shader compiled and ran without error, which shows it works mechanically, not that the colours look right. The lift on the black shorts is a guess. Buckets and drawers inside side rooms are placed by other modules but are covered by the same per-room pass; not viewed. Kenney models (fridge, stove, cabinets, beds), sofas, and textured Poly Haven models do not vary. Table sizes are next.
 
 A stray `file.png` in `2d/raw objects/` was picked up by the generator before the `REAL_SIZE` rule was added; it never reached a commit. That folder now holds fifteen unnamed or unsized images that are not used.
+
+## 2026-10-06 — Claude Code — table sizes
+
+Third part of Xyh's request: tables can be shorter or longer. A table standing by itself now takes its own length, and sometimes its own height or width; details in HANDOVER.md.
+
+Checks. `check_table_sizes.mjs` passed 14,400 arrangements across all twelve layouts and six widths: every arrangement still passes the room's clearance rules with the resized footprints, the placements without their sizes are identical to before, no resized table touches another table, and the tabletop support follows the size. Of 143,596 tables, 9,913 were resized: 3,808 shorter, 4,654 longer, 4,028 lower, 62 narrower, 49 wider, 9 taller. In the four ordinary layouts at 4 and 6 m widths, 37% of tables were resized. Object-support and sequence checks pass. In the browser on the root server, straight route: six rooms reported four resized tables (lengths 1.28, 1.16, 0.88, 0.92 and one at 0.92 height), layout and aisle checks true, no console errors; viewed room 53, where the kitchen's wooden table is visibly longer with its chairs still clear of it.
+
+Not done. A low table and a tabletop object on a resized table were not viewed. Legs thicken slightly with a longer or wider table, since the whole mesh is scaled. Tables in rows, pushed together, or stacked keep one size, so rooms furnished that way show no change. Chair sizes do not vary. The architecture-collision test for furniture in `index.html` still assumes a 0.65 m half-extent, which is 0.09 m short of the longest table. Nothing was viewed on the twisting route. Nothing was pushed.
