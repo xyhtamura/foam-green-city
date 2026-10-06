@@ -1,13 +1,16 @@
 // Places the mesh kits' objects in a room, then bakes them into one vertex-coloured mesh.
-import {createTablewareKit,TABLEWARE_COLOURS} from './tableware.js?v=d05073a010';
-import {createPlasticKit,PLASTIC_COLOURS} from './plastics.js?v=d05073a010';
-import {createLinenKit,LINEN_COLOURS} from './linens.js?v=d05073a010';
-import {placeOnSupport} from './object-supports.js?v=d05073a010';
-import {createHouseholdToolKit} from './household-tools.js?v=d05073a010';
-import {createPlasticStorageKit} from './plastic-storage.js?v=d05073a010';
-import {createCardboardKit} from './cardboard.js?v=d05073a010';
-import {createSchoolChairKit} from './school-chair.js?v=d05073a010';
-import {createBasketball,BALL_COLOURS} from './basketball.js?v=d05073a010';
+import {createTablewareKit,TABLEWARE_COLOURS} from './tableware.js?v=ae01401590';
+import {createPlasticKit,PLASTIC_COLOURS} from './plastics.js?v=ae01401590';
+import {createLinenKit,LINEN_COLOURS} from './linens.js?v=ae01401590';
+import {placeOnSupport} from './object-supports.js?v=ae01401590';
+import {createHouseholdToolKit} from './household-tools.js?v=ae01401590';
+import {createPlasticStorageKit} from './plastic-storage.js?v=ae01401590';
+import {createCardboardKit} from './cardboard.js?v=ae01401590';
+import {createSchoolChairKit} from './school-chair.js?v=ae01401590';
+import {createBasketball,BALL_COLOURS} from './basketball.js?v=ae01401590';
+import {createFootwearKit,FOOTWEAR_TYPES} from './footwear.js?v=ae01401590';
+import {createBathroomKit} from './bathroom-tools.js?v=ae01401590';
+import {createPackagingKit} from './packaging.js?v=ae01401590';
 
 // The kits only lend their geometry and colours to the bake, so one set serves every room.
 let kits=null;
@@ -56,7 +59,7 @@ export function addHouseholdItems({THREE,group,room,seed,material,blocked=[],flo
 
   // Things that stand on the floor against a wall, clear of the aisle and of everything already placed.
   const half=room.width/2,taken=[...blocked],footprints=[],walkBlocks=[];
-  function stand(object,{flat=false,open=false,side:fixedSide=null,flush=false}={}){
+  function stand(object,{flat=false,open=false,side:fixedSide=null,flush=false,litter=false}={}){
     const b=object.userData.supportBounds,hw=(b.maxX-b.minX)/2,hd=(b.maxZ-b.minZ)/2,cx=(b.minX+b.maxX)/2,cz=(b.minZ+b.maxZ)/2;
     if(half-0.14-hw<(flat?hw+0.1:AISLE+hw)||room.length-0.6<2*hd)return false;
     for(let attempt=0;attempt<10;attempt++){
@@ -66,7 +69,7 @@ export function addHouseholdItems({THREE,group,room,seed,material,blocked=[],flo
       if(!flat&&Math.abs(x)-hw<AISLE)continue;
       if(taken.some(o=>rect.maxX>o.minX&&rect.minX<o.maxX&&rect.maxZ>o.minZ&&rect.minZ<o.maxZ))continue;
       object.position.set(x-cx,floorAt(z)+0.003,z-cz);group.add(object);placed.push(object);
-      if(flat)report.rugs++;else{taken.push(rect);footprints.push(rect);report.floor++;if(b.height>0.24)walkBlocks.push({...rect,height:b.height});}
+      if(litter);else if(flat)report.rugs++;else{taken.push(rect);footprints.push(rect);report.floor++;if(b.height>0.24)walkBlocks.push({...rect,height:b.height});}
       return true;
     }
     report.rejected++;return false;
@@ -145,6 +148,53 @@ export function addHouseholdItems({THREE,group,room,seed,material,blocked=[],flo
     const side=wallSide(),chair=turned(kits.chair.create({arm:r()<0.8?'right':'left',woodColour:pick(woods),frameColour:r()<0.7?0x282a29:0x4e5a52}),facing(side)+(r()-0.5)*0.5);
     if(stand(chair,{side}))report.schoolChairs=(report.schoolChairs??0)+1;
   }
+  // ---- The third set of kits: footwear, bathroom things, packaging. Drawn after everything above. ----
+  // These kits make new geometry for every object, so they are built for this room and dropped after the bake.
+  const shoeKit=createFootwearKit(),bathKit=createBathroomKit(),packKit=createPackagingKit();
+  const overlaps=rect=>taken.some(o=>rect.maxX>o.minX&&rect.minX<o.maxX&&rect.maxZ>o.minZ&&rect.minZ<o.maxZ);
+  const count=key=>{report[key]=(report[key]??0)+1;return true;};
+  // Just inside the entry doorway, beside the aisle.
+  const byDoor=object=>{
+    const b=object.userData.supportBounds,hw=(b.maxX-b.minX)/2,hd=(b.maxZ-b.minZ)/2;
+    const side=wallSide(),x=side*(AISLE+hw+0.05+r()*0.35),z=-(0.3+hd+r()*0.45),rect={minX:x-hw,maxX:x+hw,minZ:z-hd,maxZ:z+hd};
+    if(Math.abs(x)+hw>half-0.14||overlaps(rect)){report.rejected++;return false;}
+    object.position.set(x-(b.minX+b.maxX)/2,floorAt(z)+0.003,z-(b.minZ+b.maxZ)/2);group.add(object);placed.push(object);taken.push(rect);footprints.push(rect);return true;
+  };
+  const shoeColours=[0x2f3a44,0x6b4a35,0x8c9691,0xb5524a,0x3f6f58,0xc77f9a,0x5a6f9a,0xd8d2c2,0x1f1f22,0xd9b24a],soles=[0xccc2a9,0x2a2a2a,0xe6e2d6,0x8a6a47];
+  // Toes point along the room, toward or away from the door, more often than at random.
+  const shoes=()=>turned(shoeKit.pair(pick(FOOTWEAR_TYPES),{colour:pick(shoeColours),soleColour:pick(soles),scale:0.88+r()*0.2,scattered:r()<0.45}),r()<0.65?(r()<0.5?0:Math.PI)+(r()-0.5)*0.5:r()*6.28);
+  if(domestic&&room.type!=='bathroom')for(let n=(chance(0.3)?1:0)+(chance(0.1)?1:0);n>0;n--)if(byDoor(shoes()))count('footwear');
+  if(room.type==='bedroom'&&chance(0.25)&&stand(shoes()))count('footwear');
+  // Bathroom things on the floor by a wall; a spray bottle sometimes in a kitchen.
+  const bath=(type,options={})=>bathKit.create(type,{colour:pick(plasticColours),accent:pick([0xdcd6c3,0xe8e6dc,0xcfd8d6]),rotation:r()*6.28,scale:0.92+r()*0.16,...options});
+  const roll=()=>bath('paperRoll',{remaining:0.2+r()*0.8,tail:r()<0.4,scale:1});
+  if(room.type==='bathroom'){
+    if(chance(0.6)&&stand(bath('toiletBrush')))count('bathroom');
+    if(chance(0.35)&&stand(bath('plunger')))count('bathroom');
+    if(chance(0.5)&&stand(bath(r()<0.5?'cleanerBottle':'sprayBottle')))count('bathroom');
+    if(chance(0.25)&&stand(roll()))count('bathroom');
+  }else if(room.type==='kitchen'&&chance(0.15)&&stand(bath('sprayBottle')))count('bathroom');
+  // Packaging in plain colours: the bake carries no textures, so these have no printed labels.
+  const packColours=[0xc23b32,0xe0b23a,0x2f7d4f,0x2e5fa3,0xe8e4d8,0xd96a2b,0x7a3f8c,0x3aa6a0,0xb0b4b3,0x8c5a3a],labels=[0xe2d7b9,0xf0ece0,0xd9b24a,0xc23b32,0x2a2a2a];
+  const SIZES={sachet:[0.06,0.03,0.09,0.03,0.008],packet:[0.14,0.07,0.2,0.08,0.05],pouch:[0.11,0.04,0.17,0.06,0.05],productBox:[0.09,0.1,0.12,0.12,0.05],shoppingBag:[0.26,0.1,0.3,0.1,0.11]};
+  const pack=(type,options={})=>{
+    const [w,dw,h,dh,d]=SIZES[type];
+    return packKit.create(type,{width:w+r()*dw,height:h+r()*dh,depth:d*(0.8+r()*0.5),colour:pick(packColours),labelColour:pick(labels),seed:Math.floor(r()*1e6),
+      bend:type==='productBox'?0:(r()-0.5)*0.5,crumple:type==='productBox'?0:r()*0.7,fullness:0.3+r()*0.7,rotation:r()*6.28,...options});
+  };
+  if(room.type!=='bathroom'){
+    // On tables and shelves: a tissue roll, a box, a pouch, a packet, a sachet, a cup of toothbrushes.
+    const extras={roll,cup:()=>bath('toothbrushCup',{scale:1}),box:()=>pack('productBox'),pouch:()=>pack('pouch'),packet:()=>pack('packet'),sachet:()=>pack('sachet',{pose:'flat'})};
+    const onTop={kitchen:['pouch','packet','box','sachet','sachet','roll'],sala:['packet','roll','box','sachet'],bedroom:['box','roll','cup','sachet'],other:['packet','box']}[kind];
+    const put=(parent,name)=>{const object=set(name,[extras[name]()]);if(placeOnSupport({THREE,parent,object,support:parent.userData.supportSurface,random:r})){placed.push(object);return count('packaging');}report.rejected++;return false;};
+    for(const table of group.children.filter(o=>o.userData.diningTable&&o.userData.supportSurface))
+      for(let n=chance(0.35)?between(1,2):0;n>0;n--)put(table,pick(onTop));
+    const shelves=[];group.traverse(o=>{if(o.userData.supportSurface&&!o.userData.diningTable&&!o.userData.diningChair)shelves.push(o);});
+    for(const shelf of shelves)if(chance(0.2))put(shelf,pick(['box','box','pouch','cup','roll']));
+    // Dropped on the floor, anywhere, and walked over; a paper bag stood by a wall.
+    for(let n=Math.round(amount*between(0,2));n>0;n--)if(stand(pack(r()<0.6?'sachet':'packet',{pose:'flat',crumple:0.4+r()*0.6,fullness:r()*0.4}),{flat:true,open:true,litter:true}))count('packaging');
+    if(['sala','kitchen','bedroom'].includes(room.type)&&chance(0.15)&&stand(pack('shoppingBag',{colour:pick([0xb18b58,0xc9a777,0xe8e4d8,0x8c5a3a]),crumple:r()*0.4})))count('packaging');
+  }
   if(!placed.length)return {mesh:null,footprints,walkBlocks,report};
 
   // Bake: positions into the room's frame, each mesh's material colour into its vertices.
@@ -157,8 +207,11 @@ export function addHouseholdItems({THREE,group,room,seed,material,blocked=[],flo
       if(!o.isMesh)return;
       m.multiplyMatrices(inverse,o.matrixWorld);
       const p=o.geometry.attributes.position,index=o.geometry.index,count=index?index.count:p.count;
-      const c=tint.copy(o.material.color).offsetHSL(drift[0],drift[1],drift[2]);
+      // A mesh with several materials names one per group of its geometry.
+      const several=Array.isArray(o.material),shade=material=>tint.copy(material.color).offsetHSL(drift[0],drift[1],drift[2]);
+      let c=shade(several?o.material[0]:o.material);
       for(let i=0;i<count;i++){
+        if(several){const part=o.geometry.groups.find(g=>i>=g.start&&i<g.start+g.count);c=shade(o.material[part?.materialIndex??0]);}
         v.fromBufferAttribute(p,index?index.getX(i):i).applyMatrix4(m);
         positions.push(v.x,v.y,v.z);colors.push(c.r,c.g,c.b);
       }

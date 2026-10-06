@@ -1,6 +1,6 @@
-import {floorHeight} from './room-sequences.js?v=d05073a010';
-import {RAW_OBJECTS,createRawObject,oddSize,cutoutTone} from './raw-object-assets.js?v=d05073a010';
-import {tableSupport,seatSupport,surfaceSupport,localBounds,placeOnSupport} from './object-supports.js?v=d05073a010';
+import {floorHeight} from './room-sequences.js?v=ae01401590';
+import {RAW_OBJECTS,createRawObject,oddSize,cutoutTone} from './raw-object-assets.js?v=ae01401590';
+import {tableSupport,seatSupport,surfaceSupport,localBounds,placeOnSupport} from './object-supports.js?v=ae01401590';
 
 // Authored low-detail household shapes. All resources belong to one streamed room.
 export function addDomesticDetails({THREE,group,room,seed,curvize,spots,photos,spriteMat,ceiling,forceRoof=false,forceArrangement=null,forceSeat=null,woodTexture=null}){
@@ -22,7 +22,7 @@ export function addDomesticDetails({THREE,group,room,seed,curvize,spots,photos,s
   const metal=material(0xaeb8b5),fabric=material(0xaaa995);
   const kitchen=room.type==='kitchen'||room.kitchenCorner;
   let cutouts=0,tools=0;
-  const condiments=RAW_OBJECTS.filter(p=>/silverswan|datu_puti|mang_tomas|ligo|bagoong|ube_halaya/.test(p.file));
+  const condiments=RAW_OBJECTS.filter(p=>/silverswan|datu_puti|mang_tomas|ligo|bagoong|ube_halaya|argentina|century_tuna|philips_peas/.test(p.file));
   const papers=RAW_OBJECTS.filter(p=>/envelope|pad/.test(p.file));
   const clothes=RAW_OBJECTS.filter(p=>/jeans|tshirt|shorts/.test(p.file));
   // A separate stream decides the rare wrong size, so arrangements keep their own sequence.

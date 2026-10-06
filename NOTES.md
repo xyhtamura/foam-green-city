@@ -1260,3 +1260,14 @@ Undone:
 - Higher resolutions (e.g., 1024×1024) can be rendered on demand via `--size 1024`.
 Nothing was pushed.
 
+## 2026-10-06 — Claude Code — 31 cutouts indexed; footwear, bathroom, and packaging kits placed
+
+Xyh pointed to new images in `2d/raw objects/` and new kits in `F:/xyh/fgc-cx`. What was added and at what rates is in HANDOVER.md.
+
+Checks. All twelve node checks pass, `check_raw_objects` on 76 cutouts; `stamp_versions --check` and `check_published_assets` pass. In the browser on the root server, straight route, daylight, `?prop=kits&clutter=medium`, seed 5 rooms 20 to 25: every room reported packaging (1 to 6 objects), five of six reported footwear, and no console error. With `?room=bathroom`, room 22 reported four bathroom objects; viewed close: bottle, brush in its holder, plunger, and paper roll stand on the floor by the wall. With `?room=kitchen&raw=rawDishRackCylinder`, viewed room 23: the dish rack cutout stands on the table at a believable size, a paper bag stands by the wall, and a paper roll lies on the floor.
+
+Not done. Of the 31 cutouts only the dish rack was viewed in a room; the other 30 were seen on a contact sheet and sized by estimate. Shoes and tabletop packaging were counted by the report and not viewed close. Nothing was viewed on the twisting route or at natural rates. Page load is slower with 31 more images; not timed.
+
+Decided against. The wall-mounted paper holder is not placed: it needs the wall face, and solid and window side-wall modules have different faces, which is the open question in the previous entry. Printed labels on packaging are not used, since the baked mesh has no texture. Side washrooms get none of the bathroom kit; only main bathrooms do.
+
+Found, not checked further. The earlier kits may hold per-object geometry for the whole session in the same way; `cardboard.js` and `linens.js` take seeds. Six supplied cutouts show a maker's printed label unscrambled: the food keeper, the dish rack, and the Orocan icebox, pail, and wardrobe, as the two earlier Orocan pieces do. Nothing was pushed.

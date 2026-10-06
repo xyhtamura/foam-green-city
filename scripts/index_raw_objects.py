@@ -26,6 +26,32 @@ REAL_SIZE = {
     'silverswan_toyo_1l_bottle': ('h', 0.27), 'silverswan_toyo_small_bottle': ('h', 0.17), 'silverswan_toyo_gallon': ('h', 0.30),
     'silverswan_toyo_pouch_1l': ('h', 0.24), 'silverswan_toyo_pouch_small': ('h', 0.14), 'silverswan_toyo_set': ('w', 0.30),
     'surf_jug': ('h', 0.33), 'surf_pouch': ('h', 0.20), 'zonrox_colorsafe': ('h', 0.27), 'zonrox_original': ('h', 0.27),
+    # Added 2026-10-06. Sizes are estimates from the usual retail pack, not measurements.
+    'abaniko_fan': ('w', 0.30), 'backpack_dinosaur': ('h', 0.38), 'backpack_teal': ('h', 0.45),
+    'bayong_beaded_bag': ('h', 0.38), 'bayong_plastic_purple': ('h', 0.42), 'boysen_paint_can': ('h', 0.19),
+    'argentina_meat_loaf': ('h', 0.10), 'century_tuna_flakes_oil': ('h', 0.09), 'philips_peas_can': ('h', 0.11),
+    'fibisco_chocolate_chip_tub': ('w', 0.22), 'nescafe_classic_pouch': ('h', 0.17), 'nido_milk_box': ('w', 0.16),
+    'oishi_patata_snack': ('h', 0.20), 'sweet_corn_snack': ('h', 0.18), 'skyflakes_crackers_pack': ('w', 0.20), 'skyflakes_single_packet': ('h', 0.12),
+    'charmee_pantyliners_green': ('w', 0.14), 'charmee_powder_cool_orange': ('w', 0.21), 'cleene_cotton_balls': ('h', 0.22), 'greencross_rubbing_alcohol': ('h', 0.21),
+    'chicharo_snow_peas': ('w', 0.20), 'kamatis_tomatoes': ('w', 0.22), 'onion_red': ('w', 0.085), 'talong_eggplants': ('w', 0.24),
+    'malunggay_leaves': ('w', 0.26), 'malunggay_pods': ('w', 0.45),
+    'cucina_uno_food_keeper': ('w', 0.33), 'dish_rack_cylinder': ('h', 0.44),
+    'orocan_icebox_30l': ('h', 0.38), 'orocan_timba_24l': ('h', 0.34), 'orocan_wardrobe_cabinet': ('h', 1.40),
+}
+
+# Where a cutout goes, for names the prefix rules in main() do not cover: (mode, rooms).
+PLACE = {
+    'abaniko_fan': ('flat', ['sala', 'bedroom', 'kitchen']),
+    'bayong_beaded_bag': ('floor', ['sala', 'bedroom', 'kitchen']), 'bayong_plastic_purple': ('floor', ['sala', 'bedroom', 'kitchen']),
+    'boysen_paint_can': ('floor', ['bare', 'sala', 'bedroom']),
+    'charmee_pantyliners_green': ('table', ['bedroom']), 'charmee_powder_cool_orange': ('table', ['bedroom']),
+    'cleene_cotton_balls': ('table', ['bedroom']), 'greencross_rubbing_alcohol': ('table', ['bedroom', 'sala', 'kitchen']),
+    'chicharo_snow_peas': ('table', ['kitchen']), 'kamatis_tomatoes': ('table', ['kitchen']), 'onion_red': ('table', ['kitchen']), 'talong_eggplants': ('table', ['kitchen']),
+    'malunggay_leaves': ('flat', ['kitchen']), 'malunggay_pods': ('flat', ['kitchen']),
+    'philips_peas_can': ('table', ['kitchen']), 'dish_rack_cylinder': ('table', ['kitchen']),
+    'oishi_patata_snack': ('table', ['sala', 'kitchen', 'bedroom']), 'sweet_corn_snack': ('table', ['sala', 'kitchen', 'bedroom']),
+    'skyflakes_single_packet': ('table', ['sala', 'kitchen', 'bedroom']),
+    'orocan_timba_24l': ('floor', ['bathroom', 'kitchen', 'bare']), 'orocan_wardrobe_cabinet': ('floor', ['bedroom', 'sala', 'bare']),
 }
 
 # Cutouts whose colour may vary: (from, to) hue rotation in degrees; optional (from, to) factors
@@ -37,7 +63,8 @@ HUES = {
     'athletic_shorts_black': dict(hue=[0, 330], lift=0.22, light=[0.8, 1.6]),
     'batya_green': dict(hue=[0, 330]), 'sunny_pitcher_pink': dict(hue=[0, 330]),
     'sunny_pitcher_turquoise': dict(hue=[0, 330]), 'tumbler_plastic_blue': dict(hue=[0, 330]),
-    'backpack_olive': dict(hue=[-70, 70]),
+    'backpack_olive': dict(hue=[-70, 70]), 'backpack_teal': dict(hue=[0, 330]),
+    'bayong_plastic_purple': dict(hue=[0, 330]),
 }
 # Cutouts that are never drawn at a deliberately wrong size.
 FIXED_SIZE = {'ligo_sardines_green', 'ligo_sardines_red'}
@@ -70,6 +97,8 @@ def main():
             rooms = ['bathroom','kitchen','bare']
         if name.startswith('orocan'):
             rooms = ['sala','bedroom','kitchen','bare']
+        if name in PLACE:
+            mode, rooms = PLACE[name]
         if name in REAL_SIZE:
             axis, metres = REAL_SIZE[name]
             size = metres if axis == 'w' else metres / aspect
