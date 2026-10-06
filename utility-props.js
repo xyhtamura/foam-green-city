@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
-import {DRAWER_VARIANTS} from './side-spaces.js?v=73a43d5120';
+import {DRAWER_VARIANTS} from './side-spaces.js?v=16a4f83f8d';
 
 // Plastic drawer units: count, proportions, frame, and drawer colours are drawn per variant.
 // Each is one vertex-coloured mesh, so a unit costs one draw call.

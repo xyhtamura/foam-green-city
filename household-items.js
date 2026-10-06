@@ -1,24 +1,45 @@
 // Places the mesh kits' objects in a room, then bakes them into one vertex-coloured mesh.
-import {createTablewareKit,TABLEWARE_COLOURS} from './tableware.js?v=73a43d5120';
-import {createPlasticKit,PLASTIC_COLOURS} from './plastics.js?v=73a43d5120';
-import {createLinenKit,LINEN_COLOURS} from './linens.js?v=73a43d5120';
-import {placeOnSupport} from './object-supports.js?v=73a43d5120';
-import {createHouseholdToolKit} from './household-tools.js?v=73a43d5120';
-import {createPlasticStorageKit} from './plastic-storage.js?v=73a43d5120';
-import {createCardboardKit} from './cardboard.js?v=73a43d5120';
-import {createSchoolChairKit} from './school-chair.js?v=73a43d5120';
-import {createBasketball,BALL_COLOURS} from './basketball.js?v=73a43d5120';
-import {createFootwearKit,FOOTWEAR_TYPES} from './footwear.js?v=73a43d5120';
-import {createBathroomKit} from './bathroom-tools.js?v=73a43d5120';
-import {createDecorKit} from './decor.js?v=73a43d5120';
-import {createMirrorsValancesKit,VALANCE_TYPES} from './mirrors-valances.js?v=73a43d5120';
-import {createPackagingKit} from './packaging.js?v=73a43d5120';
+import {createTablewareKit,TABLEWARE_COLOURS} from './tableware.js?v=16a4f83f8d';
+import {createPlasticKit,PLASTIC_COLOURS} from './plastics.js?v=16a4f83f8d';
+import {createLinenKit,LINEN_COLOURS} from './linens.js?v=16a4f83f8d';
+import {placeOnSupport} from './object-supports.js?v=16a4f83f8d';
+import {createHouseholdToolKit} from './household-tools.js?v=16a4f83f8d';
+import {createPlasticStorageKit} from './plastic-storage.js?v=16a4f83f8d';
+import {createCardboardKit} from './cardboard.js?v=16a4f83f8d';
+import {createSchoolChairKit} from './school-chair.js?v=16a4f83f8d';
+import {createBasketball,BALL_COLOURS} from './basketball.js?v=16a4f83f8d';
+import {createFootwearKit,FOOTWEAR_TYPES} from './footwear.js?v=16a4f83f8d';
+import {createBathroomKit} from './bathroom-tools.js?v=16a4f83f8d';
+import {createDecorKit} from './decor.js?v=16a4f83f8d';
+import {createMirrorsValancesKit,VALANCE_TYPES} from './mirrors-valances.js?v=16a4f83f8d';
+import {createPackagingKit} from './packaging.js?v=16a4f83f8d';
 
 // The kits only lend their geometry and colours to the bake. Tableware and cardboard build from
 // a fixed set of shapes, so one of each serves every room. The others make new geometry for each
 // object and keep it until disposed, so they are built for one room and dropped after its bake.
 let shared=null;
 const AISLE=0.72;
+
+// What hangs on or stands against a room's side walls: {side,minZ,maxZ,low,high,depth} for each thing, in the
+// room's frame along z and in world height. Read from the room's tree, so it does not see what has
+// been baked into the household mesh; addHouseholdItems returns those separately as `hung`. depth is
+// how far the thing's inner edge stands from the room's edge: about 0.11 m for a wire or an outlet.
+export function wallThingsOf(THREE,group,half){
+  const things=[],box=new THREE.Box3();
+  group.updateMatrixWorld(true);
+  const visit=o=>{
+    if(o.name==='room-partition'||o.name==='baseboards'||o.name==='jalousie-wall'||o.name==='wall-protrusions'||o.name==='household-items'||o===group.userData.architecture||o===group.userData.floorGroup)return;
+    box.setFromObject(o);if(box.isEmpty())return;
+    const reach=Math.max(Math.abs(box.min.x),Math.abs(box.max.x)),deep=box.max.x-box.min.x,tall=box.max.y-box.min.y;
+    if(reach<half-0.45)return;
+    // A group holding many things is read thing by thing, or it would close the whole wall.
+    if(o.children.length&&(deep>1.5||box.max.z-box.min.z>2.2)){o.children.forEach(visit);return;}
+    if(deep>1.5||(tall>2.2&&deep<0.4))return;   // the ceiling, or a wall module
+    things.push({side:Math.sign(box.min.x+box.max.x),minZ:box.min.z-group.position.z,maxZ:box.max.z-group.position.z,low:box.min.y,high:box.max.y,depth:half-Math.min(Math.abs(box.min.x),Math.abs(box.max.x))});
+  };
+  group.children.forEach(visit);
+  return things;
+}
 
 export function addHouseholdItems({THREE,group,room,seed,material,blocked=[],floorAt=()=>0,amount=1,forceBall=false,paint=0xbfdcc9,force=null,wallSpots=[],windowSpots=[]}){
   const began=performance.now();
@@ -63,7 +84,7 @@ export function addHouseholdItems({THREE,group,room,seed,material,blocked=[],flo
   }
 
   // Things that stand on the floor against a wall, clear of the aisle and of everything already placed.
-  const half=room.width/2,taken=[...blocked],footprints=[],walkBlocks=[];
+  const half=room.width/2,taken=[...blocked],footprints=[],walkBlocks=[],hung=[];
   function stand(object,{flat=false,open=false,side:fixedSide=null,flush=false,litter=false}={}){
     const b=object.userData.supportBounds,hw=(b.maxX-b.minX)/2,hd=(b.maxZ-b.minZ)/2,cx=(b.minX+b.maxX)/2,cz=(b.minZ+b.maxZ)/2;
     if(half-0.14-hw<(flat?hw+0.1:AISLE+hw)||room.length-0.6<2*hd)return false;
@@ -183,6 +204,7 @@ export function addHouseholdItems({THREE,group,room,seed,material,blocked=[],flo
       const spot=pick(wallSpots),holder=bath('paperHolder',{remaining:0.15+r()*0.85,tail:r()<0.6,scale:1,rotation:spot.side*Math.PI/2});
       const z=spot.z+(r()-0.5)*1.2;
       holder.position.set(spot.side*(half-0.108-holder.userData.wallMount.backZ),floorAt(z)+0.62+r()*0.12,z);group.add(holder);placed.push(holder);count('paperHolder');
+      hung.push({side:spot.side,minZ:z-0.1,maxZ:z+0.1,low:holder.position.y,high:holder.position.y+0.2});
     }
   }else if(room.type==='kitchen'&&chance(0.15)&&stand(bath('sprayBottle')))count('bathroom');
   // Packaging in plain colours: the bake carries no textures, so these have no printed labels.
@@ -212,22 +234,9 @@ export function addHouseholdItems({THREE,group,room,seed,material,blocked=[],flo
   // What already hangs on or stands against a side wall, found once and only if something is to be hung.
   let wallThings=null;
   const wallClear=(side,z,halfWidth,low,high)=>{
-    if(!wallThings){
-      wallThings=[];group.updateMatrixWorld(true);
-      const box=new THREE.Box3(),visit=o=>{
-        if(o.name==='room-partition'||o.name==='baseboards'||o.name==='jalousie-wall'||o.name==='wall-protrusions'||o===group.userData.architecture||o===group.userData.floorGroup)return;
-        box.setFromObject(o);if(box.isEmpty())return;
-        const reach=Math.max(Math.abs(box.min.x),Math.abs(box.max.x)),deep=box.max.x-box.min.x,tall=box.max.y-box.min.y;
-        if(reach<half-0.45)return;
-        // A group holding many things is read thing by thing, or it would close the whole wall.
-        if(o.children.length&&(deep>1.5||box.max.z-box.min.z>2.2)){o.children.forEach(visit);return;}
-        if(deep>1.5||(tall>2.2&&deep<0.4))return;   // the ceiling, or a wall module
-        wallThings.push({side:Math.sign(box.min.x+box.max.x),minZ:box.min.z-group.position.z,maxZ:box.max.z-group.position.z,low:box.min.y,high:box.max.y});
-      };
-      group.children.forEach(visit);
-    }
+    wallThings??=wallThingsOf(THREE,group,half);
     const y=floorAt(z);
-    return !wallThings.some(t=>t.side===side&&z+halfWidth>t.minZ&&z-halfWidth<t.maxZ&&y+high>t.low&&y+low<t.high);
+    return ![...wallThings,...hung].some(t=>t.side===side&&z+halfWidth>t.minZ&&z-halfWidth<t.maxZ&&y+high>t.low&&y+low<t.high);
   };
   const freeSpots=[...wallSpots];
   const takeSpot=(halfWidth,low,high)=>{
@@ -235,7 +244,11 @@ export function addHouseholdItems({THREE,group,room,seed,material,blocked=[],flo
     return null;
   };
   // Hung flat on a side wall, facing the room; `back` is how far the object reaches behind its origin.
-  const hang=(object,side,z,y,inset)=>{object.rotation.y=-side*Math.PI/2;object.position.set(side*(half-inset),floorAt(z)+y,z);group.add(object);placed.push(object);return true;};
+  const hang=(object,side,z,y,inset)=>{
+    object.rotation.y=-side*Math.PI/2;object.position.set(side*(half-inset),floorAt(z)+y,z);group.add(object);placed.push(object);
+    const b=object.userData.bounds;if(b)hung.push({side,minZ:z+b.minX,maxZ:z+b.maxX,low:floorAt(z)+y+b.minY,high:floorAt(z)+y+b.maxY});
+    return true;
+  };
   // A bare mirror: most often in a bathroom, sometimes in a bedroom or sala. The bake has no reflection, so it is a pale plate.
   if(['bathroom','bedroom','sala'].includes(room.type)&&chance(room.type==='bathroom'?0.45:0.18)){
     const width=0.28+r()*0.17,height=0.4+r()*0.3,spot=takeSpot(width/2,1.45-height/2,1.45+height/2);
@@ -282,7 +295,7 @@ export function addHouseholdItems({THREE,group,room,seed,material,blocked=[],flo
       table.add(skirt);placed.push(skirt);count('skirting');
     }
   }
-  if(!placed.length)return {mesh:null,footprints,walkBlocks,report};
+  if(!placed.length)return {mesh:null,footprints,walkBlocks,report,hung};
 
   // Bake: positions into the room's frame, each mesh's material colour into its vertices.
   group.updateMatrixWorld(true);
@@ -323,5 +336,5 @@ export function addHouseholdItems({THREE,group,room,seed,material,blocked=[],flo
   geometry.computeVertexNormals();
   const mesh=new THREE.Mesh(geometry,material);mesh.name='household-items';mesh.userData.own=true;
   report.triangles=total/3;report.ms=+(performance.now()-began).toFixed(1);
-  return {mesh,footprints,walkBlocks,report};
+  return {mesh,footprints,walkBlocks,report,hung};
 }

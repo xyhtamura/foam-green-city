@@ -1380,3 +1380,17 @@ What the highs showed is garbage: each room built left megabytes to collect. The
 Checks. The baked mesh is unchanged: in six rooms with `?prop=kits`, built with the committed bake and then the new one, the position and colour arrays had the same lengths (29,232 to 141,534) and the same weighted sums to two decimal places. After the change, 257 rooms: lows 87 to 108 MB and highs 161 to 178 MB, against highs of 163 to 298 MB before. Upward movement of the heap came to 9 to 12 MB for each room built; I have no figure for that from before the change. No console error. All twelve node checks, `stamp_versions --check`, and `check_published_assets` pass.
 
 Not done. The 9 to 12 MB a room that remains was not traced. Likely contributors, unmeasured: the kits and `floor-scatter.js` building geometry from plain arrays, and `?inspect=1` writing its state as JSON every frame, which the published page does not do. No collection pause was timed, so whether this garbage costs a visible hitch is not known. Heap was read with the pane hidden and frames stepped by hand. Nothing was pushed.
+
+## 2026-10-06 — Claude Code — fabric and banig patterns in use: mats, mattresses, wall cloth, tablecloths
+
+Xyh pointed to `tela/` and `banig/` and asked for mattresses and mats on the floor sometimes, and more cloth on walls or wherever; then agreed the patterns can be made smaller for the web. What was built and at what rates is in HANDOVER.md.
+
+Checks, in the browser on the root server, straight route, daylight, `?prop=fabric`, seed 5 rooms 20 to 25. Viewed: a gingham cloth spread on a bedroom floor; a gingham mattress lying on a green banig; a floral cloth hung on a kitchen wall above a table with a patterned tablecloth; a second tablecloth with plates and containers standing on it. At natural rates on the twisting route, rooms 20 to 112: banig in 7 rooms, mattresses in 3, tablecloths in 3, floor cloths in 2, rolled banig in 2, wall cloth in 1; no console error. All twelve node checks and `stamp_versions --check` pass; `check_published_assets` passes with 276 assets once the copies are staged.
+
+Cost in that walk: frames with no build 6.7 ms at the median, draw calls 290 on average, heap low 90 MB and high 188 MB, all in line with the runs before this change. Build time was 42 ms at the median, also within the earlier spread; this step was not timed apart.
+
+First attempt and what changed. Mattresses and wall cloth found no place in six forced rooms: the mattress was required to lie along a wall, and walls are mostly taken; the cloth avoided every wire run and outlet. The mattress now falls back to open floor, and the cloth hangs in front of flat things.
+
+Decided against. A mattress stood on edge against a wall, which I had planned: left out to keep this sitting to what could be viewed. Loading the supplied 1254 px images directly: each would be 6 to 8 MB on the graphics card and the folder is 146 MB.
+
+Not done. The rolled banig was counted and not viewed. Nothing was viewed on the twisting route or in motion. Whether a pattern's repeat size reads right was judged on four objects; the sizes in `REPEAT` are estimates. A tablecloth's overhang falls straight, as a box. Wall cloth appeared in 1 of 93 rooms, which is rarer than Xyh's request suggests; the rates are the first lines of each block in `fabric-items.js`. Mattresses carry no pillow or sheet. Side rooms get none of this. Nothing was pushed.

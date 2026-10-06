@@ -270,3 +270,9 @@ Thirty-one further PNGs in `2d/raw objects/` are in use, 76 in all; `raw-object-
 ## Mirrors, valances, and decor kits — 2026-10-06
 
 `mirrors-valances.js` and `decor.js` are procedural meshes authored for this project by Codex in `F:/xyh/fgc-cx` and copied here unchanged. They use no models, images, or fonts. Code is MIT and the geometry is CC BY 4.0 under the project's artwork terms.
+
+## Fabric and banig patterns — 2026-10-06
+
+`2d/fabric/` holds 115 pattern tiles at 256 px, made by `scripts/index_fabrics.py` from `tela/` and `banig/`, which are not published. Sixty-three come from the generators `scripts/generate_fabric_textures.py` and `scripts/generate_banig_textures.py`, written for this project by Antigravity, and are the project's own artwork under CC BY 4.0. Fifty-two come from images Xyh placed in those folders under dated file names, in `tela/` itself, `tela/fruits/`, `tela/graphic/`, `tela/kids/`, `tela/sparrow333/`, and `banig/`. **Their origin and licence have not been stated to me and are not recorded here**; the confirmation at the top of this file was given before they were supplied. Xyh should confirm they are covered before the next push.
+
+Two supplied patterns are held back from the page in `EXCLUDE` in the script, on my reading of the images and not on any stated fact: `tela/kids/2026-10-06 16-58-08.png`, whose figures resemble a commercial cartoon character, and `tela/graphic/2026-10-06 17-33-18.png`, whose motif resembles a fashion house's monogram.
