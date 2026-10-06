@@ -1132,3 +1132,15 @@ Checks. Scatter, cutout, table, support, sequence, navigation, side-space, and f
 Not done. Tsinelas were placed and counted but not seen close enough to judge; they are small and sit near the doorway behind the camera's starting point. No T-shirt was seen in a new saturation or brightness; the shader ran without error. Ice boxes, water jugs, drawer units, the leaning panel, the box seat, and the box bed were not viewed. Up to three pairs of tsinelas in one room may be too many. The school chair's seat and tablet surfaces are not offered to clutter. Side rooms get none of these. Painting tools use the wall colour even in rooms with bare block walls. Nothing was pushed.
 
 Two edits of mine broke the page in this sitting and were fixed before commit: a string literal in the shader patch was written with real line breaks, twice, by an edit script. It is a template literal now. The code was committed in 422613c; these notes follow in their own commit because the script that wrote them failed the first time.
+
+## 2026-10-06 — Antigravity — 2D object cutouts, label tile scrambling, and directory standardization
+
+Xyh requested cutting out domestic and market objects in `2d/raw objects`, isolating transparent foregrounds, scrambling brand text and packaging labels prior to low-poly Delaunay triangulation to make text illegible while preserving authentic product palettes and silhouettes, replacing all raw/date filenames with clean descriptive snake_case names, and cleaning up original source files.
+
+1. Cutouts & Transparency: Processed 17 new objects plus 3 additional dropped vegetables (`malunggay_leaves`, `malunggay_pods`, `kamatis_tomatoes`) using `rembg` (with `orocan_wardrobe_cabinet` preserving native alpha). All 67 objects in `2d/raw objects` were cropped tightly to their non-zero alpha bounds and regularized with 2px transparent padding (`bbox == (2, 2, w-2, h-2)`).
+2. Label Tile Scrambling & Low-Poly: Branded commercial packaging (`surf_pouch`, `surf_jug`, `zonrox_original`, `zonrox_colorsafe`, `datu_puti_vinegar`, `silverswan_toyo_set`, `silverswan_suka_set`, all 10 separated `silverswan_*` bottles and pouches, `ligo_sardines_green`, `ligo_sardines_red`, `boysen_paint_can`, `philips_peas_can`, `sweet_corn_snack`, `oishi_patata_snack`) had their label bounding regions segmented into grids of tiles, randomized with position shuffling and horizontal/vertical flips, and triangulated with silhouette-constrained Delaunay meshes. Brand text is now completely illegible while brand recognition, color balance, and geometric sprite silhouettes are preserved.
+3. Clean Naming & Source Removal: All date-based and vendor filenames were removed. `yellowpad.png` was preserved untouched.
+
+Verification:
+- Automated Python audit (`audit_raw_objects.py`) confirmed all 67 files in `2d/raw objects` are valid RGBA PNGs with exact 2px padding, non-empty bounds, and clean snake_case filenames.
+- Generated and visually inspected full 67-item master catalog contact sheet (`master_catalog_final.png`) on checkered background.
