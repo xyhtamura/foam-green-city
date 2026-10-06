@@ -14,9 +14,19 @@ The route is still one straight logical line; nothing here adds a second axis. A
 
 Side rooms get scatter from `planSideScatter`, fitted to the room rectangle, off fixture blocks and off the strip from the doorway across the room; the objects join the owning room's single scatter mesh. Movement no longer starts paused under `prefers-reduced-motion`; Xyh asked for it to start on Enter. `scripts/check_forks.mjs` covers exit routes and salts.
 
+## Floors: white and maroon tile, the tile bank, narrow joints — 2026-10-06
+
+`floor-variants.js` has three new treatments. `whiteTile` is plain glazed white tile at 0.3, 0.4, or 0.6 m with a light grey joint; `maroonTile` is maroon tile at 0.2 or 0.3 m with a cement joint. Both come from the one grouted-tile generator, which also draws the cream tile. Its joint is now 2 pixels of a 128-pixel tile, about 6 mm on a 0.4 m tile; it was 8 pixels, about 25 mm. `imageTile` repeats a supplied image.
+
+The tile bank is the folder `2d/floor tiles/`. `scripts/index_floor_tiles.py` lists its images into `floor-tiles.js`; the floor width an image covers is read from the file name, as in `marble_60cm.png`, and 40 cm is assumed without one. The folder's README states this. The bank is empty, and while it is, an image floor is drawn as white tile.
+
+`mismatchedTiles`, the floor with coloured replacement tiles, is retired: it is drawn as white tile unless `?floor=mismatchedTiles` asks for it by name, and no room list selects it.
+
+`mixedFloor` in `room-sequences.js` now weights bare cement 68, concrete 5, white tile 14, image tile 3, maroon tile 3, cream tile 3, red linoleum 2, green checkerboard 1, abrupt patches 1. Raised and sunken rooms and the very large ones stay bare.
+
 ## Outlets and light switches — 2026-10-06
 
-`addWallFittings` in `index.html` mounts the supplied cutouts flat on walls, from a stream of its own. One to three outlets go on solid side-wall modules, 0.3 m up (six in ten) or at 1.1 m; the white duplex plate is drawn 0.12 m wide and the black surface box 0.07 m wide. In 85% of rooms a light switch sits beside the far doorway at 1.3 m, on the side the door leaf does not cover; the single and triple switch plates are 0.07 m wide. These four images are listed in `OUTLETS` and `SWITCHES`, not in the cutout table, which only holds free-standing objects.
+`addWallFittings` in `index.html` mounts the supplied cutouts flat on walls, from a stream of its own. One to three outlets go on solid side-wall modules, 0.3 m up (six in ten) or at 1.1 m; the white duplex plate is drawn 0.12 m wide and the black surface box 0.07 m wide. In 85% of rooms a light switch sits beside the far doorway at 1.3 m, on the side the door leaf does not cover; the single and triple switch plates are 0.07 m wide. The switch images are `wall_switch_single_white.png` and `wall_switch_3gang_white.png`. These four images are listed in `OUTLETS` and `SWITCHES`, not in the cutout table, which only holds free-standing objects.
 
 ## Wall colours, trim rules, and protrusions — 2026-10-06
 

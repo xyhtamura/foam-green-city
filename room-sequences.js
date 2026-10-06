@@ -4,14 +4,14 @@ const spec=(width,length,type,layout,floor,architecture={})=>({width,length,type
 const PHRASES={
   twist:[spec(6,6,'sala','sparse','bare',{kitchenCorner:true}),spec(6,10,'kitchen','pairedDining','bare'),spec(4,6,'bathroom','sparse','bare'),spec(6,12,'sala','perimeter','bare'),spec(4,6,'kitchen','sparse','bare'),spec(6,8,'bedroom','sparse','bare')],
   opening:[spec(4,8,'sala','pairedDining','redLinoleum'),spec(4,8,'sala','pairedDining','redLinoleum'),spec(10,18,'sala','perimeter','creamCeramic'),spec(6,10,'bare','sparse','concrete')],
-  repeat:[spec(6,10,'kitchen','tableRows','greenCheckerboard'),spec(6,10,'kitchen','tableRows','greenCheckerboard'),spec(6,10,'kitchen','tableRows','greenCheckerboard'),spec(4,8,'bare','sparse','mismatchedTiles')],
-  density:[spec(8,12,'sala','chairRows','creamCeramic'),spec(8,12,'sala','chairRows','creamCeramic'),spec(12,20,'bare','sparse','abruptPatches'),spec(4,8,'bedroom','sparse','mismatchedTiles')],
+  repeat:[spec(6,10,'kitchen','tableRows','greenCheckerboard'),spec(6,10,'kitchen','tableRows','greenCheckerboard'),spec(6,10,'kitchen','tableRows','greenCheckerboard'),spec(4,8,'bare','sparse','whiteTile')],
+  density:[spec(8,12,'sala','chairRows','creamCeramic'),spec(8,12,'sala','chairRows','creamCeramic'),spec(12,20,'bare','sparse','abruptPatches'),spec(4,8,'bedroom','sparse','whiteTile')],
   long:[spec(4,8,'bedroom','pairedDining','concrete'),spec(4,8,'bedroom','pairedDining','concrete'),spec(6,32,'sala','sparse','redLinoleum'),spec(8,14,'kitchen','gathered','abruptPatches')],
-  stored:[spec(6,12,'sala','chairStacks','concrete'),spec(6,12,'sala','pushedAside','concrete'),spec(8,16,'sala','tableStacks','mismatchedTiles'),spec(10,18,'sala','ring','greenCheckerboard')],
+  stored:[spec(6,12,'sala','chairStacks','concrete'),spec(6,12,'sala','pushedAside','concrete'),spec(8,16,'sala','tableStacks','whiteTile'),spec(10,18,'sala','ring','greenCheckerboard')],
   cleared:[spec(6,12,'kitchen','chairsOnTables','creamCeramic'),spec(6,12,'kitchen','chairsOnTables','creamCeramic'),spec(8,14,'sala','facingWall','greenCheckerboard'),spec(12,24,'bare','sparse','concrete')],
   auditorium:[spec(6,10,'bare','sparse','bare'),spec(24,40,'auditorium','chairRows','bare',{height:8,shape:'auditorium'}),spec(8,12,'sala','perimeter','creamCeramic'),spec(18,28,'hall','sparse','bare',{height:5,shape:'colonnade'})],
   levels:[spec(10,24,'hall','perimeter','bare',{height:5,shape:'deadStairs',rise:1.5}),spec(8,24,'hall','sparse','bare',{height:4,shape:'branches',rise:-1.2}),spec(12,20,'hall','sparse','concrete',{height:5,shape:'deadStairs'}),spec(6,12,'sala','pairedDining','redLinoleum')],
-  passages:[spec(4,24,'hall','sparse','bare',{height:3.6,shape:'branches'}),spec(12,24,'hall','perimeter','mismatchedTiles',{height:5,shape:'cross'}),spec(18,28,'hall','sparse','bare',{height:6,shape:'colonnade'}),spec(6,16,'bare','sparse','bare',{height:4,shape:'deadStairs'})],
+  passages:[spec(4,24,'hall','sparse','bare',{height:3.6,shape:'branches'}),spec(12,24,'hall','perimeter','whiteTile',{height:5,shape:'cross'}),spec(18,28,'hall','sparse','bare',{height:6,shape:'colonnade'}),spec(6,16,'bare','sparse','bare',{height:4,shape:'deadStairs'})],
 };
 
 // Each rise returns to zero at both joins. Flat middle bays hold furniture.
@@ -64,7 +64,7 @@ const DOMESTIC=[
   spec(6,12,'sala','pairedDining','bare',{kitchenCorner:true}),
   spec(6,10,'kitchen','pairedDining','creamCeramic'),
   spec(4,10,'bedroom','sparse','bare'),
-  spec(6,12,'bedroom','sparse','mismatchedTiles'),
+  spec(6,12,'bedroom','sparse','whiteTile'),
   spec(8,12,'sala','perimeter','greenCheckerboard'),
   spec(4,8,'kitchen','sparse','redLinoleum'),
   spec(6,10,'bare','sparse','concrete'),
@@ -76,7 +76,7 @@ const STRANGE=[
   spec(6,16,'sala','perimeter','bare',{height:3.6,rise:0.65}),
   spec(4,24,'bedroom','facingWall','concrete'),
   spec(4,16,'sala','sparse','bare',{shape:'branches'}),
-  spec(8,20,'sala','perimeter','mismatchedTiles',{height:3.6,shape:'cross'}),
+  spec(8,20,'sala','perimeter','whiteTile',{height:3.6,shape:'cross'}),
   spec(6,12,'sala','chairStacks','bare'),
 ];
 function mixedRoom(index){
@@ -95,9 +95,10 @@ function mixedRoom(index){
 }
 function mixedFloor(room,index){
   if(index<3||room.rise||room.category==='rare')return {...room,floor:'bare'};
+  // Bare cement most of the time; plain white tile is the usual finished floor. An image floor
+  // is drawn from the tile bank and is white tile when the bank is empty.
   const roll=hash(Math.floor(index/2)+4299)%100;
-  const patterns=['creamCeramic','redLinoleum','greenCheckerboard','mismatchedTiles','abruptPatches'];
-  return {...room,floor:roll<85?'bare':roll<90?'concrete':patterns[hash(Math.floor(index/2)+4311)%patterns.length]};
+  return {...room,floor:roll<68?'bare':roll<73?'concrete':roll<87?'whiteTile':roll<90?'imageTile':roll<93?'maroonTile':roll<96?'creamCeramic':roll<98?'redLinoleum':roll<99?'greenCheckerboard':'abruptPatches'};
 }
 // The demo run: a fixed four-room opening, then generated shells.
 function createDemoRooms(seed,generate){

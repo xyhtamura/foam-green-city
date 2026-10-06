@@ -1,13 +1,13 @@
 // Places the mesh kits' objects in a room, then bakes them into one vertex-coloured mesh.
-import {createTablewareKit,TABLEWARE_COLOURS} from './tableware.js?v=3eb3fa719d';
-import {createPlasticKit,PLASTIC_COLOURS} from './plastics.js?v=3eb3fa719d';
-import {createLinenKit,LINEN_COLOURS} from './linens.js?v=3eb3fa719d';
-import {placeOnSupport} from './object-supports.js?v=3eb3fa719d';
-import {createHouseholdToolKit} from './household-tools.js?v=3eb3fa719d';
-import {createPlasticStorageKit} from './plastic-storage.js?v=3eb3fa719d';
-import {createCardboardKit} from './cardboard.js?v=3eb3fa719d';
-import {createSchoolChairKit} from './school-chair.js?v=3eb3fa719d';
-import {createBasketball,BALL_COLOURS} from './basketball.js?v=3eb3fa719d';
+import {createTablewareKit,TABLEWARE_COLOURS} from './tableware.js?v=f5a77c10bb';
+import {createPlasticKit,PLASTIC_COLOURS} from './plastics.js?v=f5a77c10bb';
+import {createLinenKit,LINEN_COLOURS} from './linens.js?v=f5a77c10bb';
+import {placeOnSupport} from './object-supports.js?v=f5a77c10bb';
+import {createHouseholdToolKit} from './household-tools.js?v=f5a77c10bb';
+import {createPlasticStorageKit} from './plastic-storage.js?v=f5a77c10bb';
+import {createCardboardKit} from './cardboard.js?v=f5a77c10bb';
+import {createSchoolChairKit} from './school-chair.js?v=f5a77c10bb';
+import {createBasketball,BALL_COLOURS} from './basketball.js?v=f5a77c10bb';
 
 // The kits only lend their geometry and colours to the bake, so one set serves every room.
 let kits=null;

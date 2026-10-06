@@ -230,7 +230,7 @@ models/textures/hollow-blocks.png is supplied by Xyh and covered by the standing
 
 ## Outlet and switch cutouts in use — 2026-10-06
 
-`2d/raw objects/wall_outlet_duplex_white.png`, `receptacle_box_surface.png`, `lightswitch.webp`, and `lightswitch2.png` are supplied product images, now drawn on walls. Two carry marks that have not been removed: the duplex outlet shows a manufacturer's name on its plate, and the surface box shows a retailer's watermark and a maker's emblem. At the size they are drawn, 7 to 12 cm, neither is legible, but the published files contain them.
+`2d/raw objects/wall_outlet_duplex_white.png`, `receptacle_box_surface.png`, `wall_switch_single_white.png`, and `wall_switch_3gang_white.png` (re-cut on 2026-10-06 from `lightswitch.webp` and `lightswitch2.png`, which were removed) are supplied product images, now drawn on walls. Two carry marks that have not been removed: the duplex outlet shows a manufacturer's name on its plate, and the surface box shows a retailer's watermark and a maker's emblem. At the size they are drawn, 7 to 12 cm, neither is legible, but the published files contain them.
 
 ## Tools, storage, cardboard, and school chair — 2026-10-06
 

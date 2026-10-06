@@ -1168,3 +1168,15 @@ Floor tiles: there is no bank of tile images. Floors are drawn in code by `floor
 Checks. Publication check passes with 130 assets, the two switch images now tracked. In the browser on the root server, straight route: six rooms reported zero to two outlets and a switch in three, with no console errors; viewed room 22, where a switch plate sits left of the far doorway at about shoulder height and the door leaf opens on the right.
 
 Not done. No outlet was viewed, at either height. An outlet can land behind a shelf's clutter or a floor-standing prop, since it does not reserve its place. Switches are only at the far doorway, not on side walls or beside side-room doors. Two of the images carry brand or retailer marks, recorded in ASSETS.md; Xyh may want those scrubbed the way the other cutouts were. Nothing was viewed on the twisting route. Nothing was pushed.
+
+## 2026-10-06 — Claude Code — white and maroon tile, a tile bank, narrow joints
+
+Xyh asked for image-based floor tiles, for the Mondrian-like tiled floor to be disabled as not found in the Philippines, for plain white grouted tile in its place, for narrower grout, and noted that grouted maroon tile does occur.
+
+All four are done; details in HANDOVER.md. The floor judged Mondrian-like is `mismatchedTiles`, the grey tile with red, ochre, green, and brown replacement tiles; `abruptPatches`, the checkerboard strip set into concrete, was kept at 1%.
+
+Checks. `check_room_sequences.mjs` had asserted that over 85% of floors are bare; it now asserts the new mix and that no room selects the retired floor, and passes, with 7,048 bare, 1,299 white tile, 476 concrete, 268 cream, 264 image, 241 maroon, 196 linoleum, 108 patches, and 100 checkerboard in 10,000 rooms. Sequence and publication checks pass. In the browser on the root server, straight route, daylight: white tile forced in six rooms, all with floor bounds and route surface reported clear, and viewed in room 22 with thin grey joints; maroon tile viewed in room 23 with thin cement joints.
+
+Not done. The tile bank holds no images, so the image floor has only been exercised as its white-tile fallback; the loading path for a real image is untested. Thin joints may shimmer at a distance under nearest-neighbour filtering; not watched in motion. The green checkerboard and the abrupt patches keep their own, wider joints. Nothing was viewed on the twisting route.
+
+While this was in progress the two switch images were replaced in the folder by re-cut files under new names, by someone else, and the page failed to load on the missing file. The code now names the new files, and the old ones are removed from the repository along with them. Nothing was pushed.

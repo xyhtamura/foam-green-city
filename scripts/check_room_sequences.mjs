@@ -47,8 +47,11 @@ for(let i=0;i<10000;i++){
 assert.ok(counts.domestic/10000>0.71);
 assert.ok(counts.rare/10000>0.02&&counts.rare/10000<0.025);
 assert.ok(rare[0].i>=20);
-assert.ok(floors.bare/10000>0.85);
-assert.ok((10000-floors.bare-(floors.concrete||0))/10000<0.1);
+// Bare cement is still the usual floor; plain white tile is the usual finished one; the
+// coloured replacement-tile floor is retired.
+assert.ok(floors.bare/10000>0.65);
+assert.ok(floors.whiteTile/10000>0.08&&floors.whiteTile>(floors.maroonTile||0)*2);
+assert.equal(floors.mismatchedTiles,undefined);
 assert.ok(rare.some(r=>r.height===24));
 assert.ok(rare.some(r=>r.rise===-3));
 console.log(JSON.stringify({mixSample:10000,counts,floors,firstRare:rare.slice(0,5),firstTall:rare.find(r=>r.height===24)}));

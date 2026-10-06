@@ -10,7 +10,25 @@ export const FLOOR_IDS = [
   'concrete',
   'mismatchedTiles',
   'abruptPatches',
+  'whiteTile',
+  'maroonTile',
+  'imageTile',
 ];
+
+import { FLOOR_TILE_IMAGES } from './floor-tiles.js?v=f5a77c10bb';
+
+// Images from the floor tile bank are loaded once and shared between rooms.
+const bankTextures = new Map();
+function bankTexture(THREE, file) {
+  if (!bankTextures.has(file)) {
+    const texture = new THREE.TextureLoader().load(encodeURI(file));
+    texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+    texture.magFilter = texture.minFilter = THREE.NearestFilter;
+    texture.colorSpace = THREE.SRGBColorSpace;
+    bankTextures.set(file, texture);
+  }
+  return bankTextures.get(file);
+}
 
 // Color palette constants aligning with DepEd MPSS scheme & Philippine domestic interiors
 const PALETTE = {
@@ -53,6 +71,9 @@ function normalizeVariant(v) {
   if (!v) return 'creamCeramic';
   const clean = String(v).trim().toLowerCase().replace(/[-_\s]/g, '');
   if(clean==='bare') return 'bare';
+  if(clean==='whitetile') return 'whiteTile';
+  if(clean==='maroontile') return 'maroonTile';
+  if(clean==='imagetile') return 'imageTile';
   if (clean.includes('cream') || clean.includes('ceramic')) return 'creamCeramic';
   if (clean.includes('check') || (clean.includes('green') && !clean.includes('foam'))) return 'greenCheckerboard';
   if (clean.includes('lino') || clean.includes('red')) return 'redLinoleum';
@@ -84,16 +105,16 @@ function createTileCanvasTexture(THREE, width, height, drawFn) {
   return texture;
 }
 
-// Cream ceramic tiles: 4x4 tiles in 1.6 m x 1.6 m (0.4 m per tile)
-function generateCreamTileTexture(THREE, rng) {
+// Grouted square tiles, 4x4 to the texture. `grout` is the joint's half-width in pixels: at 1,
+// with 0.4 m tiles, a joint is about 6 mm. The default colours are the cream ceramic tile.
+function generateCreamTileTexture(THREE, rng, { rgb = [234, 229, 213], groutColour = PALETTE.groutDark, grout = 1, tintRange = 12 } = {}) {
   return createTileCanvasTexture(THREE, 512, 512, (ctx, w, h) => {
     // Cement grout base
-    ctx.fillStyle = PALETTE.groutDark;
+    ctx.fillStyle = groutColour;
     ctx.fillRect(0, 0, w, h);
 
     const tiles = 4;
     const size = w / tiles;
-    const grout = 4;
 
     for (let x = 0; x < tiles; x++) {
       for (let y = 0; y < tiles; y++) {
@@ -103,21 +124,21 @@ function generateCreamTileTexture(THREE, rng) {
         const th = size - grout * 2;
 
         // Slight tonal difference per tile glaze
-        const tint = (rng() - 0.5) * 12;
-        const r = Math.min(255, Math.max(0, 234 + tint));
-        const g = Math.min(255, Math.max(0, 229 + tint * 0.9));
-        const b = Math.min(255, Math.max(0, 213 + tint * 0.7));
+        const tint = (rng() - 0.5) * tintRange;
+        const r = Math.min(255, Math.max(0, rgb[0] + tint));
+        const g = Math.min(255, Math.max(0, rgb[1] + tint * 0.9));
+        const b = Math.min(255, Math.max(0, rgb[2] + tint * 0.7));
         ctx.fillStyle = `rgb(${Math.round(r)},${Math.round(g)},${Math.round(b)})`;
         ctx.fillRect(tx, ty, tw, th);
 
         // Pressed edge bevel highlights (top/left bright, bottom/right soft shadow)
         ctx.fillStyle = 'rgba(255, 255, 255, 0.45)';
-        ctx.fillRect(tx, ty, tw, 2);
-        ctx.fillRect(tx, ty, 2, th);
+        ctx.fillRect(tx, ty, tw, 1);
+        ctx.fillRect(tx, ty, 1, th);
 
         ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
-        ctx.fillRect(tx, ty + th - 2, tw, 2);
-        ctx.fillRect(tx + tw - 2, ty, 2, th);
+        ctx.fillRect(tx, ty + th - 1, tw, 1);
+        ctx.fillRect(tx + tw - 1, ty, 1, th);
 
         // Faint micro-mottle / ceramic glaze speckle
         for (let s = 0; s < 40; s++) {
@@ -363,6 +384,7 @@ export function createFloorVariant({
   length = 12,
   seed = 0,
   variant = 'creamCeramic',
+  retired = false,
   curvize = (m) => m,
   linoleumTextureUrl,
   sharedLinoleumTexture,
@@ -385,7 +407,12 @@ export function createFloorVariant({
 
   const applyCurvize = typeof curvize === 'function' ? curvize : (m) => m;
   const rng = createPrng(seed);
-  const normalizedVariant = normalizeVariant(variant);
+  let normalizedVariant = normalizeVariant(variant);
+  // The coloured replacement-tile floor is retired: it is not a floor seen in Philippine houses.
+  // It stays reachable for inspection through `retired`.
+  if (normalizedVariant === 'mismatchedTiles' && !retired) normalizedVariant = 'whiteTile';
+  // With no images in the bank, an image floor is a plain white tiled one.
+  if (normalizedVariant === 'imageTile' && !FLOOR_TILE_IMAGES.length) normalizedVariant = 'whiteTile';
 
   // Helper to construct a standard floor mesh positioned at Y=0
   function createMesh(geo, mat, posY = 0, posZ = -length / 2) {
@@ -438,6 +465,24 @@ export function createFloorVariant({
   // Variant 1: Cream Ceramic Tiles (0.4 m x 0.4 m)
   // Strange variations: scale jump to 0.8m large format, diagonal band, or offset fault
   // ---------------------------------------------------------------------------
+  if (normalizedVariant === 'whiteTile' || normalizedVariant === 'maroonTile') {
+    // Plain glazed tiles with narrow joints: white is the usual floor, maroon the older one.
+    const white = normalizedVariant === 'whiteTile';
+    const tile = white ? [0.3, 0.4, 0.4, 0.6][Math.floor(rng() * 4)] : [0.2, 0.3, 0.3][Math.floor(rng() * 3)];
+    const tex = trackTex(generateCreamTileTexture(THREE, rng, white
+      ? { rgb: [238, 238, 232], groutColour: '#b4b1a6', tintRange: 6 }
+      : { rgb: [116, 40, 42], groutColour: '#5f554d', tintRange: 16 }));
+    createMesh(createMetricFloorPlane({ THREE, width, length, metricScaleX: tile * 4, metricScaleY: tile * 4 }),
+      applyCurvize(new THREE.MeshLambertMaterial({ map: tex })));
+    group.userData.tile = tile;
+  }
+  else if (normalizedVariant === 'imageTile') {
+    // A supplied image, repeated at the size its file name gives. The texture is shared, not owned.
+    const entry = FLOOR_TILE_IMAGES[Math.floor(rng() * FLOOR_TILE_IMAGES.length)];
+    createMesh(createMetricFloorPlane({ THREE, width, length, metricScaleX: entry.metres, metricScaleY: entry.metres * entry.aspect }),
+      applyCurvize(new THREE.MeshLambertMaterial({ map: bankTexture(THREE, entry.file) })));
+    group.userData.tileImage = entry.file;
+  }
   if(normalizedVariant==='bare'){
     createMesh(new THREE.PlaneGeometry(width,length,Math.ceil(width),Math.ceil(length*2)),applyCurvize(new THREE.MeshLambertMaterial({color:0x9c9c95})));
   }
