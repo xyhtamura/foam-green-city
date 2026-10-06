@@ -94,7 +94,7 @@ function mixedRoom(index){
   return {...STRANGE[hash(ordinal+307)%STRANGE.length],category:'strange'};
 }
 function mixedFloor(room,index){
-  if(room.court)return {...room,floor:'concrete'};
+  if(room.court)return {...room,floor:'bare'};   // plain cement: a patterned floor's patches would show through the paint
   if(room.yero)return {...room,floor:'bare'};
   if(index<3||room.rise||room.category==='rare')return {...room,floor:'bare'};
   // Bare cement most of the time; plain white tile is the usual finished floor. An image floor

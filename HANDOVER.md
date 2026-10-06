@@ -67,7 +67,7 @@ About one room in ninety is a covered court. `isCourt(index,seed)` in `room-gene
 
 `basketball-court.js` draws the court as one mesh in plain colour, with the shared vertex-colour material: a painted field 15 by 26 m, keys, free-throw and centre circles, three-point lines, and at each end a backboard, rim, and net on arms from the wall, the rim at 3.05 m, over the doorway. Six colour schemes, two of them with bare concrete for the field. Lines are 10 cm wide and cut into half-metre pieces; the paint sits 12 to 20 mm above the floor. The walker's route is the room's centre line: under one hoop, across both keys and the centre circle, out under the other.
 
-Round it: `room-sequences.js` gives a court a concrete floor; `household-items.js` leaves a ball and one to three more, strings banderitas in seven courts of ten, and never makes one a washing room; `fabric-items.js` lays nothing on its floor; the fog reaches 48 m while the walker is in one, where an ordinary room has 26.
+Round it: `room-sequences.js` gives a court a plain cement floor, since a patterned floor's patches are drawn with a depth offset and show through the paint at a shallow angle; `household-items.js` leaves a ball and one to three more, strings banderitas in seven courts of ten, and never makes one a washing room; `fabric-items.js` lays nothing on its floor; the fog reaches 48 m while the walker is in one, where an ordinary room has 26.
 
 ## Papers at bond size, hangers on walls, gas stoves — 2026-10-06
 
