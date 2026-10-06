@@ -36,10 +36,16 @@ Before committing a change to any root-level `.js` file: `python scripts/stamp_v
 
 Open, in the order they were raised:
 
-1. **Wall flicker at a join where the next room is narrower.** Reported by Xyh on 2026-10-06 and not reproduced. Xyh's description: the wall glitches or fades in and out as it used to, perhaps because it intersects the incoming wall too much. Leads, none tested. (a) The lighting-band shader in `curvize` takes the first matching band, with a 2 mm overlap at each boundary, and the band array follows the order rooms were built, not their order along the route; a face within 2 mm of a boundary can change band when rooms are rebuilt. (b) Room i's partition is 0.18 m thick and spans the wider of the two rooms, and room i+1's first side-wall modules start at the boundary plane and run through that thickness; look for faces that coincide where the widths differ. (c) Fog and background now lerp to each room's wall colour on entry, which reads as a fade wherever neighbours differ in colour, whatever the widths. To reproduce, find a join with `width(i) > width(i+1)` — at seed 5, room 21 is 6 m and room 22 is 4 m — and walk through it by hand on the twisting route and on `?space=straight`, with `?lighting=daylight` and without.
+1. **Wall flicker at a narrowing join: fixed 2026-10-06.** See the section below. Still open beside it: baseboards on the far end wall stand 0.1 m clear of the partition, and solid side-wall modules have their face at half the room width while window modules, baseboards, block-wall faces, and fittings sit 0.08 to 0.11 m inside it.
 2. **Things not yet seen by anyone:** an electric foam-green room; a hue-shifted T-shirt; tsinelas up close; a real image in the floor tile bank; protrusions in motion.
 3. **Still fixed where the rest is procedural:** side rooms and passages have no baseboards, protrusions, kit objects, or wall fittings; the minimum room length is 6 m.
 4. **Carried from before:** independent lighting profiles for side rooms.
+
+## Wall flicker at a narrowing join — 2026-10-06
+
+A Kenney wall module is 0.1 m thick with its near face on its origin plane. The partition at the end of room i was placed with that face on the boundary plane, and room i+1's side walls start on the same plane. Where room i+1 is narrower, the end caps of its first two side-wall modules lay in the partition's face, 0.1 m wide and full height at x = ± half the narrower width, and the two surfaces fought for depth. The solid partition pieces now stand `PARTITION_PROUD` (1 cm) toward room i, which covers the caps; the doorway piece is unmoved. The face is also now outside the lighting bands' 2 mm overlap, so it belongs to room i's band alone, and the bands are filled in route order rather than build order.
+
+`?inspect=1` now also sets `window.fgc` to `{THREE,scene,cam,renderer,segments,WALLP}` for console measurement. With the browser pane hidden, `requestAnimationFrame` is paused, so a test can pose `cam`, call `renderer.render`, and `readPixels` in the same task.
 
 ## Wall colours, trim rules, and protrusions — 2026-10-06
 

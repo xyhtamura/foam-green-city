@@ -240,6 +240,7 @@ uniform vec3 uLiftTo;
 // ---- constants ----
 const TSCALE = 2.0;      // Kenney tile 1u -> 2m
 const H = 1.29 * TSCALE; // wall-tile height => ~2.58m ceiling
+const PARTITION_PROUD = 0.01;   // above depth-buffer resolution at the 100 m fog limit
 const plane = (w,h) => new THREE.PlaneGeometry(w,h);
 const params=new URLSearchParams(location.search);
 const previewWidths=(params.get('widths')??params.get('width')??'').split(',').map(Number).filter(w=>ROOM_WIDTHS.includes(w));
@@ -683,8 +684,11 @@ function buildSegment(index){
   // Cover the wider room on either side of a boundary, including its shoulders.
   const partition=new THREE.Group();partition.name='room-partition';grp.add(partition);
   partition.userData.wallPaint=grp.userData.wallPaint;partition.userData.trimColor=grp.userData.trimColor;partition.userData.wallColor=grp.userData.wallColor;partition.userData.wallPaintMaterials=grp.userData.wallPaintMaterials;
+  // A wall module is 0.1 m thick and its near face lies on its origin plane, which here is the
+  // boundary. A narrower next room starts its side walls on that plane, so their end caps would
+  // share it with this face and flicker. The solid pieces stand 1 cm proud to cover the caps.
   for(const piece of partitionPieces(Math.max(width,roomWidth(index+1))))
-    addWall(partition,WALLP[piece.name],piece.x,-SEG_LEN,0);
+    addWall(partition,WALLP[piece.name],piece.x,piece.name==='wallDoorway'?-SEG_LEN:-SEG_LEN+PARTITION_PROUD,0);
   const boundaryHeight=Math.max(descriptor.height,sequence.room(index+1).height);
   if(boundaryHeight>H){const upper=new THREE.Mesh(new THREE.BoxGeometry(Math.max(width,roomWidth(index+1)),boundaryHeight-H,0.12),mat.ceiling);upper.position.set(0,(boundaryHeight+H)/2,-SEG_LEN);upper.userData.own=true;partition.add(upper);}
   const thresholdStyle=DOOR_STYLES[i%DOOR_STYLES.length];
@@ -1019,6 +1023,7 @@ function tick(){
   cam.rotation.order='YXZ';cam.rotation.set(viewPitch,viewYaw,0);
   if(params.has('inspect')){
     const state=document.getElementById('route-state')??document.body.appendChild(Object.assign(document.createElement('pre'),{id:'route-state',hidden:true}));
+    window.fgc??={THREE,scene,cam,renderer,segments,WALLP};   // inspection handle for the console
     state.textContent=JSON.stringify({room:travelRoom,distance:travelDistance,length:travelRoute.length,x:cam.position.x,y:cam.position.y,z:cam.position.z,yaw:viewYaw,pitch:viewPitch,mode:manual?'manual':rejoin?'returning':'automatic',retained:[...segments.keys()],floor:travel.floor});
   }
   const PHI = 1.61803398875;                    // aperiodic warp (never loops)
@@ -1036,7 +1041,8 @@ function tick(){
     animateDomesticProps(scene,t);
   const logicalZ=cam.position.z;
     let band=0;
-    for(const g of segments.values()){
+    // In route order, so a face on a boundary takes the earlier room's profile however the rooms were built.
+    for(const g of [...segments.values()].sort((p,q)=>q.position.z-p.position.z)){
       const l=g.userData.lighting;
       lightingBands[band].set(g.position.z,g.userData.length,l.base,0);
       lightingModes[band].set(l.window,g.userData.width,l.side,0);lightingTints[band].setHex(l.tint);band++;

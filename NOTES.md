@@ -1209,3 +1209,17 @@ Done: `blueHour` in `room-lighting.js`, a dim blue-indigo room with its lamp jus
 Not done: the flicker. I did not reproduce it, and I did not want to change the join geometry or the lighting-band shader on a guess at the end of a long sitting. Three untested leads and a way to reproduce it are under "Start here" in HANDOVER.md, which is also where the next agent should begin.
 
 Root ROADMAP.md's Next in Dev line now names the flicker; it was left uncommitted there, as that file carries other agents' edits. A commit I did not make, 0d81718, added grocery cutouts during this sitting. Nothing was pushed.
+
+## 2026-10-06 — Claude Code — wall flicker at a narrowing join fixed
+
+Reproduced at seed 5, room 21 (6 m) into room 22 (4 m), `?start=21&offset=3&still=1&space=straight&lighting=daylight`: two bright vertical stripes on the partition at x = ±2 that came and went between frames.
+
+Cause, measured through bounding boxes in the loaded scene: the partition's solid pieces occupied z from the boundary to 0.1 m beyond it, and room 22's first side-wall modules occupied x 2 to 2.1 from the boundary onward, so their end caps were coplanar with the partition face. This is lead (b) of the handover. Fix and details are in HANDOVER.md: the solid pieces stand 1 cm toward the earlier room. Lead (a) was closed with it, by filling the lighting bands in route order. Lead (c), the fog colour change on entering a room, is intended behaviour and was left alone.
+
+Checks, in the browser on the root server, rendering by hand at 800 × 450 and reading pixels back. Straight route, 60 poses along the camera's sway: pixels brighter than the wall on three rows of the partition were found in 0 poses with the fix and in 50 with the pieces moved back onto the boundary plane in the same session. Twisting route, 40 poses, everything hidden except the partition and the two abutting modules, each pose rendered twice 0.2 mm apart: 723 pixels changed with the fix, 89,610 without. Room 20 (4 m) into room 21 (6 m), a widening join, same test: 1,242 either way, so that case never fought and is unchanged; that figure is the level of edge aliasing. `check_room_sequences`, `check_navigation`, `check_spatial_route`, `check_forks`, and `check_published_assets` pass. A default-route load from room 20 at `?speed=6` logged no console error.
+
+Not done. Not watched in motion in a visible window; the pane was hidden throughout. No join into a room over 26 m of fog depth was tested; 1 cm was chosen to exceed the depth buffer's step at 100 m, by arithmetic, not by a render. I measured 4 mm first and raised it for that reason.
+
+Found and not fixed. Raycasts in room 21: the far end-wall baseboard's face is 0.119 m in front of the partition, so it stands about 0.1 m clear of the wall. `baseboards.js` uses one offset, 0.112 m, for all four walls, which is right for the near end wall (the previous partition's back face is 0.1 m inside this room) and wrong for the far one. On side walls, solid Kenney modules have their face at half the room width, while window modules sit 0.08 m inside it and baseboards, block-wall faces, and wall fittings are placed 0.105 to 0.112 m inside it, so against a solid module they stand clear of the wall. Only the baseboard gap was measured; the fittings' gap is read from the code.
+
+Nothing was pushed.
