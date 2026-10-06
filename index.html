@@ -295,7 +295,7 @@ linoleumTex.colorSpace = THREE.SRGBColorSpace;
 
 const DOORS=createDoorLeaves(curvize,COL.trim);
 const mat = {
-  ceiling:       curvize(new THREE.MeshLambertMaterial({ color: COL.ceiling })),
+  ceiling:       curvize(new THREE.MeshLambertMaterial({ color: COL.ceiling, side: THREE.DoubleSide })),
 };
 
 const scatterMaterial=curvize(new THREE.MeshLambertMaterial({vertexColors:true}));
@@ -667,6 +667,9 @@ function buildSegment(index){
   const floorChoice=FLOOR_IDS.includes(params.get('floor'))?params.get('floor'):descriptor.floor;
   const floor=createFloorVariant({THREE,width,length:SEG_LEN,seed:i+17,variant:descriptor.rise?'bare':floorChoice,retired:params.get('floor')==='mismatchedTiles',curvize,sharedLinoleumTexture:linoleumTex});
   raiseFloor(floor,descriptor);
+  // A room is seen from outside across the yero path, tilted on the twisting route, so its floor and
+  // ceiling are drawn from both sides: from below, a floor would otherwise not be there.
+  floor.traverse(o=>{if(o.isMesh)for(const m of [o.material].flat())m.side=THREE.DoubleSide;});
   const architecture=createRoomArchitecture(descriptor,curvize,{woodTexture,stairs:params.get('stairs'),wallColor:grp.userData.wallColor,trimColor:grp.userData.trimColor});grp.add(architecture);grp.userData.architecture=architecture;
   // A court room has its floor painted and a hoop over each doorway.
   if(descriptor.court){const court=createBasketballCourt({THREE,room:descriptor,material:householdMaterial,seed:i});grp.add(court);grp.userData.court=court.userData.court;}

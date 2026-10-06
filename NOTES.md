@@ -1511,3 +1511,11 @@ Checks. All twelve node checks pass. `check_room_sequences` had asserted that ev
 Changed after the first view: sheets were a metre or more apart and left gaps seen from above; they are now 0.55 to 1.1 m apart.
 
 Not done. Not viewed in motion or with the pane visible. The nine frames with nothing under the walker were not located. Walking backward into the room, a cut landing in it, and manual control inside it were not exercised. The inspector's entry for the room carries fields from the ordinary path with empty values; harmless as far as seen. Courts and yero rooms for seeds other than 5 were not listed beyond seed 42. Nothing was pushed.
+
+## 2026-10-06 — Claude Code — floors and ceilings drawn from both sides
+
+Xyh saw from the yero path that the floors of the rooms ahead were not there. A floor was a single-sided plane facing up, and a ceiling one facing down; from the open air, with the route's twist tilting the next room, they are seen from the other side and were culled. Every floor material is now set double-sided when the room is built, and the ceiling material where it is made.
+
+Checks, on the root server with `?start=91`, straight route, with the camera put by hand 2.2 m below the next room's floor looking up, and 5.5 m up looking down: hiding the floor changed 9,050 of 124,704 pixels in the first view and hiding the ceiling 14,523 in the second, so both surfaces are drawn from outside; before the change a surface seen from behind draws nothing. Viewed the first: a tiled underside closes the box. No console error; all twelve node checks pass.
+
+Not done. Not viewed from the walker's own height on the twisting route, which is where Xyh saw it. Walls were already boxes and were not changed. Nothing was pushed.

@@ -55,6 +55,8 @@ The route through it wanders. `yeroWaypoints(room)` in `room-sequences.js` swing
 
 `buildYeroRoom` in `index.html` builds it apart from `buildSegment`. It makes the next room's front wall and doorway, as wide as that room, which is why the next room is seen ahead as a box standing in the air, and the room behind likewise. Every field the rest of the page reads from a room is filled in there with an empty stand-in; **a new field that `tick`, `dropSegment`, or the inspector reads from every room has to be added there too.** Lighting is daylight whatever the room would have drawn, the air is `COL.wall`, and the fog reaches 44 m.
 
+Floors and the ceiling material are double-sided for this room's sake: the rooms either side are seen from outside, and from below a single-sided floor is not drawn.
+
 Known and left: a player who takes control can step off the sheets and walk on the air, anywhere within 3 m of the middle. `?offset=` is ignored when starting in this room.
 
 ## The basketball court room — 2026-10-06
