@@ -47,7 +47,8 @@ for(let i=0;i<4000;i++){
 }
 assert.ok(levels.none/4000>0.06&&levels.none/4000<0.14,'about one room in ten is left without scatter');
 assert.equal(scatterLevel(7,'sala','heavy'),'heavy');
-const dark=['darkDay','night','deepNight','dusk','red','violet'].reduce((sum,name)=>sum+(lights[name]??0),0)/4000;
+const dark=['darkDay','night','deepNight','dusk','blueHour','red','violet'].reduce((sum,name)=>sum+(lights[name]??0),0)/4000;
+assert.ok(lights.blueHour>100,'blue-indigo rooms occur');
 assert.ok(dark<0.22,`dark profiles stay under 22% of rooms; measured ${(dark*100).toFixed(1)}%`);
 console.log(`PASS ${cases} scatter plans, ${placed} objects; sala 4×8 light/medium/heavy = ${sala('light')}/${sala('medium')}/${sala('heavy')}`);
 console.log('scatter levels per 4000 rooms',levels);

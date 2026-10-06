@@ -28,6 +28,19 @@ The tile bank is the folder `2d/floor tiles/`. `scripts/index_floor_tiles.py` li
 
 `addWallFittings` in `index.html` mounts the supplied cutouts flat on walls, from a stream of its own. One to three outlets go on solid side-wall modules, 0.3 m up (six in ten) or at 1.1 m; the white duplex plate is drawn 0.12 m wide and the black surface box 0.07 m wide. In 85% of rooms a light switch sits beside the far doorway at 1.3 m, on the side the door leaf does not cover; the single and triple switch plates are 0.07 m wide. The switch images are `wall_switch_single_white.png` and `wall_switch_3gang_white.png`. These four images are listed in `OUTLETS` and `SWITCHES`, not in the cutout table, which only holds free-standing objects.
 
+## Start here — state at the end of 2026-10-06
+
+Read the last entries of NOTES.md first; this section is the short version for whoever picks the work up.
+
+Before committing a change to any root-level `.js` file: `python scripts/stamp_versions.py`, then `python scripts/check_published_assets.py`. Node checks run with `node --experimental-default-type=module scripts/<name>.mjs`. Other people commit to this folder's `2d/` images during a sitting, and files there have been renamed mid-task; re-read `git status` before staging.
+
+Open, in the order they were raised:
+
+1. **Wall flicker at a join where the next room is narrower.** Reported by Xyh on 2026-10-06 and not reproduced. Xyh's description: the wall glitches or fades in and out as it used to, perhaps because it intersects the incoming wall too much. Leads, none tested. (a) The lighting-band shader in `curvize` takes the first matching band, with a 2 mm overlap at each boundary, and the band array follows the order rooms were built, not their order along the route; a face within 2 mm of a boundary can change band when rooms are rebuilt. (b) Room i's partition is 0.18 m thick and spans the wider of the two rooms, and room i+1's first side-wall modules start at the boundary plane and run through that thickness; look for faces that coincide where the widths differ. (c) Fog and background now lerp to each room's wall colour on entry, which reads as a fade wherever neighbours differ in colour, whatever the widths. To reproduce, find a join with `width(i) > width(i+1)` — at seed 5, room 21 is 6 m and room 22 is 4 m — and walk through it by hand on the twisting route and on `?space=straight`, with `?lighting=daylight` and without.
+2. **Things not yet seen by anyone:** an electric foam-green room; a hue-shifted T-shirt; tsinelas up close; a real image in the floor tile bank; protrusions in motion.
+3. **Still fixed where the rest is procedural:** side rooms and passages have no baseboards, protrusions, kit objects, or wall fittings; the minimum room length is 6 m.
+4. **Carried from before:** independent lighting profiles for side rooms.
+
 ## Wall colours, trim rules, and protrusions — 2026-10-06
 
 Foam green is drawn per room by `foamColour` since 2026-10-06, not picked from five values: hue from 126° (green-leaning) to 172° (aqua), in one of five modes — familiar soft foam 32%, dusty 20%, neon pastel 20%, deeper saturated 18%, electric 10%. The four opening rooms use the familiar mode. A room's colour is `userData.wallColor`; `userData.wallPaint` holds only the family name, `foam` for all of these. `?paint=foamElectric` forces `#A7EEC1`, and the five old named greens still work as `?paint=` values.

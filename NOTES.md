@@ -1199,3 +1199,13 @@ The five fixed foam greens are replaced by a colour drawn per room; ranges and s
 Checks, in the browser on the root server. A fast run on the twisting route recorded 160 rooms with no console error; its 111 foam rooms spanned hue 126° to 172°, saturation 0.13 to 0.94, and lightness 0.68 to 0.85, with 25 dusty, 42 soft, 28 vivid, and 16 at 0.74 saturation or above. Viewed rooms 4 and 6 on the straight route in daylight: aqua-leaning greens of different strength against dark green trim. The first run gave the opening room `#97F3AA`, an electric green; the four opening rooms were then held to the familiar range and rooms 2 and 3 read `#CBE0D6` and `#B8D5BC`.
 
 Not done. No electric room was viewed, so how it reads under the piece's lighting and fog is unjudged. Foam-green trim and the fog's default still use the single value `#BFDCC9`. Side rooms take their owning room's colour. Nothing was pushed.
+
+## 2026-10-06 — Claude Code — blue-indigo lighting; the join flicker left open
+
+Xyh's closing notes for this thread: add a dim blue-indigo lighting beside the warm dusk, and a wall still flickers or fades at a join where the incoming room is narrower.
+
+Done: `blueHour` in `room-lighting.js`, a dim blue-indigo room with its lamp just on, at 5% of rooms. Daylight went from 36 to 34, overcast from 22 to 21, darkDay from 4 to 3, night from 6 to 5. `check_floor_scatter.mjs` counts it among the dim profiles and passes with a dim share of 21.5%. Viewed on the root server with `?lighting=blueHour`: room 22 reads indigo, with a warm pool of lamp light on the ceiling.
+
+Not done: the flicker. I did not reproduce it, and I did not want to change the join geometry or the lighting-band shader on a guess at the end of a long sitting. Three untested leads and a way to reproduce it are under "Start here" in HANDOVER.md, which is also where the next agent should begin.
+
+Root ROADMAP.md's Next in Dev line now names the flicker; it was left uncommitted there, as that file carries other agents' edits. A commit I did not make, 0d81718, added grocery cutouts during this sitting. Nothing was pushed.
