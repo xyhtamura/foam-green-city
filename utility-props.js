@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
-import {DRAWER_VARIANTS} from './side-spaces.js?v=659fdf9552';
+import {DRAWER_VARIANTS} from './side-spaces.js?v=6e9e3136f1';
 
 // Plastic drawer units: count, proportions, frame, and drawer colours are drawn per variant.
 // Each is one vertex-coloured mesh, so a unit costs one draw call.
@@ -50,6 +50,8 @@ export function createDrawerVariants(){
 export function createUtilityProps(){
   const material=color=>new THREE.MeshLambertMaterial({color});
   const blue=material(0x548cbe),pink=material(0xcf8fa5),metal=material(0x919a98);
+  // The cylinder does not share the bucket's material: buckets change colour by room, cylinders never do.
+  const gasBlue=material(0x548cbe);
   const dark=material(0x38474c),wood=material(0x977348),straw=material(0xc2a05b);
   const twig=material(0x79613e),binding=material(0xb2493c),cream=material(0xe3dbc4);
   function mesh(group,name,geometry,mat,x=0,y=0,z=0){
@@ -79,12 +81,12 @@ export function createUtilityProps(){
   }
   const gasul=new THREE.Group();gasul.name='gasul';
   mesh(gasul,'steel-cylinder',new THREE.LatheGeometry([[0,0.055],[0.13,0.055],[0.175,0.10],
-    [0.18,0.16],[0.18,0.40],[0.165,0.455],[0.12,0.485],[0.035,0.49],[0,0.49]].map(p=>new THREE.Vector2(...p)),20),blue);
+    [0.18,0.16],[0.18,0.40],[0.165,0.455],[0.12,0.485],[0.035,0.49],[0,0.49]].map(p=>new THREE.Vector2(...p)),20),gasBlue);
   const foot=mesh(gasul,'foot-ring',new THREE.CylinderGeometry(0.145,0.145,0.06,20,1,true),dark,0,0.03);foot.material.side=THREE.DoubleSide;
   mesh(gasul,'brass-valve',new THREE.CylinderGeometry(0.023,0.023,0.075,8),material(0xad955d),0,0.525);
   block(gasul,'valve-knob',dark,0,0.566,0,0.065,0.014,0.025);
-  for(const x of [-0.095,0.095])block(gasul,'collar-upright',blue,x,0.535,0,0.022,0.14,0.095);
-  const collar=mesh(gasul,'protective-collar',new THREE.TorusGeometry(0.098,0.012,5,20),blue,0,0.601);collar.rotation.x=Math.PI/2;
+  for(const x of [-0.095,0.095])block(gasul,'collar-upright',gasBlue,x,0.535,0,0.022,0.14,0.095);
+  const collar=mesh(gasul,'protective-collar',new THREE.TorusGeometry(0.098,0.012,5,20),gasBlue,0,0.601);collar.rotation.x=Math.PI/2;
 
   const drawers=new THREE.Group();drawers.name='plasticDrawers';
   block(drawers,'cabinet-back',cream,0,0.40,-0.18,0.44,0.76,0.035);

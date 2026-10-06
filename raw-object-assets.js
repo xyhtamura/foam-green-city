@@ -10,7 +10,12 @@ export const RAW_OBJECTS=[
       "sala",
       "bedroom"
     ],
-    "tabletop": false
+    "tabletop": false,
+    "hue": [
+      0,
+      330
+    ],
+    "lift": 0.22
   },
   {
     "id": "rawBackpackOlive",
@@ -21,6 +26,10 @@ export const RAW_OBJECTS=[
     "rooms": [
       "sala",
       "bedroom"
+    ],
+    "hue": [
+      -70,
+      70
     ]
   },
   {
@@ -44,6 +53,10 @@ export const RAW_OBJECTS=[
       "bathroom",
       "kitchen",
       "bare"
+    ],
+    "hue": [
+      0,
+      330
     ]
   },
   {
@@ -82,7 +95,7 @@ export const RAW_OBJECTS=[
   {
     "id": "rawEnvelopeKraft",
     "file": "2d/raw objects/envelope_kraft.png",
-    "aspect": 0.7556818181818182,
+    "aspect": 0.6728971962616822,
     "width": 0.24,
     "mode": "flat",
     "rooms": [
@@ -155,7 +168,11 @@ export const RAW_OBJECTS=[
       "sala",
       "bedroom"
     ],
-    "tabletop": false
+    "tabletop": false,
+    "hue": [
+      -25,
+      25
+    ]
   },
   {
     "id": "rawLigoSardinesGreen",
@@ -166,7 +183,8 @@ export const RAW_OBJECTS=[
     "rooms": [
       "sala",
       "kitchen"
-    ]
+    ],
+    "fixedSize": true
   },
   {
     "id": "rawLigoSardinesRed",
@@ -177,7 +195,8 @@ export const RAW_OBJECTS=[
     "rooms": [
       "sala",
       "kitchen"
-    ]
+    ],
+    "fixedSize": true
   },
   {
     "id": "rawMangTomasSarsa",
@@ -379,6 +398,10 @@ export const RAW_OBJECTS=[
     "rooms": [
       "sala",
       "kitchen"
+    ],
+    "hue": [
+      0,
+      330
     ]
   },
   {
@@ -390,6 +413,10 @@ export const RAW_OBJECTS=[
     "rooms": [
       "sala",
       "kitchen"
+    ],
+    "hue": [
+      0,
+      330
     ]
   },
   {
@@ -448,7 +475,11 @@ export const RAW_OBJECTS=[
       "sala",
       "bedroom"
     ],
-    "tabletop": false
+    "tabletop": false,
+    "hue": [
+      0,
+      330
+    ]
   },
   {
     "id": "rawTumblerPlasticBlue",
@@ -459,6 +490,10 @@ export const RAW_OBJECTS=[
     "rooms": [
       "sala",
       "kitchen"
+    ],
+    "hue": [
+      0,
+      330
     ]
   },
   {
@@ -512,8 +547,16 @@ export const RAW_OBJECTS=[
 // Cutouts are sized to the real object. Now and then one is not: about one in twenty-five
 // comes out several times too large or less than half size. `roll` is a 0-1 random value.
 export function oddSize(asset,roll){
-  const factor=roll<0.025?2+roll*80:roll<0.04?0.4:1;
+  const factor=asset.fixedSize?1:roll<0.025?2+roll*80:roll<0.04?0.4:1;
   return factor===1?asset:{...asset,width:asset.width*factor,odd:factor};
+}
+
+// A cutout that lists a hue range is drawn in one of twelve steps across it, three times in
+// four; otherwise it keeps its own colour. The result names a material variant for spriteMat.
+export function cutoutTone(asset,roll){
+  if(!asset.hue||roll<0.25)return null;
+  const step=Math.floor((roll-0.25)/0.75*12),angle=asset.hue[0]+(asset.hue[1]-asset.hue[0])*step/11;
+  return Math.abs(angle)<1?null:{angle:Math.round(angle),lift:asset.lift??0};
 }
 
 export function createRawObject({THREE,asset,material}={}){

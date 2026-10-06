@@ -1090,3 +1090,17 @@ A fault of mine found and fixed in this sitting: the calendar change (2026-10-06
 Also seen for the first time: the Yatra One title rendered, in capitals with larger initials, when a broken edit left the title screen up.
 
 Not done. Wall photos are now lit like the floor, which may be darker than wanted for pictures on a wall; not compared side by side. Red and violet rooms were not viewed. Cutouts still cast and receive no shadow. Nothing was pushed.
+
+## 2026-10-06 — Claude Code — colour variation for plastics, paint, and cutouts
+
+Xyh approved colour variation for plastic and painted meshes and hue-shifted cutouts, said some things must keep their colour, the gas cylinder among them, and reported the sardine-can cutouts as far too large.
+
+Plastic and painted meshes now take a per-room colour, cutouts on a short list take one of twelve hues, and baked objects drift slightly each. The gas cylinder is excluded by construction. Details in HANDOVER.md.
+
+Sardine cans. In the current code and on the published site both cans are 0.09 m tall. With cans forced onto every table, five kitchens showed eight at 0.09 m and two enlarged by the deliberate wrong-size rule, at 0.19 and 0.29 m. That rule is the only source of a large can I could find, so the cans are now exempt from it. If Xyh saw large cans often, a cached older table is the other candidate.
+
+Checks. Cutout, scatter, and sequence checks pass; publication checks pass. In the browser on the root server, straight route, daylight: rooms 21, 24, 25, and 53 showed chairs, tables, a bucket, and drawer units in colours outside the old ten finishes, and rooms rendered with no shader error. A fast run through 183 rooms on the twisting route logged no console error.
+
+Not done. No hue-shifted garment was identified by eye; the shader compiled and ran without error, which shows it works mechanically, not that the colours look right. The lift on the black shorts is a guess. Buckets and drawers inside side rooms are placed by other modules but are covered by the same per-room pass; not viewed. Kenney models (fridge, stove, cabinets, beds), sofas, and textured Poly Haven models do not vary. Table sizes are next.
+
+A stray `file.png` in `2d/raw objects/` was picked up by the generator before the `REAL_SIZE` rule was added; it never reached a commit. That folder now holds fifteen unnamed or unsized images that are not used.

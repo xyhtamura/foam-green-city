@@ -1,9 +1,9 @@
 // Places tableware, plastics, and linens in a room, then bakes them into one vertex-coloured mesh.
-import {createTablewareKit,TABLEWARE_COLOURS} from './tableware.js?v=659fdf9552';
-import {createPlasticKit,PLASTIC_COLOURS} from './plastics.js?v=659fdf9552';
-import {createLinenKit,LINEN_COLOURS} from './linens.js?v=659fdf9552';
-import {placeOnSupport} from './object-supports.js?v=659fdf9552';
-import {createBasketball,BALL_COLOURS} from './basketball.js?v=659fdf9552';
+import {createTablewareKit,TABLEWARE_COLOURS} from './tableware.js?v=6e9e3136f1';
+import {createPlasticKit,PLASTIC_COLOURS} from './plastics.js?v=6e9e3136f1';
+import {createLinenKit,LINEN_COLOURS} from './linens.js?v=6e9e3136f1';
+import {placeOnSupport} from './object-supports.js?v=6e9e3136f1';
+import {createBasketball,BALL_COLOURS} from './basketball.js?v=6e9e3136f1';
 
 // The kits only lend their geometry and colours to the bake, so one set serves every room.
 let kits=null;
@@ -95,12 +95,15 @@ export function addHouseholdItems({THREE,group,room,seed,material,blocked=[],flo
 
   // Bake: positions into the room's frame, each mesh's material colour into its vertices.
   group.updateMatrixWorld(true);
-  const inverse=group.matrixWorld.clone().invert(),m=new THREE.Matrix4(),v=new THREE.Vector3(),positions=[],colors=[];
+  const inverse=group.matrixWorld.clone().invert(),tint=new THREE.Color(),m=new THREE.Matrix4(),v=new THREE.Vector3(),positions=[],colors=[];
   for(const object of placed){
+    // One drift per object, so a cup and its saucer move together and no two bowls quite match.
+    const drift=[(r()-0.5)*0.07,(r()-0.5)*0.16,(r()-0.5)*0.12];
     object.traverse(o=>{
       if(!o.isMesh)return;
       m.multiplyMatrices(inverse,o.matrixWorld);
-      const p=o.geometry.attributes.position,index=o.geometry.index,c=o.material.color,count=index?index.count:p.count;
+      const p=o.geometry.attributes.position,index=o.geometry.index,count=index?index.count:p.count;
+      const c=tint.copy(o.material.color).offsetHSL(drift[0],drift[1],drift[2]);
       for(let i=0;i<count;i++){
         v.fromBufferAttribute(p,index?index.getX(i):i).applyMatrix4(m);
         positions.push(v.x,v.y,v.z);colors.push(c.r,c.g,c.b);

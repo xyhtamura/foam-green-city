@@ -117,13 +117,14 @@ export function createScatterMesh(THREE,items,{material,floorAt=()=>0}={}){
   // Each part is a unit shape, scaled, turned, then moved in the object's own frame.
   function add(shape,color,shade,[w,h,d],[x,y,z]=[0,0,0],[rx,ry,rz]=[0,0,0]){
     part.makeRotationFromEuler(e.set(rx,ry,rz)).scale(v.set(w,h,d)).setPosition(x,y,z);m.multiplyMatrices(base,part);
-    c.setHex(color).lerp(dust,0.22).multiplyScalar(shade);   // dulled toward the floor, so plastics do not read as new
+    c.setHex(color).offsetHSL(drift,0,0).lerp(dust,0.22).multiplyScalar(shade);   // dulled toward the floor, so plastics do not read as new
     const source=shapes[shape];
     for(let i=0;i<source.length;i+=3){v.set(source[i],source[i+1],source[i+2]).applyMatrix4(m);positions.push(v.x,v.y,v.z);colors.push(c.r,c.g,c.b);}
   }
-  const side=Math.PI/2;
+  const side=Math.PI/2;let drift=0;
   for(const o of items){
     const s=o.size,[a,b,d]=o.u,k=o.shade;
+    drift=(o.shade*7.3%1-0.5)*0.07;   // each object's colour sits slightly off its palette entry
     base.makeRotationY(o.yaw).setPosition(o.x,floorAt(o.z)+0.004,o.z);
     if(o.kind==='bottle'||o.kind==='bottleDown'){
       const w=(0.06+a*0.035)*s,h=(0.17+b*0.13)*s,shape=d<0.5?'bottle':'flask',down=o.kind==='bottleDown';

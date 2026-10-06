@@ -84,36 +84,36 @@ window.addEventListener('unhandledrejection',reportLoadFailure);
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { createJalousieWall } from './jalousie.js?v=659fdf9552';
-import { createDomesticProps, animateDomesticProps, createFurnitureVariants, FURNITURE_FINISHES } from './domestic-props.js?v=659fdf9552';
-import { WALL_HANGINGS } from './wall-assets.js?v=659fdf9552';
-import { RAW_OBJECTS, createRawObject, oddSize } from './raw-object-assets.js?v=659fdf9552';
-import { loadCurtainPatterns } from './photo-assets.js?v=659fdf9552';
-import { ROOM_WIDTHS, partitionPieces } from './room-widths.js?v=659fdf9552';
+import { createJalousieWall } from './jalousie.js?v=6e9e3136f1';
+import { createDomesticProps, animateDomesticProps, createFurnitureVariants, FURNITURE_FINISHES } from './domestic-props.js?v=6e9e3136f1';
+import { WALL_HANGINGS } from './wall-assets.js?v=6e9e3136f1';
+import { RAW_OBJECTS, createRawObject, oddSize, cutoutTone } from './raw-object-assets.js?v=6e9e3136f1';
+import { loadCurtainPatterns } from './photo-assets.js?v=6e9e3136f1';
+import { ROOM_WIDTHS, partitionPieces } from './room-widths.js?v=6e9e3136f1';
 
-import { LAYOUT_IDS, generateFurnitureLayout, checkFurnitureLayout } from './furniture-layouts.js?v=659fdf9552';
-import { FLOOR_IDS, createFloorVariant } from './floor-variants.js?v=659fdf9552';
-import { DOOR_STYLES, createDoorLeaves } from './doors.js?v=659fdf9552';
-import { MODEL_ASSETS, loadModelAssets } from './model-assets.js?v=659fdf9552';
-import { createRoomSet, createRoomFixture } from './room-sets.js?v=659fdf9552';
-import { createUratexSofa } from './uratex-sofa.js?v=659fdf9552';
-import { createWireRun } from './wire-runs.js?v=659fdf9552';
-import { createWallUtilities } from './wall-utilities.js?v=659fdf9552';
-import {createWalkSequence,retainedRooms,walkRegions,canOccupy,moveWalker,pathToRoute,roomExits} from './navigation.js?v=659fdf9552';
-import {addDomesticDetails} from './domestic-details.js?v=659fdf9552';
+import { LAYOUT_IDS, generateFurnitureLayout, checkFurnitureLayout } from './furniture-layouts.js?v=6e9e3136f1';
+import { FLOOR_IDS, createFloorVariant } from './floor-variants.js?v=6e9e3136f1';
+import { DOOR_STYLES, createDoorLeaves } from './doors.js?v=6e9e3136f1';
+import { MODEL_ASSETS, loadModelAssets } from './model-assets.js?v=6e9e3136f1';
+import { createRoomSet, createRoomFixture } from './room-sets.js?v=6e9e3136f1';
+import { createUratexSofa } from './uratex-sofa.js?v=6e9e3136f1';
+import { createWireRun } from './wire-runs.js?v=6e9e3136f1';
+import { createWallUtilities } from './wall-utilities.js?v=6e9e3136f1';
+import {createWalkSequence,retainedRooms,walkRegions,canOccupy,moveWalker,pathToRoute,roomExits} from './navigation.js?v=6e9e3136f1';
+import {addDomesticDetails} from './domestic-details.js?v=6e9e3136f1';
 let wallUtilities;
-import { roomLighting } from './room-lighting.js?v=659fdf9552';
-import { scatterLevel, planScatter, planSideScatter, scatterBlocks, createScatterMesh } from './floor-scatter.js?v=659fdf9552';
-import { createBaseboards } from './baseboards.js?v=659fdf9552';
-import { addHouseholdItems } from './household-items.js?v=659fdf9552';
-import { spatialFrame, spatialPoint, SPATIAL_GLSL, SPATIAL_PROFILES } from './spatial-route.js?v=659fdf9552';
-import { floorHeight, cameraRoute, routePoint } from './room-sequences.js?v=659fdf9552';
-import {sideSpacePlan,DRAWER_VARIANTS} from './side-spaces.js?v=659fdf9552';
-import {addWoodDetails} from './wood-details.js?v=659fdf9552';
-import {addSideWashrooms} from './side-washrooms.js?v=659fdf9552';
-import {addSideStorage} from './side-storage.js?v=659fdf9552';
-import {addSideBedrooms} from './side-bedrooms.js?v=659fdf9552';
-import { branchOpenings, raiseFloor, createRoomArchitecture } from './room-architecture.js?v=659fdf9552';
+import { roomLighting } from './room-lighting.js?v=6e9e3136f1';
+import { scatterLevel, planScatter, planSideScatter, scatterBlocks, createScatterMesh } from './floor-scatter.js?v=6e9e3136f1';
+import { createBaseboards } from './baseboards.js?v=6e9e3136f1';
+import { addHouseholdItems } from './household-items.js?v=6e9e3136f1';
+import { spatialFrame, spatialPoint, SPATIAL_GLSL, SPATIAL_PROFILES } from './spatial-route.js?v=6e9e3136f1';
+import { floorHeight, cameraRoute, routePoint } from './room-sequences.js?v=6e9e3136f1';
+import {sideSpacePlan,DRAWER_VARIANTS} from './side-spaces.js?v=6e9e3136f1';
+import {addWoodDetails} from './wood-details.js?v=6e9e3136f1';
+import {addSideWashrooms} from './side-washrooms.js?v=6e9e3136f1';
+import {addSideStorage} from './side-storage.js?v=6e9e3136f1';
+import {addSideBedrooms} from './side-bedrooms.js?v=6e9e3136f1';
+import { branchOpenings, raiseFloor, createRoomArchitecture } from './room-architecture.js?v=6e9e3136f1';
 
 // ---- palette (DepEd MPSS, stylized: green walls) ----
 const COL = {
@@ -190,7 +190,16 @@ function curvize(material){
         }
       }
       #include <opaque_fragment>`);
-    const up=material.userData.upNormal;
+    const up=material.userData.upNormal,tone=material.userData.tone;
+    // A toned cutout has its hue turned about the grey axis, which keeps folds and shading;
+    // a dark image is also lifted toward the colour that turn would give pure red.
+    if(tone){
+      const a=tone.angle*Math.PI/180,f=n=>n.toFixed(5),c=new THREE.Color().setHSL((tone.angle%360+360)%360/360,0.55,0.4);
+      shader.fragmentShader=shader.fragmentShader.replace('#include <map_fragment>',`#include <map_fragment>
+      { vec3 k=vec3(0.57735),t=diffuseColor.rgb;
+        t=t*${f(Math.cos(a))}+cross(k,t)*${f(Math.sin(a))}+k*dot(k,t)*${f(1-Math.cos(a))};
+        diffuseColor.rgb=mix(max(t,0.0),vec3(${f(c.r)},${f(c.g)},${f(c.b)}),${f(tone.lift)}); }`);
+    }
     // Undo the back-face flip, so both sides of a cutout are lit alike.
     if(up)shader.fragmentShader=shader.fragmentShader.replace('#include <normal_fragment_begin>',`#include <normal_fragment_begin>
       normal=normalize(vNormal);`);
@@ -282,23 +291,29 @@ function loadGLB(n){ return new Promise((res,rej)=>
 const WALLP = {};        // scaled+tinted wall-tile prototypes
 const FURNI = {};        // raw furniture prototypes (scaled per clone)
 const SPRMAT = {};       // sprite materials by filename
+const SPRTEX = {};       // sprite textures by filename
 const ASP = { sofa: 162/273, curtain: 808/810, plant: 370/335,
               monobloc: 419/234,
               kutsaraTinidor: 894/422, standFan: 962/508,
               wallCalendar: 1.309608540925267, taboTimba: 754/689,   // wallCalendar is the monthly calendar, about 0.4 m by 0.52 m
               waterDispenser: 944/348 };
-function spriteMat(file){
-  if (SPRMAT[file]) return SPRMAT[file];
-  const tx = texLoader.load(encodeURI(file.startsWith('2d/')?file:'models/' + file));
-  tx.magFilter = THREE.NearestFilter; tx.minFilter = THREE.NearestFilter;
-  tx.colorSpace = THREE.SRGBColorSpace;
+function spriteMat(file,tone=null){
+  const key=tone?`${file}#${tone.angle}/${tone.lift}`:file;
+  if (SPRMAT[key]) return SPRMAT[key];
+  // Tone variants of one image share its texture.
+  let tx = SPRTEX[file];
+  if (!tx){
+    tx = SPRTEX[file] = texLoader.load(encodeURI(file.startsWith('2d/')?file:'models/' + file));
+    tx.magFilter = THREE.NearestFilter; tx.minFilter = THREE.NearestFilter;
+    tx.colorSpace = THREE.SRGBColorSpace;
+  }
   // Lit like the floor under it: a cutout takes the room's lights with an upward normal,
   // whichever way its plane faces, so a camera-facing one does not change as it turns.
   const material=new THREE.MeshLambertMaterial({ map: tx, alphaTest: 0.5, side: THREE.DoubleSide, fog: true });
-  material.userData.upNormal=true;
+  material.userData.upNormal=true;material.userData.tone=tone;
   // The patch below differs for these materials, so they must not share a compiled program with the rest.
-  material.customProgramCacheKey=()=>'up-normal';
-  return SPRMAT[file] = curvize(material);
+  material.customProgramCacheKey=()=>'up-normal'+(tone?`:${tone.angle}/${tone.lift}`:'');
+  return SPRMAT[key] = curvize(material);
 }
 function prepWall(proto){                   // scale, foam-green tint, crunch
   proto.scale.setScalar(TSCALE);
@@ -370,7 +385,7 @@ const wallModel = (name,tH) => (g,r)=>{ const s = r()<0.5?-1:1;
 const floorModel = (name,tH) => (g,r)=>{ const s = r()<0.5?-1:1;
   placeModel(g,name,{ x:s*(0.8+r()*(roomHalf(g)-1.4)), z:propZ(g,r), ry:r()*6.28, targetH:tH }); };
 const rawFloor = id => (g,r)=>{
-  const asset=oddSize(RAW_OBJECTS.find(p=>p.id===id),g.userData.oddRoll()),obj=createRawObject({THREE,asset,material:spriteMat(asset.file)});
+  const asset=oddSize(RAW_OBJECTS.find(p=>p.id===id),g.userData.oddRoll()),obj=createRawObject({THREE,asset,material:spriteMat(asset.file,cutoutTone(asset,g.userData.oddRoll()))});
   const side=r()<0.5?-1:1,z=params.get('prop')===id?-g.userData.length*0.55:zin(g,r);
   obj.position.x=side*(roomHalf(g)-0.4);obj.position.z=z;obj.position.y+=floorHeight(g.userData,z);g.add(obj);
 };
@@ -462,6 +477,29 @@ function mulberry32(a){ return ()=>{ a|=0; a=a+0x6D2B79F5|0;
   return ((t^t>>>14)>>>0)/4294967296; }; }
 // A range rather than one specified value: batches of the same paint differ, and so do these.
 const WALL_PAINTS={foamGreen:0xbfdcc9,foamMint:0xb2dcc1,foamSage:0xc4d9be,foamAqua:0xb8dbd0,foamDeep:0xa8cfb6,crispEcru:0xfcedbe,brightWonder:0xf9f1d2,yellowRain:0xedd381,white:0xf1f1ec};
+// Shared materials whose colour is redrawn for each room: plastic and painted things.
+// Wood keeps to browns. Anything not registered here keeps its colour everywhere.
+const VARIED=new Map();
+function variedColour(source,kind,next){
+  const c=source.color.clone(),hsl=c.getHSL({h:0,s:0,l:0});
+  if(kind==='wood')return c.setHSL(hsl.h+(next()-0.5)*0.03,hsl.s*(0.75+next()*0.4),hsl.l*(0.8+next()*0.4));
+  // Mostly near its listed colour; one time in six a colour of its own; sometimes faded or grimy.
+  let h=next()<0.17?next():hsl.h+(next()-0.5)*0.09,s=hsl.s<0.12?hsl.s:Math.min(0.75,hsl.s*(0.65+next()*0.55)),l=hsl.l*(0.86+next()*0.24);
+  if(hsl.s<0.12&&next()<0.25){h=next();s=0.18+next()*0.2;}        // off-whites sometimes carry a tint
+  const wear=next();
+  if(wear<0.14){s*=0.55;l=Math.min(0.9,l+0.07);}else if(wear<0.24){s*=0.8;l*=0.8;}
+  return c.setHSL((h%1+1)%1,s,Math.min(0.92,l));
+}
+function varyColours(grp,i){
+  const next=mulberry32((i*7919+1237)>>>0),cache=grp.userData.wallPaintMaterials;
+  const swap=m=>{
+    const kind=VARIED.get(m);if(!kind)return m;
+    const key='varied:'+m.uuid;
+    if(!cache.has(key))cache.set(key,curvize(Object.assign(m.clone(),{color:variedColour(m,kind,next)})));
+    return cache.get(key);
+  };
+  grp.traverse(o=>{if(o.isMesh)o.material=Array.isArray(o.material)?o.material.map(swap):swap(o.material);});
+}
 const MAT_COLOURS=[0xc2885e,0x8f6a4a,0x6f7d5a,0x4e6b7a,0x9c4a42,0xb9a26a,0x7a7a74,0x5a4a6e,0xc7b79a,0x3f5a4a,0xa8644e,0x8fa3a8,0xd2c9b4,0x70573d];
 const TRIM_GREENS=[[0x6b8a3a,30],[0x7d9a45,18],[0x5a7a34,16],[0x6e8f55,12],[0x86a04e,10],[0x4e7c63,8],[0x3f7466,6]];
 const segments = new Map();
@@ -625,7 +663,7 @@ function buildSegment(index){
       if(forcedRaw||r()<(room.name==='kitchen'?0.65:0.35)){
         if(forcedRaw||(rawPool.length&&r()<0.5)){
           const asset=oddSize(forcedRaw??rawPool[Math.floor(r()*rawPool.length)],grp.userData.oddRoll());
-          const prop=createRawObject({THREE,asset,material:spriteMat(asset.file)});
+          const prop=createRawObject({THREE,asset,material:spriteMat(asset.file,cutoutTone(asset,grp.userData.oddRoll()))});
           prop.position.y+=0.766;model.add(prop);
         }else{
         const importedTabletop=['phPot','phSpoon','phApple','phBananas','phGinger','phSweetPotato'];
@@ -692,6 +730,7 @@ function buildSegment(index){
   for(const b of architecture.userData.sideBlocks)grp.userData.walkBlocks.push({...b,minZ:b.minZ+descriptor.startZ,maxZ:b.maxZ+descriptor.startZ});
   for(const b of architecture.userData.solids)
     grp.userData.walkBlocks.push({...b,minZ:b.minZ+descriptor.startZ,maxZ:b.maxZ+descriptor.startZ,minY:-10,maxY:100});
+  varyColours(grp,i);
   grp.userData.woodDetails=addWoodDetails({THREE,group:grp,room:descriptor,spots:solidWalls,texture:woodTexture,curvize,force:params.get('wood')});
   // Floor scatter is fitted last, around everything already standing in the room.
   const taken=grp.children.filter(o=>o.userData.floorProp||o.userData.billboard||o.userData.diningTable||o.userData.diningChair||o.userData.utilityProp||o.userData.door||o.userData.roomSet).concat(grp.userData.woodDetails.children.filter(o=>o.name!=='wood-wall')).map(o=>{
@@ -1021,6 +1060,10 @@ function inspectRooms(){
     for(const proto of Object.values(FURNI)) prepFurni(proto);
     Object.assign(FURNITURE_VARIANTS,createFurnitureVariants(FURNI));
     for(const variants of Object.values(FURNITURE_VARIANTS))for(const proto of variants)prepFurni(proto);
+    for(const variants of Object.values(FURNITURE_VARIANTS))variants.forEach((proto,n)=>proto.traverse(o=>{if(o.isMesh)VARIED.set(o.material,FURNITURE_FINISHES[n].name.includes('wood')?'wood':'plastic');}));
+    // Buckets, and the coloured parts of fans, cookers, and food covers. The gas cylinder is not listed.
+    for(const name of ['bucket','bucketPink'])FURNI[name].traverse(o=>{if(o.isMesh&&['hollow-pail','handle-pivot'].includes(o.name))VARIED.set(o.material,'plastic');});
+    for(const name of ['wallFan','deskFan','riceCooker','foodCover'])FURNI[name].traverse(o=>{if(o.isMesh&&[0x699baf,0xb45f4d].includes(o.material.color.getHex()))VARIED.set(o.material,'plastic');});
   await Promise.all(['wall','wallDoorway','wallHalf']
     .map(async n => { const s = await loadGLB(n); prepWall(s); WALLP[n]=s; }));
   WALLP.wallWindow = createJalousieWall({ height: H, wallColor: COL.wall,

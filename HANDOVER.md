@@ -14,6 +14,14 @@ The route is still one straight logical line; nothing here adds a second axis. A
 
 Side rooms get scatter from `planSideScatter`, fitted to the room rectangle, off fixture blocks and off the strip from the doorway across the room; the objects join the owning room's single scatter mesh. Movement no longer starts paused under `prefers-reduced-motion`; Xyh asked for it to start on Enter. `scripts/check_forks.mjs` covers exit routes and salts.
 
+## Colour variation — 2026-10-06
+
+Meshes: `VARIED` in `index.html` maps a shared material to `plastic` or `wood`. It is filled at start-up with the ten monobloc and table finishes, the bucket bodies, and the coloured parts of fans, rice cookers, and food covers. `varyColours(grp,i)` runs once per room, after furnishing, and swaps each registered material for a per-room copy whose colour `variedColour` draws from the room's own stream: near the listed colour for most, a colour of its own one time in six, off-whites sometimes tinted, 14% faded, 10% grimy; wood stays within browns. All objects sharing a source material in one room share the result, so colours differ between rooms, not between two chairs of one finish in a room. Copies live in the room's material cache and are disposed with it. A material not in `VARIED` keeps its colour everywhere; the gas cylinder has its own material in `utility-props.js` for that reason. Baked objects drift per object instead: `household-items.js` shifts hue, saturation, and lightness slightly for each placed object, and `floor-scatter.js` shifts hue.
+
+Cutouts: an entry in `HUES` in `scripts/index_raw_objects.py` gives a cutout a hue range, and for dark images a `lift` toward a colour. `cutoutTone(asset,roll)` picks one of twelve steps three times in four. `spriteMat(file,tone)` returns a material variant whose shader turns the texture's hue about the grey axis; variants share the texture and have their own program cache key. Listed: the T-shirt, shorts, jeans (±25° only), basin, two pitchers, tumbler, and backpack. Branded packaging and photographs are not listed.
+
+Also in `index_raw_objects.py`: a file is indexed only if it has an entry in `REAL_SIZE`, so a stray image in the folder cannot reach the page, and `FIXED_SIZE` exempts the sardine cans from the deliberate wrong-size rule.
+
 ## Lit cutouts — 2026-10-06
 
 `spriteMat` now returns a `MeshLambertMaterial` flagged `userData.upNormal`. For that flag `curvize` replaces the vertex normal with world up (through the route's basis on the twisting route) and undoes the fragment shader's back-face flip, so a cutout is lit like the floor under it whichever way its plane faces. These materials set `customProgramCacheKey`, because Three.js shares compiled programs between materials whose `onBeforeCompile` source is identical, and the patch here differs only by that flag. Wall photos, tabletop and floor cutouts, camera-facing sprites, and wire images all use it.

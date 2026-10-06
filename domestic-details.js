@@ -1,6 +1,6 @@
-import {floorHeight} from './room-sequences.js?v=659fdf9552';
-import {RAW_OBJECTS,createRawObject,oddSize} from './raw-object-assets.js?v=659fdf9552';
-import {tableSupport,seatSupport,surfaceSupport,localBounds,placeOnSupport} from './object-supports.js?v=659fdf9552';
+import {floorHeight} from './room-sequences.js?v=6e9e3136f1';
+import {RAW_OBJECTS,createRawObject,oddSize,cutoutTone} from './raw-object-assets.js?v=6e9e3136f1';
+import {tableSupport,seatSupport,surfaceSupport,localBounds,placeOnSupport} from './object-supports.js?v=6e9e3136f1';
 
 // Authored low-detail household shapes. All resources belong to one streamed room.
 export function addDomesticDetails({THREE,group,room,seed,curvize,spots,photos,spriteMat,ceiling,forceRoof=false,forceArrangement=null,forceSeat=null,woodTexture=null}){
@@ -29,7 +29,7 @@ export function addDomesticDetails({THREE,group,room,seed,curvize,spots,photos,s
   let oddState=(Math.imul(seed+53,2246822519)>>>0)||1;
   const oddRoll=()=>{oddState=(Math.imul(oddState,1664525)+1013904223)>>>0;return oddState/4294967296;};
   function cutout(parent,p,x,y,z,width=Infinity){
-    const asset=oddSize({...p,width:Math.min(p.width,width)},oddRoll()),obj=createRawObject({THREE,asset,material:spriteMat(p.file)});
+    const asset=oddSize({...p,width:Math.min(p.width,width)},oddRoll()),obj=createRawObject({THREE,asset,material:spriteMat(p.file,cutoutTone(p,oddRoll()))});
     geometries.add(obj.geometry);obj.userData.own=false;obj.userData.detailCutout=true;
     obj.position.x=x;obj.position.z=z;obj.position.y+=y;parent.add(obj);cutouts++;
   }
