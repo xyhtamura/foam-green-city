@@ -1549,3 +1549,11 @@ Entry walls. The colour of the next room cannot be known when a wall is built, s
 Kits. With `?prop=fabric`, four of six rooms got a puzzle mat with one or two strays, and one a stack; a patch of 30 tiles was 104 triangles. Viewed room 22: a grey patch with its seam lines, under the mattress and carpet. With `?prop=kits&room=kitchen`, rice in three of six rooms and electronics in four. At natural rates on the twisting route, 91 rooms: rice in 11, electronics in 12, puzzle mats in 6; no console error. Cost, second run of 110 rooms: a build 19.5 ms at the median, household placement 6.2 ms, and 8.5 ms in the 26 rooms with rice or electronics against 5.5 ms in the 78 without; a frame with no build 3.8 ms. The first run read twice that, as runs here do under other load. All twelve node checks, `stamp_versions --check`, and `check_published_assets` pass.
 
 Not done. No rice container and no electronic thing was picked out and viewed close; they were counted, and a kitchen was viewed whole. The stray tiles and the stack were counted and not viewed. A 60 cm hall patch was not met. The coiled extension cord is about 3,700 triangles by the kit's code, the heaviest small thing in the bake; it is rare and was left. Entry faces were not viewed in a tall room or on the twisting route. Nothing was pushed.
+
+## 2026-10-06 — Claude Code — closing the second sitting
+
+Xyh asked for housekeeping before moving to a new thread. HANDOVER.md's "Start here" is rewritten for the state now: the rules this sitting set, what is open, and the addresses that reach each new thing. Root ROADMAP.md's entry for this project is brought up to date and left uncommitted there, as before, since that file carries other agents' edits.
+
+State. Thirty commits since the flicker fix; seven are unpushed, from 7ee5d4b on. The working tree is clean. All twelve node checks, `stamp_versions --check`, and `check_published_assets` (285 assets) pass at 446c0f7.
+
+The thing to do first next time is not code: walk the piece by eye before the next push. Every check in this sitting was made with the pane hidden.

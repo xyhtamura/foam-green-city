@@ -28,18 +28,34 @@ The tile bank is the folder `2d/floor tiles/`. `scripts/index_floor_tiles.py` li
 
 `addWallFittings` in `index.html` mounts the supplied cutouts flat on walls, from a stream of its own. One to three outlets go on solid side-wall modules, 0.3 m up (six in ten) or at 1.1 m; the white duplex plate is drawn 0.12 m wide and the black surface box 0.07 m wide. In 85% of rooms a light switch sits beside the far doorway at 1.3 m, on the side the door leaf does not cover; the single and triple switch plates are 0.07 m wide. The switch images are `wall_switch_single_white.png` and `wall_switch_3gang_white.png`. These four images are listed in `OUTLETS` and `SWITCHES`, not in the cutout table, which only holds free-standing objects.
 
-## Start here — state at the end of 2026-10-06
+## Start here — state at the end of 2026-10-06, second sitting
 
-Read the last entries of NOTES.md first; this section is the short version for whoever picks the work up.
+Read the last entries of NOTES.md first; this section is the short version for whoever picks the work up. The sections below it are in the order they were written, newest first, and each says how its part works.
 
-Before committing a change to any root-level `.js` file: `python scripts/stamp_versions.py`, then `python scripts/check_published_assets.py`. Node checks run with `node --experimental-default-type=module scripts/<name>.mjs`. Other people commit to this folder's `2d/` images during a sitting, and files there have been renamed mid-task; re-read `git status` before staging.
+Before committing a change to any root-level `.js` file: `python scripts/stamp_versions.py`, then `python scripts/check_published_assets.py`. Node checks run with `node --experimental-default-type=module scripts/<name>.mjs`; there are twelve and all pass. Other people commit to this folder's `2d/` images during a sitting, and files there have been renamed mid-task; re-read `git status` before staging. Xyh pushes; seven commits were unpushed at the end of this sitting, from 7ee5d4b on.
 
-Open, in the order they were raised:
+**The one check nobody has made.** Everything in this sitting was verified with the browser pane hidden: frames stepped from the console, pixels read back, still views posed by hand. Nothing was watched in motion with `requestAnimationFrame` running. Before the next push, walk it by eye: the default route for a few minutes, then `?start=45` (court) and `?start=91` (yero path), taking control and handing back in each.
 
-1. **Wall flicker at a narrowing join: fixed 2026-10-06.** See the section below. Baseboards were fitted to each wall's face the same day, and the side-wall face was settled after it; see the two sections below. Still open: a side-room doorway's wall section has its face 0.06 m inside the room's edge, 4 cm behind the modules beside it. Cost is the standing concern; read the section on build cost below before adding anything that runs per room or per frame.
-2. **Things not yet seen by anyone:** an electric foam-green room; a hue-shifted T-shirt; tsinelas up close; a real image in the floor tile bank; protrusions in motion.
-3. **Still fixed where the rest is procedural:** side rooms and passages have no baseboards, protrusions, kit objects, or wall fittings; the minimum room length is 6 m.
-4. **Carried from before:** independent lighting profiles for side rooms.
+Standing rules this sitting set, each explained in its own section below:
+
+- **Cost is watched.** Time anything that runs per room or per frame and state the figure; tools are under "Build cost, and how to measure it". Timings here swing about twofold with other load on the machine, so compare runs taken together.
+- **Nothing in `tick` walks a room's tree or works out what is the same next frame.**
+- **A thing that moves after a room is built must be marked** (`userData.billboard`, `userData.spin`, or a fan part's name), or the merge freezes it.
+- **A room's route is one straight leg.** No room gets a route of its own.
+- **A new field that every room carries must also be filled in by `buildYeroRoom`.**
+- **A shader line in `curvize` that applies `modelMatrix` goes through `FGC_PLACED` or `FGC_TURNED`.**
+- **Side walls have their face 0.1 m inside the room's edge** (`WALL_INSET`); place anything hung or stood there from that.
+
+Open, most useful first:
+
+1. **Walk it by eye**, as above.
+2. **Not viewed close or at all:** rice containers, electronics, the stray puzzle tiles and stack, a 60 cm hall mat, the drying stand, clock, helmet, paper plates, hangers at windows, a set of clothes on a side wall, the small cloth mat, the rolled banig, the hand mirror, five of the six court colour schemes, the graph sheet, half pad, index card, single-burner stove, a door or window in a colour of its own, and an entry face in a tall room. Each was counted by the inspector.
+3. **Sizes that are estimates:** the 38 cutouts added this sitting, and the repeat size of each cloth pattern.
+4. **Known and left:** on the yero path a player at the very edge may stand over air; a side-room doorway's wall section sits 4 cm behind the modules beside it; door leaves sit 3.5 cm into the wall; a garment or a far-wall cloth can overlap furniture standing in front of it; garbage from building a room, about 6 MB, was not broken down; the coiled extension cord is about 3,700 triangles.
+5. **Not built:** alphabet puzzle tiles; cloth patterns on hanging clothes, which the bake cannot carry; a mattress stood on edge; the kit's screen door and screen window; anything in side rooms from this sitting's sets; a fall or a fence for a player stepping off the yero path.
+6. **From before this sitting:** an electric foam-green room, a hue-shifted T-shirt, tsinelas up close, a real image in the floor tile bank, and protrusions in motion are still unseen; side rooms and passages have no baseboards, protrusions, kit objects, or wall fittings; the minimum room length is 6 m; side rooms have no lighting profile of their own.
+
+Useful addresses, all with `?skipTitle=1`: `&start=45` court; `&start=91` yero path; `&prop=kits`, `&prop=fabric`, `&prop=sampayan`, `&prop=hangers` force each set; `&inspect=1` gives `window.fgc` and `#render-stats`; `&cull=off` and `&merge=off` switch off the two drawing savings for comparison; `&space=straight` for the straight route.
 
 ## Wall flicker at a narrowing join — 2026-10-06
 
