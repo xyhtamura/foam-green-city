@@ -1,20 +1,20 @@
 // Places the mesh kits' objects in a room, then bakes them into one vertex-coloured mesh.
-import {createTablewareKit,TABLEWARE_COLOURS} from './tableware.js?v=a4567bb5ed';
-import {createPlasticKit,PLASTIC_COLOURS} from './plastics.js?v=a4567bb5ed';
-import {createLinenKit,LINEN_COLOURS} from './linens.js?v=a4567bb5ed';
-import {placeOnSupport} from './object-supports.js?v=a4567bb5ed';
-import {createHouseholdToolKit} from './household-tools.js?v=a4567bb5ed';
-import {createPlasticStorageKit} from './plastic-storage.js?v=a4567bb5ed';
-import {createCardboardKit} from './cardboard.js?v=a4567bb5ed';
-import {createSchoolChairKit} from './school-chair.js?v=a4567bb5ed';
-import {createBasketball,BALL_COLOURS} from './basketball.js?v=a4567bb5ed';
-import {createFootwearKit,FOOTWEAR_TYPES} from './footwear.js?v=a4567bb5ed';
-import {createBathroomKit} from './bathroom-tools.js?v=a4567bb5ed';
-import {createSampayan,CLOTHES_COLOURS} from './sampayan.js?v=a4567bb5ed';
-import {createHouseholdDetailsKit} from './household-details.js?v=a4567bb5ed';
-import {createDecorKit} from './decor.js?v=a4567bb5ed';
-import {createMirrorsValancesKit,VALANCE_TYPES} from './mirrors-valances.js?v=a4567bb5ed';
-import {createPackagingKit} from './packaging.js?v=a4567bb5ed';
+import {createTablewareKit,TABLEWARE_COLOURS} from './tableware.js?v=7ce56b07f1';
+import {createPlasticKit,PLASTIC_COLOURS} from './plastics.js?v=7ce56b07f1';
+import {createLinenKit,LINEN_COLOURS} from './linens.js?v=7ce56b07f1';
+import {placeOnSupport} from './object-supports.js?v=7ce56b07f1';
+import {createHouseholdToolKit} from './household-tools.js?v=7ce56b07f1';
+import {createPlasticStorageKit} from './plastic-storage.js?v=7ce56b07f1';
+import {createCardboardKit} from './cardboard.js?v=7ce56b07f1';
+import {createSchoolChairKit} from './school-chair.js?v=7ce56b07f1';
+import {createBasketball,BALL_COLOURS} from './basketball.js?v=7ce56b07f1';
+import {createFootwearKit,FOOTWEAR_TYPES} from './footwear.js?v=7ce56b07f1';
+import {createBathroomKit} from './bathroom-tools.js?v=7ce56b07f1';
+import {createSampayan,CLOTHES_COLOURS} from './sampayan.js?v=7ce56b07f1';
+import {createHouseholdDetailsKit} from './household-details.js?v=7ce56b07f1';
+import {createDecorKit} from './decor.js?v=7ce56b07f1';
+import {createMirrorsValancesKit,VALANCE_TYPES} from './mirrors-valances.js?v=7ce56b07f1';
+import {createPackagingKit} from './packaging.js?v=7ce56b07f1';
 
 // The kits only lend their geometry and colours to the bake. Tableware and cardboard build from
 // a fixed set of shapes, so one of each serves every room. The others make new geometry for each
@@ -125,7 +125,7 @@ export function addHouseholdItems({THREE,group,room,seed,material,blocked=[],flo
     }
   }
   // A basketball left where it stopped: against a wall, or out on open floor.
-  const wantBall=forceBall||(['sala','bedroom','bare','hall','auditorium'].includes(room.type)&&r()<0.12*amount);
+  const wantBall=forceBall||room.court||(['sala','bedroom','bare','hall','auditorium'].includes(room.type)&&r()<0.12*amount);
   if(wantBall&&stand(createBasketball(THREE,{colour:pick(Object.keys(BALL_COLOURS)),scale:r()<0.15?0.75:1,seed:Math.floor(r()*1e6)}),{open:r()<0.5})){const ball=placed.at(-1);report.ball={x:+ball.position.x.toFixed(2),z:+ball.position.z.toFixed(2)};}
   // ---- The second set of kits. Drawn after everything above, so earlier placements are unchanged. ----
   // Fronts are local -z: a piece against a wall is turned to face the room.
@@ -273,7 +273,9 @@ export function addHouseholdItems({THREE,group,room,seed,material,blocked=[],flo
     }
   }
   // Banderitas strung from wall to wall, in a hall most of all.
-  const strung={hall:0.25,auditorium:0.25,sala:0.05,bare:0.04}[room.type];
+  // A court is strung with banderitas more often than not, and has a few more balls about.
+  if(room.court)for(let n=between(1,3);n>0;n--)stand(createBasketball(THREE,{colour:pick(Object.keys(BALL_COLOURS)),seed:Math.floor(r()*1e6)}),{open:true});
+  const strung=room.court?0.7:{hall:0.25,auditorium:0.25,sala:0.05,bare:0.04}[room.type];
   if(strung&&chance(strung)){
     const length=room.width-0.24,y=Math.min(room.height-0.22,3.1),palette=[pick(cloths),pick(cloths),pick(cloths),pick(cloths)];
     for(let n=between(1,3);n>0;n--){
@@ -308,7 +310,7 @@ export function addHouseholdItems({THREE,group,room,seed,material,blocked=[],flo
   };
   const strungOpen=!room.columns&&!room.stairs&&!room.platform&&!room.rise&&!(room.passages?.length);
   // A room given over to washing: lines the length of it, every half metre or so, none over the walker's way.
-  const washRoom={bare:0.12,hall:0.06,bedroom:0.03,sala:0.02}[room.type];
+  const washRoom=room.court?0:{bare:0.12,hall:0.06,bedroom:0.03,sala:0.02}[room.type];
   if(strungOpen&&(force==='sampayan'||(force!=='kits'&&washRoom&&r()<washRoom*amount))){
     const z0=-0.2,z1=-room.length+0.2,same=r()<0.4,oneColour=same?[pick(CLOTHES_COLOURS),0xf1efe6]:CLOTHES_COLOURS;
     let budget=150;

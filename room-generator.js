@@ -1,7 +1,7 @@
 // Room shells drawn from distributions. Nothing here names a particular strange room:
 // two slow fields along the route widen the tails of each dimension and switch on
 // features, and an unusual room is whatever those draws happen to coincide in.
-import {ORDINARY_LAYOUT_IDS,ODD_LAYOUT_IDS} from './furniture-layouts.js?v=a4567bb5ed';
+import {ORDINARY_LAYOUT_IDS,ODD_LAYOUT_IDS} from './furniture-layouts.js?v=7ce56b07f1';
 
 // A full avalanche mix of index and salt, so neighbouring indices and nearby salts are unrelated.
 function unit(n,salt){
@@ -45,7 +45,13 @@ const ORDINARY={
   auditorium:['chairRows'],
 };
 
+// About one room in ninety is a covered basketball court: a fixed shell, 18 by 28 m and 7.6 m high,
+// with nothing built into it, so the court lies clear from doorway to doorway. Drawn from a hash of
+// its own. The first eight rooms are never one.
+export const COURT_RATE=1/90;
+export const isCourt=(index,seed=5)=>index>=8&&unit(index,seed*7+997)<COURT_RATE;
 export function generateRoom(index,seed=5){
+  if(isCourt(index,seed))return {width:18,length:28,height:7.6,rise:0,shape:'rectangle',type:'hall',layout:'perimeter',floor:'bare',category:'strange',strangeness:0,court:true};
   const r=n=>unit(index,seed*7+100+n),{strange:s,scale}=roomPressure(index,seed);
   // Dimensions: a domestic base, plus a tail that only opens under pressure.
   const reach=s*(0.35+0.65*scale);

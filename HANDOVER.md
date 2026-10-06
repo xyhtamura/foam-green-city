@@ -47,6 +47,14 @@ A Kenney wall module is 0.1 m thick with its near face on its origin plane. The 
 
 `?inspect=1` now also sets `window.fgc` to `{THREE,scene,cam,renderer,segments,WALLP}` for console measurement. With the browser pane hidden, `requestAnimationFrame` is paused, so a test can pose `cam`, call `renderer.render`, and `readPixels` in the same task.
 
+## The basketball court room — 2026-10-06
+
+About one room in ninety is a covered court. `isCourt(index,seed)` in `room-generator.js` decides it from a hash of its own, never in the first eight rooms, and `generateRoom` then returns a fixed shell: 18 by 28 m, 7.6 m high, a hall with chairs round the walls (`perimeter`), no stairs, columns, platform, passages, or change of level, and `court:true`. For the default seed the courts are rooms 45, 140, 169, 210, 252; for seed 42, rooms 57, 95, 119. The hash's salt was chosen so the default walk meets one early: the first salt tried put it at room 241. `?start=45` opens on it.
+
+`basketball-court.js` draws the court as one mesh in plain colour, with the shared vertex-colour material: a painted field 15 by 26 m, keys, free-throw and centre circles, three-point lines, and at each end a backboard, rim, and net on arms from the wall, the rim at 3.05 m, over the doorway. Six colour schemes, two of them with bare concrete for the field. Lines are 10 cm wide and cut into half-metre pieces; the paint sits 12 to 20 mm above the floor. The walker's route is the room's centre line: under one hoop, across both keys and the centre circle, out under the other.
+
+Round it: `room-sequences.js` gives a court a concrete floor; `household-items.js` leaves a ball and one to three more, strings banderitas in seven courts of ten, and never makes one a washing room; `fabric-items.js` lays nothing on its floor; the fog reaches 48 m while the walker is in one, where an ordinary room has 26.
+
 ## Papers at bond size, hangers on walls, gas stoves — 2026-10-06
 
 `index_raw_objects.py` sizes 83 cutouts. Papers are measured against long bond, 216 by 330 mm: a pad sheet 203 mm wide, a graph sheet and the yellow half sheet 216 mm, an index card 203 mm. The two older pad images, which had been 150 mm, are 300 mm for the pad with a sheet beside it and 240 mm for the cover; both are photographed at an angle, so those are their diagonal extents. The graph sheet and index card join the paper group in `domestic-details.js`.

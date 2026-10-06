@@ -2,9 +2,9 @@
 // mattresses, a rolled banig, cloth hung on a wall, tablecloths, potholders, and sofa covers. The patterns are the page-sized copies listed in
 // fabric-assets.js. Each pattern has one material for the whole session; each object has its own
 // small geometry, disposed with its room.
-import {FABRICS} from './fabric-assets.js?v=a4567bb5ed';
-import {placeOnSupport} from './object-supports.js?v=a4567bb5ed';
-import {wallThingsOf} from './household-items.js?v=a4567bb5ed';
+import {FABRICS} from './fabric-assets.js?v=7ce56b07f1';
+import {placeOnSupport} from './object-supports.js?v=7ce56b07f1';
+import {wallThingsOf} from './household-items.js?v=7ce56b07f1';
 
 const AISLE=0.72,LIFT=0.008,STEP=0.4;
 const materials=new Map();
@@ -60,7 +60,7 @@ export function addFabricItems({THREE,group,room,seed,loader,patch,blocked=[],fi
   const r=()=>{state=(Math.imul(state,1664525)+1013904223)>>>0;return state/4294967296;};
   const pick=list=>list[Math.floor(r()*list.length)],chance=p=>force==='fabric'||r()<p;
   const tela=FABRICS.filter(f=>f.kind==='tela'),banig=FABRICS.filter(f=>f.kind==='banig');
-  const half=room.width/2,taken=[...blocked],footprints=[],walkBlocks=[],report={},level=!room.rise;
+  const half=room.width/2,taken=[...blocked],footprints=[],walkBlocks=[],report={},level=!room.rise&&!room.court;   // nothing is laid on a court
   const count=key=>{report[key]=(report[key]??0)+1;};
   const add=(mesh,x,y,z)=>{mesh.position.set(x,y,z);group.add(mesh);return mesh;};
   const overlaps=rect=>taken.some(o=>rect.maxX>o.minX&&rect.minX<o.maxX&&rect.maxZ>o.minZ&&rect.minZ<o.maxZ);
