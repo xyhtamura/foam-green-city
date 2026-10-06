@@ -190,6 +190,10 @@ function curvize(material){
         }
       }
       #include <opaque_fragment>`);
+    const up=material.userData.upNormal;
+    // Undo the back-face flip, so both sides of a cutout are lit alike.
+    if(up)shader.fragmentShader=shader.fragmentShader.replace('#include <normal_fragment_begin>',`#include <normal_fragment_begin>
+      normal=normalize(vNormal);`);
     if(twisted){
       shader.vertexShader=`#define SPATIAL_MODE ${SPATIAL_PROFILES.indexOf(routeProfile)}\n`+SPATIAL_GLSL+'\n'+shader.vertexShader;
       shader.vertexShader=shader.vertexShader.replace('#include <project_vertex>',`#include <project_vertex>
@@ -197,9 +201,11 @@ function curvize(material){
         mvPosition=viewMatrix*vec4(spatialPoint(routeWorld),1.0);
         gl_Position=projectionMatrix*mvPosition;`);
       shader.vertexShader=shader.vertexShader.replace('#include <defaultnormal_vertex>',`#include <defaultnormal_vertex>
-        transformedNormal=mat3(viewMatrix)*spatialBasis(-(modelMatrix*vec4(position,1.0)).z)*mat3(modelMatrix)*objectNormal;`);
+        transformedNormal=mat3(viewMatrix)*spatialBasis(-(modelMatrix*vec4(position,1.0)).z)*${up?'vec3(0.0,1.0,0.0)':'mat3(modelMatrix)*objectNormal'};`);
       return;
     }
+    if(up)shader.vertexShader=shader.vertexShader.replace('#include <defaultnormal_vertex>',`#include <defaultnormal_vertex>
+        transformedNormal=mat3(viewMatrix)*vec3(0.0,1.0,0.0);`);
     shader.uniforms.uCurve = { value: CURVE.amount };   // shared ref; mutated per frame
     shader.vertexShader = 'uniform vec2 uCurve;\n' + shader.vertexShader;
     shader.vertexShader = shader.vertexShader.replace(
@@ -279,15 +285,20 @@ const SPRMAT = {};       // sprite materials by filename
 const ASP = { sofa: 162/273, curtain: 808/810, plant: 370/335,
               monobloc: 419/234,
               kutsaraTinidor: 894/422, standFan: 962/508,
-              wallCalendar: 1.309608540925267,   // the monthly calendar, about 0.4 m by 0.52 m taboTimba: 754/689,
+              wallCalendar: 1.309608540925267, taboTimba: 754/689,   // wallCalendar is the monthly calendar, about 0.4 m by 0.52 m
               waterDispenser: 944/348 };
 function spriteMat(file){
   if (SPRMAT[file]) return SPRMAT[file];
   const tx = texLoader.load(encodeURI(file.startsWith('2d/')?file:'models/' + file));
   tx.magFilter = THREE.NearestFilter; tx.minFilter = THREE.NearestFilter;
   tx.colorSpace = THREE.SRGBColorSpace;
-  return SPRMAT[file] = curvize(new THREE.MeshBasicMaterial({
-    map: tx, alphaTest: 0.5, side: THREE.DoubleSide, fog: true }));
+  // Lit like the floor under it: a cutout takes the room's lights with an upward normal,
+  // whichever way its plane faces, so a camera-facing one does not change as it turns.
+  const material=new THREE.MeshLambertMaterial({ map: tx, alphaTest: 0.5, side: THREE.DoubleSide, fog: true });
+  material.userData.upNormal=true;
+  // The patch below differs for these materials, so they must not share a compiled program with the rest.
+  material.customProgramCacheKey=()=>'up-normal';
+  return SPRMAT[file] = curvize(material);
 }
 function prepWall(proto){                   // scale, foam-green tint, crunch
   proto.scale.setScalar(TSCALE);

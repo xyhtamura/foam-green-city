@@ -14,6 +14,10 @@ The route is still one straight logical line; nothing here adds a second axis. A
 
 Side rooms get scatter from `planSideScatter`, fitted to the room rectangle, off fixture blocks and off the strip from the doorway across the room; the objects join the owning room's single scatter mesh. Movement no longer starts paused under `prefers-reduced-motion`; Xyh asked for it to start on Enter. `scripts/check_forks.mjs` covers exit routes and salts.
 
+## Lit cutouts — 2026-10-06
+
+`spriteMat` now returns a `MeshLambertMaterial` flagged `userData.upNormal`. For that flag `curvize` replaces the vertex normal with world up (through the route's basis on the twisting route) and undoes the fragment shader's back-face flip, so a cutout is lit like the floor under it whichever way its plane faces. These materials set `customProgramCacheKey`, because Three.js shares compiled programs between materials whose `onBeforeCompile` source is identical, and the patch here differs only by that flag. Wall photos, tabletop and floor cutouts, camera-facing sprites, and wire images all use it.
+
 ## Doorway leaf on the jamb — 2026-10-06
 
 The Kenney `wallDoorway` model, at the 2× wall scale, has its opening from 0.43 m either side of the centre line and its frame out to 0.486 m; its room-side face is 0.04 m proud of the partition plane. The leaf's hinge is now at 0.47 m and 0.05 m, on that jamb. It had been at 0.96 m and 0.14 m, half a metre along the wall from the frame. The leaf stands open 7° to 41° past square, toward the wall, from the leaf's own hash. The inspector reports each leaf's hinge position and bounds.

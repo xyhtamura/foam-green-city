@@ -1076,3 +1076,17 @@ Xyh pointed out a calendar with one large number filling the page, and said that
 Checks. `check_published_assets.py` passes with 126 assets and the stamp check passes. In the browser on the root server, a fast run through 114 rooms requested the monthly calendar and never the old one, with no error and no missing-asset warning.
 
 Not done. The monthly calendar was not viewed at its new pool size. It is dated January 2023, and so every calendar in the walk shows the same month. Nothing was pushed.
+
+## 2026-10-06 — Claude Code — cutouts take the room's lighting
+
+Xyh asked whether the flat 2D objects could be affected by lighting so they do not glow in dark rooms, and chose the second of four approaches offered: make them lit like everything else. The other three were a fixed dimming factor, adding the lamp to the unlit shader by hand, and contact shadows; none of those was built.
+
+Cutouts were unlit: they took each room's brightness band but not the ambient, directional, or lamp light, so they showed their full colour beside surfaces showing 55 to 90% of theirs. They now use the lit material with an upward normal. Mechanism in HANDOVER.md.
+
+Checks, in the browser on the root server, kitchen of room 55. Night lighting, straight route, before and after: the water-dispenser sprite and the bottles on the table stood out brighter than the furniture before, and sit at the furniture's level after. Dark-day lighting on the twisting route and daylight on the straight route after the change: cutouts render, lit, with no console errors. A fast run through 191 rooms on the twisting route logged no errors.
+
+A fault of mine found and fixed in this sitting: the calendar change (2026-10-06, commit 5597de4) put a comment in the middle of the sprite aspect table and commented out the entry after it, so tabo-and-timba sprites were built with no height and Three.js logged a NaN geometry error for each. That commit was not pushed. The entry is restored and the comment moved to the end of the line.
+
+Also seen for the first time: the Yatra One title rendered, in capitals with larger initials, when a broken edit left the title screen up.
+
+Not done. Wall photos are now lit like the floor, which may be darker than wanted for pictures on a wall; not compared side by side. Red and violet rooms were not viewed. Cutouts still cast and receive no shadow. Nothing was pushed.
