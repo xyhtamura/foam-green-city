@@ -1,6 +1,6 @@
-import {floorHeight} from './room-sequences.js?v=734bddea5a';
-import {RAW_OBJECTS,createRawObject,oddSize,cutoutTone} from './raw-object-assets.js?v=734bddea5a';
-import {tableSupport,seatSupport,surfaceSupport,localBounds,placeOnSupport} from './object-supports.js?v=734bddea5a';
+import {floorHeight} from './room-sequences.js?v=3eb3fa719d';
+import {RAW_OBJECTS,createRawObject,oddSize,cutoutTone} from './raw-object-assets.js?v=3eb3fa719d';
+import {tableSupport,seatSupport,surfaceSupport,localBounds,placeOnSupport} from './object-supports.js?v=3eb3fa719d';
 
 // Authored low-detail household shapes. All resources belong to one streamed room.
 export function addDomesticDetails({THREE,group,room,seed,curvize,spots,photos,spriteMat,ceiling,forceRoof=false,forceArrangement=null,forceSeat=null,woodTexture=null}){

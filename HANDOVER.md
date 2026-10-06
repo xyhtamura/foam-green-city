@@ -14,6 +14,14 @@ The route is still one straight logical line; nothing here adds a second axis. A
 
 Side rooms get scatter from `planSideScatter`, fitted to the room rectangle, off fixture blocks and off the strip from the doorway across the room; the objects join the owning room's single scatter mesh. Movement no longer starts paused under `prefers-reduced-motion`; Xyh asked for it to start on Enter. `scripts/check_forks.mjs` covers exit routes and salts.
 
+## Wall colours, trim rules, and protrusions — 2026-10-06
+
+Walls: `PAINT_WEIGHTS` in `index.html` sums to 100 — five foam greens 62, three beiges and white 22, Palmyra as a wall colour 8 (`palmyra`, `palmyraLight`), and ten paints Xyh surveyed on buildings in Metro Manila 8 between them, the pale ones (peach, pastel pink, powder blue, yellow) at 1.1 each down to medium green at 0.4. `?paint=<name>` accepts every key of `WALL_PAINTS`.
+
+Trim: `trimFor(paint,next)` picks by the wall's family. On foam walls: dark green `#203C21` 40, a Palmyra olive 38, the earlier blue-greens 8, foam green itself 8, a surveyed colour 6. On beige and white walls: dark green 35, Palmyra 30, foam green 20, surveyed 15. On Palmyra walls: dark green 45, foam green 35, cream 20. On surveyed-colour walls: cream or white 35, dark green 25, foam green 15, another surveyed colour 25. `TRIM_GREENS` is gone. The title text is `#203C21` as well. Fog and background now fade to the colour of the room being walked through, not always to foam green.
+
+`wall-protrusions.js`: 20% of rooms, rising with the generator's strangeness, get one to three things standing out from solid wall modules (up to five in a strange room): a full-height pilaster, a narrow boxed-in run or a pair, a ledge, a block at any height, or a beam stub under the ceiling, all in the wall colour. Each takes its module out of `solidWalls`, so no photo, shelf, wire, or television is hung there. Floor-standing ones join the architecture reservations, so furniture, props, scatter, and household objects keep off them; anything below 1.8 m stops the walker. The fitted wall of a kitchen or bathroom is skipped. `?prop=protrusions` forces them.
+
 ## Second set of mesh kits, and graded tones — 2026-10-06
 
 `household-tools.js`, `plastic-storage.js`, `cardboard.js`, and `school-chair.js` are unchanged copies from `F:\xyh\fgc-cx`. `household-items.js` places them after everything it placed before, so earlier placements keep their positions, and bakes them into the same per-room mesh. Fronts are local −z; `facing(side)` turns a piece against a wall to face the room, and `turned` recomputes bounds for kits that take no rotation.

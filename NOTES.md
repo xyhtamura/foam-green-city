@@ -1144,3 +1144,15 @@ Xyh requested cutting out domestic and market objects in `2d/raw objects`, isola
 Verification:
 - Automated Python audit (`audit_raw_objects.py`) confirmed all 67 files in `2d/raw objects` are valid RGBA PNGs with exact 2px padding, non-empty bounds, and clean snake_case filenames.
 - Generated and visually inspected full 67-item master catalog contact sheet (`master_catalog_final.png`) on checkered background.
+
+## 2026-10-06 — Claude Code — surveyed wall colours, trim rules, wall protrusions
+
+Xyh asked for occasional rooms in other colours, supplied ten paint colours surveyed on Metro Manila buildings, asked for odd protrusions from walls, and revised the trim: the dark green is closer to `#203C21` than the old `#203C30` and should return in places, Palmyra can be a trim or a wall colour, and the trim is sometimes foam green itself.
+
+All three are in; weights and rules are in HANDOVER.md. The ten surveyed colours are used at Xyh's restored values.
+
+Checks. In the browser on the root server: a fast run on the twisting route recorded 312 rooms with no console error, every one with clear aisle, doorway, and branch entrances. Walls: 203 foam green, 63 beige or white, 21 Palmyra, 25 in a surveyed colour (all ten appeared). Trims: 126 dark green, 94 Palmyra olives, 40 foam green, 16 the earlier blue-greens, 27 a surveyed colour, 9 cream or white. 66 rooms had protrusions. Viewed, straight route, daylight: a terracotta bedroom with dark green window frames, door, and baseboard; and a room with protrusions forced, where blocks on the wall are visible but faint, being the wall's own colour under flat light. With protrusions forced in six rooms, both kitchens kept their fitted counters and all six reported clear architecture.
+
+Not done. Only terracotta was viewed among the surveyed colours; the dark ones (navy, medium green) may make a room read as a night room. Foam-green trim on a foam-green wall was not viewed and will be nearly invisible by design. Protrusions were not viewed on the twisting route, and none was walked into. They cast no shadow, which is why they are faint; a slightly darker or lighter face would make them read, at the cost of looking less like part of the wall. Side rooms and passages have none. `references/index.html` still uses `#203C30` for its text.
+
+Another commit landed in this folder during the sitting, a566d03, "cut out new domestic objects and scramble brand text", touching 2D images. I did not make it and did not touch those files. Nothing was pushed.
