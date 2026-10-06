@@ -14,6 +14,20 @@ The route is still one straight logical line; nothing here adds a second axis. A
 
 Side rooms get scatter from `planSideScatter`, fitted to the room rectangle, off fixture blocks and off the strip from the doorway across the room; the objects join the owning room's single scatter mesh. Movement no longer starts paused under `prefers-reduced-motion`; Xyh asked for it to start on Enter. `scripts/check_forks.mjs` covers exit routes and salts.
 
+## Second set of mesh kits, and graded tones — 2026-10-06
+
+`household-tools.js`, `plastic-storage.js`, `cardboard.js`, and `school-chair.js` are unchanged copies from `F:\xyh\fgc-cx`. `household-items.js` places them after everything it placed before, so earlier placements keep their positions, and bakes them into the same per-room mesh. Fronts are local −z; `facing(side)` turns a piece against a wall to face the room, and `turned` recomputes bounds for kits that take no rotation.
+
+- Tsinelas: pairs just inside the entry doorway of domestic rooms (55%, and a second pair 20%), and against a wall in bedrooms, bathrooms, and salas (30%). The two-rectangle `slippers` kind is removed from `floor-scatter.js`.
+- Painting tools: a tray, roller, and brush together, 6% of rooms and 22% of bare rooms, with paint in the room's own wall colour (`paint` option).
+- Plastic storage: ice boxes and water jugs in kitchens; lidded bins and drawer units in salas, bedrooms, and bare rooms.
+- Cardboard: cartons standing about, most in bare rooms; flattened or folded ones on the floor; a panel leaning flush on a wall; rarely a box seat or a box bed.
+- School chairs: one to three in a third of halls and auditoriums, a stray one in 7% of salas, bedrooms, and bare rooms.
+
+`?prop=kits` forces every one of these on, for inspection.
+
+Tones are now uniforms (`uTurn`, `uGrade`, `uLiftTo`), so toned materials share one compiled program per material kind instead of one per value. A tone carries hue angle, lift, saturation, and brightness. `HUES` in `index_raw_objects.py` may give a cutout `sat` and `light` ranges; `cutoutTone` picks one of three levels of each. The T-shirt has 12 hues × 3 saturations × 3 brightnesses; jeans and shorts have brightness, jeans saturation too. Cloth materials get a small saturation and brightness drift with their hue turn.
+
 ## Cloth hue — 2026-10-06
 
 Textured cloth takes the same hue turn as toned cutouts, per room. A material counts as cloth if it is in `VARIED` as `textile` (the sofas' upholstery and patterned pillows, registered at start-up for any sofa mesh with a texture) or carries `userData.textile` (curtain fabric, set in `jalousie.js`, patterned or plain). In `varyColours` a cloth material is left alone in 45% of rooms, turned 30° or 60° either way in 35%, and turned anywhere round the circle in 20%, in 30° steps so at most eleven extra shader programs exist. Every curtain of one pattern in a room turns together. An untouched material is not put in the room's cache, because that cache is disposed with the room and the material is shared. `?cloth=<degrees>` forces one turn on all cloth. The table runner is in `VARIED` as plain colour, and side-bedroom bedding shifts by room inside `side-bedrooms.js`.

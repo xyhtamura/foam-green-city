@@ -1120,3 +1120,15 @@ Xyh asked for the textile textures to vary or hue shift too. Curtains, sofa upho
 Checks, in the browser on the root server. A fast run through 173 rooms on the twisting route logged no console error. With `cloth=120` forced, the floral sofa in room 39 showed green flowers where the same view without it shows red, with the pattern intact and no error. Publication checks pass.
 
 Not done. No shifted curtain was viewed, patterned or plain. The default rates were not judged by eye; only the forced case was seen. Some turns will give colours no real cloth has, since any angle is allowed one room in five. Linens from the mesh kit were already drifting per object and are unchanged here. Nothing was viewed on the twisting route beyond the error count. Nothing was pushed.
+
+## 2026-10-06 — Claude Code — tsinelas and the second set of kits; T-shirt saturation and brightness
+
+Xyh pointed to new meshes in `F:\xyh\fgc-cx`, the tsinelas above all, asked for the two-rectangle slippers to be retired, and asked for hue, brightness, and saturation variation on the red T-shirt cutout.
+
+Copied Codex's four new kits in unchanged and placed all of them: tsinelas, painting tools, plastic storage, cardboard, and the school chair. The rectangle slippers are gone from the scatter. The T-shirt cutout now varies in saturation and brightness as well as hue; jeans and shorts gained brightness. Placement rules and the tone change are in HANDOVER.md. Nothing in `fgc-cx` was edited.
+
+Checks. Scatter, cutout, table, support, sequence, navigation, side-space, and fork checks pass; the publication check passes. In the browser on the root server, straight route, with `prop=kits`: six rooms each reported tsinelas, painting tools, storage, cardboard, or school chairs as their type allows, with clear aisles and open branch entrances and no console errors. Viewed a school chair with its writing arm facing into a hall, cartons with labels in a sala, a lidded bin, and a teal roller tray on a bathroom floor. Without forcing, a fast run through 234 rooms on the twisting route logged no console error, and its last six rooms reported one to three pairs of tsinelas in four of them.
+
+Not done. Tsinelas were placed and counted but not seen close enough to judge; they are small and sit near the doorway behind the camera's starting point. No T-shirt was seen in a new saturation or brightness; the shader ran without error. Ice boxes, water jugs, drawer units, the leaning panel, the box seat, and the box bed were not viewed. Up to three pairs of tsinelas in one room may be too many. The school chair's seat and tablet surfaces are not offered to clutter. Side rooms get none of these. Painting tools use the wall colour even in rooms with bare block walls. Nothing was pushed.
+
+Two edits of mine broke the page in this sitting and were fixed before commit: a string literal in the shader patch was written with real line breaks, twice, by an edit script. It is a template literal now. The code was committed in 422613c; these notes follow in their own commit because the script that wrote them failed the first time.
