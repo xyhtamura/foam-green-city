@@ -1404,3 +1404,11 @@ Xyh answered the question left in the previous entry: the dated patterns are sel
 Checks. Tried 1,400, 700, and 350 points on both and viewed them beside the originals: at each, the cartoon figures and the monogram are gone and the colours remain; 1,400 was kept. Viewed the two finished 256 px copies tiled two by two: the pink print reads as pastel shards with no figure, the red as plain red with gold flecks, and neither shows a seam. A second run of the script rewrote nothing. 117 patterns are listed. `stamp_versions --check` and `check_published_assets` pass.
 
 Not done. Neither redrawn pattern was viewed on an object in a room. Whether the fixed seed makes a rebuild byte-identical was not tested. Nothing was pushed.
+
+## 2026-10-06 — Claude Code — wall cloth made common
+
+Xyh asked for the wall cloth rate to be raised; it had appeared in 1 of 93 rooms. The rate was not the main limit: most solid wall is already taken. Three changes, in HANDOVER.md: higher rates, a cloth that shrinks to fit the stretch it finds, and the far wall beside the doorway as a second place to hang it.
+
+Checks. With `?prop=fabric`, all six rooms 20 to 25 got one, four of them on the far wall; viewed room 22, where a striped cloth hangs left of the doorway with the light switch clear between them. At natural rates on the twisting route, 74 rooms from room 20: wall cloth in 18, of which 13 on the far wall; no console error.
+
+Not done. A far-wall cloth is not checked against what stands in front of it; furniture is kept 1.5 m off that wall by the layouts, which I read from the code and did not measure. Nothing viewed on the twisting route. Nothing was pushed.

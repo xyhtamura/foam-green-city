@@ -2,8 +2,8 @@
 // banig, cloth hung on a wall, and tablecloths. The patterns are the page-sized copies listed in
 // fabric-assets.js. Each pattern has one material for the whole session; each object has its own
 // small geometry, disposed with its room.
-import {FABRICS} from './fabric-assets.js?v=e1cc89b005';
-import {wallThingsOf} from './household-items.js?v=e1cc89b005';
+import {FABRICS} from './fabric-assets.js?v=a0bea98a3c';
+import {wallThingsOf} from './household-items.js?v=a0bea98a3c';
 
 const AISLE=0.72,LIFT=0.008,STEP=0.4;
 const materials=new Map();
@@ -109,20 +109,38 @@ export function addFabricItems({THREE,group,room,seed,loader,patch,blocked=[],hu
       }
     }
   }
-  // Cloth hung flat on a solid stretch of side wall: a curtain with no window, a cover, a backdrop.
-  if({sala:0.1,bedroom:0.1,bare:0.1,kitchen:0.06,hall:0.08}[room.type]&&chance({sala:0.1,bedroom:0.1,bare:0.1,kitchen:0.06,hall:0.08}[room.type])&&wallSpots.length){
-    const w=0.9+r()*0.7,h=1+r()*0.7,top=Math.min(2.2,room.height-0.25),spots=[...wallSpots];
-    // The cloth hangs in front of a wire run or an outlet and covers it; anything standing further out is avoided.
-    const things=[...wallThingsOf(THREE,group,half).filter(t=>t.depth>0.115),...hung];
-    while(spots.length){
-      const spot=spots.splice(Math.floor(r()*spots.length),1)[0],z=spot.z,y=floorAt(z);
-      if(things.some(t=>t.side===spot.side&&z+w/2+0.1>t.minZ&&z-w/2-0.1<t.maxZ&&y+top>t.low&&y+top-h<t.high))continue;
-      const entry=pick(tela),b=builder(THREE,entry.repeat),phase=r()*6.28;
-      // Hung from its top edge, with shallow folds that deepen toward the hem.
+  // Cloth hung flat on a wall: a curtain with no window, a cover, a backdrop. On a solid stretch of
+  // side wall where one is free, at a size that fits it; failing that, on the far wall beside the
+  // doorway, on the side the door leaf does not stand against.
+  const clothRate={sala:0.28,bedroom:0.28,bare:0.3,hall:0.22,kitchen:0.16}[room.type];
+  if(clothRate&&chance(clothRate)){
+    const top=Math.min(2.2,room.height-0.25),entry=pick(tela),phase=r()*6.28;
+    // Hung from its top edge, with shallow folds that deepen toward the hem.
+    const cloth=(w,h)=>{
+      const b=builder(THREE,entry.repeat);
       b.surface(Math.max(8,cells(w)*4),cells(h)*2,(u,v)=>[(u-0.5)*w,-v*h,Math.sin(u*w*9+phase)*0.012*(0.25+v)],(u,v)=>[u*w,(1-v)*h]);
-      const cloth=b.mesh(fabricMaterial(THREE,entry,loader,patch),'fabric-wall-cloth');
-      cloth.rotation.y=-spot.side*Math.PI/2;add(cloth,spot.side*(half-0.128),y+top,z);count('wallCloths');
-      break;
+      return b.mesh(fabricMaterial(THREE,entry,loader,patch),'fabric-wall-cloth');
+    };
+    // The cloth hangs in front of a wire run or an outlet and covers it; anything standing further out is avoided.
+    const things=[...wallThingsOf(THREE,group,half).filter(t=>t.depth>0.115),...hung],spots=[...wallSpots];
+    const wide=0.9+r()*0.7,tall=1+r()*0.7;
+    let done=false;
+    // Full size first, then narrower and shorter, on each free stretch in turn.
+    for(const scale of [1,0.72,0.5]){
+      const w=wide*scale,h=Math.max(0.6,tall*(scale===1?1:0.8)),order=[...spots].sort(()=>r()-0.5);
+      for(const spot of order){
+        const z=spot.z,y=floorAt(z);
+        if(things.some(t=>t.side===spot.side&&z+w/2+0.1>t.minZ&&z-w/2-0.1<t.maxZ&&y+top>t.low&&y+top-h<t.high))continue;
+        const mesh=cloth(w,h);mesh.rotation.y=-spot.side*Math.PI/2;add(mesh,spot.side*(half-0.128),y+top,z);count('wallCloths');done=true;break;
+      }
+      if(done)break;
+    }
+    if(!done&&level){
+      const leaf=group.userData.thresholdDoor??0,side=leaf?-leaf:(r()<0.5?-1:1),inner=1.05,outer=half-0.15,w=Math.min(1.6,outer-inner,wide);
+      if(w>=0.55){
+        const x=side*(inner+w/2+r()*(outer-inner-w)),z=-room.length+0.032,mesh=cloth(w,tall);
+        add(mesh,x,floorAt(z)+top,z);count('wallCloths');report.endWallCloths=1;
+      }
     }
   }
   // A tablecloth on every table of a kitchen or sala, the one cloth through the room.
