@@ -1305,3 +1305,20 @@ Undone:
 - Higher resolutions (e.g., 1024×1024) can be rendered via `--size 1024`.
 Nothing was pushed.
 
+## 2026-10-06 — Claude Code — paper holder placed; room building spread over frames
+
+Xyh asked for the paper holder, for the cost of building kits per room to be measured, and said that memory and CPU/GPU use are to be watched and that the walk need not always be seamless. The mechanism and the measuring tools are in HANDOVER.md.
+
+Paper holder. In half of main bathrooms that have a solid stretch of side wall, baked with the room's other household objects, 0.62 to 0.74 m up. `index.html` passes the room's unused solid wall modules as `wallSpots`. Viewed in room 22 with `?room=bathroom&prop=kits`: the plate is on the wall with the roll in front of it. In five forced bathrooms the plate's back was 0.108 m inside the room's edge, 8 mm in front of the wall face, read from the baked vertices.
+
+Kit cost. Constructing each kit 200 times: plastics 0.15 ms, plastic storage 0.12, household tools 0.08, bathroom 0.07, linens 0.06, footwear 0.02, school chair 0.01, packaging 0.004. Building them per room is not a cost.
+
+What is a cost. Stepping the walk from the console at 1280 x 720 on the twisting route, rooms 20 to 90: frames with no build took 12 ms at the median; a frame that built one room and drew it took 81 ms, 170 ms at the ninetieth percentile, in a run while the machine was busy, and about 45 ms in a quieter one, of which the build was 15 ms and the upload about 17. Before today two rooms were built in one such frame. After the change, rooms 20 to 98, 1,748 frames: 78 build frames at 37 ms median, 81 ms at the ninetieth, 113 ms at most; 78 show frames at 19 ms median, 43 ms at the ninetieth; never two builds in a frame and never more than one room hidden; 43 frames over 50 ms and 4 over 100 ms; no console error. Timings moved by a factor of two between runs with the load on the machine, so compare runs taken together.
+
+Memory. Over about 190 rooms the renderer's geometry count read 595, 549, 510, 498, 528 at ten-room intervals and the JS heap 82 to 88 MB: no growth. Textures rose to about 105 and stayed, which is the image cache filling.
+
+Not done. No frame was timed with the pane visible and `requestAnimationFrame` running; every figure is from stepping by hand. The fog change was not viewed. A room can now appear one frame after its neighbour through a far doorway; not viewed. Nothing was measured on a second machine or a phone.
+
+Decided against, for now. Slicing `buildSegment` itself across frames: the build is 15 to 40 ms of a build frame, and the function is 270 lines of shared locals that other agents edit daily. Holding the walker or darkening the next room, which Xyh offered: no room needed more than one long frame, so there was nothing to wait for. Both stay available if rooms get heavier.
+
+Next lever, not started. Draw calls: six rooms are 1,500 to 1,700, one per mesh, and culling is off on the twisting route, so the two rooms behind the walker and any room beyond the fog are drawn in full every frame. Hiding rooms that cannot be seen is the cheap step; merging a room's static meshes is the larger one and trades memory and build time for it. Nothing was pushed.

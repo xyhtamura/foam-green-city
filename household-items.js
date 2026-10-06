@@ -1,16 +1,16 @@
 // Places the mesh kits' objects in a room, then bakes them into one vertex-coloured mesh.
-import {createTablewareKit,TABLEWARE_COLOURS} from './tableware.js?v=edc5d8e05a';
-import {createPlasticKit,PLASTIC_COLOURS} from './plastics.js?v=edc5d8e05a';
-import {createLinenKit,LINEN_COLOURS} from './linens.js?v=edc5d8e05a';
-import {placeOnSupport} from './object-supports.js?v=edc5d8e05a';
-import {createHouseholdToolKit} from './household-tools.js?v=edc5d8e05a';
-import {createPlasticStorageKit} from './plastic-storage.js?v=edc5d8e05a';
-import {createCardboardKit} from './cardboard.js?v=edc5d8e05a';
-import {createSchoolChairKit} from './school-chair.js?v=edc5d8e05a';
-import {createBasketball,BALL_COLOURS} from './basketball.js?v=edc5d8e05a';
-import {createFootwearKit,FOOTWEAR_TYPES} from './footwear.js?v=edc5d8e05a';
-import {createBathroomKit} from './bathroom-tools.js?v=edc5d8e05a';
-import {createPackagingKit} from './packaging.js?v=edc5d8e05a';
+import {createTablewareKit,TABLEWARE_COLOURS} from './tableware.js?v=01e87122a3';
+import {createPlasticKit,PLASTIC_COLOURS} from './plastics.js?v=01e87122a3';
+import {createLinenKit,LINEN_COLOURS} from './linens.js?v=01e87122a3';
+import {placeOnSupport} from './object-supports.js?v=01e87122a3';
+import {createHouseholdToolKit} from './household-tools.js?v=01e87122a3';
+import {createPlasticStorageKit} from './plastic-storage.js?v=01e87122a3';
+import {createCardboardKit} from './cardboard.js?v=01e87122a3';
+import {createSchoolChairKit} from './school-chair.js?v=01e87122a3';
+import {createBasketball,BALL_COLOURS} from './basketball.js?v=01e87122a3';
+import {createFootwearKit,FOOTWEAR_TYPES} from './footwear.js?v=01e87122a3';
+import {createBathroomKit} from './bathroom-tools.js?v=01e87122a3';
+import {createPackagingKit} from './packaging.js?v=01e87122a3';
 
 // The kits only lend their geometry and colours to the bake. Tableware and cardboard build from
 // a fixed set of shapes, so one of each serves every room. The others make new geometry for each
@@ -18,7 +18,8 @@ import {createPackagingKit} from './packaging.js?v=edc5d8e05a';
 let shared=null;
 const AISLE=0.72;
 
-export function addHouseholdItems({THREE,group,room,seed,material,blocked=[],floorAt=()=>0,amount=1,forceBall=false,paint=0xbfdcc9,force=null}){
+export function addHouseholdItems({THREE,group,room,seed,material,blocked=[],floorAt=()=>0,amount=1,forceBall=false,paint=0xbfdcc9,force=null,wallSpots=[]}){
+  const began=performance.now();
   shared??={table:createTablewareKit({radialSegments:10}),card:createCardboardKit()};
   const kits={...shared,plastic:createPlasticKit({radialSegments:10}),linen:createLinenKit(),tool:createHouseholdToolKit(),storage:createPlasticStorageKit(),chair:createSchoolChairKit()};
   let state=(Math.imul(seed+6113,2246822519)>>>0)||1;
@@ -174,6 +175,12 @@ export function addHouseholdItems({THREE,group,room,seed,material,blocked=[],flo
     if(chance(0.35)&&stand(bath('plunger')))count('bathroom');
     if(chance(0.5)&&stand(bath(r()<0.5?'cleanerBottle':'sprayBottle')))count('bathroom');
     if(chance(0.25)&&stand(roll()))count('bathroom');
+    // A paper holder on a solid stretch of side wall, its back plate on the wall face 0.1 m in.
+    if(wallSpots.length&&chance(0.5)){
+      const spot=pick(wallSpots),holder=bath('paperHolder',{remaining:0.15+r()*0.85,tail:r()<0.6,scale:1,rotation:spot.side*Math.PI/2});
+      const z=spot.z+(r()-0.5)*1.2;
+      holder.position.set(spot.side*(half-0.108-holder.userData.wallMount.backZ),floorAt(z)+0.62+r()*0.12,z);group.add(holder);placed.push(holder);count('paperHolder');
+    }
   }else if(room.type==='kitchen'&&chance(0.15)&&stand(bath('sprayBottle')))count('bathroom');
   // Packaging in plain colours: the bake carries no textures, so these have no printed labels.
   const packColours=[0xc23b32,0xe0b23a,0x2f7d4f,0x2e5fa3,0xe8e4d8,0xd96a2b,0x7a3f8c,0x3aa6a0,0xb0b4b3,0x8c5a3a],labels=[0xe2d7b9,0xf0ece0,0xd9b24a,0xc23b32,0x2a2a2a];
@@ -224,6 +231,6 @@ export function addHouseholdItems({THREE,group,room,seed,material,blocked=[],flo
   geometry.setAttribute('color',new THREE.Float32BufferAttribute(colors,3));
   geometry.computeVertexNormals();
   const mesh=new THREE.Mesh(geometry,material);mesh.name='household-items';mesh.userData.own=true;
-  report.triangles=positions.length/9;
+  report.triangles=positions.length/9;report.ms=+(performance.now()-began).toFixed(1);
   return {mesh,footprints,walkBlocks,report};
 }

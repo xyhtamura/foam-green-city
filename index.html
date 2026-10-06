@@ -84,37 +84,37 @@ window.addEventListener('unhandledrejection',reportLoadFailure);
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { createJalousieWall } from './jalousie.js?v=edc5d8e05a';
-import { createDomesticProps, animateDomesticProps, createFurnitureVariants, FURNITURE_FINISHES } from './domestic-props.js?v=edc5d8e05a';
-import { WALL_HANGINGS } from './wall-assets.js?v=edc5d8e05a';
-import { RAW_OBJECTS, createRawObject, oddSize, cutoutTone } from './raw-object-assets.js?v=edc5d8e05a';
-import { loadCurtainPatterns } from './photo-assets.js?v=edc5d8e05a';
-import { ROOM_WIDTHS, partitionPieces } from './room-widths.js?v=edc5d8e05a';
+import { createJalousieWall } from './jalousie.js?v=01e87122a3';
+import { createDomesticProps, animateDomesticProps, createFurnitureVariants, FURNITURE_FINISHES } from './domestic-props.js?v=01e87122a3';
+import { WALL_HANGINGS } from './wall-assets.js?v=01e87122a3';
+import { RAW_OBJECTS, createRawObject, oddSize, cutoutTone } from './raw-object-assets.js?v=01e87122a3';
+import { loadCurtainPatterns } from './photo-assets.js?v=01e87122a3';
+import { ROOM_WIDTHS, partitionPieces } from './room-widths.js?v=01e87122a3';
 
-import { LAYOUT_IDS, generateFurnitureLayout, checkFurnitureLayout, TABLE_TOP } from './furniture-layouts.js?v=edc5d8e05a';
-import { FLOOR_IDS, createFloorVariant } from './floor-variants.js?v=edc5d8e05a';
-import { DOOR_STYLES, createDoorLeaves } from './doors.js?v=edc5d8e05a';
-import { MODEL_ASSETS, loadModelAssets } from './model-assets.js?v=edc5d8e05a';
-import { createRoomSet, createRoomFixture } from './room-sets.js?v=edc5d8e05a';
-import { createUratexSofa } from './uratex-sofa.js?v=edc5d8e05a';
-import { createWireRun } from './wire-runs.js?v=edc5d8e05a';
-import { createWallUtilities } from './wall-utilities.js?v=edc5d8e05a';
-import {createWalkSequence,retainedRooms,walkRegions,canOccupy,moveWalker,pathToRoute,roomExits} from './navigation.js?v=edc5d8e05a';
-import {addDomesticDetails} from './domestic-details.js?v=edc5d8e05a';
+import { LAYOUT_IDS, generateFurnitureLayout, checkFurnitureLayout, TABLE_TOP } from './furniture-layouts.js?v=01e87122a3';
+import { FLOOR_IDS, createFloorVariant } from './floor-variants.js?v=01e87122a3';
+import { DOOR_STYLES, createDoorLeaves } from './doors.js?v=01e87122a3';
+import { MODEL_ASSETS, loadModelAssets } from './model-assets.js?v=01e87122a3';
+import { createRoomSet, createRoomFixture } from './room-sets.js?v=01e87122a3';
+import { createUratexSofa } from './uratex-sofa.js?v=01e87122a3';
+import { createWireRun } from './wire-runs.js?v=01e87122a3';
+import { createWallUtilities } from './wall-utilities.js?v=01e87122a3';
+import {createWalkSequence,retainedRooms,walkRegions,canOccupy,moveWalker,pathToRoute,roomExits} from './navigation.js?v=01e87122a3';
+import {addDomesticDetails} from './domestic-details.js?v=01e87122a3';
 let wallUtilities;
-import { roomLighting } from './room-lighting.js?v=edc5d8e05a';
-import { scatterLevel, planScatter, planSideScatter, scatterBlocks, createScatterMesh } from './floor-scatter.js?v=edc5d8e05a';
-import { addWallProtrusions } from './wall-protrusions.js?v=edc5d8e05a';
-import { createBaseboards } from './baseboards.js?v=edc5d8e05a';
-import { addHouseholdItems } from './household-items.js?v=edc5d8e05a';
-import { spatialFrame, spatialPoint, SPATIAL_GLSL, SPATIAL_PROFILES } from './spatial-route.js?v=edc5d8e05a';
-import { floorHeight, cameraRoute, routePoint } from './room-sequences.js?v=edc5d8e05a';
-import {sideSpacePlan,DRAWER_VARIANTS} from './side-spaces.js?v=edc5d8e05a';
-import {addWoodDetails} from './wood-details.js?v=edc5d8e05a';
-import {addSideWashrooms} from './side-washrooms.js?v=edc5d8e05a';
-import {addSideStorage} from './side-storage.js?v=edc5d8e05a';
-import {addSideBedrooms} from './side-bedrooms.js?v=edc5d8e05a';
-import { branchOpenings, raiseFloor, createRoomArchitecture } from './room-architecture.js?v=edc5d8e05a';
+import { roomLighting } from './room-lighting.js?v=01e87122a3';
+import { scatterLevel, planScatter, planSideScatter, scatterBlocks, createScatterMesh } from './floor-scatter.js?v=01e87122a3';
+import { addWallProtrusions } from './wall-protrusions.js?v=01e87122a3';
+import { createBaseboards } from './baseboards.js?v=01e87122a3';
+import { addHouseholdItems } from './household-items.js?v=01e87122a3';
+import { spatialFrame, spatialPoint, SPATIAL_GLSL, SPATIAL_PROFILES } from './spatial-route.js?v=01e87122a3';
+import { floorHeight, cameraRoute, routePoint } from './room-sequences.js?v=01e87122a3';
+import {sideSpacePlan,DRAWER_VARIANTS} from './side-spaces.js?v=01e87122a3';
+import {addWoodDetails} from './wood-details.js?v=01e87122a3';
+import {addSideWashrooms} from './side-washrooms.js?v=01e87122a3';
+import {addSideStorage} from './side-storage.js?v=01e87122a3';
+import {addSideBedrooms} from './side-bedrooms.js?v=01e87122a3';
+import { branchOpenings, raiseFloor, createRoomArchitecture } from './room-architecture.js?v=01e87122a3';
 
 // ---- palette (DepEd MPSS, stylized: green walls) ----
 const COL = {
@@ -840,7 +840,7 @@ function buildSegment(index){
   });
   const clutterLevel=scatterLevel(i,descriptor.type,params.get('clutter'));
   // Dishes, bags, vessels, and linens go in first; loose scatter then fills in around them.
-  const items=addHouseholdItems({THREE,group:grp,room:descriptor,seed:i,material:householdMaterial,blocked:[...taken,...architecture.userData.reservations],floorAt:z=>floorHeight(descriptor,z),amount:{none:0,light:0.6,medium:1,heavy:1.4}[clutterLevel],forceBall:params.get('prop')==='basketball',force:params.get('prop'),paint:grp.userData.wallColor});
+  const items=addHouseholdItems({THREE,group:grp,room:descriptor,seed:i,material:householdMaterial,blocked:[...taken,...architecture.userData.reservations],floorAt:z=>floorHeight(descriptor,z),amount:{none:0,light:0.6,medium:1,heavy:1.4}[clutterLevel],forceBall:params.get('prop')==='basketball',force:params.get('prop'),paint:grp.userData.wallColor,wallSpots:solidWalls});
   if(items.mesh)grp.add(items.mesh);
   grp.userData.household=items.report;
   for(const b of items.walkBlocks){const y=floorHeight(descriptor,(b.minZ+b.maxZ)/2);grp.userData.walkBlocks.push({minX:b.minX,maxX:b.maxX,minZ:b.minZ+descriptor.startZ,maxZ:b.maxZ+descriptor.startZ,minY:y,maxY:y+b.height});}
@@ -867,13 +867,28 @@ function dropSegment(i){
  });
   segments.delete(i);sequence.release(i);
 }
-let inspectedRoom=null;
+let inspectedRoom=null,builtThisFrame=false,frameNumber=0,unshown=null;
+// Time spent building rooms since the walk began, for ?inspect=1 and the console.
+const buildStats={last:0,worst:0,rooms:0};
 function ensureSegments(){
   const camSeg = travelRoom;
   const retained=retainedRooms(camSeg);
-  for (const i of retained) if (!segments.has(i)) buildSegment(i);
+  // A new room costs twice: the time to build it, and the time its first drawn frame spends sending it
+  // to the graphics card. The walker's room and its two neighbours are built and shown at once; so is
+  // everything before the walk starts and under the veil of a cut. Any other room waits its turn,
+  // nearest first: built hidden in one frame, shown in a later one, and no two rooms share either.
+  if(unshown&&frameNumber>unshown.frame){const g=segments.get(unshown.index);if(g)g.visible=true;unshown=null;builtThisFrame=true;}
+  for(const i of retained.filter(i=>!segments.has(i)).sort((a,b)=>Math.abs(a-camSeg)-Math.abs(b-camSeg))){
+    const urgent=Math.abs(i-camSeg)<=1||!walkReady||cut;
+    if(!urgent&&(builtThisFrame||unshown))continue;
+    const began=performance.now();buildSegment(i);
+    buildStats.last=+(performance.now()-began).toFixed(1);buildStats.worst=Math.max(buildStats.worst,buildStats.last);buildStats.rooms++;
+    if(!urgent){builtThisFrame=true;segments.get(i).visible=false;unshown={index:i,frame:frameNumber};}
+  }
+  const waiting=segments.get(unshown?.index);
+  if(waiting&&Math.abs(unshown.index-camSeg)<=1){waiting.visible=true;unshown=null;}
   for (const i of [...segments.keys()]) if (!retained.includes(i)) dropSegment(i);
-  if(params.has('inspect')){const stats=document.getElementById('render-stats')??document.body.appendChild(Object.assign(document.createElement('pre'),{id:'render-stats',hidden:true}));stats.textContent=JSON.stringify({rooms:segments.size,drawCalls:renderer.info.render.calls,triangles:renderer.info.render.triangles,geometries:renderer.info.memory.geometries,textures:renderer.info.memory.textures});}
+  if(params.has('inspect')){const stats=document.getElementById('render-stats')??document.body.appendChild(Object.assign(document.createElement('pre'),{id:'render-stats',hidden:true}));stats.textContent=JSON.stringify({rooms:segments.size,drawCalls:renderer.info.render.calls,triangles:renderer.info.render.triangles,geometries:renderer.info.memory.geometries,textures:renderer.info.memory.textures,programs:renderer.info.programs?.length,build:buildStats});}
   if(params.has('inspect')&&camSeg!==inspectedRoom){inspectedRoom=camSeg;inspectRooms();}
 }
 
@@ -1016,12 +1031,15 @@ function tick(){
   const elapsed=movementClock.getDelta(),delta=!entered||paused||document.hidden?0:Math.min(elapsed,0.05);
   t += delta;
   if(cut){cut.time+=Math.min(elapsed,0.1);if(!cut.swapped&&cut.time>0.4){takeBranch();cut.swapped=true;veil.style.opacity=0;}else if(cut.time>0.85)cut=null;}
+  builtThisFrame=false;frameNumber++;
   ensureSegments();
   const travel=advanceCamera(delta),current=travel.room;
   ensureSegments();
   cam.position.y=travel.floor+1.6+Math.sin(t*4)*0.03;
-  const streamFront=Math.min(...[...segments.values()].map(g=>g.position.z-g.userData.length));
-  const streamBack=Math.max(...[...segments.values()].map(g=>g.position.z));
+  // Measured over the rooms the walk keeps, built or not, so the fog does not move while one waits its turn.
+  const kept=retainedRooms(travelRoom).map(i=>sequence.room(i));
+  const streamFront=Math.min(...kept.map(room=>room.startZ-room.length));
+  const streamBack=Math.max(...kept.map(room=>room.startZ));
   const available=manual||rejoin?Math.min(cam.position.z-streamFront,streamBack-cam.position.z):cam.position.z-streamFront;
   // Wide rooms need lateral depth even when the streamed longitudinal edge is near.
   const spacious=current.width>=40;
@@ -1033,7 +1051,22 @@ function tick(){
   cam.rotation.order='YXZ';cam.rotation.set(viewPitch,viewYaw,0);
   if(params.has('inspect')){
     const state=document.getElementById('route-state')??document.body.appendChild(Object.assign(document.createElement('pre'),{id:'route-state',hidden:true}));
-    window.fgc??={THREE,scene,cam,renderer,segments,WALLP};   // inspection handle for the console
+    // Inspection handle for the console. bench(from,count) builds rooms that are not in the walk, one at a
+    // time, and reports for each the time to build it, the time of the first frame that draws it, which
+    // carries its uploads and any shader compiles, and what it adds to the renderer's memory counts.
+    window.fgc??={THREE,scene,cam,renderer,segments,WALLP,buildStats,step:tick,bench(from,count=20){
+      const gl=renderer.getContext(),rows=[],frame=()=>{const t=performance.now();renderer.render(scene,cam);gl.finish();return performance.now()-t;};
+      frame();
+      for(let i=from;i<from+count;i++){
+        if(segments.has(i))continue;
+        const before={...renderer.info.memory},steady=frame(),t=performance.now();buildSegment(i);const build=performance.now()-t,g=segments.get(i);g.traverse(o=>{o.frustumCulled=false;});const first=frame();
+        let meshes=0;g.traverse(o=>{if(o.isMesh)meshes++;});
+        rows.push({i,type:g.userData.type,area:g.userData.width*g.userData.length,build:+build.toFixed(1),first:+first.toFixed(1),steady:+steady.toFixed(1),again:+frame().toFixed(1),household:g.userData.household.ms??0,meshes,
+          geometries:renderer.info.memory.geometries-before.geometries,textures:renderer.info.memory.textures-before.textures,programs:renderer.info.programs.length});
+        dropSegment(i);
+      }
+      return rows;
+    }};
     state.textContent=JSON.stringify({room:travelRoom,distance:travelDistance,length:travelRoute.length,x:cam.position.x,y:cam.position.y,z:cam.position.z,yaw:viewYaw,pitch:viewPitch,mode:manual?'manual':rejoin?'returning':'automatic',retained:[...segments.keys()],floor:travel.floor});
   }
   const PHI = 1.61803398875;                    // aperiodic warp (never loops)
