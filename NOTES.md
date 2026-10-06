@@ -1519,3 +1519,13 @@ Xyh saw from the yero path that the floors of the rooms ahead were not there. A 
 Checks, on the root server with `?start=91`, straight route, with the camera put by hand 2.2 m below the next room's floor looking up, and 5.5 m up looking down: hiding the floor changed 9,050 of 124,704 pixels in the first view and hiding the ceiling 14,523 in the second, so both surfaces are drawn from outside; before the change a surface seen from behind draws nothing. Viewed the first: a tiled underside closes the box. No console error; all twelve node checks pass.
 
 Not done. Not viewed from the walker's own height on the twisting route, which is where Xyh saw it. Walls were already boxes and were not changed. Nothing was pushed.
+
+## 2026-10-06 — Claude Code — the yero path made an ordinary room to walk
+
+Xyh found that on the yero path the walker could get lost in the open air and stuck, and that the walking twitched, and proposed making it a normal room that happens to have no walls or ceiling and a floor of roofing sheets. That is what it now is; the handover says why the first design was wrong and not to repeat it.
+
+Removed: `yeroWaypoints` and the yero branch of `cameraRoute` in `room-sequences.js`, and the yero case in `check_room_sequences`, which again asserts one straight leg for every room. Changed: the room is 4 m wide, not 6; `yero-path.js` lays a middle run and scatters sheets to both sides.
+
+Checks. All twelve node checks pass. In the browser on the root server with `?start=91`, straight route: viewed from the doorway and from above, a ragged band of sheets swelling to one side and then the other, the next room standing in the air beyond. On the twisting route, stepping frames: over 421 frames of automatic walking in the room the walker's x stayed between -0.02 and 0.12 m, the largest change of heading in one frame was 0.0006 rad, and a ray straight down met a sheet in all 421. Then, with key events sent to the page: held D for 400 frames and W for 250, and the walker went to x = 1.64 m and no further, in manual mode; pressed Space, and it passed through returning to automatic in 51 frames, back at x = 0.12; it then walked on into room 92. `?offset=` works in this room again. No console error from the page; three errors in the log were from my first test, which sent key events to `document` itself, a target the page's handler does not expect and real keys never have.
+
+Not done. Not viewed in motion or with the pane visible, so whether it feels right to walk is Xyh's to say. Mouse look in manual mode was not exercised. The edge of the band was not checked for a place where a player at x = 1.6 m stands over air. Nothing was pushed.

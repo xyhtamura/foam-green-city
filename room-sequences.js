@@ -20,23 +20,7 @@ export function floorHeight(room,localZ){
   return (room.rise||0)*Math.min(1,u*4,(1-u)*4)||0;
 }
 
-// The yero path wanders: the route swings from side to side, by up to about 1.5 m, and comes back to
-// the middle at each doorway. The sheets are laid along this same route.
-export function yeroWaypoints(room){
-  const points=[{x:0,z:0},{x:0,z:-1.4}],phase=hash(room.index+811)%628/100,second=hash(room.index+977)%628/100,L=room.length;
-  for(let z=-3.4;z>-L+2.4;z-=2.2){
-    const ease=Math.min(1,(-z-1.4)/3,(L-1.4+z)/3);
-    points.push({x:Math.round(ease*(1.05*Math.sin(-z*0.42+phase)+0.5*Math.sin(-z*0.97+second))*100)/100,z});
-  }
-  points.push({x:0,z:-L+1.4},{x:0,z:-L});
-  return points;
-}
 export function cameraRoute(room,openings=[]){
-  if(room.yero){
-    const points=yeroWaypoints(room);let distance=0;
-    const legs=points.slice(1).map((end,i)=>{const start=points[i],length=Math.hypot(end.x-start.x,end.z-start.z),leg={start,end,length,distance};distance+=length;return leg;});
-    return {legs,length:distance};
-  }
   const points=[{x:0,z:0}],portal=openings[Math.floor(room.index/4)%Math.max(1,openings.length)];
   if(portal){
     const end=passageExit(room,portal),x=end.x,endZ=end.z+1;

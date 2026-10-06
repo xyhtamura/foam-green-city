@@ -1,7 +1,7 @@
 // Room shells drawn from distributions. Nothing here names a particular strange room:
 // two slow fields along the route widen the tails of each dimension and switch on
 // features, and an unusual room is whatever those draws happen to coincide in.
-import {ORDINARY_LAYOUT_IDS,ODD_LAYOUT_IDS} from './furniture-layouts.js?v=2f62cbb3fb';
+import {ORDINARY_LAYOUT_IDS,ODD_LAYOUT_IDS} from './furniture-layouts.js?v=3fc34d4d8f';
 
 // A full avalanche mix of index and salt, so neighbouring indices and nearby salts are unrelated.
 function unit(n,salt){
@@ -51,13 +51,14 @@ const ORDINARY={
 export const COURT_RATE=1/90;
 export const isCourt=(index,seed=5)=>index>=8&&unit(index,seed*7+997)<COURT_RATE;
 // Rarer still, about one room in two hundred and forty, is not a room: a walkway of roofing sheets with
-// no floor, walls, or ceiling, 24 to 36 m long. Its width is only how far a walker may stray. It is
+// no floor, walls, or ceiling, 24 to 36 m long. It is an ordinary room in every other way: a straight
+// walk down the middle, 4 m wide, which is how far a walker may stray and what the sheets cover. It is
 // called a hall so that a kitchen or bathroom zone passes over it.
 export const YERO_RATE=1/240;
 export const isYero=(index,seed=5)=>index>=12&&!isCourt(index,seed)&&unit(index,seed*7+YERO_SALT)<YERO_RATE;
 const YERO_SALT=1021;
 export function generateRoom(index,seed=5){
-  if(isYero(index,seed))return {width:6,length:24+2*Math.floor(unit(index,seed*7+1201)*7),height:2.58,rise:0,shape:'rectangle',type:'hall',layout:'sparse',floor:'bare',category:'strange',strangeness:0,yero:true};
+  if(isYero(index,seed))return {width:4,length:24+2*Math.floor(unit(index,seed*7+1201)*7),height:2.58,rise:0,shape:'rectangle',type:'hall',layout:'sparse',floor:'bare',category:'strange',strangeness:0,yero:true};
   if(isCourt(index,seed))return {width:18,length:28,height:7.6,rise:0,shape:'rectangle',type:'hall',layout:'perimeter',floor:'bare',category:'strange',strangeness:0,court:true};
   const r=n=>unit(index,seed*7+100+n),{strange:s,scale}=roomPressure(index,seed);
   // Dimensions: a domestic base, plus a tail that only opens under pressure.

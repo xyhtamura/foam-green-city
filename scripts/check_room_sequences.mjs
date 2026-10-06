@@ -17,17 +17,9 @@ for(const options of [{},...SEQUENCE_NAMES.map(sequence=>({sequence,generate:gen
     assert.equal(floorHeight(room,-room.length/2),room.rise);
     assert.ok(room.height-room.rise>=2.58);
     const mainRoute=cameraRoute(room);
-    if(room.yero){
-      // The yero path wanders, from the middle of one doorway to the middle of the next.
-      const first=mainRoute.legs[0],last=mainRoute.legs.at(-1);
-      assert.ok(mainRoute.length>room.length&&mainRoute.legs.length>4);
-      assert.deepEqual([first.start.x,first.start.z,last.end.x,last.end.z],[0,0,0,-room.length]);
-      assert.ok(mainRoute.legs.every(leg=>Math.abs(leg.end.x)<=1.6&&leg.end.z<leg.start.z),'the path keeps within 1.6 m of the middle and never turns back');
-    }else{
-      assert.equal(mainRoute.length,room.length);
-      assert.equal(mainRoute.legs.length,1);
-      assert.equal(routePoint(mainRoute,room.length/2).x,0);
-    }
+    assert.equal(mainRoute.length,room.length);
+    assert.equal(mainRoute.legs.length,1);
+    assert.equal(routePoint(mainRoute,room.length/2).x,0);
     const route=cameraRoute(room,[{side:1,z:-room.length/2}]);
     assert.ok(route.length>=room.length);
     assert.deepEqual({...routePoint(route,route.length),yaw:0},{x:0,z:-room.length,yaw:0});
