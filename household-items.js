@@ -1,18 +1,18 @@
 // Places the mesh kits' objects in a room, then bakes them into one vertex-coloured mesh.
-import {createTablewareKit,TABLEWARE_COLOURS} from './tableware.js?v=16a4f83f8d';
-import {createPlasticKit,PLASTIC_COLOURS} from './plastics.js?v=16a4f83f8d';
-import {createLinenKit,LINEN_COLOURS} from './linens.js?v=16a4f83f8d';
-import {placeOnSupport} from './object-supports.js?v=16a4f83f8d';
-import {createHouseholdToolKit} from './household-tools.js?v=16a4f83f8d';
-import {createPlasticStorageKit} from './plastic-storage.js?v=16a4f83f8d';
-import {createCardboardKit} from './cardboard.js?v=16a4f83f8d';
-import {createSchoolChairKit} from './school-chair.js?v=16a4f83f8d';
-import {createBasketball,BALL_COLOURS} from './basketball.js?v=16a4f83f8d';
-import {createFootwearKit,FOOTWEAR_TYPES} from './footwear.js?v=16a4f83f8d';
-import {createBathroomKit} from './bathroom-tools.js?v=16a4f83f8d';
-import {createDecorKit} from './decor.js?v=16a4f83f8d';
-import {createMirrorsValancesKit,VALANCE_TYPES} from './mirrors-valances.js?v=16a4f83f8d';
-import {createPackagingKit} from './packaging.js?v=16a4f83f8d';
+import {createTablewareKit,TABLEWARE_COLOURS} from './tableware.js?v=e1cc89b005';
+import {createPlasticKit,PLASTIC_COLOURS} from './plastics.js?v=e1cc89b005';
+import {createLinenKit,LINEN_COLOURS} from './linens.js?v=e1cc89b005';
+import {placeOnSupport} from './object-supports.js?v=e1cc89b005';
+import {createHouseholdToolKit} from './household-tools.js?v=e1cc89b005';
+import {createPlasticStorageKit} from './plastic-storage.js?v=e1cc89b005';
+import {createCardboardKit} from './cardboard.js?v=e1cc89b005';
+import {createSchoolChairKit} from './school-chair.js?v=e1cc89b005';
+import {createBasketball,BALL_COLOURS} from './basketball.js?v=e1cc89b005';
+import {createFootwearKit,FOOTWEAR_TYPES} from './footwear.js?v=e1cc89b005';
+import {createBathroomKit} from './bathroom-tools.js?v=e1cc89b005';
+import {createDecorKit} from './decor.js?v=e1cc89b005';
+import {createMirrorsValancesKit,VALANCE_TYPES} from './mirrors-valances.js?v=e1cc89b005';
+import {createPackagingKit} from './packaging.js?v=e1cc89b005';
 
 // The kits only lend their geometry and colours to the bake. Tableware and cardboard build from
 // a fixed set of shapes, so one of each serves every room. The others make new geometry for each

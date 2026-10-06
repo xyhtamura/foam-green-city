@@ -1394,3 +1394,13 @@ First attempt and what changed. Mattresses and wall cloth found no place in six 
 Decided against. A mattress stood on edge against a wall, which I had planned: left out to keep this sitting to what could be viewed. Loading the supplied 1254 px images directly: each would be 6 to 8 MB on the graphics card and the folder is 146 MB.
 
 Not done. The rolled banig was counted and not viewed. Nothing was viewed on the twisting route or in motion. Whether a pattern's repeat size reads right was judged on four objects; the sizes in `REPEAT` are estimates. A tablecloth's overhang falls straight, as a box. Wall cloth appeared in 1 of 93 rooms, which is rarer than Xyh's request suggests; the rates are the first lines of each block in `fabric-items.js`. Mattresses carry no pillow or sheet. Side rooms get none of this. Nothing was pushed.
+
+## 2026-10-06 — Claude Code — pattern provenance recorded; two prints redrawn as triangles
+
+Xyh answered the question left in the previous entry: the dated patterns are self-captured, and the two held back should be sufficiently modified already, though blurring or the low-poly treatment used for the wall photos was offered. I applied the low-poly treatment and included both. ASSETS.md records the statement and the treatment.
+
+`index_fabrics.py` now has `LOWPOLY` beside `EXCLUDE`, which is empty. A listed pattern is redrawn through `fgcphotos/lowpoly.py` before it is copied, on a wrapped border so the triangles carry across the tile's edges, with a fixed random seed. That tool is outside this repository and under no version control; root DEPENDENCIES.md has a line for it. It is needed only to rebuild those two copies.
+
+Checks. Tried 1,400, 700, and 350 points on both and viewed them beside the originals: at each, the cartoon figures and the monogram are gone and the colours remain; 1,400 was kept. Viewed the two finished 256 px copies tiled two by two: the pink print reads as pastel shards with no figure, the red as plain red with gold flecks, and neither shows a seam. A second run of the script rewrote nothing. 117 patterns are listed. `stamp_versions --check` and `check_published_assets` pass.
+
+Not done. Neither redrawn pattern was viewed on an object in a room. Whether the fixed seed makes a rebuild byte-identical was not tested. Nothing was pushed.

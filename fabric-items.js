@@ -2,8 +2,8 @@
 // banig, cloth hung on a wall, and tablecloths. The patterns are the page-sized copies listed in
 // fabric-assets.js. Each pattern has one material for the whole session; each object has its own
 // small geometry, disposed with its room.
-import {FABRICS} from './fabric-assets.js?v=16a4f83f8d';
-import {wallThingsOf} from './household-items.js?v=16a4f83f8d';
+import {FABRICS} from './fabric-assets.js?v=e1cc89b005';
+import {wallThingsOf} from './household-items.js?v=e1cc89b005';
 
 const AISLE=0.72,LIFT=0.008,STEP=0.4;
 const materials=new Map();

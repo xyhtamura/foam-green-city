@@ -49,7 +49,7 @@ A Kenney wall module is 0.1 m thick with its near face on its origin plane. The 
 
 ## Patterned cloth and banig — 2026-10-06
 
-`tela/` and `banig/` hold the patterns as supplied or generated, 119 PNGs and 146 MB, and are not tracked. `python scripts/index_fabrics.py` writes a 256 px, 96-colour copy of each to `2d/fabric/<kind>/` and lists them in `fabric-assets.js`; 115 copies come to 4.0 MB. Run it again after adding or removing a pattern; it rebuilds only what changed and removes copies whose source is gone. `REPEAT` in that script sets how large one repeat of a pattern is in the room, by folder. `EXCLUDE` holds patterns back from the page, each with its reason; two are held back, see ASSETS.md.
+`tela/` and `banig/` hold the patterns as supplied or generated, 119 PNGs and 146 MB, and are not tracked. `python scripts/index_fabrics.py` writes a 256 px, 96-colour copy of each to `2d/fabric/<kind>/` and lists them in `fabric-assets.js`; 117 copies come to 4.1 MB. Run it again after adding or removing a pattern; it rebuilds only what changed and removes copies whose source is gone. `REPEAT` in that script sets how large one repeat of a pattern is in the room, by folder. `EXCLUDE` holds a pattern back from the page and `LOWPOLY` has it redrawn as flat triangles first, each with its reason; two are redrawn, see ASSETS.md.
 
 `fabric-items.js` places things made of them, after the household objects and before the scatter, from a stream of its own:
 
@@ -59,7 +59,7 @@ A Kenney wall module is 0.1 m thick with its near face on its origin plane. The 
 - Cloth hung flat on a solid stretch of side wall, 0.9 to 1.6 m wide: 10% of salas, bedrooms, and bare rooms, 8% of halls, 6% of kitchens, where a stretch is free. It covers a wire run or an outlet and avoids anything standing further out.
 - Tablecloth on every table of the room, one cloth through the room: 14% of kitchens and salas, 8% of halls.
 
-`?prop=fabric` forces all of it. Floor pieces are skipped in a room whose floor rises or sinks. Each pattern has one material for the session and each object its own small geometry, so a room's tablecloths merge into one mesh. A pattern is loaded when first used and kept: at most 115 textures of about 0.35 MB each on the graphics card. `wallThingsOf` in `household-items.js` is now exported, and `addHouseholdItems` returns `hung`, the wall positions of what it baked, so a later step can avoid them.
+`?prop=fabric` forces all of it. Floor pieces are skipped in a room whose floor rises or sinks. Each pattern has one material for the session and each object its own small geometry, so a room's tablecloths merge into one mesh. A pattern is loaded when first used and kept: at most 117 textures of about 0.35 MB each on the graphics card. `wallThingsOf` in `household-items.js` is now exported, and `addHouseholdItems` returns `hung`, the wall positions of what it baked, so a later step can avoid them.
 
 ## Mirrors, valances, and cloth decor — 2026-10-06
 

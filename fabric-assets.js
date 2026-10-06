@@ -198,6 +198,13 @@ export const FABRICS=[
   "repeat": 0.6
  },
  {
+  "id": "graphic_graphic_173318",
+  "file": "2d/fabric/tela/graphic_graphic_173318.png",
+  "kind": "tela",
+  "group": "graphic",
+  "repeat": 0.6
+ },
+ {
   "id": "graphic_graphic_173321",
   "file": "2d/fabric/tela/graphic_graphic_173321.png",
   "kind": "tela",
@@ -291,6 +298,13 @@ export const FABRICS=[
  {
   "id": "kids_kids_165805",
   "file": "2d/fabric/tela/kids_kids_165805.png",
+  "kind": "tela",
+  "group": "kids",
+  "repeat": 0.6
+ },
+ {
+  "id": "kids_kids_165808",
+  "file": "2d/fabric/tela/kids_kids_165808.png",
   "kind": "tela",
   "group": "kids",
   "repeat": 0.6

@@ -22,10 +22,31 @@ SIZE = 256
 COLOURS = 96
 
 # Patterns kept out of the page, with the reason. Names are source paths under the root.
-EXCLUDE = {
+EXCLUDE = {}
+
+# Patterns redrawn as flat triangles before they are copied, with the reason. The redrawing keeps
+# a print's colours and loses its figures. It uses F:/xyh/fgcphotos/lowpoly.py, the tool that made
+# the wall photos, which is outside this repository; it is needed only to rebuild these copies.
+LOWPOLY = {
     'tela/kids/2026-10-06 16-58-08.png': 'figures resemble a commercial cartoon character',
     'tela/graphic/2026-10-06 17-33-18.png': 'motif resembles a fashion house monogram',
 }
+LOWPOLY_POINTS = 1400
+
+
+def redrawn(image, root):
+    import numpy as np
+    tool = root.parent / 'fgcphotos'
+    if not (tool / 'lowpoly.py').is_file():
+        raise SystemExit(f'Redrawing needs {tool / "lowpoly.py"}, which is missing.')
+    sys.path.insert(0, str(tool))
+    from lowpoly import extract_points, render_low_poly
+    # Worked at 512 px with a wrapped border, so the triangles carry across the tile's edges.
+    pad = 128
+    pixels = np.pad(np.array(image.resize((512, 512), Image.LANCZOS)), ((pad, pad), (pad, pad), (0, 0)), mode='wrap')
+    np.random.seed(20261006)
+    points = extract_points(pixels, num_points=int(LOWPOLY_POINTS * 2.25), edge_weight=0.8, min_dist=4)
+    return Image.fromarray(render_low_poly(pixels, points)[0][pad:-pad, pad:-pad])
 
 # How large one repeat of the pattern is in the room, in metres, by folder.
 REPEAT = {
@@ -54,7 +75,7 @@ def main():
     parser.add_argument('--force', action='store_true')
     args = parser.parse_args()
     root = args.root
-    entries, written, held = [], 0, []
+    entries, written, held, redone = [], 0, [], []
     for kind in ('tela', 'banig'):
         base = root / kind
         out_dir = root / '2d' / 'fabric' / kind
@@ -71,7 +92,11 @@ def main():
                 raise SystemExit(f'Two patterns would share the name {target.name}: {relative}')
             keep.add(target.name)
             if args.force or not target.exists() or target.stat().st_mtime < path.stat().st_mtime:
-                image = Image.open(path).convert('RGB').resize((SIZE, SIZE), Image.LANCZOS)
+                image = Image.open(path).convert('RGB')
+                if relative in LOWPOLY:
+                    image = redrawn(image, root)
+                    redone.append(f'{relative}: {LOWPOLY[relative]}')
+                image = image.resize((SIZE, SIZE), Image.LANCZOS)
                 image.quantize(COLOURS, method=Image.MEDIANCUT, dither=Image.NONE).save(target, optimize=True)
                 written += 1
             folder = path.parent.name if path.parent != base else kind
@@ -91,6 +116,8 @@ def main():
           f'{sum(e["kind"] == "banig" for e in entries)} banig); wrote {written} copies; {size / 1e6:.1f} MB in all.')
     for line in held:
         print('Held back,', line)
+    for line in redone:
+        print('Redrawn as triangles,', line)
 
 
 if __name__ == '__main__':
