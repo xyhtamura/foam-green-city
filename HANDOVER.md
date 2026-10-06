@@ -88,6 +88,8 @@ A new room costs twice: the time `buildSegment` takes, and the time its first dr
 
 Measuring. `?inspect=1` puts `build:{last,worst,rooms}` in `#render-stats`, in milliseconds, beside draw calls, triangles, geometries, textures, and programs. On `window.fgc`: `bench(from,count)` builds rooms outside the walk one at a time and returns build time, first-frame time, mesh count, and memory counts for each; `step()` runs one frame, for driving the walk from the console while the pane is hidden and `requestAnimationFrame` is paused. To step, replace `window.requestAnimationFrame` with a no-op first and put it back after, or every call leaves another loop queued; and define `document.hidden` as false, since the walk does not advance while hidden.
 
+Heap. `performance.memory.usedJSHeapSize` swings by 100 MB or more between collections, so one reading says nothing; take the lowest value over a stretch of 25 rooms or more and compare lows. On 2026-10-06 the lows sat at 81 to 108 MB over 480 rooms.
+
 Figures on this machine at 1280 x 720, twisting route, seed 5: an ordinary frame 11 ms; a frame that builds a room 37 ms, 81 ms at the ninetieth percentile; a frame that first shows one 19 ms, 43 ms at the ninetieth. Six rooms are about 1,500 to 1,700 draw calls and 370,000 to 530,000 triangles. Building the eight per-room kits takes 0.5 ms in all.
 
 ## Side-wall face, and kits built per room — 2026-10-06

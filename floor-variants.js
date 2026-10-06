@@ -15,7 +15,7 @@ export const FLOOR_IDS = [
   'imageTile',
 ];
 
-import { FLOOR_TILE_IMAGES } from './floor-tiles.js?v=44e2704819';
+import { FLOOR_TILE_IMAGES } from './floor-tiles.js?v=73a43d5120';
 
 // Images from the floor tile bank are loaded once and shared between rooms.
 const bankTextures = new Map();

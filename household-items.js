@@ -1,18 +1,18 @@
 // Places the mesh kits' objects in a room, then bakes them into one vertex-coloured mesh.
-import {createTablewareKit,TABLEWARE_COLOURS} from './tableware.js?v=44e2704819';
-import {createPlasticKit,PLASTIC_COLOURS} from './plastics.js?v=44e2704819';
-import {createLinenKit,LINEN_COLOURS} from './linens.js?v=44e2704819';
-import {placeOnSupport} from './object-supports.js?v=44e2704819';
-import {createHouseholdToolKit} from './household-tools.js?v=44e2704819';
-import {createPlasticStorageKit} from './plastic-storage.js?v=44e2704819';
-import {createCardboardKit} from './cardboard.js?v=44e2704819';
-import {createSchoolChairKit} from './school-chair.js?v=44e2704819';
-import {createBasketball,BALL_COLOURS} from './basketball.js?v=44e2704819';
-import {createFootwearKit,FOOTWEAR_TYPES} from './footwear.js?v=44e2704819';
-import {createBathroomKit} from './bathroom-tools.js?v=44e2704819';
-import {createDecorKit} from './decor.js?v=44e2704819';
-import {createMirrorsValancesKit,VALANCE_TYPES} from './mirrors-valances.js?v=44e2704819';
-import {createPackagingKit} from './packaging.js?v=44e2704819';
+import {createTablewareKit,TABLEWARE_COLOURS} from './tableware.js?v=73a43d5120';
+import {createPlasticKit,PLASTIC_COLOURS} from './plastics.js?v=73a43d5120';
+import {createLinenKit,LINEN_COLOURS} from './linens.js?v=73a43d5120';
+import {placeOnSupport} from './object-supports.js?v=73a43d5120';
+import {createHouseholdToolKit} from './household-tools.js?v=73a43d5120';
+import {createPlasticStorageKit} from './plastic-storage.js?v=73a43d5120';
+import {createCardboardKit} from './cardboard.js?v=73a43d5120';
+import {createSchoolChairKit} from './school-chair.js?v=73a43d5120';
+import {createBasketball,BALL_COLOURS} from './basketball.js?v=73a43d5120';
+import {createFootwearKit,FOOTWEAR_TYPES} from './footwear.js?v=73a43d5120';
+import {createBathroomKit} from './bathroom-tools.js?v=73a43d5120';
+import {createDecorKit} from './decor.js?v=73a43d5120';
+import {createMirrorsValancesKit,VALANCE_TYPES} from './mirrors-valances.js?v=73a43d5120';
+import {createPackagingKit} from './packaging.js?v=73a43d5120';
 
 // The kits only lend their geometry and colours to the bake. Tableware and cardboard build from
 // a fixed set of shapes, so one of each serves every room. The others make new geometry for each
@@ -286,30 +286,42 @@ export function addHouseholdItems({THREE,group,room,seed,material,blocked=[],flo
 
   // Bake: positions into the room's frame, each mesh's material colour into its vertices.
   group.updateMatrixWorld(true);
-  const inverse=group.matrixWorld.clone().invert(),tint=new THREE.Color(),m=new THREE.Matrix4(),v=new THREE.Vector3(),positions=[],colors=[];
+  // The size is counted first and the two arrays filled in place: growing plain arrays a number at a
+  // time and then copying them left several megabytes of garbage for every room.
+  let total=0;
+  for(const object of placed)object.traverse(o=>{if(o.isMesh)total+=o.geometry.index?o.geometry.index.count:o.geometry.attributes.position.count;});
+  const inverse=group.matrixWorld.clone().invert(),tint=new THREE.Color(),m=new THREE.Matrix4(),v=new THREE.Vector3();
+  const positions=new Float32Array(total*3),colors=new Float32Array(total*3);
+  let at=0;
   for(const object of placed){
     // One drift per object, so a cup and its saucer move together and no two bowls quite match.
     const drift=[(r()-0.5)*0.07,(r()-0.5)*0.16,(r()-0.5)*0.12];
     object.traverse(o=>{
       if(!o.isMesh)return;
       m.multiplyMatrices(inverse,o.matrixWorld);
-      const p=o.geometry.attributes.position,index=o.geometry.index,count=index?index.count:p.count;
+      const p=o.geometry.attributes.position,index=o.geometry.index,count=index?index.count:p.count,e=m.elements;
+      const direct=p.isBufferAttribute&&!p.isInterleavedBufferAttribute&&!p.normalized&&p.array instanceof Float32Array,P=p.array,I=index?.array;
       // A mesh with several materials names one per group of its geometry.
-      const several=Array.isArray(o.material),shade=material=>tint.copy(material.color).offsetHSL(drift[0],drift[1],drift[2]);
-      let c=shade(several?o.material[0]:o.material);
-      for(let i=0;i<count;i++){
-        if(several){const part=o.geometry.groups.find(g=>i>=g.start&&i<g.start+g.count);c=shade(o.material[part?.materialIndex??0]);}
-        v.fromBufferAttribute(p,index?index.getX(i):i).applyMatrix4(m);
-        positions.push(v.x,v.y,v.z);colors.push(c.r,c.g,c.b);
+      const several=Array.isArray(o.material),parts=several?o.geometry.groups:[{start:0,count,materialIndex:0}];
+      for(const part of parts){
+        tint.copy((several?o.material[part.materialIndex??0]:o.material).color).offsetHSL(drift[0],drift[1],drift[2]);
+        const end=Math.min(count,part.start+part.count);
+        for(let i=part.start;i<end;i++){
+          const k=index?I[i]:i,j=(at+i)*3;
+          if(direct){const x=P[k*3],y=P[k*3+1],z=P[k*3+2];positions[j]=e[0]*x+e[4]*y+e[8]*z+e[12];positions[j+1]=e[1]*x+e[5]*y+e[9]*z+e[13];positions[j+2]=e[2]*x+e[6]*y+e[10]*z+e[14];}
+          else{v.fromBufferAttribute(p,k).applyMatrix4(m);positions[j]=v.x;positions[j+1]=v.y;positions[j+2]=v.z;}
+          colors[j]=tint.r;colors[j+1]=tint.g;colors[j+2]=tint.b;
+        }
       }
+      at+=count;
     });
     object.parent.remove(object);
   }
   const geometry=new THREE.BufferGeometry();
-  geometry.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));
-  geometry.setAttribute('color',new THREE.Float32BufferAttribute(colors,3));
+  geometry.setAttribute('position',new THREE.BufferAttribute(positions,3));
+  geometry.setAttribute('color',new THREE.BufferAttribute(colors,3));
   geometry.computeVertexNormals();
   const mesh=new THREE.Mesh(geometry,material);mesh.name='household-items';mesh.userData.own=true;
-  report.triangles=positions.length/9;report.ms=+(performance.now()-began).toFixed(1);
+  report.triangles=total/3;report.ms=+(performance.now()-began).toFixed(1);
   return {mesh,footprints,walkBlocks,report};
 }

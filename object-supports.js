@@ -1,4 +1,4 @@
-import {FOOTPRINT_HALF,TABLE_TOP} from './furniture-layouts.js?v=44e2704819';
+import {FOOTPRINT_HALF,TABLE_TOP} from './furniture-layouts.js?v=73a43d5120';
 
 // Support coordinates are local to the furniture, before room deformation.
 export function tableSupport(placement){
