@@ -84,39 +84,39 @@ window.addEventListener('unhandledrejection',reportLoadFailure);
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { createJalousieWall } from './jalousie.js?v=a0bea98a3c';
-import { createDomesticProps, animateDomesticProps, createFurnitureVariants, FURNITURE_FINISHES } from './domestic-props.js?v=a0bea98a3c';
-import { WALL_HANGINGS } from './wall-assets.js?v=a0bea98a3c';
-import { RAW_OBJECTS, createRawObject, oddSize, cutoutTone } from './raw-object-assets.js?v=a0bea98a3c';
-import { loadCurtainPatterns } from './photo-assets.js?v=a0bea98a3c';
-import { ROOM_WIDTHS, partitionPieces } from './room-widths.js?v=a0bea98a3c';
+import { createJalousieWall } from './jalousie.js?v=1dff8746b9';
+import { createDomesticProps, animateDomesticProps, createFurnitureVariants, FURNITURE_FINISHES } from './domestic-props.js?v=1dff8746b9';
+import { WALL_HANGINGS } from './wall-assets.js?v=1dff8746b9';
+import { RAW_OBJECTS, createRawObject, oddSize, cutoutTone } from './raw-object-assets.js?v=1dff8746b9';
+import { loadCurtainPatterns } from './photo-assets.js?v=1dff8746b9';
+import { ROOM_WIDTHS, partitionPieces } from './room-widths.js?v=1dff8746b9';
 
-import { LAYOUT_IDS, generateFurnitureLayout, checkFurnitureLayout, TABLE_TOP } from './furniture-layouts.js?v=a0bea98a3c';
-import { FLOOR_IDS, createFloorVariant } from './floor-variants.js?v=a0bea98a3c';
-import { DOOR_STYLES, createDoorLeaves } from './doors.js?v=a0bea98a3c';
-import { MODEL_ASSETS, loadModelAssets } from './model-assets.js?v=a0bea98a3c';
-import { createRoomSet, createRoomFixture } from './room-sets.js?v=a0bea98a3c';
-import { createUratexSofa } from './uratex-sofa.js?v=a0bea98a3c';
-import { createWireRun } from './wire-runs.js?v=a0bea98a3c';
-import { createWallUtilities } from './wall-utilities.js?v=a0bea98a3c';
-import {createWalkSequence,retainedRooms,walkRegions,canOccupy,moveWalker,pathToRoute,roomExits} from './navigation.js?v=a0bea98a3c';
-import {addDomesticDetails} from './domestic-details.js?v=a0bea98a3c';
+import { LAYOUT_IDS, generateFurnitureLayout, checkFurnitureLayout, TABLE_TOP } from './furniture-layouts.js?v=1dff8746b9';
+import { FLOOR_IDS, createFloorVariant } from './floor-variants.js?v=1dff8746b9';
+import { DOOR_STYLES, createDoorLeaves } from './doors.js?v=1dff8746b9';
+import { MODEL_ASSETS, loadModelAssets } from './model-assets.js?v=1dff8746b9';
+import { createRoomSet, createRoomFixture } from './room-sets.js?v=1dff8746b9';
+import { createUratexSofa } from './uratex-sofa.js?v=1dff8746b9';
+import { createWireRun } from './wire-runs.js?v=1dff8746b9';
+import { createWallUtilities } from './wall-utilities.js?v=1dff8746b9';
+import {createWalkSequence,retainedRooms,walkRegions,canOccupy,moveWalker,pathToRoute,roomExits} from './navigation.js?v=1dff8746b9';
+import {addDomesticDetails} from './domestic-details.js?v=1dff8746b9';
 let wallUtilities;
-import { roomLighting } from './room-lighting.js?v=a0bea98a3c';
-import { scatterLevel, planScatter, planSideScatter, scatterBlocks, createScatterMesh } from './floor-scatter.js?v=a0bea98a3c';
-import { addWallProtrusions } from './wall-protrusions.js?v=a0bea98a3c';
-import { createBaseboards } from './baseboards.js?v=a0bea98a3c';
-import { addHouseholdItems } from './household-items.js?v=a0bea98a3c';
-import { mergeStaticMeshes, SOURCE_LAYER } from './merge-static.js?v=a0bea98a3c';
-import { addFabricItems } from './fabric-items.js?v=a0bea98a3c';
-import { spatialFrame, spatialPoint, SPATIAL_GLSL, SPATIAL_PROFILES } from './spatial-route.js?v=a0bea98a3c';
-import { floorHeight, cameraRoute, routePoint } from './room-sequences.js?v=a0bea98a3c';
-import {sideSpacePlan,DRAWER_VARIANTS} from './side-spaces.js?v=a0bea98a3c';
-import {addWoodDetails} from './wood-details.js?v=a0bea98a3c';
-import {addSideWashrooms} from './side-washrooms.js?v=a0bea98a3c';
-import {addSideStorage} from './side-storage.js?v=a0bea98a3c';
-import {addSideBedrooms} from './side-bedrooms.js?v=a0bea98a3c';
-import { branchOpenings, raiseFloor, createRoomArchitecture } from './room-architecture.js?v=a0bea98a3c';
+import { roomLighting } from './room-lighting.js?v=1dff8746b9';
+import { scatterLevel, planScatter, planSideScatter, scatterBlocks, createScatterMesh } from './floor-scatter.js?v=1dff8746b9';
+import { addWallProtrusions } from './wall-protrusions.js?v=1dff8746b9';
+import { createBaseboards } from './baseboards.js?v=1dff8746b9';
+import { addHouseholdItems } from './household-items.js?v=1dff8746b9';
+import { mergeStaticMeshes, SOURCE_LAYER } from './merge-static.js?v=1dff8746b9';
+import { addFabricItems } from './fabric-items.js?v=1dff8746b9';
+import { spatialFrame, spatialPoint, SPATIAL_GLSL, SPATIAL_PROFILES } from './spatial-route.js?v=1dff8746b9';
+import { floorHeight, cameraRoute, routePoint } from './room-sequences.js?v=1dff8746b9';
+import {sideSpacePlan,DRAWER_VARIANTS} from './side-spaces.js?v=1dff8746b9';
+import {addWoodDetails} from './wood-details.js?v=1dff8746b9';
+import {addSideWashrooms} from './side-washrooms.js?v=1dff8746b9';
+import {addSideStorage} from './side-storage.js?v=1dff8746b9';
+import {addSideBedrooms} from './side-bedrooms.js?v=1dff8746b9';
+import { branchOpenings, raiseFloor, createRoomArchitecture } from './room-architecture.js?v=1dff8746b9';
 
 // ---- palette (DepEd MPSS, stylized: green walls) ----
 const COL = {
@@ -866,6 +866,16 @@ function buildSegment(index){
   for(const b of scatterBlocks(scatterItems)){const y=floorHeight(descriptor,(b.minZ+b.maxZ)/2);grp.userData.walkBlocks.push({minX:b.minX,maxX:b.maxX,minZ:b.minZ+descriptor.startZ,maxZ:b.maxZ+descriptor.startZ,minY:y,maxY:y+b.height});}
   // Last, once nothing more will be added: one mesh per material for everything that stays still.
   grp.userData.merge=params.get('merge')==='off'?null:mergeStaticMeshes(THREE,grp);
+  // What each frame has to touch is listed once here: the cutouts that face the camera, whatever spins,
+  // and the fans' moving parts. Walking the whole room every frame to find them cost three passes over
+  // some 1,500 objects. On the twisting route nothing is culled by frustum, which is also set once.
+  const movers=[],fanParts=[];
+  grp.traverse(o=>{
+    if(o.userData.billboard||o.userData.spin)movers.push(o);
+    if(o.name==='fan-rotor'||o.name==='fan-head')fanParts.push(o);
+    if(twisted&&o.isMesh)o.frustumCulled=false;
+  });
+  grp.userData.movers=movers;grp.userData.fanParts=fanParts;
 }
 
 // Discarding a room also changes its salt: if it is built again, its contents differ.
@@ -883,16 +893,24 @@ let inspectedRoom=null,builtThisFrame=false,frameNumber=0,unshown=null,roomsDraw
 // A room is not drawn when all of it is behind the camera or all of it is past the fog, where it
 // would come out in the background colour. Depth is measured along the camera's view, as the fog
 // measures it, at points round a box that holds the room and anything opening off its sides.
-const _roomPoint=new THREE.Vector3();
-function roomInView(g){
+// The box's points are worked out once for a room and kept, in the route's bent space: a room does
+// not move, and working them out afresh every frame was the page's largest source of garbage.
+function roomBoxPoints(g){
   const d=g.userData,half=d.width/2+(branchOpenings(d).length?16:0.4),rise=d.rise??0;
   const low=Math.min(0,rise)-0.5,high=d.height+Math.max(0,rise)+0.5,z0=g.position.z+0.5,span=d.length+1,steps=Math.ceil(span/2);
-  let near=Infinity,far=-Infinity;
+  const points=new Float32Array((steps+1)*12);let at=0;
   for(let k=0;k<=steps;k++)for(const x of [-half,half])for(const y of [low,high]){
-    const z=z0-span*k/steps;
-    if(twisted)_roomPoint.fromArray(spatialPoint(x,y,z,routeProfile));else _roomPoint.set(x,y,z);
-    const depth=-_roomPoint.applyMatrix4(cam.matrixWorldInverse).z;
-    near=Math.min(near,depth);far=Math.max(far,depth);
+    const z=z0-span*k/steps,p=twisted?spatialPoint(x,y,z,routeProfile):[x,y,z];
+    points[at++]=p[0];points[at++]=p[1];points[at++]=p[2];
+  }
+  return points;
+}
+function roomInView(g){
+  const points=g.userData.boxPoints??=roomBoxPoints(g),e=cam.matrixWorldInverse.elements;
+  let near=Infinity,far=-Infinity;
+  for(let i=0;i<points.length;i+=3){
+    const depth=-(e[2]*points[i]+e[6]*points[i+1]+e[10]*points[i+2]+e[14]);
+    if(depth<near)near=depth;if(depth>far)far=depth;
   }
   return far>-0.5&&near<scene.fog.far+1.5;
 }
@@ -1113,13 +1131,16 @@ function tick(){
   cam.fov = twisted?72:72 + 7*Math.sin(t*0.09) + 3.5*Math.sin(t*0.09*PHI);
   cam.updateProjectionMatrix();
   cam.rotation.z = manual?0:0.02*Math.sin(t*0.047*PHI);
-  for (const grp of segments.values()) grp.traverse(o=>{
-    if (o.userData.billboard){ o.getWorldPosition(_wp);
-      let parentYaw=0;for(let p=o.parent;p;p=p.parent)parentYaw+=p.rotation.y;
-      o.rotation.y = Math.atan2(cam.position.x-_wp.x, cam.position.z-_wp.z)-parentYaw; }
-    else if (o.userData.spin){ o.rotation.y += delta*4.8; }
-  });
-    animateDomesticProps(scene,t);
+  for (const grp of segments.values()){
+    for(const o of grp.userData.movers){
+      if (o.userData.billboard){ o.getWorldPosition(_wp);
+        let parentYaw=0;for(let p=o.parent;p;p=p.parent)parentYaw+=p.rotation.y;
+        o.rotation.y = Math.atan2(cam.position.x-_wp.x, cam.position.z-_wp.z)-parentYaw; }
+      else o.rotation.y += delta*4.8;
+    }
+    // Each part is handed over by itself; the function walks only what it is given.
+    for(const part of grp.userData.fanParts)animateDomesticProps(part,t);
+  }
   const logicalZ=cam.position.z;
     let band=0;
     // In route order, so a face on a boundary takes the earlier room's profile however the rooms were built.
@@ -1152,7 +1173,6 @@ function tick(){
         const state=document.getElementById('route-state'),logical=JSON.parse(state.textContent);
         state.textContent=JSON.stringify({...logical,space:'twist',profile:routeProfile,roll:f.roll,world:world,up:f.up,fov:cam.fov});
       }
-      for(const grp of segments.values())grp.traverse(o=>{if(o.isMesh)o.frustumCulled=false;});
     }
     hideUnseenRooms();
     renderer.render(scene, cam);titleRendered=true;

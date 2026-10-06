@@ -112,7 +112,11 @@ export function createRoomSequence({sequence,widths=[],lengths=[],type,seed=5,ge
   const starts=[0];
   const forced=SEQUENCE_NAMES.includes(sequence);
   const demoRooms=generate&&createDemoRooms(seed,generate);
-  const raw=i=>sequence==='demo'&&demoRooms?demoRooms(i):forced?PHRASES[sequence][i%PHRASES[sequence].length]:mixedFloor(mixedRoom(i),i);
+  const make=i=>sequence==='demo'&&demoRooms?demoRooms(i):forced?PHRASES[sequence][i%PHRASES[sequence].length]:mixedFloor(mixedRoom(i),i);
+  // A shell is the same every time it is asked for, and the walk asks for the same few several times
+  // a frame. The recent ones are kept; nothing that reads one changes it.
+  const recent=new Map();
+  const raw=i=>{let shell=recent.get(i);if(!shell){if(recent.size>=256)recent.clear();recent.set(i,shell=make(i));}return shell;};
   const lengthAt=i=>lengths.length?lengths[i%lengths.length]:raw(i).length;
   function room(index){
     if(!Number.isInteger(index)||index<0)throw new RangeError('Room index must be a nonnegative integer');

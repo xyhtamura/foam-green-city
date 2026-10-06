@@ -74,6 +74,16 @@ A Kenney wall module is 0.1 m thick with its near face on its origin plane. The 
 
 A mirror or wall cloth takes any solid wall module without a protrusion, then checks what already hangs or stands there: `wallClear` measures the room's wall-side objects once, and only if something is to be hung. `?prop=kits` forces all of it. The kit's runner, banner, and fringe are not used; tables already have a runner.
 
+## Per-frame work and garbage — 2026-10-06
+
+The trace found the garbage was made every frame, not when rooms are built. Three things were changed, and the rule they leave is: **nothing in `tick` should walk a room's tree or work out anything that is the same next frame.**
+
+- `roomInView` keeps each room's box points in `userData.boxPoints`, in the route's bent space. It had called `spatialPoint` for every point of every room every frame, and each call builds a dozen small arrays.
+- `sequence.room(index)` returns the same object until the room's salt changes; `createWalkSequence` keeps the last 64 and `createRoomSequence` the last 256 shells. It had generated the descriptor afresh on every call, several times a frame. A caller must not change the object it gets; `buildSegment` copies it into `userData`.
+- `buildSegment` ends by listing `userData.movers` (camera-facing cutouts and spinning things) and `userData.fanParts`, and on the twisting route sets `frustumCulled=false` once. `tick` had walked every room three times a frame to find them.
+
+`performance.memory` does not change inside one task as far as could be seen, so it cannot time a phase of a build; it does move between frames stepped in a loop. To see what makes garbage, step frames with a suspect switched off and compare the heap's upward movement per frame: `JSON.stringify`, `THREE.Object3D.prototype.traverse`, and `renderer.render` can each be replaced for a run.
+
 ## Still meshes merged by material — 2026-10-06
 
 `merge-static.js` runs at the end of `buildSegment`. Every mesh in the room that will not move again is copied, in the room's frame, into one mesh per material, named `merged-static`. The originals stay in the room's tree, because the placement code, the inspector, and `dropSegment` all read it, and are put on layer 1 (`SOURCE_LAYER`), which the camera does not draw. A raycaster reaches them only with `ray.layers.enable(SOURCE_LAYER)`; the merged meshes ignore rays.

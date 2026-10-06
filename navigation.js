@@ -1,6 +1,6 @@
-import {branchOpenings,sideSpacePlan} from './side-spaces.js?v=a0bea98a3c';
-import {generateRoom} from './room-generator.js?v=a0bea98a3c';
-import {createRoomSequence,cameraRoute,routePoint,passageExit,exitRoute} from './room-sequences.js?v=a0bea98a3c';
+import {branchOpenings,sideSpacePlan} from './side-spaces.js?v=1dff8746b9';
+import {generateRoom} from './room-generator.js?v=1dff8746b9';
+import {createRoomSequence,cameraRoute,routePoint,passageExit,exitRoute} from './room-sequences.js?v=1dff8746b9';
 
 // Geometry is disposable; seeded descriptors and distance prefixes reconstruct it.
 export function createWalkSequence(options){
@@ -9,17 +9,25 @@ export function createWalkSequence(options){
   // A room's shell depends on its index alone. Its contents also depend on a salt, fixed
   // while the room is built and changed once it is discarded, so a revisit differs.
   const held=new Map();let era=0;
+  // The walk asks for the rooms it keeps several times a frame. A room is the same until its salt
+  // changes, so the recent ones are kept with the salt they were made under. Callers do not change them.
+  const recent=new Map();
+  function make(index,salt){
+    const decorate=r=>({...r,sideSpaces:options.sideSpaces,sideRoom:options.sideRoom,sideExits:options.sideExits,branchSeed:(options.seed??5)+salt*31,
+      ...(salt?{generationIndex:(r.generationIndex??r.index)+salt*1000003}:{})});
+    if(index>=0)return decorate(forward.room(index));
+    const source=backward.room(-index-1);
+    return decorate({...source,index,generationIndex:10000-index,startZ:-source.startZ+source.length});
+  }
   return {
     hold(index){if(!held.has(index))held.set(index,era);},
     release(index){held.delete(index);era++;},
     reroll(){held.clear();era++;},
     room(index){
-      const salt=held.get(index)??era;
-      const decorate=r=>({...r,sideSpaces:options.sideSpaces,sideRoom:options.sideRoom,sideExits:options.sideExits,branchSeed:(options.seed??5)+salt*31,
-        ...(salt?{generationIndex:(r.generationIndex??r.index)+salt*1000003}:{})});
-      if(index>=0)return decorate(forward.room(index));
-      const source=backward.room(-index-1);
-      return decorate({...source,index,generationIndex:10000-index,startZ:-source.startZ+source.length});
+      const salt=held.get(index)??era,kept=recent.get(index);
+      if(kept&&kept.salt===salt)return kept.room;
+      if(recent.size>=64)recent.clear();
+      const room=make(index,salt);recent.set(index,{salt,room});return room;
     },
     atDistance(distance){
       if(distance>=0)return this.room(forward.atDistance(distance).index);

@@ -1412,3 +1412,19 @@ Xyh asked for the wall cloth rate to be raised; it had appeared in 1 of 93 rooms
 Checks. With `?prop=fabric`, all six rooms 20 to 25 got one, four of them on the far wall; viewed room 22, where a striped cloth hangs left of the doorway with the light switch clear between them. At natural rates on the twisting route, 74 rooms from room 20: wall cloth in 18, of which 13 on the far wall; no console error.
 
 Not done. A far-wall cloth is not checked against what stands in front of it; furniture is kept 1.5 m off that wall by the layouts, which I read from the code and did not measure. Nothing viewed on the twisting route. Nothing was pushed.
+
+## 2026-10-06 — Claude Code — the garbage trace: per-frame work, not room builds
+
+Xyh asked for the trace left open two entries back. What changed is in HANDOVER.md under per-frame work.
+
+Method. `performance.memory.usedJSHeapSize` read 0 change across six 1 MB allocations inside one task, so it could not attribute garbage to a phase of `buildSegment` as planned. It does move between stepped frames. So: step the walk, record each frame's time, whether it built a room, and the heap's change; call a fall of more than 8 MB a collection.
+
+Before, at `?speed=14` on the twisting route, 1280 x 720, 6,328 frames and 72 rooms: 18 collections of about 62 MB; the frame at a collection took 100 ms at the median and 209 ms at most; frames with no build took 5.7 ms at the median, 9.9 at the ninetieth percentile, 31 at the ninety-ninth; 32 such frames ran over 50 ms. Heap rose 0.21 MB a frame, and 18 MB a room at 80 frames a room against 9 to 12 MB at 25 frames a room, which put most of it per frame.
+
+After the first two changes, 11,374 frames and 78 rooms: 73 collections of about 29 MB; the frame at a collection took 6 ms at the median; frames with no build 4.2 ms at the median, 5.8 at the ninetieth, 7.5 at the ninety-ninth; 7 ran over 50 ms, none of them at a collection. After the third, 5,463 frames: 3.8, 5.3, and 10.2 ms; 2 over 50 ms.
+
+What remains, at a standstill with `?still=1`: about 54 KB a frame, against 13 KB for `renderer.render` alone. Replacing `JSON.stringify` and `JSON.parse` for a run took it from 51 to 29 KB, and that is the inspector's state written every frame, which the published page does not do. These readings moved by half again between identical runs, so they rank causes and no more.
+
+Checks. Visibility rule with cached points, same frame drawn with it and without: 136 frames, none differing. Fans: a rotor's angle changed in 6,448 of 6,458 frame observations, and a camera-facing cutout's in 37,618 of 37,670; this also settles the fan left unwatched when meshes were merged. All twelve node checks, `stamp_versions --check`, and `check_published_assets` pass; no console error.
+
+Not done. Garbage from building a room, about 6 MB by the two-speed estimate, was not broken down, since the method could not see inside a build. The frame at a collection fell from 100 ms to 6 ms, and I did not separate how much of the 100 ms was the collection and how much was a build landing on the same frame. Nothing measured without `?inspect=1`, since the handle needs it. The manual-walk path, which calls `sequence.atDistance` every frame, was not exercised. Nothing viewed with the pane visible. Nothing was pushed.
