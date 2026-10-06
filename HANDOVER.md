@@ -47,6 +47,23 @@ A Kenney wall module is 0.1 m thick with its near face on its origin plane. The 
 
 `?inspect=1` now also sets `window.fgc` to `{THREE,scene,cam,renderer,segments,WALLP}` for console measurement. With the browser pane hidden, `requestAnimationFrame` is paused, so a test can pose `cam`, call `renderer.render`, and `readPixels` in the same task.
 
+## Washing lines, hangers, and colours for doors and windows — 2026-10-06
+
+`sampayan.js` is this project's own, not a copy from `fgc-cx`. The kit there, `household-details.js`, draws each hanger as a tube of about 1,150 triangles by its code, which suits one rack and not a room of lines. Here a hanger is two flat ribbons, 16 triangles, and a garment a flat outline: shirt, sando, shorts, trousers, duster, towel, blouse, in `CLOTHES_COLOURS`, on hangers in `HANGER_COLOURS`. `createSampayan(THREE)` gives `line({length,sag,count,hangers,seed,cluster,gap,colours})`, a string along local x with clothes on it, and `rack(...)`, a rail on two uprights. Clothes on hangers hang across the line and face along it; pegged clothes hang along it. So a line run down the room shows its hangers face on to the walker, and a line across the room is pegged. `gap` leaves a stretch bare.
+
+`household-items.js` places them as its fifth set, baked with the rest:
+
+- A room given over to washing: lines the whole length of the room every half metre or so, none within 0.6 m of the centre line, up to 150 garments, sometimes all one colour with white. 12% of bare rooms, 6% of halls, 3% of bedrooms, 2% of salas; not in a room with columns, stairs, a platform, passages, or a rising floor. `?prop=sampayan` forces it.
+- One line along a wall for 2 to 5.5 m, on hangers: 22% of bedrooms, 20% of bathrooms and bare rooms, 12% of salas, 10% of kitchens.
+- One line across the room, pegged, bare for 0.6 m either side of the centre: 15% of bathrooms, 12% of bare rooms, 8% of kitchens and bedrooms.
+- Two to five hangers hooked along the top of a glazed window: 12% of such windows.
+- A rail of hangers on the floor: 10% of bedrooms, 6% of bare rooms, 3% of salas. A folding drying stand with pegged washing, from the kit: 8% of bare rooms, 6% of bathrooms and bedrooms, 4% of salas.
+- From the kit also: a wall clock stopped at a random time in 14% of rooms other than bathrooms; a helmet on a table or shelf in 3 to 6% of salas, bedrooms, bare rooms, and kitchens; one or two paper plates on a table in 30% of halls, 20% of auditoriums, 8% of kitchens.
+
+The kit's screen door and screen window are not used: their mesh is a blended texture, which the bake cannot carry. Its hanger rack and its lines on hangers are not used either, for the triangle count above.
+
+Doors and window frames. A room's doors take its trim colour 45% of the time and otherwise one of `DOOR_COLOURS`, weighted toward wood browns and off-white; each side door then has an even chance of the room's door colour or another of its own. Window frames take the trim colour 60% of the time and otherwise one of `WINDOW_COLOURS`, one colour to a room. `repaint(object,group,trim)` takes the colour; the copies it makes are kept apart from the room's trim copies and disposed with the room. `?trim=<hex>` still forces everything to one colour. The inspector reports `doorColor` and `windowColor`.
+
 ## Patterned cloth and banig — 2026-10-06
 
 `tela/` and `banig/` hold the patterns as supplied or generated, 119 PNGs and 146 MB, and are not tracked. `python scripts/index_fabrics.py` writes a 256 px, 96-colour copy of each to `2d/fabric/<kind>/` and lists them in `fabric-assets.js`; 117 copies come to 4.1 MB. Run it again after adding or removing a pattern; it rebuilds only what changed and removes copies whose source is gone. `REPEAT` in that script sets how large one repeat of a pattern is in the room, by folder. `EXCLUDE` holds a pattern back from the page and `LOWPOLY` has it redrawn as flat triangles first, each with its reason; two are redrawn, see ASSETS.md.

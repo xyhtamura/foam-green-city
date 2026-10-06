@@ -84,39 +84,39 @@ window.addEventListener('unhandledrejection',reportLoadFailure);
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { createJalousieWall } from './jalousie.js?v=93270adc28';
-import { createDomesticProps, animateDomesticProps, createFurnitureVariants, FURNITURE_FINISHES } from './domestic-props.js?v=93270adc28';
-import { WALL_HANGINGS } from './wall-assets.js?v=93270adc28';
-import { RAW_OBJECTS, createRawObject, oddSize, cutoutTone } from './raw-object-assets.js?v=93270adc28';
-import { loadCurtainPatterns } from './photo-assets.js?v=93270adc28';
-import { ROOM_WIDTHS, partitionPieces } from './room-widths.js?v=93270adc28';
+import { createJalousieWall } from './jalousie.js?v=536dc7bb8e';
+import { createDomesticProps, animateDomesticProps, createFurnitureVariants, FURNITURE_FINISHES } from './domestic-props.js?v=536dc7bb8e';
+import { WALL_HANGINGS } from './wall-assets.js?v=536dc7bb8e';
+import { RAW_OBJECTS, createRawObject, oddSize, cutoutTone } from './raw-object-assets.js?v=536dc7bb8e';
+import { loadCurtainPatterns } from './photo-assets.js?v=536dc7bb8e';
+import { ROOM_WIDTHS, partitionPieces } from './room-widths.js?v=536dc7bb8e';
 
-import { LAYOUT_IDS, generateFurnitureLayout, checkFurnitureLayout, TABLE_TOP } from './furniture-layouts.js?v=93270adc28';
-import { FLOOR_IDS, createFloorVariant } from './floor-variants.js?v=93270adc28';
-import { DOOR_STYLES, createDoorLeaves } from './doors.js?v=93270adc28';
-import { MODEL_ASSETS, loadModelAssets } from './model-assets.js?v=93270adc28';
-import { createRoomSet, createRoomFixture } from './room-sets.js?v=93270adc28';
-import { createUratexSofa } from './uratex-sofa.js?v=93270adc28';
-import { createWireRun } from './wire-runs.js?v=93270adc28';
-import { createWallUtilities } from './wall-utilities.js?v=93270adc28';
-import {createWalkSequence,retainedRooms,walkRegions,canOccupy,moveWalker,pathToRoute,roomExits} from './navigation.js?v=93270adc28';
-import {addDomesticDetails} from './domestic-details.js?v=93270adc28';
+import { LAYOUT_IDS, generateFurnitureLayout, checkFurnitureLayout, TABLE_TOP } from './furniture-layouts.js?v=536dc7bb8e';
+import { FLOOR_IDS, createFloorVariant } from './floor-variants.js?v=536dc7bb8e';
+import { DOOR_STYLES, createDoorLeaves } from './doors.js?v=536dc7bb8e';
+import { MODEL_ASSETS, loadModelAssets } from './model-assets.js?v=536dc7bb8e';
+import { createRoomSet, createRoomFixture } from './room-sets.js?v=536dc7bb8e';
+import { createUratexSofa } from './uratex-sofa.js?v=536dc7bb8e';
+import { createWireRun } from './wire-runs.js?v=536dc7bb8e';
+import { createWallUtilities } from './wall-utilities.js?v=536dc7bb8e';
+import {createWalkSequence,retainedRooms,walkRegions,canOccupy,moveWalker,pathToRoute,roomExits} from './navigation.js?v=536dc7bb8e';
+import {addDomesticDetails} from './domestic-details.js?v=536dc7bb8e';
 let wallUtilities;
-import { roomLighting } from './room-lighting.js?v=93270adc28';
-import { scatterLevel, planScatter, planSideScatter, scatterBlocks, createScatterMesh } from './floor-scatter.js?v=93270adc28';
-import { addWallProtrusions } from './wall-protrusions.js?v=93270adc28';
-import { createBaseboards } from './baseboards.js?v=93270adc28';
-import { addHouseholdItems } from './household-items.js?v=93270adc28';
-import { mergeStaticMeshes, SOURCE_LAYER } from './merge-static.js?v=93270adc28';
-import { addFabricItems } from './fabric-items.js?v=93270adc28';
-import { spatialFrame, spatialPoint, SPATIAL_GLSL, SPATIAL_PROFILES } from './spatial-route.js?v=93270adc28';
-import { floorHeight, cameraRoute, routePoint } from './room-sequences.js?v=93270adc28';
-import {sideSpacePlan,DRAWER_VARIANTS} from './side-spaces.js?v=93270adc28';
-import {addWoodDetails} from './wood-details.js?v=93270adc28';
-import {addSideWashrooms} from './side-washrooms.js?v=93270adc28';
-import {addSideStorage} from './side-storage.js?v=93270adc28';
-import {addSideBedrooms} from './side-bedrooms.js?v=93270adc28';
-import { branchOpenings, raiseFloor, createRoomArchitecture } from './room-architecture.js?v=93270adc28';
+import { roomLighting } from './room-lighting.js?v=536dc7bb8e';
+import { scatterLevel, planScatter, planSideScatter, scatterBlocks, createScatterMesh } from './floor-scatter.js?v=536dc7bb8e';
+import { addWallProtrusions } from './wall-protrusions.js?v=536dc7bb8e';
+import { createBaseboards } from './baseboards.js?v=536dc7bb8e';
+import { addHouseholdItems } from './household-items.js?v=536dc7bb8e';
+import { mergeStaticMeshes, SOURCE_LAYER } from './merge-static.js?v=536dc7bb8e';
+import { addFabricItems } from './fabric-items.js?v=536dc7bb8e';
+import { spatialFrame, spatialPoint, SPATIAL_GLSL, SPATIAL_PROFILES } from './spatial-route.js?v=536dc7bb8e';
+import { floorHeight, cameraRoute, routePoint } from './room-sequences.js?v=536dc7bb8e';
+import {sideSpacePlan,DRAWER_VARIANTS} from './side-spaces.js?v=536dc7bb8e';
+import {addWoodDetails} from './wood-details.js?v=536dc7bb8e';
+import {addSideWashrooms} from './side-washrooms.js?v=536dc7bb8e';
+import {addSideStorage} from './side-storage.js?v=536dc7bb8e';
+import {addSideBedrooms} from './side-bedrooms.js?v=536dc7bb8e';
+import { branchOpenings, raiseFloor, createRoomArchitecture } from './room-architecture.js?v=536dc7bb8e';
 
 // ---- palette (DepEd MPSS, stylized: green walls) ----
 const COL = {
@@ -355,20 +355,22 @@ function wallOnEdge(proto){
   if(!wallFaces.has(proto))wallFaces.set(proto,new THREE.Box3().setFromObject(proto).max.z<0.1);   // frames stand 0.04 m proud; authored walls reach 0.16 m or more
   return wallFaces.get(proto);
 }
-function addWall(group, proto, x, z, ry){
-  const c = repaint(proto.clone(),group);
+function addWall(group, proto, x, z, ry, trim){
+  const c = repaint(proto.clone(),group,trim);
   c.position.set(x,0,z); c.rotation.y = ry; group.add(c);
 }
 // Shared prototypes carry the default wall and trim colours; a room swaps in its own.
-function repaint(object,group){
-  const wall=group.userData.wallColor??COL.wall,trim=group.userData.trimColor??COL.trim;
+function repaint(object,group,trim=group.userData.trimColor??COL.trim){
+  const wall=group.userData.wallColor??COL.wall;
   if(wall===COL.wall&&trim===COL.trim)return object;
-  const cache=group.userData.wallPaintMaterials;
+  // A door or window in a colour of its own keeps its copies apart from the room's trim.
+  const cache=group.userData.wallPaintMaterials,own=trim!==(group.userData.trimColor??COL.trim);
   object.traverse(o=>{if(o.isMesh){const tint=m=>{
     const hex=m.color?.getHex(),target=hex===COL.wall?wall:hex===COL.trim?trim:hex;
     if(target===hex)return m;
-    if(!cache.has(m))cache.set(m,curvize(Object.assign(m.clone(),{color:new THREE.Color(target)})));
-    return cache.get(m);
+    const key=own&&hex===COL.trim?m.uuid+':'+trim:m;
+    if(!cache.has(key))cache.set(key,curvize(Object.assign(m.clone(),{color:new THREE.Color(target)})));
+    return cache.get(key);
   };o.material=Array.isArray(o.material)?o.material.map(tint):tint(o.material);}});
   return object;
 }
@@ -521,6 +523,11 @@ const weighted=(list,roll)=>{let n=roll*list.reduce((sum,[,w])=>sum+w,0);for(con
 const DARK_GREEN=0x203c21,FOAM=0xbfdcc9,CREAM=0xe7e0cc;
 const PALMYRA_TRIMS=[[0x6b8a3a,35],[0x7d9a45,25],[0x5a7a34,20],[0x86a04e,20]];
 const ACCENT_TRIMS=[[0x373a6e,18],[0xb46767,18],[0xd3574a,16],[0x2b85d2,14],[0xe2b34e,14],[0x7e75a7,10],[0x203c07,10]];
+// Doors and window frames take the room's trim colour, or one of their own: doors a little more than half
+// the time, window frames two times in five. Each entry is a colour and its weight.
+const DOOR_COLOURS=[[0x8a5a34,14],[0x6f4526,12],[0xa9744a,10],[0xc49a6c,8],[0xeeeae0,12],[0xe6d9b8,8],[0x7fb2d6,6],[0x2f4a78,5],[0x7a1f2b,6],[0x8c9691,5],[0xe2b34e,4],[0xd98fb0,3],[0x3f8f8a,4],[0x203c21,3]];
+const WINDOW_COLOURS=[[0xeeeae0,26],[0x8a5a34,16],[0x6f4526,10],[0xb9bfc0,18],[0x4f7fa8,8],[0x3f6f58,8],[0x7a1f2b,6],[0xe6d9b8,8]];
+const weightedColour=(list,roll)=>{let at=roll*list.reduce((sum,[,w])=>sum+w,0);for(const [colour,w] of list){at-=w;if(at<0)return colour;}return list.at(-1)[0];};
 function trimFor(paint,next){
   const family=paint.startsWith('foam')?[['dark',40],['palmyra',38],['blueGreen',8],['foam',8],['accent',6]]:
     paint.startsWith('palmyra')?[['dark',45],['foam',35],['cream',20]]:
@@ -606,6 +613,11 @@ function buildSegment(index){
   grp.userData.trimColor=forcedTrim??trimFor(grp.userData.wallPaint,paintRandom);
   grp.userData.wallColor=grp.userData.wallPaint==='foam'?foamColour(paintRandom,i>=0&&i<4):WALL_PAINTS[grp.userData.wallPaint];
   grp.userData.wallPaintMaterials=new Map();
+  // From a stream of their own, so paint and furniture are what they were.
+  const fitting=mulberry32((i*69069+4219)>>>0);
+  const doorColour=forcedTrim||fitting()<0.45?grp.userData.trimColor:weightedColour(DOOR_COLOURS,fitting());
+  const windowColour=forcedTrim||fitting()<0.6?grp.userData.trimColor:weightedColour(WINDOW_COLOURS,fitting());
+  grp.userData.doorColor=doorColour;grp.userData.windowColor=windowColour;
   const r = mulberry32((i*2654435761 + 12345)>>>0);   // deterministic per segment
   const seededRoom = ROOMS.find(room=>room.name===descriptor.type)??{name:descriptor.type,pool:ROOMS.find(room=>room.name==='bare').pool};
   // Optional room preview for checking an arrangement without waiting for it.
@@ -639,7 +651,7 @@ function buildSegment(index){
   for (let j=0;j<SEG_TILES;j++){ const lz=-j*TSCALE;
     for(const side of [-1,1]){
       if(branchOpenings(descriptor).some(p=>p.side===side&&(j===p.j||j===p.j+1)))continue;
-      const tile=windowTile();addWall(grp,tile,side*(half-(wallOnEdge(tile)?WALL_INSET:0)),side>0?lz-TSCALE:lz,side>0?-Math.PI/2:Math.PI/2);
+      const tile=windowTile();addWall(grp,tile,side*(half-(wallOnEdge(tile)?WALL_INSET:0)),side>0?lz-TSCALE:lz,side>0?-Math.PI/2:Math.PI/2,tile===WALLP.wall?undefined:windowColour);
       if(tile.userData.windowVariant)windowSpots.push({side,z:lz-1,variant:tile.userData.windowVariant,curtained:tile.userData.curtainOpenness!==undefined});
       grp.children.at(-1).position.y=Math.min(floorHeight(descriptor,lz),floorHeight(descriptor,lz-2));
       if(tile===WALLP.wall&&unfinishedWalls&&(params.get('walls')==='blocks'||r()<0.65)){
@@ -649,7 +661,7 @@ function buildSegment(index){
         face.userData.own=true;face.name='hollow-block-wall';grp.add(face);
       }else skirting.push({side,z0:lz,z1:lz-2,face:wallOnEdge(tile)?WALL_INSET:0.08});   // bare block walls get no baseboard
       if(tile===WALLP.wall&&j>0&&r()<0.16){
-        const style=DOOR_STYLES[Math.floor(r()*DOOR_STYLES.length)],door=repaint(DOORS[style].clone(),grp);
+        const style=DOOR_STYLES[Math.floor(r()*DOOR_STYLES.length)],door=repaint(DOORS[style].clone(),grp,forcedTrim||fitting()<0.5?doorColour:weightedColour(DOOR_COLOURS,fitting()));
         door.rotation.y=side>0?-Math.PI/2:Math.PI/2;
         const z=lz-0.56-side*0.44;door.position.set(side*(half-0.13),floorHeight(descriptor,z),z);door.userData.door=style;grp.add(door);
       }
@@ -715,7 +727,7 @@ function buildSegment(index){
     // The doorway model's frame ends 0.486 m from the centre line and its room-side face is 0.04 m
     // proud of the partition plane. The hinge goes on that jamb, and the leaf stands open past square.
     const leafSide=grp.userData.thresholdDoor,swing=0.12+((leafRoll*977)%1)*0.6;
-    const door=repaint(DOORS[thresholdStyle].clone(),grp);door.position.set(leafSide*0.47,0,-SEG_LEN+0.05);
+    const door=repaint(DOORS[thresholdStyle].clone(),grp,doorColour);door.position.set(leafSide*0.47,0,-SEG_LEN+0.05);
     door.rotation.y=-Math.PI/2+leafSide*swing;door.userData.door=thresholdStyle;grp.add(door);
   }
   // ceiling fan sometimes
@@ -1222,7 +1234,7 @@ function inspectRooms(){
       item.roomSets=sets.map(o=>o.userData.roomSet);
       item.roomSetsClear=sets.every(o=>{const b=new THREE.Box3().setFromObject(o);return b.min.x>=-g.userData.width/2+0.05&&b.max.x<=g.userData.width/2-0.05&&(b.max.x<=-0.6||b.min.x>=0.6)&&b.min.z>=g.position.z-g.userData.length+0.2&&b.max.z<=g.position.z-0.2&&g.children.filter(p=>p.userData.diningChair||p.userData.diningTable).every(p=>!b.intersectsBox(new THREE.Box3().setFromObject(p)));});
       item.fixtures=sets.flatMap(o=>o.children.map(p=>p.userData.fixture));
-      item.wallPaint=g.userData.wallPaint;item.wallColor=g.userData.wallColor.toString(16).padStart(6,'0');item.wallFittings=g.userData.wallFittings;item.protrusions=g.userData.protrusions;item.trim=g.userData.trimColor.toString(16);item.baseboards=Math.round(g.userData.baseboardLength);
+      item.wallPaint=g.userData.wallPaint;item.wallColor=g.userData.wallColor.toString(16).padStart(6,'0');item.wallFittings=g.userData.wallFittings;item.protrusions=g.userData.protrusions;item.trim=g.userData.trimColor.toString(16);item.doorColor=g.userData.doorColor.toString(16);item.windowColor=g.userData.windowColor.toString(16);item.baseboards=Math.round(g.userData.baseboardLength);
       item.sofas=[];g.traverse(o=>{if(o.name==='uratexSofa')item.sofas.push({fabric:o.userData.fabricStyle,pillows:o.userData.pillowConfig});});
       item.rawObjects=[];g.traverse(o=>{if(o.userData.rawObject)item.rawObjects.push(o.userData.rawObject);});
       item.photoFiles=g.children.filter(o=>o.userData.wallPhoto).map(o=>o.userData.photoFile);

@@ -1,18 +1,20 @@
 // Places the mesh kits' objects in a room, then bakes them into one vertex-coloured mesh.
-import {createTablewareKit,TABLEWARE_COLOURS} from './tableware.js?v=93270adc28';
-import {createPlasticKit,PLASTIC_COLOURS} from './plastics.js?v=93270adc28';
-import {createLinenKit,LINEN_COLOURS} from './linens.js?v=93270adc28';
-import {placeOnSupport} from './object-supports.js?v=93270adc28';
-import {createHouseholdToolKit} from './household-tools.js?v=93270adc28';
-import {createPlasticStorageKit} from './plastic-storage.js?v=93270adc28';
-import {createCardboardKit} from './cardboard.js?v=93270adc28';
-import {createSchoolChairKit} from './school-chair.js?v=93270adc28';
-import {createBasketball,BALL_COLOURS} from './basketball.js?v=93270adc28';
-import {createFootwearKit,FOOTWEAR_TYPES} from './footwear.js?v=93270adc28';
-import {createBathroomKit} from './bathroom-tools.js?v=93270adc28';
-import {createDecorKit} from './decor.js?v=93270adc28';
-import {createMirrorsValancesKit,VALANCE_TYPES} from './mirrors-valances.js?v=93270adc28';
-import {createPackagingKit} from './packaging.js?v=93270adc28';
+import {createTablewareKit,TABLEWARE_COLOURS} from './tableware.js?v=536dc7bb8e';
+import {createPlasticKit,PLASTIC_COLOURS} from './plastics.js?v=536dc7bb8e';
+import {createLinenKit,LINEN_COLOURS} from './linens.js?v=536dc7bb8e';
+import {placeOnSupport} from './object-supports.js?v=536dc7bb8e';
+import {createHouseholdToolKit} from './household-tools.js?v=536dc7bb8e';
+import {createPlasticStorageKit} from './plastic-storage.js?v=536dc7bb8e';
+import {createCardboardKit} from './cardboard.js?v=536dc7bb8e';
+import {createSchoolChairKit} from './school-chair.js?v=536dc7bb8e';
+import {createBasketball,BALL_COLOURS} from './basketball.js?v=536dc7bb8e';
+import {createFootwearKit,FOOTWEAR_TYPES} from './footwear.js?v=536dc7bb8e';
+import {createBathroomKit} from './bathroom-tools.js?v=536dc7bb8e';
+import {createSampayan,CLOTHES_COLOURS} from './sampayan.js?v=536dc7bb8e';
+import {createHouseholdDetailsKit} from './household-details.js?v=536dc7bb8e';
+import {createDecorKit} from './decor.js?v=536dc7bb8e';
+import {createMirrorsValancesKit,VALANCE_TYPES} from './mirrors-valances.js?v=536dc7bb8e';
+import {createPackagingKit} from './packaging.js?v=536dc7bb8e';
 
 // The kits only lend their geometry and colours to the bake. Tableware and cardboard build from
 // a fixed set of shapes, so one of each serves every room. The others make new geometry for each
@@ -294,6 +296,71 @@ export function addHouseholdItems({THREE,group,room,seed,material,blocked=[],flo
       }
       table.add(skirt);placed.push(skirt);count('skirting');
     }
+  }
+  // ---- The fifth set: washing on lines and hangers, and a few loose details. Drawn after everything above. ----
+  const sampayan=createSampayan(THREE),detailKit=createHouseholdDetailsKit();
+  const lineSeed=()=>Math.floor(r()*1e9)+1,lineHeight=()=>Math.min(room.height-0.18,1.88+r()*0.24);
+  const garments=n=>{report.garments=(report.garments??0)+n;};
+  // A line run down the room, parallel to the side walls, clothes on hangers facing whoever walks it.
+  const lineAlong=(x,z0,z1,options={})=>{
+    const length=z0-z1,line=sampayan.line({length,sag:Math.min(0.35,length*(0.02+r()*0.02)),hangers:true,seed:lineSeed(),count:Math.max(1,Math.min(40,Math.round(length*(1.6+r()*2.2)))),...options});
+    line.rotation.y=Math.PI/2;line.position.set(x,floorAt((z0+z1)/2)+lineHeight(),(z0+z1)/2);group.add(line);placed.push(line);garments(line.userData.garments);count('lines');
+  };
+  const strungOpen=!room.columns&&!room.stairs&&!room.platform&&!room.rise&&!(room.passages?.length);
+  // A room given over to washing: lines the length of it, every half metre or so, none over the walker's way.
+  const washRoom={bare:0.12,hall:0.06,bedroom:0.03,sala:0.02}[room.type];
+  if(strungOpen&&(force==='sampayan'||(force!=='kits'&&washRoom&&r()<washRoom*amount))){
+    const z0=-0.2,z1=-room.length+0.2,same=r()<0.4,oneColour=same?[pick(CLOTHES_COLOURS),0xf1efe6]:CLOTHES_COLOURS;
+    let budget=150;
+    for(const side of [-1,1])for(let x=0.62+r()*0.15;x<half-0.28&&budget>0;x+=0.45+r()*0.3){
+      const n=Math.min(budget,Math.max(3,Math.round(room.length*(1.5+r()*2))));budget-=n;
+      lineAlong(side*x,z0,z1,{count:Math.min(40,n),colours:oneColour,oneHangerColour:r()<0.5});
+    }
+    report.sampayanRoom=1;
+  }else{
+    // One line along a wall, for part of the room's length.
+    if(chance({bedroom:0.22,bathroom:0.2,bare:0.2,sala:0.12,kitchen:0.1}[room.type]??-1)&&!room.rise){
+      const span=Math.min(room.length-0.6,2+r()*3.5),z0=-(0.3+r()*(room.length-0.6-span));
+      lineAlong(wallSide()*(half-0.3-r()*0.14),z0,z0-span,{count:between(3,Math.max(4,Math.round(span*2.6)))});
+    }
+    // One line across the room with the washing pegged on, bare where the walker passes under it.
+    if(strungOpen&&chance({bathroom:0.15,bare:0.12,kitchen:0.08,bedroom:0.08}[room.type]??-1)){
+      const length=room.width-0.24,z=-(1+r()*(room.length-2)),line=sampayan.line({length,sag:Math.min(0.3,length*0.035),hangers:false,seed:lineSeed(),count:between(4,Math.min(24,Math.round(length*2.2))),gap:[-0.6,0.6]});
+      line.position.set(0,floorAt(z)+Math.min(room.height-0.12,2.08+r()*0.12),z);group.add(line);placed.push(line);garments(line.userData.garments);count('lines');
+    }
+  }
+  // Hangers hooked along the top of a window.
+  for(const spot of windowSpots){
+    const plain=spot.variant==='open'||spot.variant.startsWith('plain'),shape=spot.variant.startsWith('plain')?spot.variant.slice(5).toLowerCase():spot.variant;
+    if(plain||!chance(0.12))continue;
+    const left=shape==='narrow'?0.6:shape==='wide'?0.12:0.28,top=shape==='high'?2.28:2.16,length=2-2*left-0.1;
+    const row=sampayan.line({length,sag:0,hangers:true,seed:lineSeed(),count:between(2,5),cluster:0.4});
+    for(const string of row.children.slice(0,2))row.remove(string);   // they hang from the frame itself
+    row.rotation.y=Math.PI/2;row.position.set(spot.side*(half-(spot.curtained?0.3:0.2)),floorAt(spot.z)+top-0.03,spot.z);group.add(row);placed.push(row);garments(row.userData.garments);count('windowHangers');
+  }
+  // On the floor: a rail of hangers, or a folding stand with washing pegged to it.
+  if(chance({bedroom:0.1,bare:0.06,sala:0.03}[room.type]??-1)){
+    const side=wallSide(),rack=sampayan.rack({length:0.9+r()*0.5,height:1.35+r()*0.3,count:between(3,9),seed:lineSeed(),colour:pick([0x8c9691,0x2f3a44,0xe2ddd0,0x9a6b4a])});
+    if(stand(turned(rack,Math.PI/2+(r()-0.5)*0.2),{side}))count('racks');
+  }
+  if(chance({bathroom:0.06,bare:0.08,bedroom:0.06,sala:0.04}[room.type]??-1)){
+    const dryer=detailKit.create('dryingStand',{length:0.9+r()*0.4,height:0.95+r()*0.25,depth:0.5+r()*0.15,count:between(2,5),palette:Array.from({length:6},()=>pick(CLOTHES_COLOURS)),colour:pick([0xe2ddd0,0x8c9691,0x6f95a5]),seed:lineSeed()});
+    if(stand(turned(dryer,r()*6.28)))count('dryingStands');
+  }
+  // A wall clock, stopped at some hour.
+  if(room.type!=='bathroom'&&chance(0.14)){
+    const spot=takeSpot(0.2,1.85,2.3);
+    if(spot){
+      const clock=detailKit.create('clock',{colour:pick([0x2f3a44,0xe2ddd0,0x8a2f2f,0x2f6b4f,0xc9a57a,0x3f7fb0]),hour:between(0,11),minute:between(0,59)});
+      if(hang(clock,spot.side,spot.z+(r()-0.5)*0.6,1.85+r()*0.15,0.122))count('clocks');
+    }
+  }
+  // A helmet left on a table or a shelf, and paper plates on the tables of a hall or a kitchen.
+  if(room.type!=='bathroom'){
+    const tops=[];group.traverse(o=>{if(o.userData.supportSurface&&!o.userData.diningChair)tops.push(o);});
+    const setDown=(object,name)=>{if(!tops.length)return false;const parent=pick(tops),holder=set(name,[object]);if(placeOnSupport({THREE,parent,object:holder,support:parent.userData.supportSurface,random:r})){placed.push(holder);return true;}report.rejected++;return false;};
+    if(chance({sala:0.06,bedroom:0.05,bare:0.05,kitchen:0.03}[room.type]??-1)&&setDown(detailKit.create('helmet',{colour:pick(plasticColours),helmetStyle:r()<0.6?'openFace':'fullFace'}),'helmet'))count('helmets');
+    if(chance({hall:0.3,auditorium:0.2,kitchen:0.08,sala:0.04}[room.type]??-1))for(let n=between(1,2);n>0;n--)if(setDown(detailKit.create('paperPlate'),'paper-plate'))count('paperPlates');
   }
   if(!placed.length)return {mesh:null,footprints,walkBlocks,report,hung};
 
