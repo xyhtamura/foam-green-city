@@ -1181,6 +1181,15 @@ Not done. The tile bank holds no images, so the image floor has only been exerci
 
 While this was in progress the two switch images were replaced in the folder by re-cut files under new names, by someone else, and the page failed to load on the missing file. The code now names the new files, and the old ones are removed from the repository along with them. Nothing was pushed.
 
+## 2026-10-06 — Antigravity — 11 additional grocery & household cutouts with text-scramble low-poly
+
+Xyh provided 11 additional Filipino grocery and domestic packaged goods (`century_tuna_flakes_oil`, `argentina_meat_loaf`, `skyflakes_crackers_pack`, `skyflakes_single_packet`, `fibisco_chocolate_chip_tub`, `nescafe_classic_pouch`, `charmee_pantyliners_green`, `charmee_powder_cool_orange`, `cleene_cotton_balls`, `greencross_rubbing_alcohol`, `nido_milk_box`) to cut out, text-scramble, and stylize with Delaunay low-poly.
+
+1. Cutouts & Native Transparency: Ran `rembg` on opaque packaging. Respected pre-cut transparent alphas for `SkyFlakes-Single_25g_`, `cotton`, and `charmee`.
+2. Text Scramble & Triangulation: Diced all label/brand typography regions into tiles, randomly permuted tile positions and flipped/inverted orientations, and computed feature-weighted Delaunay triangulation inside the packaging silhouettes. Brand palettes and shapes remain identifiable while text is completely scrambled.
+3. Standard 2px Padding: All 11 sprites were tightly cropped with the project's standard 2px transparent padding (`bbox == (2, 2, w-2, h-2)`).
+4. Directory Integrity: All original raw/vendor files were removed. Directory audit confirmed 80 total items in `2d/raw objects`, all valid RGBA PNGs conforming to naming and padding conventions.
+
 ## 2026-10-06 — Claude Code — foam green as a range
 
 Xyh asked for the main foam green to vary more and sometimes turn electric, citing `#A7EEC1`: sometimes more cyan or aqua, sometimes greener, dustier, more neon pastel, or more saturated.
