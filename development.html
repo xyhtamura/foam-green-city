@@ -27,24 +27,24 @@
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { createJalousieWall } from './jalousie.js?v=ae01401590';
-import { createDomesticProps, animateDomesticProps, createFurnitureVariants, FURNITURE_FINISHES } from './domestic-props.js?v=ae01401590';
-import { WALL_HANGINGS } from './wall-assets.js?v=ae01401590';
-import { RAW_OBJECTS, createRawObject } from './raw-object-assets.js?v=ae01401590';
-import { loadCurtainPatterns } from './photo-assets.js?v=ae01401590';
-import { ROOM_WIDTHS, partitionPieces } from './room-widths.js?v=ae01401590';
+import { createJalousieWall } from './jalousie.js?v=edc5d8e05a';
+import { createDomesticProps, animateDomesticProps, createFurnitureVariants, FURNITURE_FINISHES } from './domestic-props.js?v=edc5d8e05a';
+import { WALL_HANGINGS } from './wall-assets.js?v=edc5d8e05a';
+import { RAW_OBJECTS, createRawObject } from './raw-object-assets.js?v=edc5d8e05a';
+import { loadCurtainPatterns } from './photo-assets.js?v=edc5d8e05a';
+import { ROOM_WIDTHS, partitionPieces } from './room-widths.js?v=edc5d8e05a';
 
-import { LAYOUT_IDS, generateFurnitureLayout, checkFurnitureLayout } from './furniture-layouts.js?v=ae01401590';
-import { FLOOR_IDS, createFloorVariant } from './floor-variants.js?v=ae01401590';
-import { DOOR_STYLES, createDoorLeaves } from './doors.js?v=ae01401590';
-import { MODEL_ASSETS, loadModelAssets } from './model-assets.js?v=ae01401590';
-import { createRoomSet, createRoomFixture } from './room-sets.js?v=ae01401590';
-import { createUratexSofa } from './uratex-sofa.js?v=ae01401590';
-import { createWireRun } from './wire-runs.js?v=ae01401590';
-import { roomLighting } from './room-lighting.js?v=ae01401590';
-import { spatialFrame, spatialPoint, SPATIAL_GLSL, SPATIAL_PROFILES } from './spatial-route.js?v=ae01401590';
-import { createRoomSequence, floorHeight, cameraRoute, routePoint } from './room-sequences.js?v=ae01401590';
-import { branchOpenings, raiseFloor, createRoomArchitecture } from './room-architecture.js?v=ae01401590';
+import { LAYOUT_IDS, generateFurnitureLayout, checkFurnitureLayout } from './furniture-layouts.js?v=edc5d8e05a';
+import { FLOOR_IDS, createFloorVariant } from './floor-variants.js?v=edc5d8e05a';
+import { DOOR_STYLES, createDoorLeaves } from './doors.js?v=edc5d8e05a';
+import { MODEL_ASSETS, loadModelAssets } from './model-assets.js?v=edc5d8e05a';
+import { createRoomSet, createRoomFixture } from './room-sets.js?v=edc5d8e05a';
+import { createUratexSofa } from './uratex-sofa.js?v=edc5d8e05a';
+import { createWireRun } from './wire-runs.js?v=edc5d8e05a';
+import { roomLighting } from './room-lighting.js?v=edc5d8e05a';
+import { spatialFrame, spatialPoint, SPATIAL_GLSL, SPATIAL_PROFILES } from './spatial-route.js?v=edc5d8e05a';
+import { createRoomSequence, floorHeight, cameraRoute, routePoint } from './room-sequences.js?v=edc5d8e05a';
+import { branchOpenings, raiseFloor, createRoomArchitecture } from './room-architecture.js?v=edc5d8e05a';
 
 // ---- palette (DepEd MPSS, stylized: green walls) ----
 const COL = {

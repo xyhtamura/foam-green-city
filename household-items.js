@@ -1,24 +1,26 @@
 // Places the mesh kits' objects in a room, then bakes them into one vertex-coloured mesh.
-import {createTablewareKit,TABLEWARE_COLOURS} from './tableware.js?v=ae01401590';
-import {createPlasticKit,PLASTIC_COLOURS} from './plastics.js?v=ae01401590';
-import {createLinenKit,LINEN_COLOURS} from './linens.js?v=ae01401590';
-import {placeOnSupport} from './object-supports.js?v=ae01401590';
-import {createHouseholdToolKit} from './household-tools.js?v=ae01401590';
-import {createPlasticStorageKit} from './plastic-storage.js?v=ae01401590';
-import {createCardboardKit} from './cardboard.js?v=ae01401590';
-import {createSchoolChairKit} from './school-chair.js?v=ae01401590';
-import {createBasketball,BALL_COLOURS} from './basketball.js?v=ae01401590';
-import {createFootwearKit,FOOTWEAR_TYPES} from './footwear.js?v=ae01401590';
-import {createBathroomKit} from './bathroom-tools.js?v=ae01401590';
-import {createPackagingKit} from './packaging.js?v=ae01401590';
+import {createTablewareKit,TABLEWARE_COLOURS} from './tableware.js?v=edc5d8e05a';
+import {createPlasticKit,PLASTIC_COLOURS} from './plastics.js?v=edc5d8e05a';
+import {createLinenKit,LINEN_COLOURS} from './linens.js?v=edc5d8e05a';
+import {placeOnSupport} from './object-supports.js?v=edc5d8e05a';
+import {createHouseholdToolKit} from './household-tools.js?v=edc5d8e05a';
+import {createPlasticStorageKit} from './plastic-storage.js?v=edc5d8e05a';
+import {createCardboardKit} from './cardboard.js?v=edc5d8e05a';
+import {createSchoolChairKit} from './school-chair.js?v=edc5d8e05a';
+import {createBasketball,BALL_COLOURS} from './basketball.js?v=edc5d8e05a';
+import {createFootwearKit,FOOTWEAR_TYPES} from './footwear.js?v=edc5d8e05a';
+import {createBathroomKit} from './bathroom-tools.js?v=edc5d8e05a';
+import {createPackagingKit} from './packaging.js?v=edc5d8e05a';
 
-// The kits only lend their geometry and colours to the bake, so one set serves every room.
-let kits=null;
+// The kits only lend their geometry and colours to the bake. Tableware and cardboard build from
+// a fixed set of shapes, so one of each serves every room. The others make new geometry for each
+// object and keep it until disposed, so they are built for one room and dropped after its bake.
+let shared=null;
 const AISLE=0.72;
 
 export function addHouseholdItems({THREE,group,room,seed,material,blocked=[],floorAt=()=>0,amount=1,forceBall=false,paint=0xbfdcc9,force=null}){
-  kits??={table:createTablewareKit({radialSegments:10}),plastic:createPlasticKit({radialSegments:10}),linen:createLinenKit(),
-    tool:createHouseholdToolKit(),storage:createPlasticStorageKit(),card:createCardboardKit(),chair:createSchoolChairKit()};
+  shared??={table:createTablewareKit({radialSegments:10}),card:createCardboardKit()};
+  const kits={...shared,plastic:createPlasticKit({radialSegments:10}),linen:createLinenKit(),tool:createHouseholdToolKit(),storage:createPlasticStorageKit(),chair:createSchoolChairKit()};
   let state=(Math.imul(seed+6113,2246822519)>>>0)||1;
   const r=()=>{state=(Math.imul(state,1664525)+1013904223)>>>0;return state/4294967296;};
   const pick=list=>list[Math.floor(r()*list.length)],between=(a,b)=>a+Math.floor(r()*(b-a+1));
@@ -149,7 +151,6 @@ export function addHouseholdItems({THREE,group,room,seed,material,blocked=[],flo
     if(stand(chair,{side}))report.schoolChairs=(report.schoolChairs??0)+1;
   }
   // ---- The third set of kits: footwear, bathroom things, packaging. Drawn after everything above. ----
-  // These kits make new geometry for every object, so they are built for this room and dropped after the bake.
   const shoeKit=createFootwearKit(),bathKit=createBathroomKit(),packKit=createPackagingKit();
   const overlaps=rect=>taken.some(o=>rect.maxX>o.minX&&rect.minX<o.maxX&&rect.maxZ>o.minZ&&rect.minZ<o.maxZ);
   const count=key=>{report[key]=(report[key]??0)+1;return true;};

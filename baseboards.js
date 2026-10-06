@@ -1,10 +1,10 @@
 // Baseboards along one room's painted walls, as a single mesh that follows the floor.
-// OFFSET puts a strip against a wall face 0.1 m inside the room's edge: the near end wall, which is
-// the previous room's partition. WINDOW suits the authored window modules, whose face is 0.08 m in. FLUSH puts it against a face on the edge itself.
-const HEIGHT=0.1,THICK=0.022,OFFSET=0.112,WINDOW=0.092,FLUSH=0.012;
+// A strip's centre is FLUSH in front of the wall face behind it. OFFSET is that for a face 0.1 m
+// inside the room's edge: the near end wall, which is the previous room's partition.
+const HEIGHT=0.1,THICK=0.022,FLUSH=0.012,OFFSET=0.1+FLUSH;
 
-// runs: side-wall stretches {side,z0,z1,flush} in room coordinates (z0 nearer the entry); flush marks
-// a solid module, whose face is on the room's edge. farProud is how far the far partition stands in.
+// runs: side-wall stretches {side,z0,z1,face} in room coordinates (z0 nearer the entry); face is how
+// far inside the room's edge that stretch of wall has its surface. farProud is how far the far partition stands in.
 export function createBaseboards({THREE,room,runs,material,floorAt=()=>0,farProud=0}){
   const positions=[],half=room.width/2;
   function strip(x0,z0,x1,z1){
@@ -16,7 +16,7 @@ export function createBaseboards({THREE,room,runs,material,floorAt=()=>0,farProu
     for(let i=0;i<p.count;i++){const z=p.getZ(i)+cz;positions.push(p.getX(i)+cx,p.getY(i)+HEIGHT/2+floorAt(z),z);}
     box.dispose();
   }
-  for(const run of runs){const x=run.side*(half-(run.flush?FLUSH:WINDOW));strip(x,run.z0,x,run.z1);}
+  for(const run of runs){const x=run.side*(half-(run.face??0.1)-FLUSH);strip(x,run.z0,x,run.z1);}
   // Both end walls, either side of the doorway.
   for(const z of [-OFFSET+farProud,-room.length+farProud+FLUSH])for(const side of [-1,1])strip(side*1.0,z,side*half,z);
   if(!positions.length)return null;

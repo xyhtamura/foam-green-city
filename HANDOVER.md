@@ -36,7 +36,7 @@ Before committing a change to any root-level `.js` file: `python scripts/stamp_v
 
 Open, in the order they were raised:
 
-1. **Wall flicker at a narrowing join: fixed 2026-10-06.** See the section below. Baseboards were fitted to each wall's face the same day. Still open: on solid side-wall modules, whose face is at half the room width, wall photos (0.12 m in), outlets (0.108 m), door leaves (0.13 m), and the hollow-block face (0.105 m) stand clear of the wall. They are placed in front of the block face, so moving one means moving all of them.
+1. **Wall flicker at a narrowing join: fixed 2026-10-06.** See the section below. Baseboards were fitted to each wall's face the same day, and the side-wall face was settled after it; see the two sections below. Still open: the wall-mounted paper holder from `bathroom-tools.js` is not placed, and a side-room doorway's wall section has its face 0.06 m inside the room's edge, 4 cm behind the modules beside it.
 2. **Things not yet seen by anyone:** an electric foam-green room; a hue-shifted T-shirt; tsinelas up close; a real image in the floor tile bank; protrusions in motion.
 3. **Still fixed where the rest is procedural:** side rooms and passages have no baseboards, protrusions, kit objects, or wall fittings; the minimum room length is 6 m.
 4. **Carried from before:** independent lighting profiles for side rooms.
@@ -47,6 +47,12 @@ A Kenney wall module is 0.1 m thick with its near face on its origin plane. The 
 
 `?inspect=1` now also sets `window.fgc` to `{THREE,scene,cam,renderer,segments,WALLP}` for console measurement. With the browser pane hidden, `requestAnimationFrame` is paused, so a test can pose `cam`, call `renderer.render`, and `readPixels` in the same task.
 
+## Side-wall face, and kits built per room — 2026-10-06
+
+The side-wall face is 0.1 m inside the room's edge (`WALL_INSET` in `index.html`). Imported modules (`wall`, `normalWindow`, `slidingWindow`) had their face on the edge; they are now set in by 0.1 m. This was chosen over moving the fittings because nearly everything already assumed it: photos, outlets, shelves, televisions, pipes, protrusions, the hollow-block face, and furniture stood against a wall were all placed from 0.1 m in, and stood that far off the solid modules. Authored window modules keep their face at 0.08 m. Wire runs moved from 0.04 to 0.11 m and the wall fan from 0.19 to 0.26 m, since those two had been fitted to the old face. A baseboard run now carries `face`, the inset of the wall behind it, in place of `flush`. The room's logical width, collision, and the partition are unchanged; a room with solid walls on both sides is 0.2 m narrower to the eye.
+
+`household-items.js` keeps one tableware kit and one cardboard kit for the session and builds the plastics, linens, household-tools, plastic-storage, and school-chair kits for each room. Those five make new geometry for every object and hold it in a set until disposed, so a session-long kit grew with every room. A kit that is only baked from never reaches the GPU, so dropping the reference is enough.
+
 ## Thirty-one more cutouts and a third set of mesh kits — 2026-10-06
 
 Cutouts: `index_raw_objects.py` now sizes 76 of the images in `2d/raw objects/`. The 31 added are groceries and snacks, produce, toiletries, two backpacks, two bayong, an abaniko, a paint can, a food keeper, a dish rack, and three more Orocan pieces. `PLACE` in that script gives a cutout its mode and rooms where the name-prefix rules do not; the teal backpack and the purple bayong take a hue turn. Sizes are estimates from the usual retail pack. The three cans join the condiment group in `domestic-details.js`. Toiletries are listed for bedrooms only, since a bathroom has no table to stand them on.
@@ -55,7 +61,7 @@ Kits: `footwear.js`, `bathroom-tools.js`, and `packaging.js` are unchanged copie
 
 ## Baseboards against the wall face — 2026-10-06
 
-`baseboards.js` had one offset, 0.112 m, for every wall. Walls have three face positions: the near end wall is the previous partition's back, 0.1 m inside the room less `PARTITION_PROUD`; the far partition's face is on the boundary plus `PARTITION_PROUD`; imported side modules (`wall`, `normalWindow`, `slidingWindow`) have their face on the room's edge; authored window modules have theirs 0.08 m inside it. A run now carries `flush` for an imported module, from `wallOnEdge(tile)` in `index.html`, which reads the prototype's bounds; `createBaseboards` takes `farProud`. End strips run to the room's edge.
+`baseboards.js` had one offset, 0.112 m, for every wall. Walls have three face positions: the near end wall is the previous partition's back, 0.1 m inside the room less `PARTITION_PROUD`; the far partition's face is on the boundary plus `PARTITION_PROUD`; side-wall faces are given in the section above. A run carries `face`, the inset of the wall behind it; `wallOnEdge(tile)` in `index.html` tells an imported module from an authored one by the prototype's bounds; `createBaseboards` takes `farProud`. End strips run to the room's edge.
 
 ## Wall colours, trim rules, and protrusions — 2026-10-06
 
