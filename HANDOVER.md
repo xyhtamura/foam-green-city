@@ -30,7 +30,9 @@ The tile bank is the folder `2d/floor tiles/`. `scripts/index_floor_tiles.py` li
 
 ## Wall colours, trim rules, and protrusions — 2026-10-06
 
-Walls: `PAINT_WEIGHTS` in `index.html` sums to 100 — five foam greens 62, three beiges and white 22, Palmyra as a wall colour 8 (`palmyra`, `palmyraLight`), and ten paints Xyh surveyed on buildings in Metro Manila 8 between them, the pale ones (peach, pastel pink, powder blue, yellow) at 1.1 each down to medium green at 0.4. `?paint=<name>` accepts every key of `WALL_PAINTS`.
+Foam green is drawn per room by `foamColour` since 2026-10-06, not picked from five values: hue from 126° (green-leaning) to 172° (aqua), in one of five modes — familiar soft foam 32%, dusty 20%, neon pastel 20%, deeper saturated 18%, electric 10%. The four opening rooms use the familiar mode. A room's colour is `userData.wallColor`; `userData.wallPaint` holds only the family name, `foam` for all of these. `?paint=foamElectric` forces `#A7EEC1`, and the five old named greens still work as `?paint=` values.
+
+Walls: `PAINT_WEIGHTS` in `index.html` sums to 100 — foam greens 62, three beiges and white 22, Palmyra as a wall colour 8 (`palmyra`, `palmyraLight`), and ten paints Xyh surveyed on buildings in Metro Manila 8 between them, the pale ones (peach, pastel pink, powder blue, yellow) at 1.1 each down to medium green at 0.4. `?paint=<name>` accepts every key of `WALL_PAINTS`.
 
 Trim: `trimFor(paint,next)` picks by the wall's family. On foam walls: dark green `#203C21` 40, a Palmyra olive 38, the earlier blue-greens 8, foam green itself 8, a surveyed colour 6. On beige and white walls: dark green 35, Palmyra 30, foam green 20, surveyed 15. On Palmyra walls: dark green 45, foam green 35, cream 20. On surveyed-colour walls: cream or white 35, dark green 25, foam green 15, another surveyed colour 25. `TRIM_GREENS` is gone. The title text is `#203C21` as well. Fog and background now fade to the colour of the room being walked through, not always to foam green.
 

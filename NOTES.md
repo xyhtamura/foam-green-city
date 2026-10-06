@@ -1180,3 +1180,13 @@ Checks. `check_room_sequences.mjs` had asserted that over 85% of floors are bare
 Not done. The tile bank holds no images, so the image floor has only been exercised as its white-tile fallback; the loading path for a real image is untested. Thin joints may shimmer at a distance under nearest-neighbour filtering; not watched in motion. The green checkerboard and the abrupt patches keep their own, wider joints. Nothing was viewed on the twisting route.
 
 While this was in progress the two switch images were replaced in the folder by re-cut files under new names, by someone else, and the page failed to load on the missing file. The code now names the new files, and the old ones are removed from the repository along with them. Nothing was pushed.
+
+## 2026-10-06 — Claude Code — foam green as a range
+
+Xyh asked for the main foam green to vary more and sometimes turn electric, citing `#A7EEC1`: sometimes more cyan or aqua, sometimes greener, dustier, more neon pastel, or more saturated.
+
+The five fixed foam greens are replaced by a colour drawn per room; ranges and shares are in HANDOVER.md. The share of foam-green rooms is unchanged at 62%.
+
+Checks, in the browser on the root server. A fast run on the twisting route recorded 160 rooms with no console error; its 111 foam rooms spanned hue 126° to 172°, saturation 0.13 to 0.94, and lightness 0.68 to 0.85, with 25 dusty, 42 soft, 28 vivid, and 16 at 0.74 saturation or above. Viewed rooms 4 and 6 on the straight route in daylight: aqua-leaning greens of different strength against dark green trim. The first run gave the opening room `#97F3AA`, an electric green; the four opening rooms were then held to the familiar range and rooms 2 and 3 read `#CBE0D6` and `#B8D5BC`.
+
+Not done. No electric room was viewed, so how it reads under the piece's lighting and fog is unjudged. Foam-green trim and the fog's default still use the single value `#BFDCC9`. Side rooms take their owning room's colour. Nothing was pushed.
