@@ -53,6 +53,7 @@ export function createJalousieWall({ height, wallColor, trimColor, curvize, curt
     const fabric=curvize(new THREE.MeshLambertMaterial({
       color:curtains.map?0xffffff:(curtains.color??0xe6dbbf), map:curtains.map??null, side:THREE.DoubleSide,
     }));
+    fabric.userData.textile=true;   // a room may turn this cloth's hue
     const rod=curvize(new THREE.MeshLambertMaterial({color:0x78634c}));
     const cafe=curtains.style==='cafe';
     const rodY=cafe?1.6:2.29, hemY=cafe?0.88:0.46;

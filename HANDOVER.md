@@ -14,6 +14,10 @@ The route is still one straight logical line; nothing here adds a second axis. A
 
 Side rooms get scatter from `planSideScatter`, fitted to the room rectangle, off fixture blocks and off the strip from the doorway across the room; the objects join the owning room's single scatter mesh. Movement no longer starts paused under `prefers-reduced-motion`; Xyh asked for it to start on Enter. `scripts/check_forks.mjs` covers exit routes and salts.
 
+## Cloth hue — 2026-10-06
+
+Textured cloth takes the same hue turn as toned cutouts, per room. A material counts as cloth if it is in `VARIED` as `textile` (the sofas' upholstery and patterned pillows, registered at start-up for any sofa mesh with a texture) or carries `userData.textile` (curtain fabric, set in `jalousie.js`, patterned or plain). In `varyColours` a cloth material is left alone in 45% of rooms, turned 30° or 60° either way in 35%, and turned anywhere round the circle in 20%, in 30° steps so at most eleven extra shader programs exist. Every curtain of one pattern in a room turns together. An untouched material is not put in the room's cache, because that cache is disposed with the room and the material is shared. `?cloth=<degrees>` forces one turn on all cloth. The table runner is in `VARIED` as plain colour, and side-bedroom bedding shifts by room inside `side-bedrooms.js`.
+
 ## Table sizes — 2026-10-06
 
 `varyTables` in `furniture-layouts.js` runs after an arrangement is fixed and gives a table that stands by itself a `scale:{x,y,z}` on its width, height, and length. Length is 0.65 to 0.95 for three in ten and 1.15 to 1.7 for about a third; a longer or wider size is stepped back down until the enlarged footprint clears the room rules and every other piece by 2 cm, so a table grows into free floor and never into a chair. A table with a chair within 0.25 m shortens no further than 0.86 and may sit a little low (0.86 to 0.96 of standard height, three in ten); a table with no chairs may be coffee-table low (0.55 to 0.85) and wider or narrower. Tables pushed together, stacked, or upside down are untouched. Sizes use a stream of their own, so every arrangement is what it was before.

@@ -84,36 +84,36 @@ window.addEventListener('unhandledrejection',reportLoadFailure);
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { createJalousieWall } from './jalousie.js?v=0f963ae461';
-import { createDomesticProps, animateDomesticProps, createFurnitureVariants, FURNITURE_FINISHES } from './domestic-props.js?v=0f963ae461';
-import { WALL_HANGINGS } from './wall-assets.js?v=0f963ae461';
-import { RAW_OBJECTS, createRawObject, oddSize, cutoutTone } from './raw-object-assets.js?v=0f963ae461';
-import { loadCurtainPatterns } from './photo-assets.js?v=0f963ae461';
-import { ROOM_WIDTHS, partitionPieces } from './room-widths.js?v=0f963ae461';
+import { createJalousieWall } from './jalousie.js?v=9ddc9c7ed2';
+import { createDomesticProps, animateDomesticProps, createFurnitureVariants, FURNITURE_FINISHES } from './domestic-props.js?v=9ddc9c7ed2';
+import { WALL_HANGINGS } from './wall-assets.js?v=9ddc9c7ed2';
+import { RAW_OBJECTS, createRawObject, oddSize, cutoutTone } from './raw-object-assets.js?v=9ddc9c7ed2';
+import { loadCurtainPatterns } from './photo-assets.js?v=9ddc9c7ed2';
+import { ROOM_WIDTHS, partitionPieces } from './room-widths.js?v=9ddc9c7ed2';
 
-import { LAYOUT_IDS, generateFurnitureLayout, checkFurnitureLayout, TABLE_TOP } from './furniture-layouts.js?v=0f963ae461';
-import { FLOOR_IDS, createFloorVariant } from './floor-variants.js?v=0f963ae461';
-import { DOOR_STYLES, createDoorLeaves } from './doors.js?v=0f963ae461';
-import { MODEL_ASSETS, loadModelAssets } from './model-assets.js?v=0f963ae461';
-import { createRoomSet, createRoomFixture } from './room-sets.js?v=0f963ae461';
-import { createUratexSofa } from './uratex-sofa.js?v=0f963ae461';
-import { createWireRun } from './wire-runs.js?v=0f963ae461';
-import { createWallUtilities } from './wall-utilities.js?v=0f963ae461';
-import {createWalkSequence,retainedRooms,walkRegions,canOccupy,moveWalker,pathToRoute,roomExits} from './navigation.js?v=0f963ae461';
-import {addDomesticDetails} from './domestic-details.js?v=0f963ae461';
+import { LAYOUT_IDS, generateFurnitureLayout, checkFurnitureLayout, TABLE_TOP } from './furniture-layouts.js?v=9ddc9c7ed2';
+import { FLOOR_IDS, createFloorVariant } from './floor-variants.js?v=9ddc9c7ed2';
+import { DOOR_STYLES, createDoorLeaves } from './doors.js?v=9ddc9c7ed2';
+import { MODEL_ASSETS, loadModelAssets } from './model-assets.js?v=9ddc9c7ed2';
+import { createRoomSet, createRoomFixture } from './room-sets.js?v=9ddc9c7ed2';
+import { createUratexSofa } from './uratex-sofa.js?v=9ddc9c7ed2';
+import { createWireRun } from './wire-runs.js?v=9ddc9c7ed2';
+import { createWallUtilities } from './wall-utilities.js?v=9ddc9c7ed2';
+import {createWalkSequence,retainedRooms,walkRegions,canOccupy,moveWalker,pathToRoute,roomExits} from './navigation.js?v=9ddc9c7ed2';
+import {addDomesticDetails} from './domestic-details.js?v=9ddc9c7ed2';
 let wallUtilities;
-import { roomLighting } from './room-lighting.js?v=0f963ae461';
-import { scatterLevel, planScatter, planSideScatter, scatterBlocks, createScatterMesh } from './floor-scatter.js?v=0f963ae461';
-import { createBaseboards } from './baseboards.js?v=0f963ae461';
-import { addHouseholdItems } from './household-items.js?v=0f963ae461';
-import { spatialFrame, spatialPoint, SPATIAL_GLSL, SPATIAL_PROFILES } from './spatial-route.js?v=0f963ae461';
-import { floorHeight, cameraRoute, routePoint } from './room-sequences.js?v=0f963ae461';
-import {sideSpacePlan,DRAWER_VARIANTS} from './side-spaces.js?v=0f963ae461';
-import {addWoodDetails} from './wood-details.js?v=0f963ae461';
-import {addSideWashrooms} from './side-washrooms.js?v=0f963ae461';
-import {addSideStorage} from './side-storage.js?v=0f963ae461';
-import {addSideBedrooms} from './side-bedrooms.js?v=0f963ae461';
-import { branchOpenings, raiseFloor, createRoomArchitecture } from './room-architecture.js?v=0f963ae461';
+import { roomLighting } from './room-lighting.js?v=9ddc9c7ed2';
+import { scatterLevel, planScatter, planSideScatter, scatterBlocks, createScatterMesh } from './floor-scatter.js?v=9ddc9c7ed2';
+import { createBaseboards } from './baseboards.js?v=9ddc9c7ed2';
+import { addHouseholdItems } from './household-items.js?v=9ddc9c7ed2';
+import { spatialFrame, spatialPoint, SPATIAL_GLSL, SPATIAL_PROFILES } from './spatial-route.js?v=9ddc9c7ed2';
+import { floorHeight, cameraRoute, routePoint } from './room-sequences.js?v=9ddc9c7ed2';
+import {sideSpacePlan,DRAWER_VARIANTS} from './side-spaces.js?v=9ddc9c7ed2';
+import {addWoodDetails} from './wood-details.js?v=9ddc9c7ed2';
+import {addSideWashrooms} from './side-washrooms.js?v=9ddc9c7ed2';
+import {addSideStorage} from './side-storage.js?v=9ddc9c7ed2';
+import {addSideBedrooms} from './side-bedrooms.js?v=9ddc9c7ed2';
+import { branchOpenings, raiseFloor, createRoomArchitecture } from './room-architecture.js?v=9ddc9c7ed2';
 
 // ---- palette (DepEd MPSS, stylized: green walls) ----
 const COL = {
@@ -491,11 +491,22 @@ function variedColour(source,kind,next){
   return c.setHSL((h%1+1)%1,s,Math.min(0.92,l));
 }
 function varyColours(grp,i){
-  const next=mulberry32((i*7919+1237)>>>0),cache=grp.userData.wallPaintMaterials;
+  const next=mulberry32((i*7919+1237)>>>0),cache=grp.userData.wallPaintMaterials,unchanged=new Set();
   const swap=m=>{
-    const kind=VARIED.get(m);if(!kind)return m;
+    const kind=VARIED.get(m)??(m.userData.textile?'textile':null);if(!kind||unchanged.has(m))return m;
     const key='varied:'+m.uuid;
-    if(!cache.has(key))cache.set(key,curvize(Object.assign(m.clone(),{color:variedColour(m,kind,next)})));
+    if(!cache.has(key)){
+      if(kind==='textile'){
+        // Cloth keeps its pattern and has its hue turned: not at all for nearly half the rooms,
+        // a step or two for most of the rest, anywhere round the circle for a few.
+        const roll=next(),drawn=roll<0.45?0:30*(roll<0.8?[-2,-1,1,2][Math.floor(next()*4)]:1+Math.floor(next()*11));
+        // ?cloth=<degrees> forces one turn on every cloth, for inspection.
+        const angle=params.has('cloth')?30*Math.round((Number(params.get('cloth'))||0)/30):drawn;
+        if(!angle){unchanged.add(m);return m;}   // not cached: the cache is disposed with the room, and this material is shared
+        const toned=m.clone();toned.userData.tone={angle,lift:0};toned.customProgramCacheKey=()=>'tone:'+angle;
+        cache.set(key,curvize(toned));
+      }else cache.set(key,curvize(Object.assign(m.clone(),{color:variedColour(m,kind,next)})));
+    }
     return cache.get(key);
   };
   grp.traverse(o=>{if(o.isMesh)o.material=Array.isArray(o.material)?o.material.map(swap):swap(o.material);});
@@ -1065,6 +1076,7 @@ function inspectRooms(){
     for(const variants of Object.values(FURNITURE_VARIANTS))for(const proto of variants)prepFurni(proto);
     for(const variants of Object.values(FURNITURE_VARIANTS))variants.forEach((proto,n)=>proto.traverse(o=>{if(o.isMesh)VARIED.set(o.material,FURNITURE_FINISHES[n].name.includes('wood')?'wood':'plastic');}));
     // Buckets, and the coloured parts of fans, cookers, and food covers. The gas cylinder is not listed.
+    FURNI.scallopedRunner.traverse(o=>{if(o.isMesh)VARIED.set(o.material,'plastic');});
     for(const name of ['bucket','bucketPink'])FURNI[name].traverse(o=>{if(o.isMesh&&['hollow-pail','handle-pivot'].includes(o.name))VARIED.set(o.material,'plastic');});
     for(const name of ['wallFan','deskFan','riceCooker','foodCover'])FURNI[name].traverse(o=>{if(o.isMesh&&[0x699baf,0xb45f4d].includes(o.material.color.getHex()))VARIED.set(o.material,'plastic');});
   await Promise.all(['wall','wallDoorway','wallHalf']
@@ -1085,6 +1097,8 @@ function inspectRooms(){
   Object.assign(FURNI,await loadModelAssets(curvize));
   for(const [name,fabricStyle,pillowConfig] of [['uratexNavy','trellisNavy','singleCenter'],['uratexFloral','vintageFloral','domesticMix'],['uratexMaroon','solidMaroon','twoThrows']]){
     FURNI[name]=createUratexSofa({THREE,width:1.45,fabricStyle,pillowConfig,curvize});
+    // Upholstery and patterned pillows are cloth; seams and piping are not.
+    FURNI[name].traverse(o=>{if(o.isMesh&&o.material.map)VARIED.set(o.material,'textile');});
   }
   resize();
 

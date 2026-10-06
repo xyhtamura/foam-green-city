@@ -1,6 +1,6 @@
-import {branchOpenings,sideSpacePlan} from './side-spaces.js?v=0f963ae461';
-import {localBounds} from './object-supports.js?v=0f963ae461';
-import {RAW_OBJECTS,createRawObject} from './raw-object-assets.js?v=0f963ae461';
+import {branchOpenings,sideSpacePlan} from './side-spaces.js?v=9ddc9c7ed2';
+import {localBounds} from './object-supports.js?v=9ddc9c7ed2';
+import {RAW_OBJECTS,createRawObject} from './raw-object-assets.js?v=9ddc9c7ed2';
 
 // Prototype meshes stay shared; bedding and photo planes belong to this room.
 export function addSideBedrooms({THREE,group,room,assets,curvize,photos,spriteMat}){
@@ -25,7 +25,9 @@ export function addSideBedrooms({THREE,group,room,assets,curvize,photos,spriteMa
   }
   for(const portal of branchOpenings(room).filter(p=>p.kind!=='legacy')){
     const plan=sideSpacePlan(room,portal);if(!plan.bedroom)continue;
-    const cloth=colour(bedding[plan.variant]),pieces=[];
+    // Bedding keeps its family of colour and shifts a little by room.
+    const turn=(Math.imul((room.generationIndex??room.index??0)+71,2654435761)>>>0)/4294967296;
+    const cloth=colour(new THREE.Color(bedding[plan.variant]).offsetHSL((turn-0.5)*0.3,(turn*7%1-0.5)*0.2,(turn*13%1-0.5)*0.14).getHex()),pieces=[];
     for(const f of plan.fixtures){
       const object=fit(f),bounds=localBounds(THREE,object,group),r=plan.roomRect;
       pieces.push({role:f.role,model:f.model,inside:bounds.min.x>=r.minX+.06&&bounds.max.x<=r.maxX-.06&&bounds.min.z>=r.minZ+.06&&bounds.max.z<=r.maxZ-.06,contactGap:bounds.min.y,bounds:{minX:bounds.min.x,maxX:bounds.max.x,minZ:bounds.min.z,maxZ:bounds.max.z},size:bounds.getSize(new THREE.Vector3()).toArray()});
