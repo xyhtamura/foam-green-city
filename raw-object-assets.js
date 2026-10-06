@@ -39,8 +39,8 @@ export const RAW_OBJECTS=[
   {
     "id": "rawBagoongAlamangJar",
     "file": "2d/raw objects/bagoong_alamang_jar.png",
-    "aspect": 1.7937219730941705,
-    "width": 0.0669,
+    "aspect": 1.8071748878923768,
+    "width": 0.06640198511166252,
     "mode": "table",
     "rooms": [
       "sala",
@@ -99,7 +99,7 @@ export const RAW_OBJECTS=[
   {
     "id": "rawEnvelopeKraft",
     "file": "2d/raw objects/envelope_kraft.png",
-    "aspect": 0.6728971962616822,
+    "aspect": 0.6759259259259259,
     "width": 0.24,
     "mode": "flat",
     "rooms": [
@@ -132,8 +132,8 @@ export const RAW_OBJECTS=[
   {
     "id": "rawHydrangeaPinkPair",
     "file": "2d/raw objects/hydrangea_pink_pair.png",
-    "aspect": 0.8517034068136272,
-    "width": 0.39920000000000005,
+    "aspect": 0.8483033932135728,
+    "width": 0.40080000000000005,
     "mode": "floor",
     "rooms": [
       "sala",
@@ -143,7 +143,7 @@ export const RAW_OBJECTS=[
   {
     "id": "rawIntermediatePad",
     "file": "2d/raw objects/intermediate_pad.png",
-    "aspect": 0.8801571709233792,
+    "aspect": 0.8784313725490196,
     "width": 0.15,
     "mode": "flat",
     "rooms": [
@@ -154,7 +154,7 @@ export const RAW_OBJECTS=[
   {
     "id": "rawPadCover",
     "file": "2d/raw objects/intermediate_pad_cover.png",
-    "aspect": 1.1428571428571428,
+    "aspect": 1.1399229781771503,
     "width": 0.15,
     "mode": "flat",
     "rooms": [
@@ -201,8 +201,8 @@ export const RAW_OBJECTS=[
   {
     "id": "rawLigoSardinesRed",
     "file": "2d/raw objects/ligo_sardines_red.png",
-    "aspect": 1.7486338797814207,
-    "width": 0.05146875,
+    "aspect": 1.7704918032786885,
+    "width": 0.050833333333333335,
     "mode": "table",
     "rooms": [
       "sala",
