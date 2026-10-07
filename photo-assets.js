@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import {CURTAIN_TEXTURES} from './wall-assets.js?v=bfa26a66b6';
+import {CURTAIN_TEXTURES} from './wall-assets.js?v=ff65cc10b1';
 
 export function loadCurtainPatterns(){
   const loader=new THREE.TextureLoader();

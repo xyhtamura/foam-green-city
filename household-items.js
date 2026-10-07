@@ -1,22 +1,22 @@
 // Places the mesh kits' objects in a room, then bakes them into one vertex-coloured mesh.
-import {createTablewareKit,TABLEWARE_COLOURS} from './tableware.js?v=bfa26a66b6';
-import {createPlasticKit,PLASTIC_COLOURS} from './plastics.js?v=bfa26a66b6';
-import {createLinenKit,LINEN_COLOURS} from './linens.js?v=bfa26a66b6';
-import {placeOnSupport} from './object-supports.js?v=bfa26a66b6';
-import {createHouseholdToolKit} from './household-tools.js?v=bfa26a66b6';
-import {createPlasticStorageKit} from './plastic-storage.js?v=bfa26a66b6';
-import {createCardboardKit} from './cardboard.js?v=bfa26a66b6';
-import {createSchoolChairKit} from './school-chair.js?v=bfa26a66b6';
-import {createBasketball,BALL_COLOURS} from './basketball.js?v=bfa26a66b6';
-import {createFootwearKit,FOOTWEAR_TYPES} from './footwear.js?v=bfa26a66b6';
-import {createBathroomKit} from './bathroom-tools.js?v=bfa26a66b6';
-import {createSampayan,CLOTHES_COLOURS} from './sampayan.js?v=bfa26a66b6';
-import {createHouseholdDetailsKit} from './household-details.js?v=bfa26a66b6';
-import {createRiceStorageKit} from './rice-storage.js?v=bfa26a66b6';
-import {createSmallElectronicsKit} from './small-electronics.js?v=bfa26a66b6';
-import {createDecorKit} from './decor.js?v=bfa26a66b6';
-import {createMirrorsValancesKit,VALANCE_TYPES} from './mirrors-valances.js?v=bfa26a66b6';
-import {createPackagingKit} from './packaging.js?v=bfa26a66b6';
+import {createTablewareKit,TABLEWARE_COLOURS} from './tableware.js?v=ff65cc10b1';
+import {createPlasticKit,PLASTIC_COLOURS} from './plastics.js?v=ff65cc10b1';
+import {createLinenKit,LINEN_COLOURS} from './linens.js?v=ff65cc10b1';
+import {placeOnSupport} from './object-supports.js?v=ff65cc10b1';
+import {createHouseholdToolKit} from './household-tools.js?v=ff65cc10b1';
+import {createPlasticStorageKit} from './plastic-storage.js?v=ff65cc10b1';
+import {createCardboardKit} from './cardboard.js?v=ff65cc10b1';
+import {createSchoolChairKit} from './school-chair.js?v=ff65cc10b1';
+import {createBasketball,BALL_COLOURS} from './basketball.js?v=ff65cc10b1';
+import {createFootwearKit,FOOTWEAR_TYPES} from './footwear.js?v=ff65cc10b1';
+import {createBathroomKit} from './bathroom-tools.js?v=ff65cc10b1';
+import {createSampayan,CLOTHES_COLOURS} from './sampayan.js?v=ff65cc10b1';
+import {createHouseholdDetailsKit} from './household-details.js?v=ff65cc10b1';
+import {createRiceStorageKit} from './rice-storage.js?v=ff65cc10b1';
+import {createSmallElectronicsKit} from './small-electronics.js?v=ff65cc10b1';
+import {createDecorKit} from './decor.js?v=ff65cc10b1';
+import {createMirrorsValancesKit,VALANCE_TYPES} from './mirrors-valances.js?v=ff65cc10b1';
+import {createPackagingKit} from './packaging.js?v=ff65cc10b1';
 
 // The kits only lend their geometry and colours to the bake. Tableware and cardboard build from
 // a fixed set of shapes, so one of each serves every room. The others make new geometry for each

@@ -4,6 +4,18 @@
 
 2026-10-03 — Codex
 
+## The varied route, the default — 2026-10-08
+
+Claude Code. The default profile is now `route=varied`. `mixed`, the default until now, rolls at a rate that never changes sign and curves on one circle, so it always turned over the same way. It and the other four profiles are unchanged and still reachable by name.
+
+The varied route is drawn in sections, in `spatial-route.js`. Roll has 48 m sections: each holds (26%), or turns a quarter turn (14% each way), a half turn (14% each way), or an eighth turn (9% each way), eased over 30 m. Bend has 64 m sections: each keeps its heading (30%), turns it left or right by 0.6 to 1.2 rad (35%), or tips it up or down by 0.5 to 1.0 rad (35%), eased over 58 m. Heading is a yaw and a pitch against the world, held within 1.3 and 1.0 rad, so the route always makes headway along -z and cannot cross itself. The two section lengths differ so the combinations drift. `?routeSeed=<whole number>` draws another route; the default seed is fixed, so the walk is the same on every visit.
+
+The centre line has no formula. It is summed once at half-metre samples, and the camera and the shader both read those samples and interpolate in a straight line: the camera from `spatialFrame`, the shader from `uRoute`, a 2048 by 2 float texture written as a ring. `routeTable.ensure(distance)` in `tick` rewrites the ring when the camera comes within 384 m of either end, about once per 128 m walked, and is one comparison otherwise. For this profile there is no arithmetic to keep in step between JavaScript and GLSL; the other five still repeat theirs.
+
+Limits that follow from the rooms: the radius of curvature stays above 32 m because a 24 m room with side rooms reaches 28 m from the centre line, and geometry past the centre of a bend would fold through itself. A sequence with wider rooms than the default generator's 24 m needs a larger radius, which means a longer `bendEase`. `check_spatial_route.mjs` asserts the radius, the limits, a roll rate under 0.2 rad per metre, a clearance of 40 m between stretches 60 to 400 m apart, that every kind of section occurs, and that the ring holds the samples the camera reads, over 12 km on three seeds.
+
+`development.html` does not set `uRoute`, so `route=varied` there would draw nothing sensible; its default is still `mixed`.
+
 ## Passage exits, regenerating rooms, and side-room scatter — 2026-10-05
 
 The route is still one straight logical line; nothing here adds a second axis. A branch is a cut. The `branches` and `cross` side passages now end in a dark doorway (`exit` material in `room-architecture.js`). Reaching it — by the automatic `exitRoute` or by hand, tested in `atPassageExit` — calls `beginCut`: `#veil` fades to near-black over 0.35 s, `takeBranch` discards all six rooms, calls `sequence.reroll()`, and places the walker 0.4 m inside a domestic room 20 to 620 indices ahead, then the veil clears. Room building happens under the veil. Steady-state cost is unchanged: still six rooms, no extra geometry apart from the doorway.
@@ -55,7 +67,7 @@ Open, most useful first:
 5. **Not built:** alphabet puzzle tiles; cloth patterns on hanging clothes, which the bake cannot carry; a mattress stood on edge; the kit's screen door and screen window; anything in side rooms from this sitting's sets; a fall or a fence for a player stepping off the yero path.
 6. **From before this sitting:** an electric foam-green room, a hue-shifted T-shirt, tsinelas up close, a real image in the floor tile bank, and protrusions in motion are still unseen; side rooms and passages have no baseboards, protrusions, kit objects, or wall fittings; the minimum room length is 6 m; side rooms have no lighting profile of their own.
 
-Useful addresses, all with `?skipTitle=1`: `&start=45` court; `&start=91` yero path, with `&yero=plain|posts|grass|both` to force what stands on it; `&prop=kits`, `&prop=fabric`, `&prop=sampayan`, `&prop=hangers` force each set; `&inspect=1` gives `window.fgc` and `#render-stats`; `&cull=off` and `&merge=off` switch off the two drawing savings for comparison; `&space=straight` for the straight route.
+Useful addresses, all with `?skipTitle=1`: `&start=45` court; `&start=91` yero path, with `&yero=plain|posts|grass|both` to force what stands on it; `&prop=kits`, `&prop=fabric`, `&prop=sampayan`, `&prop=hangers` force each set; `&inspect=1` gives `window.fgc` and `#render-stats`; `&cull=off` and `&merge=off` switch off the two drawing savings for comparison; `&space=straight` for the straight route; `&route=mixed` for the route that was the default before 2026-10-08.
 
 ## Wall flicker at a narrowing join — 2026-10-06
 
