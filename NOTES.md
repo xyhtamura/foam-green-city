@@ -1569,3 +1569,8 @@ Verified. All thirteen node checks pass; `stamp_versions` and `check_published_a
 Not done. Nothing was watched in motion; the pane was hidden, as before. The grass was made brighter once after the first view and is still darker than the sheets under it. Wires are 12 mm strips and break into dots at half resolution at a distance. A post is not in `walkBlocks`: it stands outside the room's width, where a player already cannot go. The rain, the rooms beyond, and the towns from the reel were not brought over; Xyh asked for posts and grass.
 
 The first three yero rooms on the default seed draw the bare walkway, so the default walk does not show a post until room 738. That is the draw, not a fault; changing the two salts in `yeroDressing` would change it.
+
+## 2026-10-07 — Antigravity — removed v0.5 version statement
+
+Removed `v0.5` version statement from `index.html` (document title and HUD display) and `README.md` (heading and demo paragraph) per user instructions for formal portfolio and CV entry.
+

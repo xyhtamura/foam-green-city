@@ -1,4 +1,4 @@
-# Foam Green City v0.5
+# Foam Green City
 
 An autonomous browser-based 3D walkthrough of a procedurally arranged Filipino domestic interior. Foam-green walls, small family photos, modest furniture, and household objects recur along a slow, curving and twisting route. The core reference is a modernish lower-middle-income household; occasional larger or unusual rooms interrupt it.
 
@@ -44,7 +44,7 @@ For inspection, `?start=7&offset=1&still=1&inspect=1` selects a room without for
 
 Before committing a change to any root-level `.js` file, run `python scripts/stamp_versions.py` and `python scripts/check_published_assets.py`. The first gives every module import one shared version stamp, so a browser never mixes old and new modules; the second fails if the page refers to a file git does not track. Push this repository's `main` branch to your GitHub repository. In **Settings → Pages**, choose **Deploy from a branch**, select **main**, and use **/(root)**. All runtime asset paths are relative to this repository. The `.nojekyll` file keeps publication static. See [GitHub's publishing-source instructions](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site).
 
-The local v0.5 demo is prepared for sampling. No remote repository, push, public Release, or DOI is created by this preparation. Release tags and publication remain separate actions.
+The local demo is prepared for sampling. No remote repository, push, public Release, or DOI is created by this preparation. Release tags and publication remain separate actions.
 
 ## Checks and limits
 
