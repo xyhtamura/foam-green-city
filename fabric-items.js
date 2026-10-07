@@ -2,10 +2,10 @@
 // mattresses, a rolled banig, cloth hung on a wall, tablecloths, potholders, and sofa covers. The patterns are the page-sized copies listed in
 // fabric-assets.js. Each pattern has one material for the whole session; each object has its own
 // small geometry, disposed with its room.
-import {FABRICS} from './fabric-assets.js?v=29908bed5a';
-import {createPuzzleMatKit} from './puzzle-mats.js?v=29908bed5a';
-import {placeOnSupport} from './object-supports.js?v=29908bed5a';
-import {wallThingsOf} from './household-items.js?v=29908bed5a';
+import {FABRICS} from './fabric-assets.js?v=bfa26a66b6';
+import {createPuzzleMatKit} from './puzzle-mats.js?v=bfa26a66b6';
+import {placeOnSupport} from './object-supports.js?v=bfa26a66b6';
+import {wallThingsOf} from './household-items.js?v=bfa26a66b6';
 
 const AISLE=0.72,LIFT=0.008,STEP=0.4;
 // One puzzle-mat kit for the session: it holds one seam texture and one material, and no geometry.

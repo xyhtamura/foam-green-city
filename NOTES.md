@@ -1557,3 +1557,15 @@ Xyh asked for housekeeping before moving to a new thread. HANDOVER.md's "Start h
 State. Thirty commits since the flicker fix; seven are unpushed, from 7ee5d4b on. The working tree is clean. All twelve node checks, `stamp_versions --check`, and `check_published_assets` (285 assets) pass at 446c0f7.
 
 The thing to do first next time is not code: walk the piece by eye before the next push. Every check in this sitting was made with the pane hidden.
+
+## 2026-10-07 — Claude Code — posts and grass on the yero path
+
+Xyh staged a ten-second reel from the yero room (`ephemeralrenders/yero-rain-reel/`), with electric posts and grass that this piece did not have, and asked for those two to come back here: sometimes posts, sometimes grass, sometimes both, sometimes the bare walkway, a quarter each.
+
+Added `yero-dressing.js` and three lines in `buildYeroRoom`. HANDOVER.md's yero section says how it works and what it costs. `scripts/check_yero_dressing.mjs` is the thirteenth node check: a room keeps its draw, the four outcomes are each within a point of a quarter over 40,000 rooms, and a forced value wins.
+
+Verified. All thirteen node checks pass; `stamp_versions` and `check_published_assets` (285 assets) run. In the browser pane at `?start=91&skipTitle=1&inspect=1`: with `&yero=both`, `&yero=posts`, and `&yero=grass` the room held the mesh `yero-dressing` with the counts expected (4 posts and 68 tufts; 4 posts; tufts only), and a screenshot of each showed posts with crossarms and wires, or grass on the sheets, bent with the route. With no `yero` parameter room 91 has no dressing, which is its draw. No console errors.
+
+Not done. Nothing was watched in motion; the pane was hidden, as before. The grass was made brighter once after the first view and is still darker than the sheets under it. Wires are 12 mm strips and break into dots at half resolution at a distance. A post is not in `walkBlocks`: it stands outside the room's width, where a player already cannot go. The rain, the rooms beyond, and the towns from the reel were not brought over; Xyh asked for posts and grass.
+
+The first three yero rooms on the default seed draw the bare walkway, so the default walk does not show a post until room 738. That is the draw, not a fault; changing the two salts in `yeroDressing` would change it.

@@ -1,6 +1,6 @@
-import {branchOpenings,sideSpacePlan} from './side-spaces.js?v=29908bed5a';
-import {generateRoom} from './room-generator.js?v=29908bed5a';
-import {createRoomSequence,cameraRoute,routePoint,passageExit,exitRoute} from './room-sequences.js?v=29908bed5a';
+import {branchOpenings,sideSpacePlan} from './side-spaces.js?v=bfa26a66b6';
+import {generateRoom} from './room-generator.js?v=bfa26a66b6';
+import {createRoomSequence,cameraRoute,routePoint,passageExit,exitRoute} from './room-sequences.js?v=bfa26a66b6';
 
 // Geometry is disposable; seeded descriptors and distance prefixes reconstruct it.
 export function createWalkSequence(options){

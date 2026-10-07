@@ -32,7 +32,7 @@ The tile bank is the folder `2d/floor tiles/`. `scripts/index_floor_tiles.py` li
 
 Read the last entries of NOTES.md first; this section is the short version for whoever picks the work up. The sections below it are in the order they were written, newest first, and each says how its part works.
 
-Before committing a change to any root-level `.js` file: `python scripts/stamp_versions.py`, then `python scripts/check_published_assets.py`. Node checks run with `node --experimental-default-type=module scripts/<name>.mjs`; there are twelve and all pass. Other people commit to this folder's `2d/` images during a sitting, and files there have been renamed mid-task; re-read `git status` before staging. Xyh pushes; seven commits were unpushed at the end of this sitting, from 7ee5d4b on.
+Before committing a change to any root-level `.js` file: `python scripts/stamp_versions.py`, then `python scripts/check_published_assets.py`. Node checks run with `node --experimental-default-type=module scripts/<name>.mjs`; there are thirteen and all pass. Other people commit to this folder's `2d/` images during a sitting, and files there have been renamed mid-task; re-read `git status` before staging. Xyh pushes; seven commits were unpushed at the end of this sitting, from 7ee5d4b on.
 
 **The one check nobody has made.** Everything in this sitting was verified with the browser pane hidden: frames stepped from the console, pixels read back, still views posed by hand. Nothing was watched in motion with `requestAnimationFrame` running. Before the next push, walk it by eye: the default route for a few minutes, then `?start=45` (court) and `?start=91` (yero path), taking control and handing back in each.
 
@@ -55,7 +55,7 @@ Open, most useful first:
 5. **Not built:** alphabet puzzle tiles; cloth patterns on hanging clothes, which the bake cannot carry; a mattress stood on edge; the kit's screen door and screen window; anything in side rooms from this sitting's sets; a fall or a fence for a player stepping off the yero path.
 6. **From before this sitting:** an electric foam-green room, a hue-shifted T-shirt, tsinelas up close, a real image in the floor tile bank, and protrusions in motion are still unseen; side rooms and passages have no baseboards, protrusions, kit objects, or wall fittings; the minimum room length is 6 m; side rooms have no lighting profile of their own.
 
-Useful addresses, all with `?skipTitle=1`: `&start=45` court; `&start=91` yero path; `&prop=kits`, `&prop=fabric`, `&prop=sampayan`, `&prop=hangers` force each set; `&inspect=1` gives `window.fgc` and `#render-stats`; `&cull=off` and `&merge=off` switch off the two drawing savings for comparison; `&space=straight` for the straight route.
+Useful addresses, all with `?skipTitle=1`: `&start=45` court; `&start=91` yero path, with `&yero=plain|posts|grass|both` to force what stands on it; `&prop=kits`, `&prop=fabric`, `&prop=sampayan`, `&prop=hangers` force each set; `&inspect=1` gives `window.fgc` and `#render-stats`; `&cull=off` and `&merge=off` switch off the two drawing savings for comparison; `&space=straight` for the straight route.
 
 ## Wall flicker at a narrowing join — 2026-10-06
 
@@ -86,6 +86,12 @@ It is an ordinary room to walk: 4 m wide, one straight leg down the middle, like
 `buildYeroRoom` in `index.html` builds it apart from `buildSegment`. It makes the next room's front wall and doorway, as wide as that room, which is why the next room is seen ahead as a box standing in the air, and the room behind likewise. Every field the rest of the page reads from a room is filled in there with an empty stand-in; **a new field that `tick`, `dropSegment`, or the inspector reads from every room has to be added there too.** Lighting is daylight whatever the room would have drawn, the air is `COL.wall`, and the fog reaches 44 m.
 
 Floors and the ceiling material are double-sided for this room's sake: the rooms either side are seen from outside, and from below a single-sided floor is not drawn.
+
+**Posts and grass on the yero path — 2026-10-07.** `yero-dressing.js` adds one more mesh to a yero room, in the shared plain-colour material: electric posts strung with wire, grass in tufts, both, or nothing. `yeroDressing(index)` draws two even chances from the room's index, one for posts and one for grass, so the four outcomes are a quarter each and a room keeps its draw. `?yero=plain|posts|grass|both` forces one. For the default seed the first yero rooms draw: 91, 185, and 565 plain; 738 posts; 1008 both; 1138 grass.
+
+Posts stand a little outside the room's width down one side, 9.5 to 13.5 m apart, each 6.2 to 7.4 m tall above the sheets and 50 m below them, with two crossarms and a box; in half of the rooms one more stands alone on the other side. Four wires run from each post to the next. **A wire is two thin strips crossed, not a line**: the shared material draws triangles, and a line material would need its own pass through `curvize`. Grass is 4.5 tufts tried per metre of room, each kept only where it lands on metal; heights come from a 5 cm grid filled from the path's triangles in one pass. Its colours are set brighter than their hex, since the material is lit and a blade's face is seldom square to the light.
+
+Measured in room 91, 24 m long: posts and wire 680 triangles, with grass 1,404 in all, one draw call. Building it took 0.6 ms for posts, 4.4 ms for grass, 6.4 ms for both, averaged over twenty builds; it runs once in a yero room, about one room in 240.
 
 A player who takes control can walk the room's 4 m width, which the sheets cover, raggedly; a step at the very edge can still be over air.
 
