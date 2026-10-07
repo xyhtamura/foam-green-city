@@ -2,6 +2,7 @@
 !/.gitignore
 !/.gitattributes
 !/index.html
+!/favicon.svg
 !/development.html
 !/props-preview.html
 !/windows-preview.html

@@ -1574,3 +1574,7 @@ The first three yero rooms on the default seed draw the bare walkway, so the def
 
 Removed `v0.5` version statement from `index.html` (document title and HUD display) and `README.md` (heading and demo paragraph) per user instructions for formal portfolio and CV entry.
 
+
+## 2026-10-07 — Codex — doorway favicon
+
+After Xyh confirmed the other edits were clear, added favicon.svg and its relative SVG link in index.html. The icon is an original foam-green doorway drawing with a lit interior; ASSETS.md records provenance and the existing artwork licence applies. The prepared icon was rendered in headless Microsoft Edge at 16, 32, and 96 pixels on light and dark backgrounds and its screenshot inspected in the preceding multicart pass. Parsed the installed SVG as XML, confirmed the local page serves its icon link, and checked HTTP 200 with image/svg+xml for the icon itself. scripts/check_published_assets.py passes for all 285 referenced runtime assets. Browser-chrome tab display and gameplay were not re-tested. The standing development next step is unchanged. No remote push performed.

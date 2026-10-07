@@ -284,3 +284,7 @@ Two of them are published only as redrawn copies: `tela/kids/2026-10-06 16-58-08
 ## Puzzle mats, rice storage, and small electronics kits — 2026-10-06
 
 `puzzle-mats.js`, `rice-storage.js`, and `small-electronics.js` are procedural kits authored for this project by Codex in `F:/xyh/fgc-cx` and copied here unchanged. The puzzle mat's seam texture is drawn on a canvas by its module. None uses models, images, or fonts; the sacks carry plain blocks of colour in place of any print. Code is MIT and the geometry is CC BY 4.0 under the project's artwork terms.
+
+## Favicon — 2026-10-07
+
+favicon.svg is an original SVG drawing of a foam-green doorway with a lit interior, using the title-screen palette. Drawn by Codex on 2026-10-07. No third-party artwork or fonts are embedded. Covered by the project's CC BY 4.0 artwork licence.
