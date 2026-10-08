@@ -85,16 +85,22 @@ export function createRoomFixture(models,{height,index=0,type,lighting,fixture:c
     group.add(holder,body,globe);group.userData.lightColor=0xffecd0;group.userData.lightY=height-0.35;
     return group;
   }
-  const fixture=new THREE.Mesh(new THREE.BoxGeometry(1.0,0.06,0.22),new THREE.MeshLambertMaterial({color:0xc6cac6}));
-  fixture.userData.own=true;fixture.userData.ownMaterial=true;
-  const box=new THREE.Box3().setFromObject(fixture);
-  fixture.position.set(-(box.min.x+box.max.x)/2,height-box.max.y,-0.1);
-  group.add(fixture);
-  const glow=new THREE.Mesh(new THREE.BoxGeometry(0.88,0.025,0.14),new THREE.MeshLambertMaterial({color:type==='bathroom'?0xe6f1e7:0xffebc1,emissive:type==='bathroom'?0xa6bca9:0xa88c52,emissiveIntensity:0.7}));
-  if(!lighting?.lamp){glow.material.emissiveIntensity=0;glow.material.color.setHex(0xb3b8b2);}
-  const underside=new THREE.Box3().setFromObject(fixture).min.y;
-  glow.userData.own=true;glow.userData.ownMaterial=true;glow.position.set(0,underside-0.015,-0.1);group.add(glow);
-  group.userData.lightColor=type==='bathroom'?0xddebe0:index%3===0?0xf3e5c9:0xffe4b5;
-  group.userData.lightY=underside-0.4;
+  // A bare tube on a batten: a long box against the ceiling, a holder at each end, and one rod under
+  // it, or two side by side in about a quarter of them. A 1.2 m tube is 26 mm across.
+  const lit=!!lighting?.lamp,bath=type==='bathroom',rods=(Math.imul(index+7,0x9E3779B1)>>>0)%4===0?2:1;
+  const span=1.2,gap=0.075,battenWidth=rods===2?0.15:0.05,battenHeight=0.04,drop=0.028;
+  const body=new THREE.MeshLambertMaterial({color:0xe4e4dc});
+  const glass=new THREE.MeshLambertMaterial({color:lit?(bath?0xeef6ee:0xfdf6e2):0xc4c8c2,emissive:bath?0xcfe0d2:0xfff0cc,emissiveIntensity:lit?3:0});
+  const part=(geometry,material,x,y,z)=>{const m=new THREE.Mesh(geometry,material);m.position.set(x,y,z-0.1);m.userData.own=true;group.add(m);return m;};
+  part(new THREE.BoxGeometry(span+0.05,battenHeight,battenWidth),body,0,height-battenHeight/2,0).userData.ownMaterial=true;
+  const rodY=height-battenHeight-drop;
+  for(const side of [-1,1])part(new THREE.BoxGeometry(0.022,drop+0.018,battenWidth-0.008),body,side*(span/2+0.003),height-battenHeight-(drop+0.018)/2,0);
+  for(let n=0;n<rods;n++){
+    const rod=part(new THREE.CylinderGeometry(0.013,0.013,span-0.02,8,1,true).rotateZ(Math.PI/2),glass,0,rodY,rods===2?(n-0.5)*gap:0);
+    if(!n)rod.userData.ownMaterial=true;
+  }
+  group.userData.rods=rods;
+  group.userData.lightColor=bath?0xddebe0:index%3===0?0xf3e5c9:0xffe4b5;
+  group.userData.lightY=rodY-0.4;
   return group;
 }

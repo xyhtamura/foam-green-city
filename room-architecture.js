@@ -1,9 +1,9 @@
 import * as THREE from 'three';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
-import {floorHeight} from './room-sequences.js?v=ff65cc10b1';
+import {floorHeight} from './room-sequences.js?v=c5915c4915';
 
-import {branchOpenings,sideSpacePlan} from './side-spaces.js?v=ff65cc10b1';
-export {branchOpenings} from './side-spaces.js?v=ff65cc10b1';
+import {branchOpenings,sideSpacePlan} from './side-spaces.js?v=c5915c4915';
+export {branchOpenings} from './side-spaces.js?v=c5915c4915';
 
 // Bake a floor's local transforms before changing its owned vertex positions.
 export function raiseFloor(floor,room){

@@ -4,6 +4,14 @@
 
 2026-10-03 — Codex
 
+## Tube lights, fewer ceiling fans, ceiling colours — 2026-10-08
+
+Claude Code. The tube fixture in `createRoomFixture` (`room-sets.js`) is now a bare tube on a batten: a box 1.25 m long and 4 cm deep against the ceiling, a holder at each end, and a rod 26 mm across under it. One fixture in four, by a hash of the room index, has a batten 15 cm wide and two rods; `userData.rods` says which. A lit rod has an emissive strength of 3, because the room's lighting band multiplies emissive light with everything else and a lower value came out darker than the ceiling at night. Which rooms get a tube rather than a bulb is unchanged: one in three, or `?fixture=tube`.
+
+A ceiling fan is placed in 20% of rooms that are not bathrooms, down from 60%. The draw is still made, so everything seeded after it is what it was.
+
+A ceiling is white in 40% of rooms. In 18% it is the wall colour mixed half with white, in 12% the wall colour, in 10% cream, in 10% pale blue, and in 10% plywood tan (`ceilingColour` and `CEILING_OWN` in `index.html`). The draw has its own stream. `ceilingMaterial` keeps one material per colour, never disposed, so rooms share them. `?ceiling=white`, `?ceiling=wall`, or `?ceiling=<six hex digits>` forces one. A room with an exposed yero roof still has its ceiling removed. Side rooms and passages keep white.
+
 ## The varied route, the default — 2026-10-08
 
 Claude Code. The default profile is now `route=varied`. `mixed`, the default until now, rolls at a rate that never changes sign and curves on one circle, so it always turned over the same way. It and the other four profiles are unchanged and still reachable by name.
