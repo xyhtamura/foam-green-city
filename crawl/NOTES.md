@@ -16,13 +16,12 @@ develops this folder.
   top log entry and compare file times against it before changing anything: a
   hook reported another session's server here on 2026-10-08, and the folder has
   no git history, so an overwritten file cannot be recovered.
-- `git rev-parse --show-toplevel` returns `F:/xyh` here. The folder is ignored
-  by the root repository. Record work in this file; there is nothing to commit
-  except `../ROADMAP.md`, which is tracked by the root repository.
+- `git rev-parse --show-toplevel` returns `F:/xyh/foam-green-city`. The folder is
+  tracked inside the `foam-green-city` repository as a 2D crawl companion mode.
 - Run `npm run check` before and after a change. It runs
   `scripts/check_boards.mjs` (determinism, edge agreement, reachability, room
   mix over 6,000 boards) and `scripts/check_still.mjs`.
-- View it at `http://localhost:8000/foam-green-crawl/` on the root server. Do
+- View it at `http://localhost:8000/foam-green-city/crawl/` on the root server. Do
   not start another server.
 
 **Rules that are easy to break**
