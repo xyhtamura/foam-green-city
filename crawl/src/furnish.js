@@ -514,6 +514,224 @@ function placeOutsideSeating(board, room, landings, rFunc) {
   }
 }
 
+// Helper to place wall fixtures, calendars, wooden spoon/fork, and wall marks/smudges
+function placeWallFixturesAndSmudges(board, room, rFunc) {
+  const b = room.bounds;
+  const wallCandidates = [];
+
+  // North wall: y = b.y - 1
+  if (b.y > 0) {
+    for (let x = b.x + 1; x < b.x + b.w - 1; x++) {
+      const cell = board.cells[b.y - 1][x];
+      if (cell.solid && !cell.wallThing && cell.surface.id.includes('wall')) {
+        wallCandidates.push({ x, y: b.y - 1 });
+      }
+    }
+  }
+  // South wall: y = b.y + b.h
+  if (b.y + b.h < BOARD_HEIGHT) {
+    for (let x = b.x + 1; x < b.x + b.w - 1; x++) {
+      const cell = board.cells[b.y + b.h][x];
+      if (cell.solid && !cell.wallThing && cell.surface.id.includes('wall')) {
+        wallCandidates.push({ x, y: b.y + b.h });
+      }
+    }
+  }
+  // West wall: x = b.x - 1
+  if (b.x > 0) {
+    for (let y = b.y + 1; y < b.y + b.h - 1; y++) {
+      const cell = board.cells[y][b.x - 1];
+      if (cell.solid && !cell.wallThing && cell.surface.id.includes('wall')) {
+        wallCandidates.push({ x: b.x - 1, y });
+      }
+    }
+  }
+  // East wall: x = b.x + b.w
+  if (b.x + b.w < BOARD_WIDTH) {
+    for (let y = b.y + 1; y < b.y + b.h - 1; y++) {
+      const cell = board.cells[y][b.x + b.w];
+      if (cell.solid && !cell.wallThing && cell.surface.id.includes('wall')) {
+        wallCandidates.push({ x: b.x + b.w, y });
+      }
+    }
+  }
+
+  if (wallCandidates.length === 0) return;
+
+  // 1. Primary fixture: mirror, tv, kutsarat tinidor, photo, calendar, or outlet
+  const pIdx = Math.floor(rFunc(40) * wallCandidates.length);
+  const primaryCell = wallCandidates.splice(pIdx, 1)[0];
+
+  if (room.type === 'bathroom') {
+    placeWallThing(board, primaryCell.x, primaryCell.y, WALL_THINGS.mirror);
+  } else if (room.type === 'sala') {
+    if (rFunc(41) < 0.40) placeWallThing(board, primaryCell.x, primaryCell.y, WALL_THINGS.wall_tv);
+    else if (rFunc(42) < 0.45) placeWallThing(board, primaryCell.x, primaryCell.y, WALL_THINGS.kutsarat_tinidor);
+    else placeWallThing(board, primaryCell.x, primaryCell.y, WALL_THINGS.photo);
+  } else if (room.type === 'kitchen') {
+    if (rFunc(43) < 0.45) placeWallThing(board, primaryCell.x, primaryCell.y, WALL_THINGS.kutsarat_tinidor);
+    else if (rFunc(44) < 0.50) placeWallThing(board, primaryCell.x, primaryCell.y, WALL_THINGS.wall_calendar);
+    else placeWallThing(board, primaryCell.x, primaryCell.y, WALL_THINGS.outlet);
+  } else if (room.type === 'bedroom') {
+    if (rFunc(45) < 0.45) placeWallThing(board, primaryCell.x, primaryCell.y, WALL_THINGS.photo);
+    else if (rFunc(46) < 0.45) placeWallThing(board, primaryCell.x, primaryCell.y, WALL_THINGS.wall_calendar);
+    else placeWallThing(board, primaryCell.x, primaryCell.y, WALL_THINGS.outlet);
+  } else {
+    placeWallThing(board, primaryCell.x, primaryCell.y, WALL_THINGS.outlet);
+  }
+
+  // 2. Secondary wall fixture / paper calendar / outlet / tape residue
+  if (wallCandidates.length > 0 && rFunc(47) < 0.65) {
+    const sIdx = Math.floor(rFunc(48) * wallCandidates.length);
+    const secCell = wallCandidates.splice(sIdx, 1)[0];
+    const rollSec = rFunc(49);
+    if (rollSec < 0.35) placeWallThing(board, secCell.x, secCell.y, WALL_THINGS.wall_calendar);
+    else if (rollSec < 0.65) placeWallThing(board, secCell.x, secCell.y, WALL_THINGS.outlet);
+    else placeWallThing(board, secCell.x, secCell.y, WALL_THINGS.tape_residue);
+  }
+
+  // 3. Wall smudge or hairline stress crack (traces of wear)
+  if (wallCandidates.length > 0 && rFunc(51) < 0.55) {
+    const mIdx = Math.floor(rFunc(52) * wallCandidates.length);
+    const markCell = wallCandidates.splice(mIdx, 1)[0];
+    if (rFunc(53) < 0.55) {
+      placeWallThing(board, markCell.x, markCell.y, WALL_THINGS.wall_smudge);
+    } else {
+      placeWallThing(board, markCell.x, markCell.y, WALL_THINGS.hairline_crack);
+    }
+  }
+}
+
+// Helper to place floor scatter, smudges, traces of human movement, and corner storage
+function placeScatterAndSmudges(board, room, landings, rFunc) {
+  const b = room.bounds;
+
+  // 1. Cockroach
+  if (rFunc(55) < 0.20) {
+    const rx = b.x + 1 + Math.floor(rFunc(56) * Math.max(1, b.w - 2));
+    const ry = b.y + 1 + Math.floor(rFunc(57) * Math.max(1, b.h - 2));
+    const cell = board.cells[ry][rx];
+    if (!cell.solid && !cell.object && !cell.item && !cell.surface.id.startsWith('stair')) {
+      if (!landings.some(l => l.x === rx && l.y === ry)) {
+        cell.object = OBJECTS.cockroach;
+      }
+    }
+  }
+
+  // 2. Tabo in bathroom or kitchen
+  if (room.type === 'bathroom' || (room.type === 'kitchen' && rFunc(60) < 0.45)) {
+    const rx = b.x + 1 + Math.floor(rFunc(84) * Math.max(1, b.w - 2));
+    const ry = b.y + 1 + Math.floor(rFunc(85) * Math.max(1, b.h - 2));
+    const cell = board.cells[ry][rx];
+    if (!cell.solid && !cell.object && !cell.item && !cell.surface.id.startsWith('stair')) {
+      placeItem(board, rx, ry, ITEMS.tabo);
+    }
+  }
+
+  // 3. Tsinelas (rubber slippers) near doorway, bed, or outside bench
+  if (rFunc(61) < 0.40) {
+    const rx = b.x + 1 + Math.floor(rFunc(82) * Math.max(1, b.w - 2));
+    const ry = b.y + 1 + Math.floor(rFunc(83) * Math.max(1, b.h - 2));
+    const cell = board.cells[ry][rx];
+    if (!cell.solid && !cell.object && !cell.item && !cell.surface.id.startsWith('stair')) {
+      placeItem(board, rx, ry, ITEMS.tsinelas);
+    }
+  }
+
+  // 4. Water stain (ceiling leak, floor wash, or puddle trace)
+  if (rFunc(62) < 0.35 || room.type === 'bathroom' || room.type === 'kitchen') {
+    const rx = b.x + 1 + Math.floor(rFunc(63) * Math.max(1, b.w - 2));
+    const ry = b.y + 1 + Math.floor(rFunc(64) * Math.max(1, b.h - 2));
+    const cell = board.cells[ry][rx];
+    if (!cell.solid && !cell.object && !cell.item && !cell.surface.id.startsWith('stair')) {
+      placeItem(board, rx, ry, ITEMS.water_stain);
+    }
+  }
+
+  // 5. Scuff mark (slipper heel or dragged furniture)
+  if (rFunc(65) < 0.38) {
+    const rx = b.x + 1 + Math.floor(rFunc(66) * Math.max(1, b.w - 2));
+    const ry = b.y + 1 + Math.floor(rFunc(67) * Math.max(1, b.h - 2));
+    const cell = board.cells[ry][rx];
+    if (!cell.solid && !cell.object && !cell.item && !cell.surface.id.startsWith('stair')) {
+      placeItem(board, rx, ry, ITEMS.scuff);
+    }
+  }
+
+  // 6. Grease smudge (kitchen cooking lard or soot spot)
+  if (room.type === 'kitchen' || (room.type === 'sala' && rFunc(68) < 0.20)) {
+    const rx = b.x + 1 + Math.floor(rFunc(69) * Math.max(1, b.w - 2));
+    const ry = b.y + 1 + Math.floor(rFunc(70) * Math.max(1, b.h - 2));
+    const cell = board.cells[ry][rx];
+    if (!cell.solid && !cell.object && !cell.item && !cell.surface.id.startsWith('stair')) {
+      placeItem(board, rx, ry, ITEMS.grease_smudge);
+    }
+  }
+
+  // 7. Chalk mark (hopscotch, carpenter mark, kid's drawing)
+  if (rFunc(71) < 0.24 && (room.type === 'sala' || room.type === 'bare' || room.type === 'hall')) {
+    const rx = b.x + 1 + Math.floor(rFunc(72) * Math.max(1, b.w - 2));
+    const ry = b.y + 1 + Math.floor(rFunc(73) * Math.max(1, b.h - 2));
+    const cell = board.cells[ry][rx];
+    if (!cell.solid && !cell.object && !cell.item && !cell.surface.id.startsWith('stair')) {
+      placeItem(board, rx, ry, ITEMS.chalk_mark);
+    }
+  }
+
+  // 8. Extension cord snake
+  if (rFunc(74) < 0.28 && (room.type === 'sala' || room.type === 'bedroom' || room.type === 'kitchen')) {
+    const rx = b.x + 1 + Math.floor(rFunc(75) * Math.max(1, b.w - 2));
+    const ry = b.y + 1 + Math.floor(rFunc(76) * Math.max(1, b.h - 2));
+    const cell = board.cells[ry][rx];
+    if (!cell.solid && !cell.object && !cell.item && !cell.surface.id.startsWith('stair')) {
+      placeItem(board, rx, ry, ITEMS.extension_cord);
+    }
+  }
+
+  // 9. Dropped coin
+  if (rFunc(77) < 0.20) {
+    const rx = b.x + 1 + Math.floor(rFunc(78) * Math.max(1, b.w - 2));
+    const ry = b.y + 1 + Math.floor(rFunc(79) * Math.max(1, b.h - 2));
+    const cell = board.cells[ry][rx];
+    if (!cell.solid && !cell.object && !cell.item && !cell.surface.id.startsWith('stair')) {
+      placeItem(board, rx, ry, ITEMS.coin);
+    }
+  }
+
+  // 10. Dustpan and broom in corner
+  if (rFunc(80) < 0.32 && (room.type === 'kitchen' || room.type === 'bare' || room.type === 'hall' || room.type === 'sala')) {
+    const corners = [
+      { x: b.x + 1, y: b.y + 1 },
+      { x: b.x + b.w - 2, y: b.y + 1 },
+      { x: b.x + 1, y: b.y + b.h - 2 },
+      { x: b.x + b.w - 2, y: b.y + b.h - 2 },
+    ];
+    for (const c of corners) {
+      const cell = board.cells[c.y][c.x];
+      if (!cell.solid && !cell.object && !cell.item && !landings.some(l => l.x === c.x && l.y === c.y)) {
+        cell.object = OBJECTS.dustpan;
+        break;
+      }
+    }
+  }
+
+  // 11. Cardboard balikbayan box in corner
+  if (rFunc(81) < 0.36 && (room.type === 'bedroom' || room.type === 'bare' || room.type === 'sala')) {
+    const corners = [
+      { x: b.x + b.w - 2, y: b.y + b.h - 2 },
+      { x: b.x + 1, y: b.y + b.h - 2 },
+      { x: b.x + b.w - 2, y: b.y + 1 },
+      { x: b.x + 1, y: b.y + 1 },
+    ];
+    for (const c of corners) {
+      if (canPlacePieces(board, room, landings, [c])) {
+        placePiece(board, c.x, c.y, OBJECTS.cardboard_box);
+        break;
+      }
+    }
+  }
+}
+
 export function furnishRoom(board, room, seed) {
   // Basketball courts and yero walkways have their own dedicated architectural layout
   if (room.court || room.type === 'court' || room.type === 'yero_walkway') {
@@ -862,8 +1080,12 @@ export function furnishRoom(board, room, seed) {
       for (let cx = b.x; cx < b.x + b.w; cx++) {
         const cell = board.cells[cy][cx];
         if (cell.object && cell.object.id === 'table' && !cell.item) {
-          if (r(30) < 0.6) {
-            placeItem(board, cx, cy, (cx % 2 === 0) ? ITEMS.pitcher : ITEMS.plate);
+          const itemRoll = r(cx * 13 + cy * 19);
+          if (itemRoll < 0.70) {
+            if (itemRoll < 0.22) placeItem(board, cx, cy, ITEMS.rice_cooker);
+            else if (itemRoll < 0.40) placeItem(board, cx, cy, ITEMS.thermos);
+            else if (itemRoll < 0.55) placeItem(board, cx, cy, ITEMS.pitcher);
+            else placeItem(board, cx, cy, ITEMS.plate);
           }
         }
       }
@@ -893,6 +1115,23 @@ export function furnishRoom(board, room, seed) {
       const fanY = b.y + b.h - 2;
       if (canPlacePieces(board, room, landings, [{ x: fanX, y: fanY }])) {
         placePiece(board, fanX, fanY, OBJECTS.fan);
+      }
+    }
+  }
+
+  // Items on tables in other rooms (sala dining clusters, bare tables)
+  if (room.type !== 'kitchen') {
+    for (let cy = b.y; cy < b.y + b.h; cy++) {
+      for (let cx = b.x; cx < b.x + b.w; cx++) {
+        const cell = board.cells[cy][cx];
+        if (cell.object && cell.object.id === 'table' && !cell.item) {
+          const itemRoll = r(cx * 17 + cy * 23);
+          if (itemRoll < 0.55) {
+            if (itemRoll < 0.20) placeItem(board, cx, cy, ITEMS.thermos);
+            else if (itemRoll < 0.38) placeItem(board, cx, cy, ITEMS.pitcher);
+            else placeItem(board, cx, cy, ITEMS.plate);
+          }
+        }
       }
     }
   }
@@ -936,41 +1175,11 @@ export function furnishRoom(board, room, seed) {
     }
   }
 
-  // Wall things on walls bordering room
-  if (b.y > 0) {
-    let placedWall = false;
-    for (let wx = b.x + 2; wx < b.x + b.w - 2; wx++) {
-      const wCell = board.cells[b.y - 1][wx];
-      if (wCell.solid && !wCell.wallThing && wCell.surface.id.includes('wall')) {
-        if (room.type === 'bathroom' && !placedWall) {
-          placeWallThing(board, wx, b.y - 1, WALL_THINGS.mirror);
-          placedWall = true;
-        } else if (room.type === 'sala' && !placedWall && r(42) < 0.5) {
-          placeWallThing(board, wx, b.y - 1, WALL_THINGS.wall_tv);
-          placedWall = true;
-        } else if ((room.type === 'sala' || room.type === 'bedroom') && !placedWall && r(43) < 0.35) {
-          placeWallThing(board, wx, b.y - 1, WALL_THINGS.photo);
-          placedWall = true;
-        } else if (!placedWall && r(44) < 0.4) {
-          placeWallThing(board, wx, b.y - 1, WALL_THINGS.outlet);
-          placedWall = true;
-        }
-      }
-    }
-  }
+  // Wall fixtures and atmospheric wall smudges/cracks across all bordering walls
+  placeWallFixturesAndSmudges(board, room, r);
 
-  // Floor scatter: harmless cockroach
-  if (r(55) < 0.2) {
-    const rx = b.x + 1 + Math.floor(r(56) * (b.w - 2));
-    const ry = b.y + 1 + Math.floor(r(57) * (b.h - 2));
-    const cCell = board.cells[ry][rx];
-    if (!cCell.solid && !cCell.object && !cCell.surface.id.startsWith('stair')) {
-      const isLanding = landings.some(l => l.x === rx && l.y === ry);
-      if (!isLanding) {
-        cCell.object = OBJECTS.cockroach;
-      }
-    }
-  }
+  // Floor scatter, smudges, traces, and corner storage
+  placeScatterAndSmudges(board, room, landings, r);
 
   // Long chairs outside: benches and chair rows along exterior walls, verandas, and airwells
   placeOutsideSeating(board, room, landings, r);

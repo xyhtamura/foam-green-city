@@ -289,9 +289,15 @@ function buildCourtBoard(board, court, edges) {
         }
       }
 
-      // Loose basketballs on the court
+      // Loose basketballs, sneaker scuffs, and water drips on the court
       if ((gx === 11 && gy === 27) || (gx === 28 && gy === 33)) {
         cell.item = ITEMS.basketball;
+      } else if ((gx === 14 && gy === 21) || (gx === 24 && gy === 41)) {
+        cell.item = ITEMS.scuff;
+      } else if ((gx === 8 && gy === 15) || (gx === 31 && gy === 48)) {
+        cell.item = ITEMS.water_stain;
+      } else if (gx === 19 && gy === 30) {
+        cell.item = ITEMS.coin;
       }
 
       // Overheads: roof trusses across the court every 6 cells

@@ -287,6 +287,131 @@ export const TEXTS = {
     'Overhead distribution line running between board boundaries on [level].',
     'Service drop wires suspended overhead, gently vibrating in the outdoor breeze.',
   ],
+
+  // --- New Objects: Storage & Domestic Tools ---
+  cardboard_box: [
+    'Heavy double-corrugated box bound tight with brown packing tape and nylon twine.',
+    'Carton stamped with shipping barcodes from Dubai to Manila, tucked into the corner.',
+    'Taped cardboard box smelling faintly of soap bars, canned goods, and newsprint.',
+    'Sturdy storage cube stacked beneath [light], handwriting in marker on the flap: "BEDSHEETS".',
+    'Sunken carton bowing slightly under its own weight on [level].',
+  ],
+  dustpan: [
+    'Red plastic dustpan leaning against a tiger grass walis tambo in the corner.',
+    'Coconut midrib broom (walis tingting) bound with tire rubber beside a shallow scoop.',
+    'Broom bristles splayed from years of sweeping cool cement in the morning.',
+    'A modest cleaning pair standing sentinel by the partition under [light].',
+    'Dustpan holding a small crescent of fine gray swept grit on [level].',
+  ],
+
+  // --- New Items: Smudges, Stains & Floor Scatter ---
+  water_stain: [
+    'Faint dried concentric rings where a galvanized roof seam leaked during the monsoon.',
+    'A pale chalky ring on the [room] floor, darker at the rim where mineral dust settled.',
+    'Moisture contour dried into bare concrete under [light]. No dripping left overhead.',
+    'A shadow-ring from an unemptied pail left standing overnight.',
+    'Water mark shaped like an island on [level], outline faintly bleached by sunlight.',
+  ],
+  scuff: [
+    'A black diagonal skid from a dragged rubber slipper.',
+    'Heel scuff baked into the wax of the [room] floor.',
+    'Friction burn from moving a heavy wooden bench across bare concrete.',
+    'Short dark stroke near the doorway, where someone pivoted hurriedly in the rain.',
+    'A twin pair of faint streaks under [light], tracing where a table leg caught the floor.',
+  ],
+  grease_smudge: [
+    'A dark tack of splattered cooking lard that caught dust over months.',
+    'Soot ring on the floor where a portable stove or burner once rested.',
+    'Dark sticky sheen along the kitchen skirting under [light].',
+    'Yellowed halo of oil mist settled deep into the concrete grain.',
+    'Burnt seasoning splatter on [level], hardened into a glass-like amber drop.',
+  ],
+  chalk_mark: [
+    'A faded hopscotch corner drawn with carpenter\'s chalk on the [room] floor.',
+    'A small handwritten tally in white school chalk, faint under [light].',
+    'A stick figure and a crooked square sketched on the cool cement.',
+    'Chalk arrow pointing toward an interior doorway, half-rubbed away by foot traffic.',
+    'Construction mark in blue chalk: an alignment cross from when the partition was raised.',
+  ],
+  tsinelas: [
+    'A pair of mismatched blue Beach Walk slippers left side by side at the threshold.',
+    'Thin foam rubber slippers with worn treads, cool to the touch on the cement.',
+    'One slipper right side up, the other kicked sideways under [light].',
+    'Yellow and white tsinelas with the strap repaired with a safety pin.',
+    'Pair of small rubber slippers resting on the cool [room] floor.',
+  ],
+  tabo: [
+    'Pastel blue plastic water dipper with a ridged handle, dripping into a pail.',
+    'Translucent red tabo resting rim-down on the bathroom floor under [light].',
+    'Molded plastic water scoop, lightweight and sun-faded near the laundry basin.',
+    'A sturdy water dipper with limescale watermarks dried around its belly.',
+    'Standard cylindrical tabo balanced carefully on [level].',
+  ],
+  rice_cooker: [
+    'White aluminum drum with floral enamel decal, amber "WARM" neon glowing faintly.',
+    'Glass lid clouded with condensation over a warm batch of sinandomeng.',
+    'Dented rice cooker plugged into a double adapter on the [room] table.',
+    'Compact rice cooker humming quietly under [light], steam vent stained with starch.',
+    'Ten-cup automatic cooker with a plastic paddle resting across its handle.',
+  ],
+  thermos: [
+    'Tin pump thermos with peeling rose transfers, keeping water hot for 3-in-1 coffee.',
+    'Red plastic vacuum jug with a twist stopper, warm around the neck.',
+    'Tall insulated flask with a dented chrome base resting on the table.',
+    'Steam hisses faintly from the spout when tapped under [light].',
+    'Glass-lined thermos holding morning water for tea on [level].',
+  ],
+  extension_cord: [
+    'Bright orange heavy-duty extension cord snaking along the floor baseboard.',
+    'Tangled multi-socket power strip with a glowing red rocker switch under [light].',
+    'Flat white electrical wire taped down with peeling brown parcel tape.',
+    'Cord zigzagging from the solitary wall outlet toward a table fan in the [room].',
+    'Two-prong plug loosely seated in a cracked adapter on [level].',
+  ],
+  coin: [
+    'A dull nickel-plated 5-peso coin nestled in the hairline expansion joint of the cement.',
+    'A tarnished 1-peso coin glinting faintly under [light] near the table leg.',
+    'Old brass coin slipped beneath the edge of the linoleum mat.',
+    'Small metallic circle dropped unnoticed on the [room] floor.',
+    'Coin worn smooth by thousand pockets, resting silent on [level].',
+  ],
+
+  // --- New Wall Things: Wall Smudges, Residue, & Filipino Wall Decor ---
+  tape_residue: [
+    'Four yellowed rectangles of brittle cellophane tape that outlived whatever poster was pinned here.',
+    'Gummy adhesive fuzz clinging to the foam green plaster under [light].',
+    'Tape residue in the exact proportions of a class schedule or prayer guide.',
+    'Frayed scrap of grey packing tape that tore when pulled, leaving adhesive skin behind.',
+    'Dried scotch tape framing an empty patch of wall on [level].',
+  ],
+  wall_smudge: [
+    'A dull grey handprint near the doorway where shoulders lean to take off shoes.',
+    'Dark patina around the switchplate where knuckles graze the paint daily.',
+    'Slight oil shadow at eye height on the [room] partition.',
+    'Grime halo rubbed into the lime wash under [light].',
+    'Dark vertical rub line where a wardrobe once pressed against the wall.',
+  ],
+  hairline_crack: [
+    'A meandering lightning crack running down the skim coat of the plaster.',
+    'Settlement fracture opening hairline width between concrete blocks.',
+    'Fine fissure in the foam green paint under [light], shifting with the heat of the day.',
+    'Diagonal shear line through the plaster, tracing an old tremor.',
+    'Crevice no wider than a fingernail, dividing two panels of [level] partition.',
+  ],
+  wall_calendar: [
+    'Daily tear-off commercial calendar with red auspicious numbers and a gold dragon header.',
+    'Hardware store calendar showing an aerial view of Manila Bay from three years ago.',
+    'Large glossy wall calendar pinned over the plaster under [light], pages curled at the bottom.',
+    'Calendar with handwritten reminders in ballpoint ink: rent due, water delivery, birthdays.',
+    'Thick stack of paper dates held by a single rusted tack on [level].',
+  ],
+  kutsarat_tinidor: [
+    'Pair of oversized monkey-pod wood carvings: four-foot spoon and fork flanking the dining area.',
+    'Dark varnished wooden utensils hanging vertically, their bowls curved like small canoes.',
+    'Classic dining room decor carved with mountain scenes along the handles.',
+    'Polished wood reflecting [light], a familiar fixture of Filipino family dining.',
+    'Giant spoon on the left, fork on the right, keeping watch over meals on [level].',
+  ],
 };
 
 /**

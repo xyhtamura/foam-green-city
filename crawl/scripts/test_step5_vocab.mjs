@@ -64,9 +64,18 @@ console.log('Odd Layouts:', Array.from(stats.oddLayouts).sort().join(', '));
 console.log('Max cell layers encountered on a single cell:', stats.maxLayersEncountered);
 
 // Assert expectations
-const requiredObjects = ['monobloc', 'table', 'bed', 'sofa', 'drawers', 'bucket', 'lpg', 'fan', 'toilet', 'column', 'cockroach', 'bench'];
-const requiredItems = ['chair_on_table', 'pitcher', 'plate'];
-const requiredWallThings = ['photo', 'outlet', 'mirror', 'wall_tv'];
+const requiredObjects = [
+  'monobloc', 'table', 'bed', 'sofa', 'drawers', 'bucket', 'lpg', 'fan', 'toilet',
+  'column', 'cockroach', 'bench', 'cardboard_box', 'dustpan'
+];
+const requiredItems = [
+  'chair_on_table', 'pitcher', 'plate', 'water_stain', 'scuff', 'grease_smudge',
+  'chalk_mark', 'tsinelas', 'tabo', 'rice_cooker', 'thermos', 'extension_cord', 'coin'
+];
+const requiredWallThings = [
+  'photo', 'outlet', 'mirror', 'wall_tv', 'tape_residue', 'wall_smudge',
+  'hairline_crack', 'wall_calendar', 'kutsarat_tinidor'
+];
 const requiredOverheads = ['tube_light', 'bulb', 'sampayan'];
 const requiredFinishes = ['foam_green_wall', 'yellow_wall', 'concrete_wall', 'beige_wall', 'offwhite_wall'];
 const requiredLighting = ['daylight', 'overcast', 'shaded', 'dawn', 'dusk', 'blueHour', 'darkDay', 'night', 'deepNight'];

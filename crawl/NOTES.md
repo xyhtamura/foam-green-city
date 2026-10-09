@@ -637,6 +637,41 @@ Implemented Option #4 (Lattice "Cuts" / Mysterious Portals):
   - `npm run check`: 6,000 boards across seeds 5, 42, 108 passed determinism, edge agreement, stair agreement, and reachability. Stillness check passed (0 rAF, 0 timers, 0 transitions, 0 animations).
   - `test_step7_texts.mjs`: passed 51/51 vocabulary pools with 100% substitution success.
 
+2026-10-10 — Antigravity — added domestic smudges, stains, surface wear, floor scatter, and objects.
+
+Added 17 new authentic Philippine domestic entities across objects, floor items, and wall things:
+- Floor smudges, stains & marks (`ITEMS`):
+  - `water_stain` (`~`): dried concentric leak rings from galvanized roof seams or unemptied basins.
+  - `scuff` (`-`): black rubber slipper (tsinelas) heel marks and dragged furniture burns.
+  - `grease_smudge` (`%`): cooking lard splatter and burner soot patches near kitchen corners.
+  - `chalk_mark` (`x`): hopscotch corners, carpenter tally marks, and school chalk scribbles.
+  - `coin` (`.`): dropped 1-peso / 5-peso coins resting in cement expansion joints.
+  - `extension_cord` (`s`): bright orange power strip snake trailing along baseboards.
+- Everyday domestic scatter & tableware (`ITEMS`):
+  - `tsinelas` (`»`): blue Beach Walk rubber slippers resting by thresholds, beds, and benches.
+  - `tabo` (`d`): plastic water scoop in bathrooms, laundry areas, and near sinks.
+  - `rice_cooker` (`ö`): electric rice cooker with warm neon indicator on tables and counters.
+  - `thermos` (`!`): floral tin pump thermos / vacuum jug for instant coffee and hot water.
+- Storage & domestic maintenance tools (`OBJECTS`):
+  - `cardboard_box` (`■`, solid): taped balikbayan box or grocery carton tucked in corners.
+  - `dustpan` (`v`, non-solid): plastic dustpan and walis tambo / tingting broom standing sentinel.
+- Wall smudges, traces & Filipino wall decor (`WALL_THINGS`):
+  - `tape_residue` (`=`): yellowed cellophane tape rectangles from removed posters or schedules.
+  - `wall_smudge` (`'`): handprint oil patinas and knuckle marks near doors and switches.
+  - `hairline_crack` (`/`): fine plaster stress fractures running down foam green partitions.
+  - `wall_calendar` (`§`): Chinese-Filipino commercial calendar with auspicious dates.
+  - `kutsarat_tinidor` (`Ψ`): giant carved monkeypod wooden spoon and fork wall sculptures.
+- Generator integration:
+  - `furnish.js`: added `placeWallFixturesAndSmudges` (inspects all bordering walls, not just North), `placeScatterAndSmudges`, and expanded tabletop items across all rooms.
+  - `board.js`: added sneaker scuffs, roof drip water stains, and dropped coins to covered basketball courts.
+- Styling:
+  - Full Light and Terminal theme CSS rules in `style.css` for all 17 entities.
+- Verification:
+  - `npm run check`: 6,000 boards (seeds 5, 42, 108) passed 100% determinism, edge agreement, stair agreement, and reachability. Stillness check passed (0 rAF, 0 timers, 0 animations, 0 transitions).
+  - `test_step5_vocab.mjs`: 100% vocabulary discovery across 500 boards with all new items verified.
+  - `test_step7_texts.mjs`: 100% test coverage across all 68 vocabulary text pools with zero residual template tokens.
+
+
 
 
 
