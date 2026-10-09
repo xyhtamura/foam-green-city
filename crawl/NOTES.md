@@ -613,6 +613,15 @@ Performance benchmarks (measured per SPEC.md section 10):
 What is left undone or known broken:
 - None. All 7 steps and verification checks in SPEC.md are complete.
 
+2026-10-10 — Antigravity — Diversified table shapes, chair configurations, absences, and outdoor benches.
+
+Addressed user feedback regarding repetitive chair/table patterns (-hh- / htth / -hh-):
+- Table geometries: expanded beyond 2x1 horizontal to 1x1 compact/breakfast tables, vertical 1x2 and 1x3 runs, long 3x1 and 4x1 banquet/fiesta tables, 2x2 square family tables, and L-shaped corner tables.
+- Seating configurations & deliberate absences: introduced one-sided seating (facing into room or against wall), opposite-sides dining with gaps/absences, head-of-table solitary dining, bare tables with zero chairs, and conversational seating clusters/arcs without central dining tables.
+- Long chairs outside: added `bench` ("wooden bench" / "bangko", glyph `п`) to vocabulary records, complete with 5 authored inspection texts in `data/texts.js` and dual-theme styling in `style.css`. Placed 2-to-4 cell wooden benches and monobloc chair runs along exterior walls, under jalousie windows, beside interior airwells (lightwell/hole courtyards), in hallways, and in bare spaces.
+- Verification: all 6,000 boards passed reachability, determinism, edge agreement, stair agreement, and stillness in `npm run check`. `test_step5_vocab.mjs` (50 items) and `test_step7_texts.mjs` passed 100%.
+
+
 
 
 

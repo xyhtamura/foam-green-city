@@ -146,6 +146,7 @@ h1 {
 .cell[data-obj="hoop"]      { background: #c24b38; color: #ffffff; font-weight: 700; }
 .cell[data-obj="bleacher"]  { background: #5a4231; color: #e6d7c8; font-weight: 700; }
 .cell[data-obj="post"]      { background: #423428; color: #d9c8b8; font-weight: 700; }
+.cell[data-obj="bench"]     { background: #5a3d24; color: #e4cbb5; font-weight: 700; }
 
 /* Items resting on furniture or surfaces */
 .cell[data-item="chair_on_table"] { background: #6a462f; color: #f4f6f0; font-weight: 700; }
@@ -240,6 +241,7 @@ h1 {
 :root[data-display="terminal"] .cell[data-obj="hoop"]      { color: #f07153; }
 :root[data-display="terminal"] .cell[data-obj="bleacher"]  { color: #c49366; }
 :root[data-display="terminal"] .cell[data-obj="post"]      { color: #b58c65; }
+:root[data-display="terminal"] .cell[data-obj="bench"]     { color: #d29d66; }
 
 /* Items in terminal display */
 :root[data-display="terminal"] .cell[data-item]                  { background: transparent; }

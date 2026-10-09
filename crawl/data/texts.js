@@ -187,6 +187,13 @@ export const TEXTS = {
     'Salt-cured post supporting overhead wires above the void on [level].',
     'Vertical wood timber anchored into the catwalk subframe.',
   ],
+  bench: [
+    'Two planks smoothed by years of trousers and bare thighs under [light].',
+    'Narrow wooden bangko pushed against the wall in [room]. Long enough for three people or one afternoon nap.',
+    'Rough timber bench, stained dark by rain and palm sweat. Cool to the touch.',
+    'Long outdoor seat facing the empty passage. A damp circle where a drinking glass was set down.',
+    'Heavy mahogany plank resting on two cinderblocks on [level]. Stiff, unyielding, and always available.',
+  ],
 
   // --- Items: Things Resting on Supports or Surfaces ---
   chair_on_table: [

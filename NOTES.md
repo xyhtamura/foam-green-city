@@ -1605,5 +1605,6 @@ Added `crawl/`, a top-down deterministic DOS/dungeon-crawler companion mode in a
 - Inspection & specimen engine: 49 vocabulary items (surfaces, objects, items, fixtures, overheads) with contextual deterministic descriptions.
 - Audio: Strictly silent, adhering to the stillness and minimal distraction constraint.
 - Performance: Generates in <1 ms average (<8 ms 99th percentile across 2,000 boards), ~445 DOM nodes, 0.0% idle CPU.
+- Furniture & seating variety: added wooden benches (`bench`, glyph `п`), flexible table shapes (1x1, 1x2, 2x1, 1x3, 1x4, 2x2, L-shape), deliberate chair absences (one-sided, opposite pairs, bare tables, solitary chairs), and outdoor seating runs along exterior walls and airwells.
 - Test suites: `check_boards.mjs` (6,000 boards edge agreement and reachability), `check_still.mjs` (stillness guarantee), `test_step5_vocab.mjs`, `test_step6_large_spaces.mjs`, `test_step7_texts.mjs`, all passing.
 

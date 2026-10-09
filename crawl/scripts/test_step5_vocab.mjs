@@ -64,7 +64,7 @@ console.log('Odd Layouts:', Array.from(stats.oddLayouts).sort().join(', '));
 console.log('Max cell layers encountered on a single cell:', stats.maxLayersEncountered);
 
 // Assert expectations
-const requiredObjects = ['monobloc', 'table', 'bed', 'sofa', 'drawers', 'bucket', 'lpg', 'fan', 'toilet', 'column', 'cockroach'];
+const requiredObjects = ['monobloc', 'table', 'bed', 'sofa', 'drawers', 'bucket', 'lpg', 'fan', 'toilet', 'column', 'cockroach', 'bench'];
 const requiredItems = ['chair_on_table', 'pitcher', 'plate'];
 const requiredWallThings = ['photo', 'outlet', 'mirror', 'wall_tv'];
 const requiredOverheads = ['tube_light', 'bulb', 'sampayan'];

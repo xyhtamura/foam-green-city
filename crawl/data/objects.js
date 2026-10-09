@@ -143,6 +143,16 @@ export const OBJECTS = {
     tags: ['structural', 'wood', 'timber', 'post', 'outdoor'],
     texts: [],
   },
+  bench: {
+    id: 'bench',
+    name: 'wooden bench',
+    layer: 'object',
+    glyphs: ['п'],
+    glyph: 'п',
+    solid: true,
+    tags: ['wood', 'bench', 'seat', 'outdoor', 'domestic'],
+    texts: [],
+  },
 };
 
 export const ITEMS = {

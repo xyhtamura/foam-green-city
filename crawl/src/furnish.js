@@ -9,6 +9,9 @@ import { OBJECTS, ITEMS, WALL_THINGS, OVERHEADS } from '../data/objects.js';
 import { BOARD_WIDTH, BOARD_HEIGHT } from './board.js';
 
 export const ORDINARY_LAYOUT_IDS = [
+  'diningSet',
+  'benchesAndChairs',
+  'conversation',
   'pairedDining',
   'chairRows',
   'tableRows',
@@ -29,12 +32,12 @@ export const ODD_LAYOUT_IDS = [
 export const LAYOUT_IDS = [...ORDINARY_LAYOUT_IDS, ...ODD_LAYOUT_IDS];
 
 const ORDINARY_LAYOUTS_BY_ROOM = {
-  sala: ['pairedDining', 'pairedDining', 'perimeter', 'sparse', 'gathered'],
-  kitchen: ['pairedDining', 'tableRows', 'sparse', 'gathered'],
-  bedroom: ['sparse', 'sparse', 'pairedDining'],
+  sala: ['diningSet', 'conversation', 'benchesAndChairs', 'perimeter', 'sparse', 'gathered'],
+  kitchen: ['diningSet', 'benchesAndChairs', 'tableRows', 'sparse', 'gathered'],
+  bedroom: ['sparse', 'sparse', 'diningSet'],
   bathroom: ['sparse'],
-  bare: ['sparse'],
-  hall: ['sparse', 'sparse', 'perimeter', 'chairRows', 'gathered'],
+  bare: ['sparse', 'benchesAndChairs', 'conversation'],
+  hall: ['sparse', 'benchesAndChairs', 'perimeter', 'chairRows', 'conversation'],
   auditorium: ['chairRows'],
 };
 
@@ -224,6 +227,265 @@ function placeWallThing(board, x, y, wallThingDef) {
   cell.solid = true;
 }
 
+// Helper to place a table of varied shape and corresponding varied seating
+function placeDiningCluster(board, room, landings, tx, ty, rFunc, saltBase = 0) {
+  const b = room.bounds;
+  const rollShape = rFunc(saltBase + 1);
+  const rollSeating = rFunc(saltBase + 2);
+
+  let tableOffsets = [];
+  const canFit4H = (tx + 3 < b.x + b.w);
+  const canFit3H = (tx + 2 < b.x + b.w);
+  const canFit3V = (ty + 2 < b.y + b.h);
+  const canFitSquare = (tx + 1 < b.x + b.w && ty + 1 < b.y + b.h);
+
+  if (canFit4H && rollShape < 0.15) {
+    tableOffsets = [{ dx: 0, dy: 0 }, { dx: 1, dy: 0 }, { dx: 2, dy: 0 }, { dx: 3, dy: 0 }];
+  } else if (canFit3H && rollShape < 0.35) {
+    tableOffsets = [{ dx: 0, dy: 0 }, { dx: 1, dy: 0 }, { dx: 2, dy: 0 }];
+  } else if (canFit3V && rollShape < 0.48) {
+    tableOffsets = [{ dx: 0, dy: 0 }, { dx: 0, dy: 1 }, { dx: 0, dy: 2 }];
+  } else if (canFitSquare && rollShape < 0.62) {
+    tableOffsets = [{ dx: 0, dy: 0 }, { dx: 1, dy: 0 }, { dx: 0, dy: 1 }, { dx: 1, dy: 1 }];
+  } else if (canFit3H && ty + 1 < b.y + b.h && rollShape < 0.72) {
+    tableOffsets = [{ dx: 0, dy: 0 }, { dx: 1, dy: 0 }, { dx: 2, dy: 0 }, { dx: 0, dy: 1 }];
+  } else if (ty + 1 < b.y + b.h && rollShape < 0.85) {
+    tableOffsets = [{ dx: 0, dy: 0 }, { dx: 0, dy: 1 }];
+  } else if (tx + 1 < b.x + b.w && rollShape < 0.94) {
+    tableOffsets = [{ dx: 0, dy: 0 }, { dx: 1, dy: 0 }];
+  } else {
+    tableOffsets = [{ dx: 0, dy: 0 }];
+  }
+
+  const tableCells = [];
+  for (const off of tableOffsets) {
+    const cx = tx + off.dx;
+    const cy = ty + off.dy;
+    if (cx >= b.x && cx < b.x + b.w && cy >= b.y && cy < b.y + b.h) {
+      tableCells.push({ x: cx, y: cy });
+    }
+  }
+
+  if (tableCells.length === 0) return;
+
+  if (!canPlacePieces(board, room, landings, tableCells)) {
+    const single = [{ x: tx, y: ty }];
+    if (canPlacePieces(board, room, landings, single)) {
+      placePiece(board, tx, ty, OBJECTS.table);
+      tableCells.length = 0;
+      tableCells.push({ x: tx, y: ty });
+    } else {
+      return;
+    }
+  } else {
+    for (const cell of tableCells) {
+      placePiece(board, cell.x, cell.y, OBJECTS.table);
+    }
+  }
+
+  const minTableX = Math.min(...tableCells.map(c => c.x));
+  const maxTableX = Math.max(...tableCells.map(c => c.x));
+  const minTableY = Math.min(...tableCells.map(c => c.y));
+  const maxTableY = Math.max(...tableCells.map(c => c.y));
+
+  const northSlots = [];
+  const southSlots = [];
+  const westSlots = [];
+  const eastSlots = [];
+
+  for (let x = minTableX; x <= maxTableX; x++) {
+    if (tableCells.some(c => c.x === x && c.y === minTableY)) {
+      northSlots.push({ x, y: minTableY - 1 });
+    }
+    if (tableCells.some(c => c.x === x && c.y === maxTableY)) {
+      southSlots.push({ x, y: maxTableY + 1 });
+    }
+  }
+  for (let y = minTableY; y <= maxTableY; y++) {
+    if (tableCells.some(c => c.y === y && c.x === minTableX)) {
+      westSlots.push({ x: minTableX - 1, y });
+    }
+    if (tableCells.some(c => c.y === y && c.x === maxTableX)) {
+      eastSlots.push({ x: maxTableX + 1, y });
+    }
+  }
+
+  if (rollSeating < 0.22) {
+    // Style A: Table with Long Wooden Bench on one side, and chairs/open on other
+    const benchSide = rFunc(saltBase + 3) < 0.5 ? northSlots : southSlots;
+    const chairSide = benchSide === northSlots ? southSlots : northSlots;
+
+    for (const pos of benchSide) {
+      if (canPlacePieces(board, room, landings, [pos])) {
+        placePiece(board, pos.x, pos.y, OBJECTS.bench);
+      }
+    }
+    for (let i = 0; i < chairSide.length; i++) {
+      if (rFunc(saltBase + 4 + i) < 0.7) {
+        const pos = chairSide[i];
+        if (canPlacePieces(board, room, landings, [pos])) {
+          placePiece(board, pos.x, pos.y, OBJECTS.monobloc);
+        }
+      }
+    }
+  } else if (rollSeating < 0.42) {
+    // Style B: One-sided seating (facing into room or against wall)
+    const pickSide = rFunc(saltBase + 5);
+    const side = (pickSide < 0.4) ? southSlots : (pickSide < 0.7) ? northSlots : (pickSide < 0.85) ? eastSlots : westSlots;
+    for (let i = 0; i < side.length; i++) {
+      if (rFunc(saltBase + 6 + i) < 0.85) {
+        const pos = side[i];
+        if (canPlacePieces(board, room, landings, [pos])) {
+          placePiece(board, pos.x, pos.y, OBJECTS.monobloc);
+        }
+      }
+    }
+  } else if (rollSeating < 0.60) {
+    // Style C: Opposite sides only, with absences / gaps
+    const sideA = (minTableY !== maxTableY) ? westSlots : northSlots;
+    const sideB = (minTableY !== maxTableY) ? eastSlots : southSlots;
+
+    for (let i = 0; i < sideA.length; i++) {
+      if (rFunc(saltBase + 7 + i) < 0.65) {
+        const pos = sideA[i];
+        if (canPlacePieces(board, room, landings, [pos])) {
+          placePiece(board, pos.x, pos.y, OBJECTS.monobloc);
+        }
+      }
+    }
+    for (let i = 0; i < sideB.length; i++) {
+      if (rFunc(saltBase + 12 + i) < 0.65) {
+        const pos = sideB[i];
+        if (canPlacePieces(board, room, landings, [pos])) {
+          placePiece(board, pos.x, pos.y, OBJECTS.monobloc);
+        }
+      }
+    }
+  } else if (rollSeating < 0.72) {
+    // Style D: Head of the table only / solitary chair
+    const allEnds = [...westSlots, ...eastSlots, ...northSlots, ...southSlots];
+    if (allEnds.length > 0) {
+      const idx = Math.floor(rFunc(saltBase + 18) * allEnds.length);
+      const pos = allEnds[idx];
+      if (canPlacePieces(board, room, landings, [pos])) {
+        placePiece(board, pos.x, pos.y, OBJECTS.monobloc);
+      }
+    }
+  } else if (rollSeating < 0.82) {
+    // Style E: Bare table (zero chairs around table)
+  } else {
+    // Style F: Asymmetric / lived-in surround
+    const allSlots = [...northSlots, ...southSlots, ...westSlots, ...eastSlots];
+    for (let i = 0; i < allSlots.length; i++) {
+      const rollSlot = rFunc(saltBase + 20 + i);
+      if (rollSlot < 0.55) {
+        const pos = allSlots[i];
+        if (canPlacePieces(board, room, landings, [pos])) {
+          placePiece(board, pos.x, pos.y, OBJECTS.monobloc);
+        }
+      }
+    }
+  }
+}
+
+// Helper to place seating clusters without large dining tables
+function placeConversationSeating(board, room, landings, cx, cy, rFunc, saltBase = 0) {
+  const rollType = rFunc(saltBase + 1);
+
+  if (rollType < 0.35) {
+    // Small side table with 2 chairs facing each other
+    if (canPlacePieces(board, room, landings, [{ x: cx, y: cy }])) {
+      placePiece(board, cx, cy, OBJECTS.table);
+    }
+    const chairs = [
+      { x: cx - 1, y: cy },
+      { x: cx + 1, y: cy },
+    ];
+    if (rFunc(saltBase + 2) < 0.5) chairs.push({ x: cx, y: cy + 1 });
+    for (const ch of chairs) {
+      if (canPlacePieces(board, room, landings, [ch])) {
+        placePiece(board, ch.x, ch.y, OBJECTS.monobloc);
+      }
+    }
+  } else if (rollType < 0.65) {
+    // Open arc or ring of 3 to 5 monobloc chairs with NO table in the middle
+    const ring = [
+      { x: cx - 1, y: cy },
+      { x: cx + 1, y: cy },
+      { x: cx, y: cy - 1 },
+      { x: cx, y: cy + 1 },
+    ];
+    for (let i = 0; i < ring.length; i++) {
+      if (rFunc(saltBase + 3 + i) < 0.75) {
+        const pos = ring[i];
+        if (canPlacePieces(board, room, landings, [pos])) {
+          placePiece(board, pos.x, pos.y, OBJECTS.monobloc);
+        }
+      }
+    }
+  } else {
+    // Pair of chairs side by side facing into room
+    const p1 = { x: cx, y: cy };
+    const p2 = { x: cx + 1, y: cy };
+    if (canPlacePieces(board, room, landings, [p1])) placePiece(board, p1.x, p1.y, OBJECTS.monobloc);
+    if (canPlacePieces(board, room, landings, [p2])) placePiece(board, p2.x, p2.y, OBJECTS.monobloc);
+  }
+}
+
+// Helper to place long chairs and wooden benches outside along walls, verandas, and airwells
+function placeOutsideSeating(board, room, landings, rFunc) {
+  const b = room.bounds;
+
+  // 1. Check if room has an airwell boundary (interior lightwell / hole)
+  let placedAirwellBench = false;
+  for (let y = b.y; y < b.y + b.h; y++) {
+    for (let x = b.x; x < b.x + b.w; x++) {
+      if (!board.cells[y][x].solid && !board.cells[y][x].object) {
+        const nearAirwell = (
+          (y > 0 && board.cells[y - 1][x].surface.id === 'airwell') ||
+          (y < BOARD_HEIGHT - 1 && board.cells[y + 1][x].surface.id === 'airwell') ||
+          (x > 0 && board.cells[y][x - 1].surface.id === 'airwell') ||
+          (x < BOARD_WIDTH - 1 && board.cells[y][x + 1].surface.id === 'airwell')
+        );
+        if (nearAirwell && !placedAirwellBench && rFunc(45) < 0.55) {
+          const benchCells = [{ x, y }];
+          if (x + 1 < b.x + b.w && !board.cells[y][x + 1].solid) benchCells.push({ x: x + 1, y });
+          if (x + 2 < b.x + b.w && !board.cells[y][x + 2].solid && rFunc(46) < 0.5) benchCells.push({ x: x + 2, y });
+
+          for (const pos of benchCells) {
+            if (canPlacePieces(board, room, landings, [pos])) {
+              placePiece(board, pos.x, pos.y, rFunc(47) < 0.7 ? OBJECTS.bench : OBJECTS.monobloc);
+            }
+          }
+          placedAirwellBench = true;
+        }
+      }
+    }
+  }
+
+  // 2. Exterior walls or veranda (walls with jalousie windows or perimeter borders)
+  if (rFunc(48) < 0.45 && (room.type === 'hall' || room.type === 'bare' || room.type === 'sala' || b.w >= 10)) {
+    if (b.y === 1) {
+      const startX = b.x + 2 + Math.floor(rFunc(49) * Math.max(1, b.w - 6));
+      const benchLen = 2 + Math.floor(rFunc(50) * 3);
+      for (let x = startX; x < Math.min(b.x + b.w - 2, startX + benchLen); x++) {
+        if (canPlacePieces(board, room, landings, [{ x, y: b.y }])) {
+          placePiece(board, x, b.y, rFunc(51) < 0.65 ? OBJECTS.bench : OBJECTS.monobloc);
+        }
+      }
+    } else if (b.y + b.h === BOARD_HEIGHT - 1) {
+      const sy = b.y + b.h - 1;
+      const startX = b.x + 2 + Math.floor(rFunc(52) * Math.max(1, b.w - 6));
+      const benchLen = 2 + Math.floor(rFunc(53) * 3);
+      for (let x = startX; x < Math.min(b.x + b.w - 2, startX + benchLen); x++) {
+        if (canPlacePieces(board, room, landings, [{ x, y: sy }])) {
+          placePiece(board, x, sy, rFunc(54) < 0.65 ? OBJECTS.bench : OBJECTS.monobloc);
+        }
+      }
+    }
+  }
+}
+
 export function furnishRoom(board, room, seed) {
   // Basketball courts and yero walkways have their own dedicated architectural layout
   if (room.court || room.type === 'court' || room.type === 'yero_walkway') {
@@ -247,31 +509,48 @@ export function furnishRoom(board, room, seed) {
   room.layout = layout;
 
   switch (layout) {
+    case 'diningSet':
     case 'pairedDining': {
-      // 1 or 2 dining sets: a table + 2 to 4 monobloc chairs
+      // 1 or 2 dining clusters of varied shapes and seating
       const numSets = (b.w >= 14 && b.h >= 10 && r(2) < 0.5) ? 2 : 1;
       for (let s = 0; s < numSets; s++) {
         const offX = s === 0 ? Math.floor(b.w * 0.3) : Math.floor(b.w * 0.7);
         const tx = b.x + offX;
         const ty = b.y + Math.floor(b.h * 0.5);
+        placeDiningCluster(board, room, landings, tx, ty, r, s * 30 + 10);
+      }
+      break;
+    }
 
-        // Try candidate table + chairs
-        const candidates = [
-          { x: tx, y: ty, obj: OBJECTS.table },
-          { x: tx + 1, y: ty, obj: OBJECTS.table },
-          { x: tx, y: ty - 1, obj: OBJECTS.monobloc },
-          { x: tx + 1, y: ty - 1, obj: OBJECTS.monobloc },
-          { x: tx, y: ty + 1, obj: OBJECTS.monobloc },
-          { x: tx + 1, y: ty + 1, obj: OBJECTS.monobloc },
-        ];
+    case 'benchesAndChairs': {
+      // Long table with long wooden bench and chairs (carinderia / party style)
+      const cx = b.x + Math.floor(b.w / 2) - 1;
+      const cy = b.y + Math.floor(b.h / 2);
+      const tableCells = [{ x: cx, y: cy }, { x: cx + 1, y: cy }];
+      if (cx + 2 < b.x + b.w - 1) tableCells.push({ x: cx + 2, y: cy });
 
-        // Place pieces that pass reachability
-        for (const item of candidates) {
-          if (canPlacePieces(board, room, landings, [{ x: item.x, y: item.y }])) {
-            placePiece(board, item.x, item.y, item.obj);
+      if (canPlacePieces(board, room, landings, tableCells)) {
+        for (const tc of tableCells) placePiece(board, tc.x, tc.y, OBJECTS.table);
+        // Wooden bench above
+        for (const tc of tableCells) {
+          if (canPlacePieces(board, room, landings, [{ x: tc.x, y: cy - 1 }])) {
+            placePiece(board, tc.x, cy - 1, OBJECTS.bench);
+          }
+        }
+        // Monobloc chairs below (with gaps)
+        for (let i = 0; i < tableCells.length; i++) {
+          if (r(15 + i) < 0.7 && canPlacePieces(board, room, landings, [{ x: tableCells[i].x, y: cy + 1 }])) {
+            placePiece(board, tableCells[i].x, cy + 1, OBJECTS.monobloc);
           }
         }
       }
+      break;
+    }
+
+    case 'conversation': {
+      const cx = b.x + Math.floor(b.w / 2);
+      const cy = b.y + Math.floor(b.h / 2);
+      placeConversationSeating(board, room, landings, cx, cy, r, 5);
       break;
     }
 
@@ -296,19 +575,23 @@ export function furnishRoom(board, room, seed) {
     }
 
     case 'tableRows': {
-      // Runs of tables along length with chairs
+      // Runs of tables along length with chairs and benches
       const startY = b.y + Math.floor(b.h * 0.4);
       for (let x = b.x + 2; x < b.x + b.w - 3; x += 3) {
         if (canPlacePieces(board, room, landings, [{ x, y: startY }, { x: x + 1, y: startY }])) {
           placePiece(board, x, startY, OBJECTS.table);
           placePiece(board, x + 1, startY, OBJECTS.table);
 
-          // Chair above
+          // Seat above: either wooden bench or monobloc
+          const seatObj = (r(x * 3) < 0.35) ? OBJECTS.bench : OBJECTS.monobloc;
           if (canPlacePieces(board, room, landings, [{ x, y: startY - 1 }])) {
-            placePiece(board, x, startY - 1, OBJECTS.monobloc);
+            placePiece(board, x, startY - 1, seatObj);
           }
-          // Chair below
-          if (canPlacePieces(board, room, landings, [{ x: x + 1, y: startY + 1 }])) {
+          if (canPlacePieces(board, room, landings, [{ x: x + 1, y: startY - 1 }])) {
+            placePiece(board, x + 1, startY - 1, seatObj);
+          }
+          // Seat below: monobloc chairs with possible gap
+          if (r(x * 5) < 0.75 && canPlacePieces(board, room, landings, [{ x: x + 1, y: startY + 1 }])) {
             placePiece(board, x + 1, startY + 1, OBJECTS.monobloc);
           }
         }
@@ -317,13 +600,17 @@ export function furnishRoom(board, room, seed) {
     }
 
     case 'perimeter': {
-      // Seating and storage along walls
-      // Sofa along North or South wall
+      // Seating and storage along walls: sofas, long wooden benches, drawers, and chair runs
       const sofaX = b.x + 2;
       const sofaY = b.y + 1;
+      const useBench = r(4) < 0.4;
+      const wallObj = useBench ? OBJECTS.bench : OBJECTS.sofa;
       if (canPlacePieces(board, room, landings, [{ x: sofaX, y: sofaY }, { x: sofaX + 1, y: sofaY }])) {
-        placePiece(board, sofaX, sofaY, OBJECTS.sofa);
-        placePiece(board, sofaX + 1, sofaY, OBJECTS.sofa);
+        placePiece(board, sofaX, sofaY, wallObj);
+        placePiece(board, sofaX + 1, sofaY, wallObj);
+        if (useBench && canPlacePieces(board, room, landings, [{ x: sofaX + 2, y: sofaY }])) {
+          placePiece(board, sofaX + 2, sofaY, wallObj);
+        }
       }
 
       // Drawers in a corner
@@ -344,33 +631,17 @@ export function furnishRoom(board, room, seed) {
     }
 
     case 'gathered': {
-      // Central cluster of tables and chairs
+      // Diverse central gathering: 2x2 table, circle of chairs, or bench+table
       const cx = b.x + Math.floor(b.w / 2);
       const cy = b.y + Math.floor(b.h / 2);
+      const rollG = r(3);
 
-      const tableGroup = [
-        { x: cx, y: cy, obj: OBJECTS.table },
-        { x: cx + 1, y: cy, obj: OBJECTS.table },
-      ];
-      for (const item of tableGroup) {
-        if (canPlacePieces(board, room, landings, [{ x: item.x, y: item.y }])) {
-          placePiece(board, item.x, item.y, item.obj);
-        }
-      }
-
-      // Chairs gathered around
-      const surroundingChairs = [
-        { x: cx - 1, y: cy },
-        { x: cx + 2, y: cy },
-        { x: cx, y: cy - 1 },
-        { x: cx + 1, y: cy - 1 },
-        { x: cx, y: cy + 1 },
-        { x: cx + 1, y: cy + 1 },
-      ];
-      for (const ch of surroundingChairs) {
-        if (canPlacePieces(board, room, landings, [{ x: ch.x, y: ch.y }])) {
-          placePiece(board, ch.x, ch.y, OBJECTS.monobloc);
-        }
+      if (rollG < 0.4) {
+        // Circle of chairs with an open center
+        placeConversationSeating(board, room, landings, cx, cy, r, 20);
+      } else {
+        // Central table cluster with diverse seating
+        placeDiningCluster(board, room, landings, cx - 1, cy, r, 25);
       }
 
       // Nearby bucket or drawers
@@ -413,24 +684,40 @@ export function furnishRoom(board, room, seed) {
           placePiece(board, chairX, chairY, OBJECTS.monobloc);
         }
       } else {
-        // One isolated table with a chair, or isolated sofa
+        // Solitary chair, lone bench, single small table, or isolated sofa
         const midX = b.x + Math.floor(b.w / 2);
         const midY = b.y + Math.floor(b.h / 2);
+        const rollSparse = r(5);
 
-        if (r(5) < 0.5) {
-          if (canPlacePieces(board, room, landings, [{ x: midX, y: midY }, { x: midX + 1, y: midY }])) {
+        if (rollSparse < 0.3) {
+          // Solitary monobloc chair standing alone in the room
+          if (canPlacePieces(board, room, landings, [{ x: midX, y: midY }])) {
+            placePiece(board, midX, midY, OBJECTS.monobloc);
+          }
+        } else if (rollSparse < 0.55) {
+          // Solitary wooden bench against wall
+          const by = b.y + 1;
+          const bx = b.x + 2;
+          if (canPlacePieces(board, room, landings, [{ x: bx, y: by }, { x: bx + 1, y: by }])) {
+            placePiece(board, bx, by, OBJECTS.bench);
+            placePiece(board, bx + 1, by, OBJECTS.bench);
+          }
+        } else if (rollSparse < 0.8) {
+          // Small 1x1 or 2x1 table with 1 chair
+          if (canPlacePieces(board, room, landings, [{ x: midX, y: midY }])) {
             placePiece(board, midX, midY, OBJECTS.table);
-            placePiece(board, midX + 1, midY, OBJECTS.table);
             if (canPlacePieces(board, room, landings, [{ x: midX, y: midY - 1 }])) {
               placePiece(board, midX, midY - 1, OBJECTS.monobloc);
             }
           }
         } else {
+          // Isolated sofa
           if (canPlacePieces(board, room, landings, [{ x: midX, y: midY }, { x: midX + 1, y: midY }])) {
             placePiece(board, midX, midY, OBJECTS.sofa);
             placePiece(board, midX + 1, midY, OBJECTS.sofa);
           }
         }
+
         // Occasional bucket in corner
         if (r(6) < 0.35 && canPlacePieces(board, room, landings, [{ x: b.x + 1, y: b.y + b.h - 2 }])) {
           placePiece(board, b.x + 1, b.y + b.h - 2, OBJECTS.bucket);
@@ -656,6 +943,9 @@ export function furnishRoom(board, room, seed) {
       }
     }
   }
+
+  // Long chairs outside: benches and chair rows along exterior walls, verandas, and airwells
+  placeOutsideSeating(board, room, landings, r);
 }
 
 export function furnishBoard(board) {
