@@ -70,6 +70,13 @@ export const TEXTS = {
     'Unobstructed opening on [level], framing the transition into the next space.',
     'The lintel overhead is unadorned. Footsteps pass through without friction.',
   ],
+  dark_doorway: [
+    'An unlit threshold leading beyond the mapped floor. The draft smells of distant rain on another level.',
+    'No frame and no light on the other side. Passing through cuts directly to an unfamiliar run of rooms.',
+    'A doorway opening into pitch shadow. Stepping across breaks the continuity of the grid.',
+    'A silent corridor exit on [level]. Whatever lies past does not share a wall with this room.',
+    'A cold threshold in the [room]. The lintel is painted foam green, but nothing inside reflects [light].',
+  ],
   jalousie: [
     'Louvred glass slats in an aluminum frame, cranked open to catch the evening cross-breeze.',
     'Adjustable glass louvres filtering the [light] outside.',

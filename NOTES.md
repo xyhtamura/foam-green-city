@@ -1607,4 +1607,6 @@ Added `crawl/`, a top-down deterministic DOS/dungeon-crawler companion mode in a
 - Performance: Generates in <1 ms average (<8 ms 99th percentile across 2,000 boards), ~445 DOM nodes, 0.0% idle CPU.
 - Furniture & seating variety: added wooden benches (`bench`, glyph `п`), flexible table shapes (1x1, 1x2, 2x1, 1x3, 1x4, 2x2, L-shape), deliberate chair absences (one-sided, opposite pairs, bare tables, solitary chairs), and outdoor seating runs along exterior walls and airwells.
 - Test suites: `check_boards.mjs` (6,000 boards edge agreement and reachability), `check_still.mjs` (stillness guarantee), `test_step5_vocab.mjs`, `test_step6_large_spaces.mjs`, `test_step7_texts.mjs`, all passing.
+- Lattice cuts & mysterious portals: added `dark_doorway` (glyph `"`, name "dark doorway") on ~20-30% of domestic boards, deterministically warping player across lattice coordinates `(bx + Δx, by + Δy, z + Δz)`. Interactive inspection displays poetic descriptions and a direct travel button or double-click / Space / Enter trigger; 100% reachability preserved across 6,000 boards.
+
 

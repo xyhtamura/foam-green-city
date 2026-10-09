@@ -93,6 +93,34 @@ function getRoomLandings(board, room) {
     }
   }
 
+  // Include any dark doorway cuts in or directly adjacent to this room
+  if (board.cuts) {
+    for (const cut of board.cuts) {
+      if (cut.x >= b.x - 1 && cut.x <= b.x + b.w && cut.y >= b.y - 1 && cut.y <= b.y + b.h) {
+        landings.push({
+          x: cut.x,
+          y: cut.y,
+        });
+        const nbs = [
+          [cut.x + 1, cut.y],
+          [cut.x - 1, cut.y],
+          [cut.x, cut.y + 1],
+          [cut.x, cut.y - 1],
+        ];
+        for (const [nx, ny] of nbs) {
+          if (nx >= b.x && nx < b.x + b.w && ny >= b.y && ny < b.y + b.h && !board.cells[ny][nx].solid) {
+            landings.push({
+              x: nx,
+              y: ny,
+              fromX: cut.x,
+              fromY: cut.y,
+            });
+          }
+        }
+      }
+    }
+  }
+
   return landings;
 }
 
@@ -109,8 +137,8 @@ function canPlacePieces(board, room, landings, candidatePositions) {
     if (cell.solid || cell.object !== null) {
       return false;
     }
-    // Never place on stair cells
-    if (cell.surface.id === 'stair_up' || cell.surface.id === 'stair_down') {
+    // Never place on stair cells or dark doorways
+    if (cell.surface.id === 'stair_up' || cell.surface.id === 'stair_down' || cell.surface.id === 'dark_doorway') {
       return false;
     }
     // Cannot place on landing cell or 1-cell step directly inside landing

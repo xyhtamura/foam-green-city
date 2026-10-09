@@ -621,6 +621,23 @@ Addressed user feedback regarding repetitive chair/table patterns (-hh- / htth /
 - Long chairs outside: added `bench` ("wooden bench" / "bangko", glyph `п`) to vocabulary records, complete with 5 authored inspection texts in `data/texts.js` and dual-theme styling in `style.css`. Placed 2-to-4 cell wooden benches and monobloc chair runs along exterior walls, under jalousie windows, beside interior airwells (lightwell/hole courtyards), in hallways, and in bare spaces.
 - Verification: all 6,000 boards passed reachability, determinism, edge agreement, stair agreement, and stillness in `npm run check`. `test_step5_vocab.mjs` (50 items) and `test_step7_texts.mjs` passed 100%.
 
+2026-10-10 — Antigravity — added lattice cuts and mysterious portals warping to distant sectors.
+
+Implemented Option #4 (Lattice "Cuts" / Mysterious Portals):
+- Feature: Introduced `dark_doorway` (glyph `"`, name "dark doorway", tags: `['opening', 'threshold', 'shadow', 'cut', 'portal']`) representing unlit rectangular wall apertures.
+- Generation & Reachability: Placed deterministically in `board.js` (Section 7b) on ~20-30% of domestic boards. Carved on interior partition walls or alcoves adjacent to walkable floor, never touching perimeter boundaries (preserving edge agreement) or airwells. Reachability tested and verified at 100% across all 6,000 boards.
+- Warp coordinates: Deterministically hashes `(bx, by, z)` into distant destination `(bx + Δx, by + Δy, z + Δz)` with `Δx, Δy` spanning up to ±39 boards and `Δz` in `[-2..2]`.
+- Furniture keep-out: In `furnish.js`, included dark doorways and step-in landing zones in `getRoomLandings` and forbade placing objects on `dark_doorway` cells.
+- Inspection & interaction:
+  - Authored 5 poetic text entries in `data/texts.js` with template substitutions.
+  - First click inspects the doorway and presents metadata with the "Step into shadow → (bx, by) Lz" action button.
+  - Clicking the action button, clicking the cell a second time, or pressing `Space` / `Enter` executes `loadBoard` to the distant sector.
+- Styling: Styled in `style.css` for both Light (`#0c1811` background, `#4ee69a` glyph, dark inset shadow) and Terminal mode (`#4ee69a` text on `#000000`).
+- Verification:
+  - `npm run check`: 6,000 boards across seeds 5, 42, 108 passed determinism, edge agreement, stair agreement, and reachability. Stillness check passed (0 rAF, 0 timers, 0 transitions, 0 animations).
+  - `test_step7_texts.mjs`: passed 51/51 vocabulary pools with 100% substitution success.
+
+
 
 
 

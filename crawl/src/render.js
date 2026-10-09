@@ -201,11 +201,19 @@ export function createRenderer(gridEl, inspectEl, statusEl, logEl) {
       dataAttr = `data-s="${cell.surface.id}"`;
     }
 
+    const cut = board.cuts && board.cuts.find(c => c.x === target.x && c.y === target.y);
+
     let stairLead = '';
     if (cell.surface.id === 'stair_up') {
       stairLead = ` · ascends to Level ${board.z + 1} (tap or press R)`;
     } else if (cell.surface.id === 'stair_down') {
       stairLead = ` · descends to Level ${board.z - 1} (tap or press F)`;
+    } else if (cell.surface.id === 'dark_doorway') {
+      if (cut) {
+        stairLead = ` · cuts to Board (${cut.targetBx}, ${cut.targetBy}) L${cut.targetZ} (tap or press Space)`;
+      } else {
+        stairLead = ` · dark doorway`;
+      }
     } else if (cell.surface.id === 'doorway') {
       if (target.y === 0) stairLead = ` · North exit (tap or press W)`;
       else if (target.y === BOARD_HEIGHT - 1) stairLead = ` · South exit (tap or press S)`;
@@ -232,6 +240,7 @@ export function createRenderer(gridEl, inspectEl, statusEl, logEl) {
         ${layers.length > 1 ? `<span class="layer-tag">layer ${activeIdx + 1}/${layers.length}</span>` : ''}
       </div>
       ${text ? `<div class="inspect-text">“${text}”</div>` : ''}
+      ${cut ? `<div class="inspect-actions" style="margin-top:0.6rem;"><button id="cut-travel-btn" class="cut-travel-btn" data-target-bx="${cut.targetBx}" data-target-by="${cut.targetBy}" data-target-z="${cut.targetZ}">Step into shadow → (${cut.targetBx}, ${cut.targetBy}) L${cut.targetZ}</button></div>` : ''}
       <div class="inspect-meta">
         <div><strong>Position:</strong> (${target.x}, ${target.y}) on Board (${board.bx}, ${board.by}) · Level ${board.z}${stairLead}</div>
         <div><strong>Layer:</strong> ${item.layer} ${layers.length > 1 ? '(click cell again to cycle)' : ''}</div>

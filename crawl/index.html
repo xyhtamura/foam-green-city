@@ -211,6 +211,14 @@
           }
           break;
         }
+        case 'cut': {
+          const cut = state.inspected && state.board.cuts && state.board.cuts.find(c => c.x === state.inspected.x && c.y === state.inspected.y);
+          if (cut) {
+            if (statusEl) statusEl.textContent = `Cut to Board (${cut.targetBx}, ${cut.targetBy}) · Level ${cut.targetZ} · Crossed dark threshold`;
+            loadBoard(cut.targetBx, cut.targetBy, cut.targetZ);
+          }
+          break;
+        }
       }
     }
 
@@ -250,6 +258,15 @@
         return;
       }
 
+      // 2b. Tapping dark doorway: if already inspected, travel through it!
+      if (cell.surface.id === 'dark_doorway') {
+        const isSame = state.inspected && state.inspected.x === x && state.inspected.y === y;
+        if (isSame) {
+          handleNavigate('cut');
+          return;
+        }
+      }
+
       // 3. Tapping any other room cell inspects it
       handleInspect(x, y);
     }
@@ -280,6 +297,22 @@
       onNavigate: handleNavigate,
       onCellClick: handleCellClick,
     });
+
+    const inspectEl = document.getElementById('inspect');
+    if (inspectEl) {
+      inspectEl.addEventListener('click', (e) => {
+        const btn = e.target.closest('#cut-travel-btn');
+        if (btn) {
+          const bx = parseInt(btn.getAttribute('data-target-bx'), 10);
+          const by = parseInt(btn.getAttribute('data-target-by'), 10);
+          const z = parseInt(btn.getAttribute('data-target-z'), 10);
+          if (!Number.isNaN(bx) && !Number.isNaN(by) && !Number.isNaN(z)) {
+            if (statusEl) statusEl.textContent = `Cut to Board (${bx}, ${by}) · Level ${z} · Crossed dark threshold`;
+            loadBoard(bx, by, z);
+          }
+        }
+      });
+    }
 
     // Display toggle. Colours are CSS keyed on the root attribute, so nothing is redrawn.
     const displayBtn = document.getElementById('display-toggle');

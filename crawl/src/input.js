@@ -45,6 +45,11 @@ export function setupInput({ onNavigate, onCellClick }) {
         e.preventDefault();
         onNavigate('down');
         break;
+      case ' ':
+      case 'Enter':
+        e.preventDefault();
+        onNavigate('cut');
+        break;
     }
   });
 

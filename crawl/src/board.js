@@ -492,6 +492,7 @@ export function generateBoard(seed, bx, by, z = 0) {
       edges,
       rooms: [],
       stairs: [],
+      cuts: [],
       cells,
     };
     buildCourtBoard(board, courtInfo, edges);
@@ -512,6 +513,7 @@ export function generateBoard(seed, bx, by, z = 0) {
       edges,
       rooms: [],
       stairs: [],
+      cuts: [],
       cells,
     };
     buildYeroBoard(board, edges);
@@ -956,6 +958,82 @@ export function generateBoard(seed, bx, by, z = 0) {
     });
   }
 
+  // 7b. Place cuts (dark doorways warping to distant lattice sectors) on select domestic boards
+  const cuts = [];
+  const hasCut = (unit3(bx, by, z, seed * 101 + 47) < (0.18 + strange * 0.14));
+  if (hasCut) {
+    const candidates = [];
+    for (let cy = 1; cy < BOARD_HEIGHT - 1; cy++) {
+      for (let cx = 1; cx < BOARD_WIDTH - 1; cx++) {
+        const c = cells[cy][cx];
+        if (!c.solid || !c.surface.id.endsWith('_wall')) continue;
+
+        // Must not hit stairs or reserved stair keep-outs
+        const hitsStairs = reservedStairCells.some(s => Math.abs(s.x - cx) <= 1 && Math.abs(s.y - cy) <= 1);
+        if (hitsStairs) continue;
+
+        // Examine 4-way neighbors
+        const nbs = [
+          [cx + 1, cy],
+          [cx - 1, cy],
+          [cx, cy + 1],
+          [cx, cy - 1],
+        ];
+
+        let walkableCount = 0;
+        let touchesAirwell = false;
+        let neighborRoomId = null;
+
+        for (const [nx, ny] of nbs) {
+          const nb = cells[ny][nx];
+          if (nb.surface.id === 'airwell') {
+            touchesAirwell = true;
+            break;
+          }
+          if (!nb.solid) {
+            walkableCount++;
+            if (nb.roomId && !neighborRoomId) neighborRoomId = nb.roomId;
+          }
+        }
+
+        if (touchesAirwell) continue;
+
+        // Valid candidate: alcove or interior wall doorway with 1 or 2 walkable neighbors
+        if (walkableCount >= 1 && walkableCount <= 2) {
+          candidates.push({ x: cx, y: cy, roomId: neighborRoomId });
+        }
+      }
+    }
+
+    if (candidates.length > 0) {
+      const cutPickIdx = Math.floor(unit3(bx, by, z, seed * 101 + 59) * candidates.length);
+      const picked = candidates[cutPickIdx];
+
+      cells[picked.y][picked.x].surface = SURFACES.dark_doorway;
+      cells[picked.y][picked.x].solid = false;
+      if (picked.roomId) cells[picked.y][picked.x].roomId = picked.roomId;
+
+      // Compute distant warp target (dx, dy in [-40..40], dz in [-2..2])
+      const cutHash = hash3(bx, by, z, seed * 113 + 37);
+      let dX = ((cutHash % 79) - 39);
+      if (dX === 0) dX = 23;
+      let dY = (((cutHash >> 7) % 79) - 39);
+      if (dY === 0) dY = -29;
+      let dZ = ((cutHash >> 14) % 5) - 2;
+      const targetZ = clamp(z + dZ, -3, 5);
+      const targetBx = bx + dX;
+      const targetBy = by + dY;
+
+      cuts.push({
+        x: picked.x,
+        y: picked.y,
+        targetBx,
+        targetBy,
+        targetZ,
+      });
+    }
+  }
+
   const board = {
     seed,
     bx,
@@ -969,6 +1047,7 @@ export function generateBoard(seed, bx, by, z = 0) {
     edges,
     rooms,
     stairs,
+    cuts,
     cells,
   };
 

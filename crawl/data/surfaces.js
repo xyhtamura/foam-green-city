@@ -102,6 +102,15 @@ export const SURFACES = {
     solid: false,
     tags: ['doorway', 'threshold', 'open'],
   },
+  dark_doorway: {
+    id: 'dark_doorway',
+    name: 'dark doorway',
+    layer: 'surface',
+    glyphs: ['"'],
+    glyph: '"',
+    solid: false,
+    tags: ['opening', 'threshold', 'shadow', 'cut', 'portal'],
+  },
   jalousie: {
     id: 'jalousie',
     name: 'jalousie window',
