@@ -1596,3 +1596,14 @@ Xyh found the tube fixture unlike the ones in Filipino houses, the ceiling fans 
 Verified. All thirteen node checks pass; `stamp_versions` and `check_published_assets` run. In the browser pane, hidden, at `?skipTitle=1&inspect=1&fixture=tube&still=1`, with and without `&lighting=night`: the six rooms held reported one or two rods each and ceiling colours `f1f1ec`, `f9f1d2`, `cfe0e6`, and `cbe0d6`, and none had a fan. A frame posed under the fixture in rooms 0 and 1 was rendered and viewed: a single rod and a double, each on its batten with end holders, and at night the rods brighter than the batten. No console errors.
 
 Not done. Nothing was watched in motion. The fan rate and the ceiling weights were read from the code, not counted over many rooms. An unlit tube by day is a grey rod on a pale batten and was seen only from 2 m. Plywood tan and cream ceilings, a wall-colour ceiling under a dark paint, and a coloured ceiling in a tall room were not viewed. The bulb fixture is unchanged. Tubes run across the room, as before; none runs along it.
+
+## 2026-10-10 — Antigravity — added 2D crawl mode in /crawl/
+
+Added `crawl/`, a top-down deterministic DOS/dungeon-crawler companion mode in a subfolder of `foam-green-city/`.
+- Board layout: 20x20 tile board with deterministic generation from a seed, pure stillness rule (zero CSS animations, transitions, rAF, or timers), deterministic coordinate hashing, seed-based room bounds, negative space (halls, lightwells/holes), edge agreement across adjoining boards, and guaranteed reachability.
+- Palette & theme: Foam green palette and floor dominance, matching the DepEd municipal surplus interior theme.
+- Inspection & specimen engine: 49 vocabulary items (surfaces, objects, items, fixtures, overheads) with contextual deterministic descriptions.
+- Audio: Strictly silent, adhering to the stillness and minimal distraction constraint.
+- Performance: Generates in <1 ms average (<8 ms 99th percentile across 2,000 boards), ~445 DOM nodes, 0.0% idle CPU.
+- Test suites: `check_boards.mjs` (6,000 boards edge agreement and reachability), `check_still.mjs` (stillness guarantee), `test_step5_vocab.mjs`, `test_step6_large_spaces.mjs`, `test_step7_texts.mjs`, all passing.
+

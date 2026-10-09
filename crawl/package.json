@@ -1,0 +1,13 @@
+{
+  "name": "foam-green-crawl",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check": "node scripts/check_boards.mjs && node scripts/check_still.mjs",
+    "check:boards": "node scripts/check_boards.mjs",
+    "check:still": "node scripts/check_still.mjs",
+    "test:step5": "node scripts/test_step5_vocab.mjs",
+    "test:step6": "node scripts/test_step6_large_spaces.mjs",
+    "test:step7": "node scripts/test_step7_texts.mjs"
+  }
+}

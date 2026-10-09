@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Foam Green Crawl</title>
+  <meta name="description" content="A still glyph crawl through endless generated Filipino domestic rooms." />
+  <link rel="stylesheet" href="style.css" />
+  <script>
+    // Display: "light" (default) or "terminal". ?display= overrides the saved choice.
+    (function () {
+      var choice = new URLSearchParams(location.search).get('display');
+      if (!choice) { try { choice = localStorage.getItem('fgcrawl_display'); } catch (e) {} }
+      document.documentElement.dataset.display = choice === 'terminal' ? 'terminal' : 'light';
+    })();
+  </script>
+</head>
+<body>
+  <header>
+    <h1>Foam Green Crawl</h1>
+    <div id="status">Loading...</div>
+  </header>
+
+  <main class="main-layout">
+    <div class="grid-wrapper">
+      <div id="grid"></div>
+    </div>
+
+    <aside class="sidebar">
+      <div class="card" id="inspect-card">
+        <h2>Inspection</h2>
+        <div id="inspect">Click any cell to inspect</div>
+      </div>
+
+      <div class="card" id="specimen-card">
+        <h2>Specimen Log</h2>
+        <div id="specimen-log" class="specimen-list">None yet</div>
+      </div>
+
+      <div class="card">
+        <h2>Controls</h2>
+        <p class="controls-help">WASD / Arrows to crawl. R / F for stairs.<br />Tap any perimeter door or stair to travel; click room cells to inspect.</p>
+        <div class="dpad">
+          <button class="dpad-btn" id="pad-up" title="North (W)" aria-label="North">▲</button>
+          <button class="dpad-btn" id="pad-left" title="West (A)" aria-label="West">◀</button>
+          <button class="dpad-btn" id="pad-right" title="East (D)" aria-label="East">▶</button>
+          <button class="dpad-btn" id="pad-down" title="South (S)" aria-label="South">▼</button>
+          <button class="dpad-btn" id="pad-up-stair" title="Ascend stairs (R)" aria-label="Ascend">R</button>
+          <button class="dpad-btn" id="pad-down-stair" title="Descend stairs (F)" aria-label="Descend">F</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Display</h2>
+        <button class="display-btn" id="display-toggle" type="button"></button>
+      </div>
+    </aside>
+  </main>
+
+  <script type="module">
+    import { generateBoard, BOARD_WIDTH, BOARD_HEIGHT } from './src/board.js';
+    import { createRenderer, getInspectLayers } from './src/render.js';
+    import { setupInput } from './src/input.js';
+    import { resolveText } from './data/texts.js';
+
+    // Parse seed, board coordinates, and level from URL query
+    const params = new URLSearchParams(window.location.search);
+    const seed = parseInt(params.get('seed') || '5', 10);
+    const initialBx = parseInt(params.get('bx') || '0', 10);
+    const initialBy = parseInt(params.get('by') || '0', 10);
+    const initialZ = parseInt(params.get('z') || '0', 10);
+
+    const state = {
+      seed,
+      bx: initialBx,
+      by: initialBy,
+      z: initialZ,
+      board: null,
+      inspected: null,
+      inspectLayerIdx: 0,
+      specimenLog: [],
+    };
+
+    const gridEl = document.getElementById('grid');
+    const inspectEl = document.getElementById('inspect');
+    const statusEl = document.getElementById('status');
+    const logEl = document.getElementById('specimen-log');
+
+    const renderer = createRenderer(gridEl, inspectEl, statusEl, logEl);
+
+    function addSpecimen(item, board, x = 0, y = 0) {
+      if (!item) return;
+      const boardPosStr = `(${board.bx}, ${board.by}) L${board.z}`;
+      const first = state.specimenLog[0];
+      if (first && first.id === item.id && first.layer === item.layer && first.boardPos === boardPosStr) {
+        return;
+      }
+      const cell = (board.cells && board.cells[y]) ? board.cells[y][x] : null;
+      const room = cell ? board.rooms.find(r => r.id === cell.roomId) : null;
+      const text = resolveText(item.id, {
+        seed: board.seed,
+        bx: board.bx,
+        by: board.by,
+        z: board.z,
+        x,
+        y,
+        layer: item.layer,
+        room,
+      });
+
+      state.specimenLog.unshift({
+        id: item.id,
+        name: item.name,
+        layer: item.layer,
+        glyph: item.glyph,
+        boardPos: boardPosStr,
+        surfaceId: item.surfaceId,
+        text,
+      });
+      if (state.specimenLog.length > 20) {
+        state.specimenLog.pop();
+      }
+    }
+
+    function updatePadButtons(board) {
+      const padUp = document.getElementById('pad-up');
+      const padDown = document.getElementById('pad-down');
+      const padLeft = document.getElementById('pad-left');
+      const padRight = document.getElementById('pad-right');
+      const padUpStair = document.getElementById('pad-up-stair');
+      const padDownStair = document.getElementById('pad-down-stair');
+
+      if (padUp) padUp.disabled = !(board.edges.north.hasDoor || board.edges.north.isOpen);
+      if (padDown) padDown.disabled = !(board.edges.south.hasDoor || board.edges.south.isOpen);
+      if (padLeft) padLeft.disabled = !(board.edges.west.hasDoor || board.edges.west.isOpen);
+      if (padRight) padRight.disabled = !(board.edges.east.hasDoor || board.edges.east.isOpen);
+      if (padUpStair) padUpStair.disabled = !board.stairs.some(s => s.type === 'up');
+      if (padDownStair) padDownStair.disabled = !board.stairs.some(s => s.type === 'down');
+    }
+
+    function loadBoard(bx, by, z) {
+      state.bx = bx;
+      state.by = by;
+      state.z = z;
+      state.board = generateBoard(state.seed, bx, by, z);
+      state.inspected = null;
+      state.inspectLayerIdx = 0;
+
+      updatePadButtons(state.board);
+
+      const url = new URL(window.location);
+      url.searchParams.set('bx', bx);
+      url.searchParams.set('by', by);
+      url.searchParams.set('z', z);
+      window.history.replaceState({}, '', url);
+
+      renderer.renderBoard(state.board, state.inspected, state.inspectLayerIdx, state.specimenLog);
+    }
+
+    function handleNavigate(dir) {
+      if (!state.board) return;
+
+      switch (dir) {
+        case 'north': {
+          if (state.board.edges.north.hasDoor || state.board.edges.north.isOpen) {
+            loadBoard(state.bx, state.by - 1, state.z);
+          } else {
+            if (statusEl) statusEl.textContent = `Board (${state.bx}, ${state.by}) · Level ${state.z} · No exit to the North`;
+          }
+          break;
+        }
+        case 'south': {
+          if (state.board.edges.south.hasDoor || state.board.edges.south.isOpen) {
+            loadBoard(state.bx, state.by + 1, state.z);
+          } else {
+            if (statusEl) statusEl.textContent = `Board (${state.bx}, ${state.by}) · Level ${state.z} · No exit to the South`;
+          }
+          break;
+        }
+        case 'west': {
+          if (state.board.edges.west.hasDoor || state.board.edges.west.isOpen) {
+            loadBoard(state.bx - 1, state.by, state.z);
+          } else {
+            if (statusEl) statusEl.textContent = `Board (${state.bx}, ${state.by}) · Level ${state.z} · No exit to the West`;
+          }
+          break;
+        }
+        case 'east': {
+          if (state.board.edges.east.hasDoor || state.board.edges.east.isOpen) {
+            loadBoard(state.bx + 1, state.by, state.z);
+          } else {
+            if (statusEl) statusEl.textContent = `Board (${state.bx}, ${state.by}) · Level ${state.z} · No exit to the East`;
+          }
+          break;
+        }
+        case 'up': {
+          const hasStairUp = state.board.stairs.some(s => s.type === 'up');
+          if (hasStairUp) {
+            loadBoard(state.bx, state.by, state.z + 1);
+          } else {
+            if (statusEl) statusEl.textContent = `Board (${state.bx}, ${state.by}) · Level ${state.z} · No stairs leading up here`;
+          }
+          break;
+        }
+        case 'down': {
+          const hasStairDown = state.board.stairs.some(s => s.type === 'down');
+          if (hasStairDown) {
+            loadBoard(state.bx, state.by, state.z - 1);
+          } else {
+            if (statusEl) statusEl.textContent = `Board (${state.bx}, ${state.by}) · Level ${state.z} · No stairs leading down here`;
+          }
+          break;
+        }
+      }
+    }
+
+    function handleCellClick(x, y) {
+      if (!state.board) return;
+      const cell = state.board.cells[y][x];
+      if (!cell) return;
+
+      // 1. Tapping perimeter doors or open perimeter passages transitions room-to-room (WASD)
+      if (cell.surface.id === 'doorway' || (!cell.solid && (y === 0 || y === BOARD_HEIGHT - 1 || x === 0 || x === BOARD_WIDTH - 1))) {
+        if (y === 0 && (state.board.edges.north.hasDoor || state.board.edges.north.isOpen)) {
+          handleNavigate('north');
+          return;
+        }
+        if (y === BOARD_HEIGHT - 1 && (state.board.edges.south.hasDoor || state.board.edges.south.isOpen)) {
+          handleNavigate('south');
+          return;
+        }
+        if (x === 0 && (state.board.edges.west.hasDoor || state.board.edges.west.isOpen)) {
+          handleNavigate('west');
+          return;
+        }
+        if (x === BOARD_WIDTH - 1 && (state.board.edges.east.hasDoor || state.board.edges.east.isOpen)) {
+          handleNavigate('east');
+          return;
+        }
+        // Interior doorway falls through to inspection
+      }
+
+      // 2. Tapping stairs transitions vertical levels (Up / Down)
+      if (cell.surface.id === 'stair_up') {
+        handleNavigate('up');
+        return;
+      }
+      if (cell.surface.id === 'stair_down') {
+        handleNavigate('down');
+        return;
+      }
+
+      // 3. Tapping any other room cell inspects it
+      handleInspect(x, y);
+    }
+
+    function handleInspect(x, y) {
+      if (x >= 0 && x < BOARD_WIDTH && y >= 0 && y < BOARD_HEIGHT) {
+        const isSame = state.inspected && state.inspected.x === x && state.inspected.y === y;
+        if (isSame) {
+          state.inspectLayerIdx++;
+        } else {
+          renderer.setInspectedCell(state.inspected, { x, y });
+          state.inspected = { x, y };
+          state.inspectLayerIdx = 0;
+        }
+
+        const layers = getInspectLayers(state.board, x, y);
+        if (layers.length > 0) {
+          const activeIdx = (state.inspectLayerIdx % layers.length + layers.length) % layers.length;
+          addSpecimen(layers[activeIdx], state.board, x, y);
+        }
+
+        renderer.renderInspect(state.board, state.inspected, state.inspectLayerIdx);
+        renderer.renderSpecimenLog(state.specimenLog);
+      }
+    }
+
+    setupInput({
+      onNavigate: handleNavigate,
+      onCellClick: handleCellClick,
+    });
+
+    // Display toggle. Colours are CSS keyed on the root attribute, so nothing is redrawn.
+    const displayBtn = document.getElementById('display-toggle');
+    const root = document.documentElement;
+    function labelDisplay() {
+      displayBtn.textContent = root.dataset.display === 'terminal' ? 'Switch to light display' : 'Switch to terminal display';
+    }
+    displayBtn.addEventListener('click', () => {
+      root.dataset.display = root.dataset.display === 'terminal' ? 'light' : 'terminal';
+      try { localStorage.setItem('fgcrawl_display', root.dataset.display); } catch (e) {}
+      labelDisplay();
+      displayBtn.blur();
+    });
+    labelDisplay();
+
+    // Initial render
+    loadBoard(initialBx, initialBy, initialZ);
+  </script>
+</body>
+</html>

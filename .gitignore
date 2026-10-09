@@ -22,6 +22,7 @@
 !/scripts/*.py
 !/scripts/*.mjs
 !/scripts/*.html
+!/crawl/
 !/references/
 /references/*
 !/references/index.html
