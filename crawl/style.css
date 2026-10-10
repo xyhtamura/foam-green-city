@@ -27,11 +27,19 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: 'FFF Forward';
+  src: url('../fonts/FFFFORWA.TTF') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   /* Cornice's glyph size. Cells stay square so that rooms keep their proportions. */
   --cell-size: clamp(16px, min(3.8vw, 3.8vh), 28px);
   --font-mono: ui-monospace, "Cascadia Code", "Consolas", "DejaVu Sans Mono", monospace;
-  --font-title: 'HiJO', var(--font-mono);
+  --font-title: 'FFF Forward', var(--font-mono);
   --font-heading: 'Terminal Grotesque', var(--font-mono);
 
   --page: #9dbba8;
@@ -93,12 +101,12 @@ header {
 
 h1 {
   font-family: var(--font-title);
-  font-size: 1.55rem;
-  font-weight: 700;
+  font-size: 1.15rem;
+  font-weight: 400;
   color: var(--title);
-  letter-spacing: 0.04em;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
-  line-height: 1.1;
+  line-height: 1.2;
 }
 
 #status {

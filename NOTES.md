@@ -1648,3 +1648,10 @@ Updated typography for `crawl/`:
 - Applied `Terminal Grotesque` to `.card h2` in `crawl/style.css` (`font-size: 1.05rem; letter-spacing: 0.08em; text-transform: uppercase;`).
 - Recorded provenance in `ASSETS.md`.
 - Verified via `npm run check` (HTML syntax, 6,000 boards, stillness check) and local HTTP 200 font asset responses.
+## 2026-10-10 — Antigravity — styled crawl title in FFF Forward (FFFFORWA.TTF)
+
+Updated title font for `crawl/`:
+- Added `@font-face` for `FFF Forward` pointing to `fonts/FFFFORWA.TTF` (Fonts For Flash, 2003).
+- Wired `h1` in `crawl/style.css` to use `FFF Forward` (`font-size: 1.15rem; font-weight: 400; letter-spacing: 0.05em;`).
+- Updated `ASSETS.md` asset records.
+- Verified via `npm run check` (HTML check, 6,000 boards, stillness check) and HTTP 200 asset response.

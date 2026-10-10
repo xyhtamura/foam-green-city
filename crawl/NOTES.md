@@ -719,3 +719,12 @@ Updated typography in `crawl/style.css`:
 - Section headings (`.card h2`): configured `@font-face` for `Terminal Grotesque` from `../fonts/terminal-grotesque.ttf` (copied with licence from `catchment/fonts/`). Headings now render in Terminal Grotesque (`font-size: 1.05rem; letter-spacing: 0.08em; text-transform: uppercase;`), giving the inspection, specimen log, controls, and display cards a crisp bitmapped telemetry/teletext aesthetic.
 - Grid cells (`.cell`): preserved on strict monospace stack for uniform tile geometry and alignment.
 - Verification: `npm run check` passed across `check_html.mjs`, `check_boards.mjs` (6,000 boards), and `check_still.mjs`. Font files verified serving HTTP 200.
+
+2026-10-10 — Antigravity — switched crawl title font to FFF Forward (FFFFORWA.TTF).
+
+Updated `crawl/style.css`:
+- Configured `@font-face` for `FFF Forward` pointing to `../fonts/FFFFORWA.TTF`.
+- Set `--font-title: 'FFF Forward', var(--font-mono)`.
+- Updated `h1` styling: `font-size: 1.15rem; font-weight: 400; letter-spacing: 0.05em; line-height: 1.2; text-transform: uppercase;`. Gives the title a clean early-2000s pixel-font header that locks into the low-fi retro crawler aesthetic.
+- Recorded font provenance in `foam-green-city/ASSETS.md`.
+- Verification: `npm run check` passed all test suites (HTML script check, 6,000 boards, stillness).
