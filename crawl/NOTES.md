@@ -88,6 +88,8 @@ Maintenance and multi-cart integration testing within foam-green-city.
 
 ## Log
 
+2026-10-10 — Claude Code — Added favicon.svg, a dark doorway with a lit opening on the page green, and linked it from index.html, at Xyh's request for the multicart's three hax. An original drawing with no outside source. Rendered at 16, 32, and 96 px in headless Edge on light and dark backgrounds and inspected the screenshot; the motif is legible at 16 px. The root server returns the file as image/svg+xml. Display in an actual browser tab was not checked.
+
 2026-10-08 — Antigravity — Implemented step 3 of the spec: domestic objects,
 ordinary furniture layouts, walking aisle preservation, and layer-based cell
 inspection with specimen log.
