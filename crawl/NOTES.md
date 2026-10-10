@@ -701,3 +701,11 @@ What was verified and how:
 - `node scripts/check_html.mjs`: passed; verified all scripts in `index.html` are syntactically valid.
 - `npm run check`: passed across `check_html.mjs`, `check_boards.mjs` (6,000 boards, 100% reachability), and `check_still.mjs` (0 timers/animations).
 - Live server: verified `index.html` renders without errors on `http://localhost:8000/foam-green-city/crawl/`.
+
+2026-10-10 — Antigravity — styled monobloc chair as white text on clear background.
+
+Updated `crawl/style.css`:
+- Light display: removed opaque `#f4f6f0` background on `.cell[data-obj="monobloc"]`, changed text color to `#ffffff` (bold) with subtle `text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45)` so the underlying floor surface (cement, linoleum, tile, foam green) shows through clearly while keeping the plastic chair glyph crisp and high-contrast on any surface.
+- `chair_on_table`: updated glyph color to `#ffffff`.
+- Terminal display: updated `monobloc` and `chair_on_table` color from pale green (`#e0ede2`) to crisp white (`#ffffff`).
+- Verification: `npm run check` passed across `check_html.mjs`, `check_boards.mjs` (6,000 boards), and `check_still.mjs`.

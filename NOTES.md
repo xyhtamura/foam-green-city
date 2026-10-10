@@ -1618,3 +1618,9 @@ Diagnosed and resolved the issue where `foam-green-city/crawl/` remained stuck o
 - Fix: Removed the duplicate declaration in `crawl/index.html`, wrapped history replacement in `try / catch`, hardened search parameter parsing against `NaN`, and added uncaught error and unhandled rejection event listeners in `<head>` to display any runtime errors directly on-screen in `#status`.
 - Enforcement check: Created `crawl/scripts/check_html.mjs` and wired it into `npm run check` to ensure syntax validity of all scripts in `index.html`.
 - Verification: `npm run check` (HTML check, 6,000 board checks across seeds 5, 42, 108 with 100% reachability and edge agreement, and stillness check) passed with 0 errors.
+## 2026-10-10 — Antigravity — styled crawl monobloc chair as white glyph on clear background
+
+Updated `.cell[data-obj="monobloc"]` and `.cell[data-item="chair_on_table"]` in `crawl/style.css`:
+- Removed the opaque off-white rectangular background block from monobloc chairs in Light display. The chair glyph `h` is now rendered in bold white (`#ffffff`) with subtle drop shadow for edge definition against all floor textures (cement, linoleum, tile, floor paint), allowing the room's clear floor background to show through.
+- Updated Terminal display monobloc color to pure white (`#ffffff`).
+- Verified via `npm run check` (HTML syntax check, 6,000 board verification, stillness check).

@@ -133,7 +133,7 @@ h1 {
 .cell[data-s="wood_plank"]      { background: #8f6a3f; color: #5e4223; }
 
 /* Objects in light display: solid distinctive tones with legible glyphs */
-.cell[data-obj="monobloc"]  { background: #f4f6f0; color: #2a4430; font-weight: 700; }
+.cell[data-obj="monobloc"]  { color: #ffffff; font-weight: 700; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45); }
 .cell[data-obj="table"]     { background: #6a462f; color: #f5e6d3; font-weight: 700; }
 .cell[data-obj="bed"]       { background: #5c7788; color: #e6eef5; font-weight: 700; }
 .cell[data-obj="sofa"]      { background: #668252; color: #eef5e6; font-weight: 700; }
@@ -152,7 +152,7 @@ h1 {
 .cell[data-obj="dustpan"]       { color: #c04030; font-weight: 700; }
 
 /* Items resting on furniture or surfaces */
-.cell[data-item="chair_on_table"] { background: #6a462f; color: #f4f6f0; font-weight: 700; }
+.cell[data-item="chair_on_table"] { background: #6a462f; color: #ffffff; font-weight: 700; }
 .cell[data-item="pitcher"]        { background: #6a462f; color: #8dd8f0; font-weight: 700; }
 .cell[data-item="plate"]          { background: #6a462f; color: #ffffff; font-weight: 700; }
 .cell[data-item="basketball"]     { color: #ea6828; font-weight: 700; }
@@ -246,7 +246,7 @@ h1 {
 
 /* Objects in terminal display */
 :root[data-display="terminal"] .cell[data-obj]           { background: transparent; }
-:root[data-display="terminal"] .cell[data-obj="monobloc"] { color: #e0ede2; }
+:root[data-display="terminal"] .cell[data-obj="monobloc"] { color: #ffffff; }
 :root[data-display="terminal"] .cell[data-obj="table"]    { color: #c89658; }
 :root[data-display="terminal"] .cell[data-obj="bed"]      { color: #89b8dc; }
 :root[data-display="terminal"] .cell[data-obj="sofa"]     { color: #98cf7e; }
@@ -266,7 +266,7 @@ h1 {
 
 /* Items in terminal display */
 :root[data-display="terminal"] .cell[data-item]                  { background: transparent; }
-:root[data-display="terminal"] .cell[data-item="chair_on_table"] { color: #e0ede2; }
+:root[data-display="terminal"] .cell[data-item="chair_on_table"] { color: #ffffff; }
 :root[data-display="terminal"] .cell[data-item="pitcher"]        { color: #79cff2; }
 :root[data-display="terminal"] .cell[data-item="plate"]          { color: #ffffff; }
 :root[data-display="terminal"] .cell[data-item="basketball"]     { color: #ff7830; }
