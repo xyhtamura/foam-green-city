@@ -7,6 +7,15 @@
   <meta name="description" content="A still glyph crawl through endless generated Filipino domestic rooms." />
   <link rel="stylesheet" href="style.css" />
   <script>
+    // Error feedback in status element
+    window.addEventListener('error', function (e) {
+      var el = document.getElementById('status');
+      if (el) el.textContent = 'Error: ' + (e.message || e.error);
+    });
+    window.addEventListener('unhandledrejection', function (e) {
+      var el = document.getElementById('status');
+      if (el) el.textContent = 'Error: ' + (e.reason && e.reason.message || e.reason);
+    });
     // Display: "light" (default) or "terminal". ?display= overrides the saved choice.
     (function () {
       var choice = new URLSearchParams(location.search).get('display');
@@ -65,10 +74,15 @@
 
     // Parse seed, board coordinates, and level from URL query
     const params = new URLSearchParams(window.location.search);
-    const seed = parseInt(params.get('seed') || '5', 10);
-    const initialBx = parseInt(params.get('bx') || '0', 10);
-    const initialBy = parseInt(params.get('by') || '0', 10);
-    const initialZ = parseInt(params.get('z') || '0', 10);
+    const parsedSeed = parseInt(params.get('seed') || '5', 10);
+    const parsedBx = parseInt(params.get('bx') || '0', 10);
+    const parsedBy = parseInt(params.get('by') || '0', 10);
+    const parsedZ = parseInt(params.get('z') || '0', 10);
+
+    const seed = Number.isFinite(parsedSeed) ? parsedSeed : 5;
+    const initialBx = Number.isFinite(parsedBx) ? parsedBx : 0;
+    const initialBy = Number.isFinite(parsedBy) ? parsedBy : 0;
+    const initialZ = Number.isFinite(parsedZ) ? parsedZ : 0;
 
     const state = {
       seed,
@@ -139,22 +153,31 @@
     }
 
     function loadBoard(bx, by, z) {
-      state.bx = bx;
-      state.by = by;
-      state.z = z;
-      state.board = generateBoard(state.seed, bx, by, z);
-      state.inspected = null;
-      state.inspectLayerIdx = 0;
+      try {
+        state.bx = bx;
+        state.by = by;
+        state.z = z;
+        state.board = generateBoard(state.seed, bx, by, z);
+        state.inspected = null;
+        state.inspectLayerIdx = 0;
 
-      updatePadButtons(state.board);
+        updatePadButtons(state.board);
 
-      const url = new URL(window.location);
-      url.searchParams.set('bx', bx);
-      url.searchParams.set('by', by);
-      url.searchParams.set('z', z);
-      window.history.replaceState({}, '', url);
+        try {
+          const url = new URL(window.location);
+          url.searchParams.set('bx', bx);
+          url.searchParams.set('by', by);
+          url.searchParams.set('z', z);
+          window.history.replaceState({}, '', url);
+        } catch (e) {
+          // Ignore history state failures in restricted environments
+        }
 
-      renderer.renderBoard(state.board, state.inspected, state.inspectLayerIdx, state.specimenLog);
+        renderer.renderBoard(state.board, state.inspected, state.inspectLayerIdx, state.specimenLog);
+      } catch (err) {
+        if (statusEl) statusEl.textContent = 'Error loading board: ' + err.message;
+        console.error(err);
+      }
     }
 
     function handleNavigate(dir) {
@@ -298,7 +321,6 @@
       onCellClick: handleCellClick,
     });
 
-    const inspectEl = document.getElementById('inspect');
     if (inspectEl) {
       inspectEl.addEventListener('click', (e) => {
         const btn = e.target.closest('#cut-travel-btn');

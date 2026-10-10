@@ -677,3 +677,27 @@ Added 17 new authentic Philippine domestic entities across objects, floor items,
 
 
 
+
+
+2026-10-10 — Antigravity — Resolved "Loading..." startup freeze and added HTML integrity check.
+
+Root cause analysis:
+- In `crawl/index.html`, `const inspectEl = document.getElementById('inspect');` was declared on line 85 and accidentally re-declared on line 301.
+- In JavaScript (`<script type="module">`), re-declaring a const identifier in the same scope raises a fatal `SyntaxError: Identifier 'inspectEl' has already been declared` at parse time.
+- Because the script failed to parse, the module never executed, leaving `<div id="status">Loading...</div>` indefinitely visible.
+
+What changed:
+- `index.html`:
+  - Removed duplicate `const inspectEl` declaration on line 301.
+  - Added uncaught error and unhandled rejection handlers in `<head>` to immediately surface any future runtime error into the `#status` bar.
+  - Wrapped `window.history.replaceState` in `try / catch` to safeguard against restricted environments.
+  - Hardened URL search parameter parsing with `Number.isFinite` checks.
+- `scripts/check_html.mjs`:
+  - Added test script that validates syntax of all inline `<script>` tags in `index.html` via `node --check`.
+- `package.json`:
+  - Added `check:html` and integrated it into `npm run check`.
+
+What was verified and how:
+- `node scripts/check_html.mjs`: passed; verified all scripts in `index.html` are syntactically valid.
+- `npm run check`: passed across `check_html.mjs`, `check_boards.mjs` (6,000 boards, 100% reachability), and `check_still.mjs` (0 timers/animations).
+- Live server: verified `index.html` renders without errors on `http://localhost:8000/foam-green-city/crawl/`.

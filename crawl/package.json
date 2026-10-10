@@ -3,7 +3,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "check": "node scripts/check_boards.mjs && node scripts/check_still.mjs",
+    "check": "node scripts/check_html.mjs && node scripts/check_boards.mjs && node scripts/check_still.mjs",
+    "check:html": "node scripts/check_html.mjs",
     "check:boards": "node scripts/check_boards.mjs",
     "check:still": "node scripts/check_still.mjs",
     "test:step5": "node scripts/test_step5_vocab.mjs",

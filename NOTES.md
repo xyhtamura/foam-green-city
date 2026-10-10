@@ -1611,3 +1611,10 @@ Added `crawl/`, a top-down deterministic DOS/dungeon-crawler companion mode in a
 - Domestic smudges, stains, surface wear, and floor scatter: added 17 new authentic Philippine entities (water stains `~`, slipper scuffs `-`, cooking grease `%`, chalk marks `x`, dropped coins `.`, extension cords `s`, rubber tsinelas `»`, tabo water dippers `d`, electric rice cookers `ö`, vacuum thermos flasks `!`, balikbayan boxes `■`, dustpan & brooms `v`, tape residue `=`, wall smudges `'`, hairline cracks `/`, commercial wall calendars `§`, and giant carved spoon and fork `Ψ`), fully inspectable with authored poetic texts and dual-theme styling. 100% reachability preserved across 6,000 boards.
 
 
+## 2026-10-10 — Antigravity — fixed crawl startup freeze on "Loading..."
+
+Diagnosed and resolved the issue where `foam-green-city/crawl/` remained stuck on `<div id="status">Loading...</div>`:
+- Root cause: In `crawl/index.html`, `const inspectEl` was declared on line 85 and re-declared on line 301, raising `SyntaxError: Identifier 'inspectEl' has already been declared` during module script evaluation, preventing the crawl board from initializing.
+- Fix: Removed the duplicate declaration in `crawl/index.html`, wrapped history replacement in `try / catch`, hardened search parameter parsing against `NaN`, and added uncaught error and unhandled rejection event listeners in `<head>` to display any runtime errors directly on-screen in `#status`.
+- Enforcement check: Created `crawl/scripts/check_html.mjs` and wired it into `npm run check` to ensure syntax validity of all scripts in `index.html`.
+- Verification: `npm run check` (HTML check, 6,000 board checks across seeds 5, 42, 108 with 100% reachability and edge agreement, and stillness check) passed with 0 errors.
