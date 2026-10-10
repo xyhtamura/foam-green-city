@@ -85,42 +85,42 @@ window.addEventListener('unhandledrejection',reportLoadFailure);
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { createJalousieWall } from './jalousie.js?v=125f738e3b';
-import { createDomesticProps, animateDomesticProps, createFurnitureVariants, FURNITURE_FINISHES } from './domestic-props.js?v=125f738e3b';
-import { WALL_HANGINGS } from './wall-assets.js?v=125f738e3b';
-import { RAW_OBJECTS, createRawObject, oddSize, cutoutTone } from './raw-object-assets.js?v=125f738e3b';
-import { loadCurtainPatterns } from './photo-assets.js?v=125f738e3b';
-import { ROOM_WIDTHS, partitionPieces } from './room-widths.js?v=125f738e3b';
+import { createJalousieWall } from './jalousie.js?v=7a89c05d69';
+import { createDomesticProps, animateDomesticProps, createFurnitureVariants, FURNITURE_FINISHES } from './domestic-props.js?v=7a89c05d69';
+import { WALL_HANGINGS } from './wall-assets.js?v=7a89c05d69';
+import { RAW_OBJECTS, createRawObject, oddSize, cutoutTone } from './raw-object-assets.js?v=7a89c05d69';
+import { loadCurtainPatterns } from './photo-assets.js?v=7a89c05d69';
+import { ROOM_WIDTHS, partitionPieces } from './room-widths.js?v=7a89c05d69';
 
-import { LAYOUT_IDS, generateFurnitureLayout, checkFurnitureLayout, TABLE_TOP } from './furniture-layouts.js?v=125f738e3b';
-import { FLOOR_IDS, createFloorVariant } from './floor-variants.js?v=125f738e3b';
-import { DOOR_STYLES, createDoorLeaves } from './doors.js?v=125f738e3b';
-import { MODEL_ASSETS, loadModelAssets } from './model-assets.js?v=125f738e3b';
-import { createRoomSet, createRoomFixture } from './room-sets.js?v=125f738e3b';
-import { createUratexSofa } from './uratex-sofa.js?v=125f738e3b';
-import { createWireRun, ceilingWirePlan } from './wire-runs.js?v=125f738e3b';
-import { createWallUtilities } from './wall-utilities.js?v=125f738e3b';
-import {createWalkSequence,retainedRooms,walkRegions,canOccupy,moveWalker,pathToRoute,roomExits} from './navigation.js?v=125f738e3b';
-import {addDomesticDetails} from './domestic-details.js?v=125f738e3b';
+import { LAYOUT_IDS, generateFurnitureLayout, checkFurnitureLayout, TABLE_TOP } from './furniture-layouts.js?v=7a89c05d69';
+import { FLOOR_IDS, createFloorVariant } from './floor-variants.js?v=7a89c05d69';
+import { DOOR_STYLES, createDoorLeaves } from './doors.js?v=7a89c05d69';
+import { MODEL_ASSETS, loadModelAssets } from './model-assets.js?v=7a89c05d69';
+import { createRoomSet, createRoomFixture } from './room-sets.js?v=7a89c05d69';
+import { createUratexSofa } from './uratex-sofa.js?v=7a89c05d69';
+import { createWireRun, createWireRiser, ceilingWirePlan } from './wire-runs.js?v=7a89c05d69';
+import { createWallUtilities } from './wall-utilities.js?v=7a89c05d69';
+import {createWalkSequence,retainedRooms,walkRegions,canOccupy,moveWalker,pathToRoute,roomExits} from './navigation.js?v=7a89c05d69';
+import {addDomesticDetails} from './domestic-details.js?v=7a89c05d69';
 let wallUtilities;
-import { roomLighting } from './room-lighting.js?v=125f738e3b';
-import { scatterLevel, planScatter, planSideScatter, scatterBlocks, createScatterMesh } from './floor-scatter.js?v=125f738e3b';
-import { addWallProtrusions } from './wall-protrusions.js?v=125f738e3b';
-import { createBaseboards } from './baseboards.js?v=125f738e3b';
-import { addHouseholdItems } from './household-items.js?v=125f738e3b';
-import { mergeStaticMeshes, SOURCE_LAYER } from './merge-static.js?v=125f738e3b';
-import { addFabricItems } from './fabric-items.js?v=125f738e3b';
-import { createBasketballCourt } from './basketball-court.js?v=125f738e3b';
-import { createYeroPath } from './yero-path.js?v=125f738e3b';
-import { yeroDressing, createYeroDressing } from './yero-dressing.js?v=125f738e3b';
-import { spatialFrame, spatialPoint, SPATIAL_GLSL, SPATIAL_PROFILES, routeTable, setVariedSeed } from './spatial-route.js?v=125f738e3b';
-import { floorHeight, cameraRoute, routePoint } from './room-sequences.js?v=125f738e3b';
-import {sideSpacePlan,DRAWER_VARIANTS} from './side-spaces.js?v=125f738e3b';
-import {addWoodDetails} from './wood-details.js?v=125f738e3b';
-import {addSideWashrooms} from './side-washrooms.js?v=125f738e3b';
-import {addSideStorage} from './side-storage.js?v=125f738e3b';
-import {addSideBedrooms} from './side-bedrooms.js?v=125f738e3b';
-import { branchOpenings, raiseFloor, createRoomArchitecture } from './room-architecture.js?v=125f738e3b';
+import { roomLighting } from './room-lighting.js?v=7a89c05d69';
+import { scatterLevel, planScatter, planSideScatter, scatterBlocks, createScatterMesh } from './floor-scatter.js?v=7a89c05d69';
+import { addWallProtrusions } from './wall-protrusions.js?v=7a89c05d69';
+import { createBaseboards } from './baseboards.js?v=7a89c05d69';
+import { addHouseholdItems } from './household-items.js?v=7a89c05d69';
+import { mergeStaticMeshes, SOURCE_LAYER } from './merge-static.js?v=7a89c05d69';
+import { addFabricItems } from './fabric-items.js?v=7a89c05d69';
+import { createBasketballCourt } from './basketball-court.js?v=7a89c05d69';
+import { createYeroPath } from './yero-path.js?v=7a89c05d69';
+import { yeroDressing, createYeroDressing } from './yero-dressing.js?v=7a89c05d69';
+import { spatialFrame, spatialPoint, SPATIAL_GLSL, SPATIAL_PROFILES, routeTable, setVariedSeed } from './spatial-route.js?v=7a89c05d69';
+import { floorHeight, cameraRoute, routePoint } from './room-sequences.js?v=7a89c05d69';
+import {sideSpacePlan,DRAWER_VARIANTS} from './side-spaces.js?v=7a89c05d69';
+import {addWoodDetails} from './wood-details.js?v=7a89c05d69';
+import {addSideWashrooms} from './side-washrooms.js?v=7a89c05d69';
+import {addSideStorage} from './side-storage.js?v=7a89c05d69';
+import {addSideBedrooms} from './side-bedrooms.js?v=7a89c05d69';
+import { branchOpenings, raiseFloor, createRoomArchitecture } from './room-architecture.js?v=7a89c05d69';
 
 // ---- palette (DepEd MPSS, stylized: green walls) ----
 const COL = {
@@ -256,6 +256,11 @@ const H = 1.29 * TSCALE; // wall-tile height => ~2.58m ceiling
 // Everything hung on or stood against a side wall is placed from a face 0.1 m inside the room's edge.
 // Imported modules are set in by that much to put their face there.
 const WALL_INSET = 0.1;
+// A floor and a ceiling run this far past the outside of each side wall. On the bent route a wall's
+// lower and upper edges do not follow the floor and ceiling exactly, and through the gap the
+// background showed; now more floor or ceiling shows. A side with a room or passage opening off it
+// is left as it was, since the floor there would lie in the same plane as the side floor.
+const SEAM_COVER = 0.25;
 const PARTITION_PROUD = 0.01;   // above depth-buffer resolution at the 100 m fog limit
 const plane = (w,h) => new THREE.PlaneGeometry(w,h);
 const params=new URLSearchParams(location.search);
@@ -736,7 +741,8 @@ function buildSegment(index){
   grp.userData.diningRoom=room.name==='sala'||room.name==='kitchen';
   // floor + ceiling (subdivided so the curvature shader bends them)
   const floorChoice=FLOOR_IDS.includes(params.get('floor'))?params.get('floor'):descriptor.floor;
-  const floor=createFloorVariant({THREE,width,length:SEG_LEN,seed:i+17,variant:descriptor.rise?'bare':floorChoice,retired:params.get('floor')==='mismatchedTiles',curvize,sharedLinoleumTexture:linoleumTex});
+  const coverAt=side=>branchOpenings(descriptor).some(p=>p.side===side)?0:SEAM_COVER,coverLeft=coverAt(-1),coverRight=coverAt(1),coveredWidth=width+coverLeft+coverRight;
+  const floor=createFloorVariant({THREE,width:coveredWidth,length:SEG_LEN,seed:i+17,variant:descriptor.rise?'bare':floorChoice,retired:params.get('floor')==='mismatchedTiles',curvize,sharedLinoleumTexture:linoleumTex});
   raiseFloor(floor,descriptor);
   // A room is seen from outside across the yero path, tilted on the twisting route, so its floor and
   // ceiling are drawn from both sides: from below, a floor would otherwise not be there.
@@ -747,10 +753,11 @@ function buildSegment(index){
   grp.userData.sideBedrooms=addSideBedrooms({THREE,group:grp,room:descriptor,assets:FURNI,curvize,photos:WALL_HANGINGS,spriteMat});
   grp.userData.sideStorage=addSideStorage({THREE,group:grp,room:descriptor,assets:FURNI,curvize});
   grp.userData.sideWashrooms=addSideWashrooms({THREE,group:grp,room:descriptor,assets:FURNI,curvize});
+  floor.position.x+=(coverRight-coverLeft)/2;
   grp.userData.floorGroup=floor;grp.userData.floor=descriptor.rise?'bare':floorChoice;grp.add(floor);
   grp.userData.ceilingColor=ceilingColour(i,grp.userData.wallColor);
-  const c = new THREE.Mesh(new THREE.PlaneGeometry(width,SEG_LEN,width/2,SEG_TILES*3), ceilingMaterial(grp.userData.ceilingColor));
-  c.rotation.x=Math.PI/2; c.position.set(0,descriptor.height,-SEG_LEN/2); c.userData.own=true; grp.add(c);
+  const c = new THREE.Mesh(new THREE.PlaneGeometry(coveredWidth,SEG_LEN,Math.ceil(coveredWidth/2),SEG_TILES*3), ceilingMaterial(grp.userData.ceilingColor));
+  c.rotation.x=Math.PI/2; c.position.set((coverRight-coverLeft)/2,descriptor.height,-SEG_LEN/2); c.userData.own=true; grp.add(c);
   // side walls, seeded windows
   const solidWalls=[],skirting=[],windowSpots=[];
   const unfinishedWalls=params.get('walls')==='blocks'||(params.get('walls')!=='paint'&&r()<0.22);
@@ -808,9 +815,11 @@ function buildSegment(index){
   if(baseboards)grp.add(baseboards);
   grp.userData.baseboardLength=baseboards?.userData.length??0;
   // Supplied photos stay rectangular and flush with a solid section of wall.
+  const solidStretches=solidWalls.slice(),wallRuns=[];
   if(solidWalls.length&&(i%3!==2||params.get('wires')==='1')){
     const spots=solidWalls.filter(p=>Math.abs(p.z+SEG_LEN/2)>1.2).sort((a,b)=>Math.abs(a.z+3)-Math.abs(b.z+3));
     for(const spot of spots.slice(0,i%2?2:1)){
+      wallRuns.push(spot);
       const run=createWireRun({THREE,materials:{line:spriteMat('2d/wiring/wireline.png'),sag:spriteMat('2d/wiring/wiresag.png')},span:1.8,anchorY:Math.min(2.15,descriptor.height-0.25),seed:i+(spot.side>0?1:0)});
       run.position.set(spot.side*(half-0.11),floorHeight(descriptor,spot.z),spot.z);
       run.rotation.y=spot.side>0?-Math.PI/2:Math.PI/2;grp.add(run);
@@ -861,10 +870,27 @@ function buildSegment(index){
   lightFixture.traverse(o=>{if(o.isMesh&&o.userData.ownMaterial)curvize(o.material);});
   grp.add(lightFixture);grp.userData.lightFixture=lightFixture;
   const tubeLight=lightFixture.userData.fixtureType==='tube';
-  const ceilingWire=params.get('wires')==='ceiling'?{...ceilingWirePlan({index:0,width:0,fixtureEnd:0}),side:1,span:half-0.1-(tubeLight?0.63:0.05),seed:i}:ceilingWirePlan({index:i,width,fixtureEnd:tubeLight?0.63:0.05});
+  const lightEnd=tubeLight?0.63:0.05,lightZ=-SEG_LEN/2-(tubeLight?0.1:0),wireMaterials={line:spriteMat('2d/wiring/wireline.png'),sag:spriteMat('2d/wiring/wiresag.png')};
+  const solidAt=(side,z)=>solidStretches.some(p=>p.side===side&&Math.abs(p.z-z)<=1);
+  let ceilingWire=params.get('wires')==='ceiling'?{side:1,span:half-0.1-lightEnd,seed:i}:ceilingWirePlan({index:i,width,fixtureEnd:lightEnd});
   if(ceilingWire){
-    const run=createWireRun({THREE,materials:{line:spriteMat('2d/wiring/wireline.png'),sag:spriteMat('2d/wiring/wiresag.png')},span:ceilingWire.span,anchorY:descriptor.height,seed:ceilingWire.seed,ceiling:true});
-    run.position.set(ceilingWire.side*((tubeLight?0.63:0.05)+ceilingWire.span/2),0,-SEG_LEN/2-(tubeLight?0.1:0));grp.add(run);grp.userData.ceilingWire=ceilingWire.side;
+    // Where the wall under the run's end is solid, the wire turns down it; the run takes the other side
+    // of the room if only that side is solid there.
+    if(!solidAt(ceilingWire.side,lightZ)&&solidAt(-ceilingWire.side,lightZ))ceilingWire={...ceilingWire,side:-ceilingWire.side};
+    const side=ceilingWire.side,run=createWireRun({THREE,materials:wireMaterials,span:ceilingWire.span,anchorY:descriptor.height,seed:ceilingWire.seed,ceiling:true});
+    run.position.set(side*(lightEnd+ceilingWire.span/2),0,lightZ);grp.add(run);grp.userData.ceilingWire=side;
+    const wallBase=floorHeight(descriptor,lightZ),wallY=Math.min(2.15,descriptor.height-0.25);
+    if(solidAt(side,lightZ)&&descriptor.height-wallBase-wallY>=0.1){
+      const riser=createWireRiser({THREE,material:wireMaterials.line,from:wallBase+wallY,to:descriptor.height});
+      riser.position.set(side*(half-0.11),0,lightZ);riser.rotation.y=side>0?-Math.PI/2:Math.PI/2;grp.add(riser);grp.userData.wireRiser=true;
+      // In six of ten, a run along the wall starts where the wire comes down, toward whichever end of the
+      // room has solid wall for it and no run already.
+      const toward=[-1,1].find(d=>solidAt(side,lightZ+0.1*d)&&solidAt(side,lightZ+1.7*d)&&!wallRuns.some(p=>p.side===side&&Math.abs(p.z-(lightZ+0.9*d))<1.9));
+      if(toward&&ceilingWire.seed%10<6){
+        const along=createWireRun({THREE,materials:wireMaterials,span:1.8,anchorY:wallY,seed:ceilingWire.seed+3});
+        along.position.set(side*(half-0.11),wallBase,lightZ+0.9*toward);along.rotation.y=side>0?-Math.PI/2:Math.PI/2;grp.add(along);grp.userData.wireMeeting=true;
+      }
+    }
   }
   const layout=LAYOUT_IDS.includes(params.get('layout'))?params.get('layout'):descriptor.layout;
   grp.userData.layout=layout;

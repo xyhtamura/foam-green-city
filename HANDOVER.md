@@ -4,6 +4,12 @@
 
 2026-10-03 — Codex
 
+## Floor and ceiling past the side walls; wire from ceiling to wall — 2026-10-10
+
+Claude Code. **Seams.** A room's floor and ceiling now run 0.25 m past the outside of each side wall (`SEAM_COVER` in `index.html`). On the bent route a wall's lower and upper edges do not follow the floor and ceiling exactly, and the background showed through the gap; with the cover, more floor or ceiling shows there. The floor variant is built at the wider width and the ceiling plane likewise, so patterns are not stretched; a pattern laid from the left edge starts 0.25 m further left. A side that has a room or passage opening off it gets no cover, and the floor group is shifted by half the difference: the main floor would otherwise lie in the same plane as the side floor. Xyh offered the alternative of taller walls cut through the floor and ceiling; it was not taken because wall modules are models with windows in them and would stretch.
+
+**Wire.** Where a ceiling run reaches a side wall and the wall under it is solid, `createWireRiser` (`wire-runs.js`) stands a straight length on the wall from the ceiling down to the height wall runs use (2.15 m, or 0.25 m under a lower ceiling). The run takes the other side of the room if only that side is solid at the light. In six of ten of those, a 1.8 m run along the wall starts at the foot of the riser, toward whichever end of the room has solid wall for it and no wall run already. `userData.wireRiser` and `userData.wireMeeting` say what a room got.
+
 ## Wire sag heights, and wire across the ceiling — 2026-10-10
 
 Claude Code. `wire-runs.js`. The sag image has its wire ends at its two top corners, so it can be any height and still meet its neighbours. Each sagging length now draws its own drop, 0.08 to 0.5 m, squared so that shallow ones are common: over 3,000 plans the median is 0.18 m, 42% are under 0.15 m and 19% over 0.35 m. Before, every sag in a run had one of three drops between 0.22 and 0.30 m. The stroke is stretched with the image: about 3 mm thick at the shallowest and 2 cm at the deepest.

@@ -41,3 +41,11 @@ export function createWireRun({THREE,materials,span,anchorY,seed,ceiling=false}=
   }
   return group;
 }
+// A straight length standing on a wall, from one height to another: the wire between a run along the
+// wall and a run across the ceiling. The group's origin is at floor level under it.
+export function createWireRiser({THREE,material,from,to}={}){
+  const group=new THREE.Group();group.userData.wireRiser=true;
+  const mesh=new THREE.Mesh(new THREE.PlaneGeometry(to-from,0.18,2,1),material);
+  mesh.rotation.z=Math.PI/2;mesh.position.set(0,(from+to)/2,0);mesh.userData.own=true;group.add(mesh);
+  return group;
+}
