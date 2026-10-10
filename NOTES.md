@@ -1624,3 +1624,11 @@ Updated `.cell[data-obj="monobloc"]` and `.cell[data-item="chair_on_table"]` in 
 - Removed the opaque off-white rectangular background block from monobloc chairs in Light display. The chair glyph `h` is now rendered in bold white (`#ffffff`) with subtle drop shadow for edge definition against all floor textures (cement, linoleum, tile, floor paint), allowing the room's clear floor background to show through.
 - Updated Terminal display monobloc color to pure white (`#ffffff`).
 - Verified via `npm run check` (HTML syntax check, 6,000 board verification, stillness check).
+
+## 2026-10-10 — Claude Code — wire sags of different heights, and wire across the ceiling
+
+Xyh pointed out that `2d/wiring/wiresag.png` can be scaled in height and still connect, since its ends are its top corners, and asked for wiring that sometimes runs across the ceiling. Each sagging length now draws its own drop from 0.08 to 0.5 m, and three rooms in ten get a run from a side wall across the ceiling to the light. HANDOVER.md, "Wire sag heights, and wire across the ceiling", has the figures.
+
+Verified. `check_wire_runs.mjs` passes with new assertions for the sag range, its spread, and the ceiling plan (5,927 of 20,000 rooms, 2,955 on the left, each reaching from the light to the wall face). All thirteen node checks pass; `stamp_versions` and `check_published_assets` run. In the browser pane, hidden, at `?skipTitle=1&inspect=1&still=1&wires=ceiling&space=straight`, three posed frames were rendered and viewed: room 0, a run from the end of the tube to the wall, two flat lengths and one hanging; room 1, two shallow sags from the bulb to the wall; and room 0's wall run, two sags of 0.12 and 0.08 m meeting at their ends. No console errors.
+
+Not done. Nothing was watched in motion or on the twisting route. A deep sag near 0.5 m was not viewed, on a wall or a ceiling. A straight length lying flat on the ceiling came out broken into dashes from 3 m away at this resolution. A ceiling run in a room with an exposed yero roof, in a tall room, and beside a ceiling fan was not viewed; the fan hangs at 0.7 of the room's length and the run at half. A ceiling run does not join the wall run below it. Side rooms and passages get neither.

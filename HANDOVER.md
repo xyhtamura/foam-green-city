@@ -4,6 +4,12 @@
 
 2026-10-03 — Codex
 
+## Wire sag heights, and wire across the ceiling — 2026-10-10
+
+Claude Code. `wire-runs.js`. The sag image has its wire ends at its two top corners, so it can be any height and still meet its neighbours. Each sagging length now draws its own drop, 0.08 to 0.5 m, squared so that shallow ones are common: over 3,000 plans the median is 0.18 m, 42% are under 0.15 m and 19% over 0.35 m. Before, every sag in a run had one of three drops between 0.22 and 0.30 m. The stroke is stretched with the image: about 3 mm thick at the shallowest and 2 cm at the deepest.
+
+`ceilingWirePlan` puts a run across the ceiling in three rooms of ten, in rooms up to 8 m wide, from the face of one side wall to the end of the room's light (0.63 m from the centre for a tube, 0.05 m for a bulb). `createWireRun` with `ceiling:true` hangs the sagging lengths from the ceiling and lays the straight ones flat against it, 6 mm below. `?wires=ceiling` forces one in every room, on the right. It uses the two existing sprite materials and adds two or three meshes to a room that has it.
+
 ## Tube lights, fewer ceiling fans, ceiling colours — 2026-10-08
 
 Claude Code. The tube fixture in `createRoomFixture` (`room-sets.js`) is now a bare tube on a batten: a box 1.25 m long and 4 cm deep against the ceiling, a holder at each end, and a rod 26 mm across under it. One fixture in four, by a hash of the room index, has a batten 15 cm wide and two rods; `userData.rods` says which. A lit rod has an emissive strength of 3, because the room's lighting band multiplies emissive light with everything else and a lower value came out darker than the ceiling at night. Which rooms get a tube rather than a bulb is unchanged: one in three, or `?fixture=tube`.
