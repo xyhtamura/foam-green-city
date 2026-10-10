@@ -1640,3 +1640,11 @@ Xyh asked for the wire on a wall to meet the wire on a ceiling, and for the floo
 Verified. All thirteen node checks pass; `stamp_versions` and `check_published_assets` run. In the browser pane at `?skipTitle=1&inspect=1&start=4&merge=off&cull=off`, a frame on a stretch rolling and bending (roll -1.14 rad) was rendered at 960 by 600 with the background set to magenta and its pixels counted: 1 with the cover, 94 after scaling each floor and ceiling back to the room's width, 1 again on restoring them. At `?skipTitle=1&inspect=1&still=1&wires=ceiling`, floor extents read 0.25 m past the room's edge on sides with no opening and at the edge on sides with one; rooms 0, 1, and 2 each reported a riser and a meeting run, and a rendered frame of room 0 showed the wire leaving the tube, crossing the ceiling, coming down the right wall, and running along it. No console errors.
 
 Not done. The seam count is one frame at one place; nothing was watched in motion. A side with an opening off it has no cover and can still show the background. The seams along the doorway walls at each end of a room were not looked at. The riser is the straight-wire image stood on end, 0.18 m wide as a sprite; where a hung cloth or a tall picture is at that spot they overlap. A riser in a room with a raised floor, a tall room, or an exposed roof was not viewed. Wall runs placed by the older rule still do not join a ceiling run unless they happen to sit under it.
+## 2026-10-10 — Antigravity — styled crawl title in HiJO and card headings in Terminal Grotesque
+
+Updated typography for `crawl/`:
+- Added `@font-face` bindings for `HiJO` (`fonts/HiJO Bold.otf` and `HiJO Regular.otf`, authored by JVMIYO) and `Terminal Grotesque` (`fonts/terminal-grotesque.ttf`, SIL OFL 1.1 by Raphaël Bastide).
+- Applied `HiJO` to `h1` in `crawl/style.css` (`font-size: 1.55rem; letter-spacing: 0.04em;`).
+- Applied `Terminal Grotesque` to `.card h2` in `crawl/style.css` (`font-size: 1.05rem; letter-spacing: 0.08em; text-transform: uppercase;`).
+- Recorded provenance in `ASSETS.md`.
+- Verified via `npm run check` (HTML syntax, 6,000 boards, stillness check) and local HTTP 200 font asset responses.

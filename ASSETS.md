@@ -288,3 +288,8 @@ Two of them are published only as redrawn copies: `tela/kids/2026-10-06 16-58-08
 ## Favicon — 2026-10-07
 
 favicon.svg is an original SVG drawing of a foam-green doorway with a lit interior, using the title-screen palette. Drawn by Codex on 2026-10-07. No third-party artwork or fonts are embedded. Covered by the project's CC BY 4.0 artwork licence.
+
+## HiJO and Terminal Grotesque fonts for crawl/ — 2026-10-10
+
+- `fonts/HiJO *.otf` (Black, Bold, Light, Regular, Thin) and `fonts/License HiJO Font.txt`: authored by JVMIYO, 100% free open license for personal and commercial use. Used for the title (`h1`) in `crawl/`.
+- `fonts/terminal-grotesque.ttf` and `fonts/terminal-grotesque-OFL.txt`: authored by Raphaël Bastide (2011), SIL Open Font License 1.1 with Reserved Font Name *Terminal Grotesque*. Used for section headings (`.card h2`) in `crawl/`.

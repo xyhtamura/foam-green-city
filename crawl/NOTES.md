@@ -711,3 +711,11 @@ Updated `crawl/style.css`:
 - `chair_on_table`: updated glyph color to `#ffffff`.
 - Terminal display: updated `monobloc` and `chair_on_table` color from pale green (`#e0ede2`) to crisp white (`#ffffff`).
 - Verification: `npm run check` passed across `check_html.mjs`, `check_boards.mjs` (6,000 boards), and `check_still.mjs`.
+
+2026-10-10 — Antigravity — styled title in HiJO and section headings in Terminal Grotesque.
+
+Updated typography in `crawl/style.css`:
+- Title (`h1`): configured `@font-face` for `HiJO` from `../fonts/HiJO Bold.otf` and `../fonts/HiJO Regular.otf`. Title now renders in HiJO bold (`font-size: 1.55rem; letter-spacing: 0.04em;`), giving it a distinctive vernacular display character.
+- Section headings (`.card h2`): configured `@font-face` for `Terminal Grotesque` from `../fonts/terminal-grotesque.ttf` (copied with licence from `catchment/fonts/`). Headings now render in Terminal Grotesque (`font-size: 1.05rem; letter-spacing: 0.08em; text-transform: uppercase;`), giving the inspection, specimen log, controls, and display cards a crisp bitmapped telemetry/teletext aesthetic.
+- Grid cells (`.cell`): preserved on strict monospace stack for uniform tile geometry and alignment.
+- Verification: `npm run check` passed across `check_html.mjs`, `check_boards.mjs` (6,000 boards), and `check_still.mjs`. Font files verified serving HTTP 200.
